@@ -1,4 +1,4 @@
-import { Flex, Card, Text, Address } from '@makerdao/ui-components-core'
+import { Flex, Card, Text } from '@makerdao/ui-components-core'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 function Subheading({ ...props }) {
@@ -7,7 +7,7 @@ function Subheading({ ...props }) {
     <Card py="xs" px="m" flexGrow={{ s: '1', m: '0' }}>
       <Flex alignItems="center" justifyContent="center">
         <Jazzicon diameter={20} seed={jsNumberForAddress("0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef")}/>
-        <Text display="block" ml="xs" color="steel">MetaMask <Address shorten full="0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef" placement="bottom"></Address></Text>
+        <Text display="block" ml="xs" color="steel">MetaMask 0xdead...beef</Text>
       </Flex>
     </Card>
   </Flex>

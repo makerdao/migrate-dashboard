@@ -1,6 +1,6 @@
 import React from 'react'
 import Header from '@makerdao/ui-components-header'
-import { Box, Flex, Text, Card, Grid, CardBody, Button, Link } from '@makerdao/ui-components-core'
+import { Box, Flex, Text, Card, Grid, Button, Link } from '@makerdao/ui-components-core'
 
 import { Breakout } from '../components/Typography'
 import ButtonCard from '../components/ButtonCard'
@@ -28,8 +28,6 @@ function Recommended() {
     <Text.p t="subheading" color="makerTeal" ml="xs">Recommended</Text.p>
   </Flex>
 }
-
-
 
 function Overview() {
   return <Flex flexDirection="column" minHeight="100vh">
