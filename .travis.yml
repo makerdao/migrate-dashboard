@@ -1,0 +1,18 @@
+language: node_js
+sudo: required
+node_js:
+  - '11'
+cache:
+  directories:
+    - node_modules
+  timeout: 9000
+install:
+  - yarn install
+before_deploy:
+  - npm install now --no-save
+deploy:
+  - provider: script
+    script: now --token $NOW_TOKEN --team mkr-js-prod && now --target production --token $NOW_TOKEN --team mkr-js-prod
+    skip_cleanup: true
+    on:
+      branch: master
