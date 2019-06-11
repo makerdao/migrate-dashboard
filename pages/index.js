@@ -5,6 +5,12 @@ import { Box, Flex, Text, Button, Grid } from '@makerdao/ui-components-core'
 import Link from 'next/link'
 
 import { Breakout } from '../components/Typography'
+import IconButton from '../components/IconButton'
+
+import metamask from '../assets/icons/metamask.svg'
+import trezor from '../assets/icons/trezor.svg'
+import ledger from '../assets/icons/ledger.svg'
+import walletConnect from '../assets/icons/walletConnect.svg'
 
 const Feature = ({ title, body }) => {
   return <Grid gridRowGap='s'>
@@ -26,8 +32,8 @@ const WithSeparator = styled(Box).attrs((props) => {
 `
 
 const DatedInfo = ({ date, title, body }) => {
-  return <WithSeparator><Grid pt="l" pb="xl" gridTemplateColumns="auto 1fr">
-    <Box style={{ gridRow: "span 2" }} mr="2xl">
+  return <WithSeparator><Grid pt="l" pb="xl" gridTemplateColumns={{ s: "1fr", m: "auto 1fr" }}>
+    <Box style={{ gridRow: "span 2" }} mr="2xl" mb={{ s: 'xs', m: "unset" }}>
       <Text t="subheading">{ date }</Text>
     </Box>
     <Text.h5 fontWeight="normal" mb="s" fontSize="1.8rem" letterSpacing="-0.12px" color="darkPurple">{ title }</Text.h5>
@@ -40,14 +46,19 @@ const DatedInfo = ({ date, title, body }) => {
 function Index() {
   return <Flex flexDirection="column" minHeight="100vh">
     <Header/>
-    <Grid maxWidth="113.4rem" width="100%" m="0 auto" px="m" pb="xl">
-      <Box maxWidth="57.6rem" width="100%" mt="xl">
+    <Grid maxWidth="113.4rem" width="100%" m="0 auto" px="m" pt={{ s: 'm', l: "xl" }} pb={{ s: "xl", l: "l" }} gridTemplateColumns={{ s: "1fr", l: "auto auto"}} gridColumnGap="xl" gridRowGap="m">
+      <Box maxWidth="57.6rem" width="100%" mt="xl" textAlign={{ s: 'center', l: 'left'}} justifySelf={{ s: "center", l: "unset" }}>
         <Text.h1 mb='s'>Migrate</Text.h1>
         <Breakout>
           Upgrade your DAI, MKR, and CDPs to their respective updated versions, and claims funds after emergency shutdown and other system updates.
         </Breakout>
-        <Link href="/overview"><Button>Connect wallet</Button></Link>
       </Box>
+      <Grid gridRowGap='s' alignSelf="center" justifySelf="center">
+        <Link href="/overview"><IconButton icon={<img src={metamask} css={{ marginTop: '-5px', marginBottom: '-5px' }}/>}>MetaMask</IconButton></Link>
+        <Link href="/overview"><IconButton icon={<img src={ledger}/>}>Ledger Nano</IconButton></Link>
+        <Link href="/overview"><IconButton icon={<img src={trezor}/>}>Trezor</IconButton></Link>
+        <Link href="/overview"><IconButton icon={<img src={walletConnect}/>}>Wallet Connect</IconButton></Link>
+      </Grid>
     </Grid>
     <Box bg="white" flexGrow="1">
       <Box maxWidth="113.4rem" width="100%" m="0 auto" px='m' mt="xl">
