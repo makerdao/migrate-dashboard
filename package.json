@@ -10,8 +10,13 @@
     "start": "next start"
   },
   "dependencies": {
+    "@makerdao/ui-components-core": "^0.2.2",
+    "@makerdao/ui-components-footer": "^0.1.10",
+    "@makerdao/ui-components-header": "^0.1.11-alpha.2",
+    "@zeit/next-css": "^1.0.1",
     "next": "^8.1.0",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "styled-components": "^4.3.1"
   }
 }
