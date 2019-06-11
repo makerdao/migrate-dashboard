@@ -1,0 +1,17 @@
+{
+  "name": "migrate-dashboard",
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": "git@github.com:makerdao/migrate-dashboard.git",
+  "author": "andrea@makerdao.com",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^8.1.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  }
+}
