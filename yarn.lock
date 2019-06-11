@@ -753,10 +753,10 @@
     react-popper "1.0.2"
     styled-system "^3.1.11"
 
-"@makerdao/ui-components-footer@^0.1.10":
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/@makerdao/ui-components-footer/-/ui-components-footer-0.1.10.tgz#b4b88a90eadb5d1d1c86569704429d875dfd1d99"
-  integrity sha512-UFc5YqN3Tyn5ToWeGT1lG6wmiDoSEiTzEW5BNay23Wta/nnTPVGTTJwucCGN3vkohFwiETPfPMLxdZJmB2Jnqw==
+"@makerdao/ui-components-footer@^0.1.12":
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/@makerdao/ui-components-footer/-/ui-components-footer-0.1.12.tgz#9c4d9e7201de3d612c30fe70d568a9a1b4f671c0"
+  integrity sha512-YG4974jqmk0GOBzKF/MnmLS8Ync4Ht/5GYpJLxesU75P3zwTqh0AKvg8SrzTm5BOgXYAn4P1a5W6LeGJ4xytUA==
   dependencies:
     "@makerdao/i18n-helper" "^0.1.6"
     react-qr-svg "^2.2.1"
