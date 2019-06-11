@@ -15,6 +15,7 @@ module.exports = (phase, { defaultConfig }) => {
   }
 
   const withCSS = require('@zeit/next-css');
+  const withImages = require('next-images')
 
-  return withCSS(config);
+  return withImages(withCSS(config));
 };

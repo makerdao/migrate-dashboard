@@ -5,6 +5,8 @@ import { themeLight, Box, Flex, Text, Link } from '@makerdao/ui-components-core'
 import { colors } from '@makerdao/design-system-constants'
 import '@makerdao/ui-components-core/dist/styles/global.css'
 
+import theme from '../utils/theme'
+
 const GlobalStyle = createGlobalStyle`
   html {
     min-height: 100%;
@@ -20,7 +22,7 @@ export default class MyApp extends App {
     return (
       <Container>
         <GlobalStyle/>
-        <ThemeProvider theme={themeLight}>
+        <ThemeProvider theme={theme}>
           <Component {...pageProps} />
         </ThemeProvider>
       </Container>

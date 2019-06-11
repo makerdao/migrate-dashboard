@@ -2,17 +2,31 @@ import styled from 'styled-components'
 import Header from '@makerdao/ui-components-header'
 import Footer from '@makerdao/ui-components-footer'
 import { Box, Flex, Text, Button, Grid } from '@makerdao/ui-components-core'
+import Link from 'next/link'
+
+import { Breakout } from '../components/Typography'
 
 const Feature = ({ title, body }) => {
   return <Grid gridRowGap='s'>
-    <Box borderRadius="circle" bg="grey.300" width="4.8rem" height="4.8rem"/>
+    <Box borderRadius="circle" bg="grey.300" width="4.8rem" height="4.8rem" mb="2xs"/>
     <Text.h4>{title}</Text.h4>
-    <Text.p lineHeight="normal">{body}</Text.p>
+    <Text.p lineHeight="normal" color="darkLavender">{body}</Text.p>
   </Grid>
 }
 
+const WithSeparator = styled(Box).attrs((props) => {
+  return {
+    borderBottom: 'default',
+    borderColor: 'grey.200'
+  }
+})`
+  &:last-child {
+    border: none;
+  }
+`
+
 const DatedInfo = ({ date, title, body }) => {
-  return <Grid pt="l" pb="xl" gridTemplateColumns="auto 1fr">
+  return <WithSeparator><Grid pt="l" pb="xl" gridTemplateColumns="auto 1fr">
     <Box style={{ gridRow: "span 2" }} mr="2xl">
       <Text t="subheading">{ date }</Text>
     </Box>
@@ -20,24 +34,24 @@ const DatedInfo = ({ date, title, body }) => {
     <Box>
       <Text.p lineHeight="normal" color="darkLavender">{ body }</Text.p>
     </Box>
-  </Grid>
+  </Grid></WithSeparator>
 }
 
-function Home() {
+function Index() {
   return <Flex flexDirection="column" minHeight="100vh">
     <Header/>
     <Box maxWidth="113.4rem" width="100%" m="0 auto" px="m" pb="xl">
-      <Box width="57.6rem" mt="xl">
+      <Box maxWidth="57.6rem" width="100%" mt="xl">
         <Text.h1 mb='s'>Migrate</Text.h1>
-        <Text.p fontSize="2rem" color="darkLavender" lineHeight='1.3' letterSpacing="0.3px" mb="m">
+        <Breakout>
           Upgrade your DAI, MKR, and CDPs to their respective updated versions, and claims funds after emergency shutdown and other system updates.
-        </Text.p>
-        <Button>Connect wallet</Button>
+        </Breakout>
+        <Link href="/overview"><Button>Connect wallet</Button></Link>
       </Box>
     </Box>
     <Box bg="white" flexGrow="1">
       <Box maxWidth="113.4rem" width="100%" m="0 auto" px='m' mt="xl">
-        <Grid gridTemplateColumns={{ s: "1fr", l: "repeat(3, 1fr)"}} gridColumnGap="2xl">
+        <Grid gridTemplateColumns={{ s: "1fr", l: "repeat(3, 1fr)"}} gridColumnGap="2xl" gridRowGap="xl">
           <Feature title="Migrate CDPs" body="During a system upgrade, migrate CDPs to move them into the new system. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."/>
           <Feature title="Redeem DAI & MKR" body="During a system upgrade, migrate CDPs to move them into the new system. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."/>
           <Feature title="Emergency Shutdown" body="During a system upgrade, migrate CDPs to move them into the new system. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."/>
@@ -59,4 +73,4 @@ function Home() {
   </Flex>;
 }
 
-export default Home;
+export default Index;
