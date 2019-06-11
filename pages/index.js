@@ -40,7 +40,7 @@ const DatedInfo = ({ date, title, body }) => {
 function Index() {
   return <Flex flexDirection="column" minHeight="100vh">
     <Header/>
-    <Box maxWidth="113.4rem" width="100%" m="0 auto" px="m" pb="xl">
+    <Grid maxWidth="113.4rem" width="100%" m="0 auto" px="m" pb="xl">
       <Box maxWidth="57.6rem" width="100%" mt="xl">
         <Text.h1 mb='s'>Migrate</Text.h1>
         <Breakout>
@@ -48,7 +48,7 @@ function Index() {
         </Breakout>
         <Link href="/overview"><Button>Connect wallet</Button></Link>
       </Box>
-    </Box>
+    </Grid>
     <Box bg="white" flexGrow="1">
       <Box maxWidth="113.4rem" width="100%" m="0 auto" px='m' mt="xl">
         <Grid gridTemplateColumns={{ s: "1fr", l: "repeat(3, 1fr)"}} gridColumnGap="2xl" gridRowGap="xl">
