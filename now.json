@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "Migrate Dashboard",
+  "alias": "migrate-dashboard-staging",
+  "builds": [
+    {
+      "src": "next.config.js",
+      "use": "@now/next",
+      "config": {}
+    },
+    { "src": "./static", "use": "@now/static" }
+  ],
+  "routes": [
+    {"src": "^/favicon.ico$", "dest": "/static/favicon.ico"}
+  ]
+}
