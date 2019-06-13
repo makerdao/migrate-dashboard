@@ -1,19 +1,21 @@
 import React from 'react'
 import Header from '@makerdao/ui-components-header'
 import { Box, Flex, Text, Card, Grid, Button, Link } from '@makerdao/ui-components-core'
+import { useModal } from "react-modal-hook";
 
 import { Breakout } from '../components/Typography'
 import ButtonCard from '../components/ButtonCard'
 import Subheading from '../components/Subheading'
 import Footer from '../components/Footer'
+import FlowExample from '../components/modals/FlowExample'
 
 import checkmark from '../assets/icons/checkmark.svg'
 
-function Migration({ title, body, recommended, metadataTitle, metadataValue }) {
+function Migration({ title, body, recommended, metadataTitle, metadataValue, onSelected }) {
   return <ButtonCard minHeight="25.3rem" buttonTag={<Grid gridRowGap="2xs">
     <Text t="subheading" color="darkLavender">{metadataTitle}</Text>
     <Text t="body">{metadataValue}</Text>
-  </Grid>} button={<Button px="xl" variant={recommended ? 'primary' : 'secondary-outline'}>Continue</Button>}>
+  </Grid>} button={<Button px="xl" variant={recommended ? 'primary' : 'secondary-outline'} onClick={onSelected}>Continue</Button>}>
     <Grid gridTemplateAreas={`"title recommended" "body body"`} gridTemplateColumns="1fr auto" gridColumnGap="m" gridRowGap="m">
       <Box gridArea="title" alignSelf="center"><Text.h4>{ title }</Text.h4></Box>
       <Box gridArea="recommended" alignSelf="center" justifySelf="end">{ recommended && <Recommended/> }</Box>
@@ -30,6 +32,10 @@ function Recommended() {
 }
 
 function Overview() {
+  const [showModal, hideModal] = useModal(({ in: open, ...rest }) => {
+    return <FlowExample open={open} onClose={hideModal}/>
+  })
+
   return <Flex flexDirection="column" minHeight="100vh">
     <Header/>
     <Box borderBottom="1px solid" borderColor="grey.300"/>
@@ -41,31 +47,34 @@ function Overview() {
         <Breakout>Upgrade your DAI, MKR, and CDPs to their respective updated versions. Redeem and withdraw collateral during emergency shutdown.</Breakout>
       </Box>
 
-
       <Grid mt="l" gridTemplateColumns={{ s: '1fr', l: '1fr 1fr' }} gridGap="l">
         <Migration
           recommended
           title="Dai Redeemer"
           body="Redeem your Dai holdings into either Single Collateral Dai (SCD) or Multi Collateral Dai (MCD)."
           metadataTitle="SCD Balance"
-          metadataValue="1,400.00 DAI"/>
+          metadataValue="1,400.00 DAI"
+          onSelected={showModal} />
         <Migration
           recommended
           title="CDP Migrate"
           body="Migrate your CDPs to the newest version of the CDP Portal."
           metadataTitle="SCD Balance"
-          metadataValue="1,400.00 DAI"/>
+          metadataValue="1,400.00 DAI"
+          onSelected={showModal}/>
         <Migration
           recommended
           title="DSChief MKR Withdrawal"
           body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet."
           metadataTitle="SCD Balance"
-          metadataValue="1,400.00 DAI"/>
+          metadataValue="1,400.00 DAI"
+          onSelected={showModal}/>
         <Migration
           title="Dai Redeemer"
           body="Redeem your Dai holdings into either Single Collateral Dai (SCD) or Multi Collateral Dai (MCD)."
           metadataTitle="SCD Balance"
-          metadataValue="1,400.00 DAI"/>
+          metadataValue="1,400.00 DAI"
+          onSelected={showModal}/>
       </Grid>
 
       <Box mt="xl">

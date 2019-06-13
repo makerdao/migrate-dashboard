@@ -1,5 +1,7 @@
 import React from 'react'
 import App, { Container } from 'next/app'
+import { ModalProvider } from "react-modal-hook";
+import { TransitionGroup } from "react-transition-group";
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import { themeLight, Box, Flex, Text, Link } from '@makerdao/ui-components-core'
 import { colors } from '@makerdao/design-system-constants'
@@ -23,7 +25,9 @@ export default class MyApp extends App {
       <Container>
         <GlobalStyle/>
         <ThemeProvider theme={theme}>
-          <Component {...pageProps} />
+          <ModalProvider container={TransitionGroup}>
+            <Component {...pageProps} />
+          </ModalProvider>
         </ThemeProvider>
       </Container>
     )
