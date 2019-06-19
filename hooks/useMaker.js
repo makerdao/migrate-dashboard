@@ -9,10 +9,6 @@ function useMaker() {
     account,
     network,
   } = useContext(MakerObjectContext) || {};
-  //these are undefined:
-  console.log('maker in useMaker', maker);
-    console.log('account in useMaker', account);
-      console.log('network in useMaker', network);
   const [authenticated, setAuthenticated] = useState(false);
   useEffect(() => {
     if (maker) {
@@ -40,7 +36,6 @@ function useMaker() {
       .find(acc => acc.address.toUpperCase() === address.toUpperCase());
 
   const connectBrowserProvider = async () => {
-    console.log('maker in connectBrowserProvider', maker);
     const networkId = maker.service('web3').networkId();
 
     const browserProvider = await checkEthereumProvider();
