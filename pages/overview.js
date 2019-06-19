@@ -7,7 +7,7 @@ import { Breakout } from '../components/Typography'
 import ButtonCard from '../components/ButtonCard'
 import Subheading from '../components/Subheading'
 import Footer from '../components/Footer'
-import FlowExample from '../components/modals/FlowExample'
+import MigrateCDP from '../components/modals/MigrateCDP'
 
 import checkmark from '../assets/icons/checkmark.svg'
 
@@ -33,7 +33,7 @@ function Recommended() {
 
 function Overview() {
   const [showModal, hideModal] = useModal(({ in: open, ...rest }) => {
-    return <FlowExample open={open} onClose={hideModal}/>
+    return <MigrateCDP open={open} onClose={hideModal}/>
   })
 
   return <Flex flexDirection="column" minHeight="100vh">
