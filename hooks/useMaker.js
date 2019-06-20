@@ -22,14 +22,6 @@ function useMaker() {
     }
   }, [maker]);
 
-  function isConnectedToProvider(provider) {
-    return (
-      maker.service('accounts').hasAccount() &&
-      !!provider.address &&
-      provider.address === maker.currentAddress()
-    );
-  }
-
   const _getMatchedAccount = address =>
     maker
       .listAccounts()
@@ -51,7 +43,7 @@ function useMaker() {
       );
 
     let account;
-    if (maker.service('accounts').hasAccount) {
+    if (maker.service('accounts').hasAccount()) {
       const matchedAccount = _getMatchedAccount(browserProvider.address);
       if (!matchedAccount) {
         account = await maker.addAccount({
@@ -76,7 +68,6 @@ function useMaker() {
   return {
     maker,
     authenticated,
-    isConnectedToProvider,
     connectBrowserProvider,
     account,
     network

@@ -11,7 +11,6 @@ import metamask from '../assets/icons/metamask.svg'
 import trezor from '../assets/icons/trezor.svg'
 import ledger from '../assets/icons/ledger.svg'
 import walletConnect from '../assets/icons/walletConnect.svg'
-import { useCallback } from 'react';
 import useMaker from '../hooks/useMaker';
 
 const Feature = ({ title, body }) => {
@@ -52,17 +51,10 @@ function Index() {
     connectBrowserProvider
   } = useMaker();
 
-  const onAccountChosen = useCallback(
-    async ({ address }, type) => {
-      maker.useAccountWithAddress(address);
-    },
-    [maker]
-  );
-
   async function connectBrowserWallet() {
     try {
       const connectedAddress = await connectBrowserProvider();
-      onAccountChosen({ address: connectedAddress }, 'metamask');
+      maker.useAccountWithAddress(connectedAddress);
     } catch (err) {
       window.alert(err);
     }
