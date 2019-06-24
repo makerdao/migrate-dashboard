@@ -15,4 +15,4 @@ deploy:
     script: now --token $NOW_TOKEN --team mkr-js-prod && now --target production --token $NOW_TOKEN --team mkr-js-prod
     skip_cleanup: true
     on:
-      branch: MIG3-wallet-connect-test
+      branch: master
