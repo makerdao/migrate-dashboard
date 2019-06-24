@@ -1,5 +1,10 @@
 const config = {
-  target: 'serverless',
+  exportPathMap: function() {
+    return {
+      '/': { page: '/' },
+      '/overview': { page: '/overview' },
+    };
+  }
 }
 
 const { PHASE_PRODUCTION_SERVER } =
