@@ -9,7 +9,7 @@ cache:
 install:
   - yarn install
 before_deploy:
-  - npm install now --no-save
+  - npm install -g now
 deploy:
   - provider: script
     script: now --token $NOW_TOKEN --team mkr-js-prod && now --target production --token $NOW_TOKEN --team mkr-js-prod
