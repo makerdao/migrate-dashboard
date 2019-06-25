@@ -7,11 +7,12 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "now-build": "next build",
+    "now-build": "next build && next export",
     "start": "next start",
     "test": "echo \"To DAI, to sleep - to sleep, perchance to dream\""
   },
   "dependencies": {
+    "@makerdao/dai": "^0.16.1",
     "@makerdao/ui-components-core": "^0.2.2",
     "@makerdao/ui-components-footer": "^0.1.12",
     "@makerdao/ui-components-header": "^0.1.11-alpha.2",

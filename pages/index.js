@@ -11,6 +11,7 @@ import metamask from '../assets/icons/metamask.svg'
 import trezor from '../assets/icons/trezor.svg'
 import ledger from '../assets/icons/ledger.svg'
 import walletConnect from '../assets/icons/walletConnect.svg'
+import useMaker from '../hooks/useMaker';
 
 const Feature = ({ title, body }) => {
   return <Grid gridRowGap='s'>
@@ -44,44 +45,60 @@ const DatedInfo = ({ date, title, body }) => {
 }
 
 function Index() {
-  return <Flex flexDirection="column" minHeight="100vh">
-    <Header/>
-    <Grid maxWidth="113.4rem" width="100%" m="0 auto" px="m" pt={{ s: 'm', l: "xl" }} pb={{ s: "xl", l: "l" }} gridTemplateColumns={{ s: "1fr", l: "auto auto"}} gridColumnGap="xl" gridRowGap="m">
-      <Box maxWidth="57.6rem" width="100%" mt="xl" textAlign={{ s: 'center', l: 'left'}} justifySelf={{ s: "center", l: "unset" }}>
-        <Text.h1 mb='s'>Migrate</Text.h1>
-        <Breakout>
-          Upgrade your DAI, MKR, and CDPs to their respective updated versions, and claims funds after emergency shutdown and other system updates.
-        </Breakout>
-      </Box>
-      <Grid gridRowGap='s' alignSelf="center" justifySelf="center">
-        <Link href="/overview"><IconButton icon={<img src={metamask} css={{ marginTop: '-5px', marginBottom: '-5px' }}/>}>MetaMask</IconButton></Link>
-        <Link href="/overview"><IconButton icon={<img src={ledger}/>}>Ledger Nano</IconButton></Link>
-        <Link href="/overview"><IconButton icon={<img src={trezor}/>}>Trezor</IconButton></Link>
-        <Link href="/overview"><IconButton icon={<img src={walletConnect}/>}>Wallet Connect</IconButton></Link>
-      </Grid>
-    </Grid>
-    <Box bg="white" flexGrow="1">
-      <Box maxWidth="113.4rem" width="100%" m="0 auto" px='m' mt="xl">
-        <Grid gridTemplateColumns={{ s: "1fr", l: "repeat(3, 1fr)"}} gridColumnGap="2xl" gridRowGap="xl">
-          <Feature title="Migrate CDPs" body="During a system upgrade, migrate CDPs to move them into the new system. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."/>
-          <Feature title="Redeem DAI & MKR" body="During a system upgrade, migrate CDPs to move them into the new system. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."/>
-          <Feature title="Emergency Shutdown" body="During a system upgrade, migrate CDPs to move them into the new system. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."/>
-        </Grid>
-      </Box>
+  const {
+    maker,
+    authenticated: makerAuthenticated,
+    connectBrowserProvider
+  } = useMaker();
 
-      <Box mt="2xl" maxWidth="113.4rem" width="100%" m="0 auto" px='m'>
-        <Box borderBottom={`2px solid #E1E1E1`}>
-          <Text.h5 color="darkPurple" fontWeight="normal" fontSize="1.8rem" letterSpacing="-0.12px" mb="s">Recent additions</Text.h5>
+  async function connectBrowserWallet() {
+    try {
+      const connectedAddress = await connectBrowserProvider();
+      maker.useAccountWithAddress(connectedAddress);
+    } catch (err) {
+      window.alert(err);
+    }
+  }
+  return (
+    <Flex flexDirection="column" minHeight="100vh">
+      <Header/>
+      <Grid maxWidth="113.4rem" width="100%" m="0 auto" px="m" pt={{ s: 'm', l: "xl" }} pb={{ s: "xl", l: "l" }} gridTemplateColumns={{ s: "1fr", l: "auto auto"}} gridColumnGap="xl" gridRowGap="m">
+        <Box maxWidth="57.6rem" width="100%" mt="xl" textAlign={{ s: 'center', l: 'left'}} justifySelf={{ s: "center", l: "unset" }}>
+          <Text.h1 mb='s'>Migrate</Text.h1>
+          <Breakout>
+            Upgrade your DAI, MKR, and CDPs to their respective updated versions, and claims funds after emergency shutdown and other system updates.
+          </Breakout>
         </Box>
-        <DatedInfo date="MARCH 13, 2019" title="DSChief MKR Withdrawal" body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet." />
-        <DatedInfo date="MARCH 13, 2019" title="DSChief MKR Withdrawal" body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet." />
-        <DatedInfo date="MARCH 13, 2019" title="DSChief MKR Withdrawal" body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet." />
-        <DatedInfo date="MARCH 13, 2019" title="DSChief MKR Withdrawal" body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet." />
-        <DatedInfo date="MARCH 13, 2019" title="DSChief MKR Withdrawal" body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet." />
+        <Grid gridRowGap='s' alignSelf="center" justifySelf="center">
+          <Link href="/overview"><IconButton onClick={connectBrowserWallet} disabled={!makerAuthenticated} icon={<img src={metamask} css={{ marginTop: '-5px', marginBottom: '-5px' }}/>}>MetaMask</IconButton></Link>
+          <Link href="/overview"><IconButton icon={<img src={ledger}/>}>Ledger Nano</IconButton></Link>
+          <Link href="/overview"><IconButton icon={<img src={trezor}/>}>Trezor</IconButton></Link>
+          <Link href="/overview"><IconButton icon={<img src={walletConnect}/>}>Wallet Connect</IconButton></Link>
+        </Grid>
+      </Grid>
+      <Box bg="white" flexGrow="1">
+        <Box maxWidth="113.4rem" width="100%" m="0 auto" px='m' mt="xl">
+          <Grid gridTemplateColumns={{ s: "1fr", l: "repeat(3, 1fr)"}} gridColumnGap="2xl" gridRowGap="xl">
+            <Feature title="Migrate CDPs" body="During a system upgrade, migrate CDPs to move them into the new system. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."/>
+            <Feature title="Redeem DAI & MKR" body="During a system upgrade, migrate CDPs to move them into the new system. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."/>
+            <Feature title="Emergency Shutdown" body="During a system upgrade, migrate CDPs to move them into the new system. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."/>
+          </Grid>
+        </Box>
+
+        <Box mt="2xl" maxWidth="113.4rem" width="100%" m="0 auto" px='m'>
+          <Box borderBottom={`2px solid #E1E1E1`}>
+            <Text.h5 color="darkPurple" fontWeight="normal" fontSize="1.8rem" letterSpacing="-0.12px" mb="s">Recent additions</Text.h5>
+          </Box>
+          <DatedInfo date="MARCH 13, 2019" title="DSChief MKR Withdrawal" body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet." />
+          <DatedInfo date="MARCH 13, 2019" title="DSChief MKR Withdrawal" body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet." />
+          <DatedInfo date="MARCH 13, 2019" title="DSChief MKR Withdrawal" body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet." />
+          <DatedInfo date="MARCH 13, 2019" title="DSChief MKR Withdrawal" body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet." />
+          <DatedInfo date="MARCH 13, 2019" title="DSChief MKR Withdrawal" body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet." />
+        </Box>
       </Box>
-    </Box>
-    <Footer/>
-  </Flex>;
+      <Footer/>
+    </Flex>
+  );
 }
 
 export default Index;
