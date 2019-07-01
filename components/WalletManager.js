@@ -1,33 +1,56 @@
-
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import useMaker from '../hooks/useMaker';
 import IconButton from '../components/IconButton'
 import { Grid } from '@makerdao/ui-components-core'
 import BrowserProviderButton from '../components/BrowserProviderButton'
-// import Metamask from '../assets/icons/metamask.svg'
-// import Trezor from '../assets/icons/trezor.svg'
-// import Ledger from '../assets/icons/ledger.svg'
-// import WalletConnect from '../assets/icons/walletConnect.svg'
+import Trezor from '../assets/icons/trezor.svg'
+import Ledger from '../assets/icons/ledger.svg'
+import WalletConnect from '../assets/icons/walletConnect.svg'
 import { getWebClientProviderName } from '../utils/web3';
 
-// const StyledLedgerLogo = styled(Ledger)`
-//   margin-top: -5px;
-//   margin-bottom: -5px;
-// `;
+const StyledLedgerLogo = styled(Ledger)`
+  margin-top: -5px;
+  margin-bottom: -5px;
+`;
 
-// const StyledTrezorLogo = styled(Trezor)`
-//   margin-top: -5px;
-//   margin-bottom: -5px;
-// `;
+const StyledTrezorLogo = styled(Trezor)`
+  margin-top: -5px;
+  margin-bottom: -5px;
+`;
 
-// const StyledWalletConnectLogo = styled(WalletConnect)`
-//   margin-top: -5px;
-//   margin-bottom: -5px;
-// `;
+const StyledWalletConnectLogo = styled(WalletConnect)`
+  margin-top: -5px;
+  margin-bottom: -5px;
+`;
 
 function WalletManager() {
-  const { authenticated: makerAuthenticated } = useMaker();
+  const {
+    maker,
+   	authenticated: makerAuthenticated
+  } = useMaker();
   const providerName = getWebClientProviderName();
+
+  const onAccountChosen = useCallback(
+    async ({ address }, type) => {
+      maker.useAccountWithAddress(address);
+
+      navigation.navigate({
+        pathname: `owner/${address}`,
+        search
+      });
+    },
+    [maker, navigation]
+  );
+
+  async function connectBrowserWallet() {
+    try {
+      const connectedAddress = await connectBrowserProvider();
+      onAccountChosen({ address: connectedAddress }, providerName);
+    } catch (err) {
+      window.alert(err);
+    }
+  }
 
   return (
     <Grid px="m" py="xs" gridRowGap="s">
@@ -39,20 +62,20 @@ function WalletManager() {
       <IconButton
         onClick={() => null}
         disabled={!makerAuthenticated}
-        icon={null}
+        icon={<StyledTrezorLogo />}
       >
         Trezor
       </IconButton>
       <IconButton
         onClick={() => null}
         disabled={!makerAuthenticated}
-        icon={null}
+        icon={<StyledLedgerLogo />}
       >
         Ledger
       </IconButton>
       <IconButton
         onClick={() => null}
-        icon={null}
+        icon={<StyledWalletConnectLogo />}
       >
         Wallet Connect
       </IconButton>

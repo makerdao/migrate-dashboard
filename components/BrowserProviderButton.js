@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import styled from 'styled-components';
 
-// import MetaMaskLogo from '../assets/icons/metamask.svg';
+import MetaMaskLogo from '../assets/icons/metamask.svg';
 // import TrustLogo from '../assets/icons/trust-logo.svg';
 // import ImTokenLogo from '../assets/icons/imtoken-logo.svg';
 // import coinbaseWalletLogo from '../assets/icons/coinbase-wallet.png';
@@ -10,11 +10,10 @@ import styled from 'styled-components';
 import { wallets } from '../utils/web3';
 import IconButton from '../components/IconButton';
 
-// hack to get around button padding for now
-// const MMLogo = styled(MetaMaskLogo)`
-//   margin-top: -5px;
-//   margin-bottom: -5px;
-// `;
+const MMLogo = styled(MetaMaskLogo)`
+  margin-top: -5px;
+  margin-bottom: -5px;
+`;
 
 const providers = {
   metamask: "MetaMask",
