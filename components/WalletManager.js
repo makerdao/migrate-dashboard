@@ -8,7 +8,7 @@ import Trezor from '../assets/icons/trezor.svg'
 import Ledger from '../assets/icons/ledger.svg'
 import WalletConnect from '../assets/icons/walletConnect.svg'
 import { getWebClientProviderName } from '../utils/web3';
-
+import Router from 'next/router'
 const StyledLedgerLogo = styled(Ledger)`
   margin-top: -5px;
   margin-bottom: -5px;
@@ -27,20 +27,17 @@ const StyledWalletConnectLogo = styled(WalletConnect)`
 function WalletManager() {
   const {
     maker,
-   	authenticated: makerAuthenticated
+   	authenticated: makerAuthenticated,
+    connectBrowserProvider
   } = useMaker();
   const providerName = getWebClientProviderName();
 
   const onAccountChosen = useCallback(
     async ({ address }, type) => {
       maker.useAccountWithAddress(address);
-
-      navigation.navigate({
-        pathname: `owner/${address}`,
-        search
-      });
+      Router.push(`/overview?${address}`)
     },
-    [maker, navigation]
+    [maker]
   );
 
   async function connectBrowserWallet() {
@@ -55,7 +52,7 @@ function WalletManager() {
   return (
     <Grid px="m" py="xs" gridRowGap="s">
       <BrowserProviderButton
-        onClick={() => null}
+        onClick={connectBrowserWallet}
         disabled={!makerAuthenticated}
         provider={providerName}
       />
