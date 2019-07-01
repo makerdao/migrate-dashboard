@@ -9,6 +9,8 @@ import Ledger from '../assets/icons/ledger.svg'
 import WalletConnect from '../assets/icons/walletConnect.svg'
 import { getWebClientProviderName } from '../utils/web3';
 import Router from 'next/router'
+import { useLedger, useTrezor } from '../hooks/useHardwareWallet';
+
 const StyledLedgerLogo = styled(Ledger)`
   margin-top: -5px;
   margin-bottom: -5px;
@@ -40,6 +42,9 @@ function WalletManager() {
     [maker]
   );
 
+  const { connectTrezorWallet } = useTrezor({ onAccountChosen });
+  const { connectLedgerWallet } = useLedger({ onAccountChosen });
+
   async function connectBrowserWallet() {
     try {
       const connectedAddress = await connectBrowserProvider();
@@ -57,14 +62,14 @@ function WalletManager() {
         provider={providerName}
       />
       <IconButton
-        onClick={() => null}
+        onClick={connectTrezorWallet}
         disabled={!makerAuthenticated}
         icon={<StyledTrezorLogo />}
       >
         Trezor
       </IconButton>
       <IconButton
-        onClick={() => null}
+        onClick={connectLedgerWallet}
         disabled={!makerAuthenticated}
         icon={<StyledLedgerLogo />}
       >

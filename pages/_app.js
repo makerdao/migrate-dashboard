@@ -7,8 +7,9 @@ import { themeLight, Box, Flex, Text, Link } from '@makerdao/ui-components-core'
 import { colors } from '@makerdao/design-system-constants'
 import '@makerdao/ui-components-core/dist/styles/global.css'
 import MakerProvider from '../providers/MakerProvider';
-
+import { WalletProvider } from '../providers/WalletProvider';
 import theme from '../utils/theme'
+import { wallets, templates } from '../components/wallets';
 
 const GlobalStyle = createGlobalStyle`
   html {
@@ -31,7 +32,9 @@ export default class MyApp extends App {
               network='kovan'
           >
             <ModalProvider container={TransitionGroup}>
-              <Component {...pageProps} />
+              <WalletProvider modals={wallets} templates={templates}>
+                <Component {...pageProps} />
+              </WalletProvider>
             </ModalProvider>
           </MakerProvider>
         </ThemeProvider>
