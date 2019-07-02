@@ -13,6 +13,7 @@ import useHardwareWallet from '../../hooks/useHardwareWallet';
 import { cutMiddle, copyToClipboard } from '../../utils/ui';
 import { CopyBtn, CopyBtnIcon } from './AddressTable';
 import Cross from '../../assets/icons/cross.svg';
+import { getColor } from '../../utils/theme';
 
 const ACCOUNTS_PER_PAGE = 5;
 const ACCOUNTS_TO_FETCH = 25;
@@ -57,7 +58,7 @@ function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
   const renderedAccounts = accounts.slice(start, start + ACCOUNTS_PER_PAGE);
 
   return !renderedAccounts.length ? (
-    <Loader size="5rem" color='#342e3e' />
+    <Loader size="5rem" color={getColor('makerTeal')} />
   ) : (
     <Grid gridRowGap="m" width={['100%', '53rem']}>
       <Flex justifyContent="flex-end">

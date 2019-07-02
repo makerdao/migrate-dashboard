@@ -2,7 +2,7 @@ import { useReducer, useCallback } from 'react';
 import useMaker from '../hooks/useMaker';
 import useWallet from '../hooks/useWallet';
 import { AccountTypes } from '../utils/constants';
-import { addMkrAndEthBalance } from '../utils/ethereum';
+import { addMkrAndEthBalance } from '../utils/maker';
 
 const TREZOR_PATH = "44'/60'/0'/0/0";
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Grid, Box, Text, Button } from '@makerdao/ui-components-core';
 
-const ButtonCard = ({
+const LedgerConnectCard = ({
   icon,
   title,
   subtitle,
@@ -40,8 +40,8 @@ const ButtonCard = ({
   );
 };
 
-ButtonCard.defaultProps = {
+LedgerConnectCard.defaultProps = {
   buttonText: 'Next'
 };
 
-export default ButtonCard;
+export default LedgerConnectCard;

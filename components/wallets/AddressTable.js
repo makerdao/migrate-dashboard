@@ -2,11 +2,7 @@ import React, { Component } from 'react';
 import { cutMiddle, copyToClipboard } from '../../utils/ui';
 import styled from 'styled-components';
 import copy from '../../assets/icons/copy.svg';
-
-export const Bold = styled.strong`
-  color: #212536;
-  font-weight: ${({ theme }) => theme.fonts.weight.bold};
-`;
+import { Text } from '@makerdao/ui-components-core';
 
 export const Table = styled.table`
   width: 100%;
@@ -82,7 +78,7 @@ class AddressTable extends Component {
           <tbody>
             <tr>
               <td>
-                <Bold> Cold </Bold>
+                <Text color='darkPurple' fontWeight='bold'> Cold </Text>
               </td>
               <InlineTd title={coldAddress}>
                 {cutMiddle(coldAddress, 7, 5)}
@@ -95,7 +91,7 @@ class AddressTable extends Component {
             </tr>
             <tr>
               <td>
-                <Bold> Hot </Bold>
+                <Text color='darkPurple' fontWeight='bold'> Hot </Text>
               </td>
               <InlineTd title={hotAddress}>
                 {cutMiddle(hotAddress, 7, 5)}

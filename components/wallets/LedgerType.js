@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Box, Button, Flex, Grid, Text } from '@makerdao/ui-components-core';
-import ButtonCard from './ButtonCard';
+import LedgerConnectCard from './LedgerConnectCard';
 
 import { BreakableText } from '../Typography';
 import LedgerLogo from '../../assets/icons/ledger.svg';
@@ -29,7 +29,7 @@ function LedgerType({ onClose, onPathSelect }) {
         <Text.h3 textAlign="center">Connect Ledger Live or Legacy</Text.h3>
 
         <Grid gridRowGap="s">
-          <ButtonCard
+          <LedgerConnectCard
             icon={<StyledLedgerLogo />}
             onClick={() => onPathSelect(LEDGER_LIVE_PATH)}
             title="Ledger live"
@@ -38,7 +38,7 @@ function LedgerType({ onClose, onPathSelect }) {
             }
             buttonText="Connect"
           />
-          <ButtonCard
+          <LedgerConnectCard
             icon={<StyledLedgerLogo />}
             onClick={() => onPathSelect(LEDGER_LEGACY_PATH)}
             title="Ledger legacy"
