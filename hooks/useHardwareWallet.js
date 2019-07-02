@@ -2,18 +2,8 @@ import { useReducer, useCallback } from 'react';
 import useMaker from '../hooks/useMaker';
 import useWallet from '../hooks/useWallet';
 import { AccountTypes } from '../utils/constants';
-import { addMkrAndEthBalance } from '../utils/maker';
 
 const TREZOR_PATH = "44'/60'/0'/0/0";
-
-const computeAddressBalances = addresses =>
-  Promise.all(
-    addresses.map(address =>
-      addMkrAndEthBalance({
-        address
-      })
-    )
-  );
 
 const reducer = (state, action) => {
   const { type, payload } = action;
@@ -68,6 +58,7 @@ export function useTrezor({ onAccountChosen }) {
 
   const connectTrezorWallet = useCallback(
     path => {
+      console.log('using hardwareccountselect')
       show({
         modalType: 'hardwareaccountselect',
         modalProps: {
@@ -135,8 +126,8 @@ function useHardwareWallet({
       path,
       accountsOffset: 0,
       accountsLength: accountsLength,
-      choose: async (addresses, onAccountChosen) => {
-        const accounts = await computeAddressBalances(addresses);
+      choose: async (accounts, onAccountChosen) => {
+        console.log(accounts)
         dispatch({ type: 'connect-success', payload: { onAccountChosen } });
         dispatch({ type: 'fetch-success', payload: { accounts, offset: 0 } });
       }
@@ -152,8 +143,7 @@ function useHardwareWallet({
           path,
           accountsOffset: offset,
           accountsLength,
-          choose: async addresses => {
-            const accounts = await computeAddressBalances(addresses);
+          choose: async accounts => {
             dispatch({ type: 'fetch-success', payload: { accounts, offset } });
             resolve(accounts);
           }

@@ -1,4 +1,6 @@
 import Maker from '@makerdao/dai';
+import trezorPlugin from '@makerdao/dai-plugin-trezor-web';
+import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 
 let _maker;
 
@@ -14,6 +16,7 @@ export async function instantiateMaker({
 
   const config = {
     log: false,
+    plugins: [trezorPlugin, ledgerPlugin],
     smartContract: {
       addContracts: {}
     },
