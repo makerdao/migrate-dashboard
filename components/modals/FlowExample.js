@@ -4,11 +4,11 @@ import Account from '../Account'
 
 import crossCircle from '../../assets/icons/crossCircle.svg'
 
-function FlowExample({ open, onClose }) {
+function FlowExample({ open, onClose, account }) {
   return <FlowBackground open={open}>
     <Grid gridRowGap="xl">
       <Grid justifyContent="flex-end" gridTemplateColumns="auto auto" gridColumnGap="m" pt="xl" px="m">
-        <Account provider="MetaMask" address="0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef"/>
+        <Account account={account} />
         <Flex alignItems="center" onClick={onClose} css={{ cursor: 'pointer' }}><img src={crossCircle}/>&nbsp;<Text color="steel" fontWeight="medium">Close</Text></Flex>
       </Grid>
       <Stepper steps={['Approve', 'Redeem', 'Confirmation']} m="0 auto"/>
