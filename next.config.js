@@ -1,4 +1,4 @@
-global.self = global
+global.self = require('node-fetch')
 
 const config = {
   exportPathMap: function() {
