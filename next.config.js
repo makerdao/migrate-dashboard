@@ -1,4 +1,4 @@
-GLOBAL.self = GLOBAL
+global.self = global
 
 const config = {
   exportPathMap: function() {
