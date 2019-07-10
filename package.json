@@ -16,6 +16,8 @@
     "@makerdao/ui-components-core": "^0.2.2",
     "@makerdao/ui-components-footer": "^0.1.12",
     "@makerdao/ui-components-header": "^0.1.11-alpha.2",
+    "@walletconnect/browser": "^1.0.0-beta.25",
+    "@walletconnect/qrcode-modal": "^1.0.0-beta.25",
     "@zeit/next-css": "^1.0.1",
     "next": "^8.1.0",
     "next-images": "^1.1.2",

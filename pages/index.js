@@ -1,16 +1,16 @@
 import styled from 'styled-components'
 import Header from '@makerdao/ui-components-header'
 import Footer from '@makerdao/ui-components-footer'
-import { Box, Flex, Text, Button, Grid } from '@makerdao/ui-components-core'
+import { Box, Flex, Text, Grid } from '@makerdao/ui-components-core'
 import Link from 'next/link'
 
 import { Breakout } from '../components/Typography'
 import IconButton from '../components/IconButton'
-
+import WalletConnect from '../components/WalletConnect'
 import metamask from '../assets/icons/metamask.svg'
 import trezor from '../assets/icons/trezor.svg'
 import ledger from '../assets/icons/ledger.svg'
-import walletConnect from '../assets/icons/walletConnect.svg'
+
 import useMaker from '../hooks/useMaker';
 
 const Feature = ({ title, body }) => {
@@ -59,6 +59,7 @@ function Index() {
       window.alert(err);
     }
   }
+
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <Header/>
@@ -73,7 +74,7 @@ function Index() {
           <Link href="/overview"><IconButton onClick={connectBrowserWallet} disabled={!makerAuthenticated} icon={<img src={metamask} css={{ marginTop: '-5px', marginBottom: '-5px' }}/>}>MetaMask</IconButton></Link>
           <Link href="/overview"><IconButton icon={<img src={ledger}/>}>Ledger Nano</IconButton></Link>
           <Link href="/overview"><IconButton icon={<img src={trezor}/>}>Trezor</IconButton></Link>
-          <Link href="/overview"><IconButton icon={<img src={walletConnect}/>}>Wallet Connect</IconButton></Link>
+          <WalletConnect />
         </Grid>
       </Grid>
       <Box bg="white" flexGrow="1">
