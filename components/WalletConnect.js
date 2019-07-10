@@ -35,7 +35,7 @@ function WalletConnect() {
     });
   });
   return (
-    <Link>
+    <Link href="/overview">
       <IconButton
         onClick={async () => {
           await getWalletConnectAccounts()

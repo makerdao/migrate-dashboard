@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Header from '@makerdao/ui-components-header'
 import Footer from '@makerdao/ui-components-footer'
@@ -53,6 +53,11 @@ function Index() {
     connectBrowserProvider
   } = useMaker();
 
+  const [providerName, setProviderName] = useState(0);
+  useEffect(() => {
+    setProviderName(getWebClientProviderName())
+  });
+
   async function connectBrowserWallet() {
     try {
       const connectedAddress = await connectBrowserProvider();
@@ -76,7 +81,7 @@ function Index() {
           <BrowserProviderButton
             onClick={connectBrowserWallet}
             disabled={!makerAuthenticated}
-            provider={getWebClientProviderName()}
+            provider={providerName}
           />
           <Link href="/overview"><IconButton icon={<img src={ledger}/>}>Ledger Nano</IconButton></Link>
           <Link href="/overview"><IconButton icon={<img src={trezor}/>}>Trezor</IconButton></Link>
