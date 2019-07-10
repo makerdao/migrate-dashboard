@@ -1,11 +1,13 @@
+import { useEffect } from 'react'
 import styled from 'styled-components'
 import Header from '@makerdao/ui-components-header'
 import Footer from '@makerdao/ui-components-footer'
 import { Box, Flex, Text, Grid } from '@makerdao/ui-components-core'
 import Link from 'next/link'
-
+import { getWebClientProviderName } from '../utils/web3'
 import { Breakout } from '../components/Typography'
 import IconButton from '../components/IconButton'
+import BrowserProviderButton from '../components/BrowserProviderButton'
 import WalletConnect from '../components/WalletConnect'
 import metamask from '../assets/icons/metamask.svg'
 import trezor from '../assets/icons/trezor.svg'
@@ -71,7 +73,11 @@ function Index() {
           </Breakout>
         </Box>
         <Grid gridRowGap='s' alignSelf="center" justifySelf="center">
-          <Link href="/overview"><IconButton onClick={connectBrowserWallet} disabled={!makerAuthenticated} icon={<img src={metamask} css={{ marginTop: '-5px', marginBottom: '-5px' }}/>}>MetaMask</IconButton></Link>
+          <BrowserProviderButton
+            onClick={connectBrowserWallet}
+            disabled={!makerAuthenticated}
+            provider={getWebClientProviderName()}
+          />
           <Link href="/overview"><IconButton icon={<img src={ledger}/>}>Ledger Nano</IconButton></Link>
           <Link href="/overview"><IconButton icon={<img src={trezor}/>}>Trezor</IconButton></Link>
           <WalletConnect />
