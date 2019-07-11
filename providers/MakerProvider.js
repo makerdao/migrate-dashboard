@@ -6,6 +6,11 @@ export const MakerObjectContext = createContext();
 function MakerProvider({ children, rpcUrl, network }) {
   const [account, setAccount] = useState(null);
   const [maker, setMaker] = useState(null);
+
+  const initAccount = account => {
+    setAccount({ ...account });
+  };
+
   useEffect(() => {
     if (!rpcUrl) return;
     instantiateMaker({
@@ -13,6 +18,12 @@ function MakerProvider({ children, rpcUrl, network }) {
       rpcUrl
     }).then(maker => {
       setMaker(maker);
+      if (maker.service('accounts').hasAccount()) initAccount(maker.currentAccount());
+
+      maker.on('accounts/CHANGE', eventObj => {
+        const { account } = eventObj.payload;
+        initAccount(account);
+      });
     });
   }, [rpcUrl]);
   return (

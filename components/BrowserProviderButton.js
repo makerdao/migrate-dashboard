@@ -1,56 +1,51 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from 'react'
+import Link from 'next/link'
+import metamask from '../assets/icons/metamask.svg'
+import trustLogo from '../assets/icons/trust-logo.svg'
+import imTokenLogo from '../assets/icons/imtoken-logo.svg'
+import coinbaseWalletLogo from '../assets/icons/coinbase-wallet.png'
+import alphaWalletLogo from '../assets/icons/alpha-wallet-logo.png'
+import { wallets } from '../utils/web3'
+import IconButton from './IconButton'
 
-import styled from 'styled-components';
+export default function BrowserProviderButton ({ provider, ...props }) {
+  const icon = useMemo(() => {
+    if (provider === wallets.METAMASK) {
+      return <img src={metamask} css={{ marginTop: '-5px', marginBottom: '-5px' }} />
+    } else if (provider === wallets.TRUST) {
+      return <img src={trustLogo} css={{ width: '20px', height: '20px' }} />
+    } else if (provider === wallets.IMTOKEN) {
+      return <img src={imTokenLogo} css={{ width: '20px', height: '20px' }} />
+    } else if (provider === wallets.COINBASE) {
+      return <img src={coinbaseWalletLogo} css={{ width: '20px', height: '20px' }} alt='' />
+    } else if (provider === wallets.ALPHA) {
+      return <img src={alphaWalletLogo} css={{ width: '20px', height: '20px' }} alt='' />
+    } else {
+      return <div />
+    }
+  }, [provider])
 
-import MetaMaskLogo from '../assets/icons/metamask.svg';
-// import TrustLogo from '../assets/icons/trust-logo.svg';
-// import ImTokenLogo from '../assets/icons/imtoken-logo.svg';
-// import coinbaseWalletLogo from '../assets/icons/coinbase-wallet.png';
-// import alphaWalletLogo from '../assets/icons/alpha-wallet-logo.png';
-import { wallets } from '../utils/web3';
-import IconButton from '../components/IconButton';
-
-const MMLogo = styled(MetaMaskLogo)`
-  margin-top: -5px;
-  margin-bottom: -5px;
-`;
-
-const providers = {
-  metamask: "MetaMask",
-  trust: "Trust",
-  coinbase: "Coinbase Wallet",
-  imtoken: "ImToken",
-  alphawallet: "Alpha Wallet"
-}
-
-export default function BrowserProviderButton({ provider, ...props }) {
-  // const icon = useMemo(() => {
-  //   if (provider === wallets.METAMASK) {
-  //     return <MMLogo />;
-  //   } else if (provider === wallets.TRUST) {
-  //     return <TrustLogo width="20px" height="20px" />;
-  //   } else if (provider === wallets.IMTOKEN) {
-  //     return (
-  //       <ImTokenLogo
-  //         css={`
-  //           pointer-events: none;
-  //         `}
-  //         width="20px"
-  //         height="20px"
-  //       />
-  //     );
-  //   } else if (provider === wallets.COINBASE) {
-  //     return <img src={coinbaseWalletLogo} width="20px" height="20px" alt="" />;
-  //   } else if (provider === wallets.ALPHA) {
-  //     return <img src={alphaWalletLogo} width="20px" height="20px" alt="" />;
-  //   } else {
-  //     return <div />;
-  //   }
-  // }, [provider]);
+  const name = useMemo(() => {
+    if (provider === wallets.METAMASK) {
+      return 'MetaMask'
+    } else if (provider === wallets.TRUST) {
+      return 'Trust'
+    } else if (provider === wallets.IMTOKEN) {
+      return 'ImToken'
+    } else if (provider === wallets.COINBASE) {
+      return 'Coinbase Wallet'
+    } else if (provider === wallets.ALPHA) {
+      return 'Alpha Wallet'
+    } else {
+      return 'Active Wallet'
+    }
+  }, [provider])
 
   return (
-    <IconButton icon={null} {...props}>
-      {providers[provider] || 'Active Wallet'}
-    </IconButton>
-  );
+    <Link href='/overview'>
+      <IconButton icon={icon} {...props}>
+        {name}
+      </IconButton>
+    </Link>
+  )
 }

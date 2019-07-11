@@ -1,9 +1,10 @@
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Header from '@makerdao/ui-components-header'
 import Footer from '@makerdao/ui-components-footer'
-import { Box, Flex, Text, Button, Grid } from '@makerdao/ui-components-core'
+import { Box, Flex, Text, Grid } from '@makerdao/ui-components-core'
 import Link from 'next/link'
-
+import { getWebClientProviderName } from '../utils/web3'
 import { Breakout } from '../components/Typography'
 import useMaker from '../hooks/useMaker';
 
@@ -47,14 +48,20 @@ function Index() {
     connectBrowserProvider
   } = useMaker();
 
-  async function connectBrowserWallet() {
-    try {
-      const connectedAddress = await connectBrowserProvider();
-      maker.useAccountWithAddress(connectedAddress);
-    } catch (err) {
-      window.alert(err);
-    }
-  }
+  // const [providerName, setProviderName] = useState(0);
+  // useEffect(() => {
+  //   setProviderName(getWebClientProviderName())
+  // });
+  //
+  // async function connectBrowserWallet() {
+  //   try {
+  //     const connectedAddress = await connectBrowserProvider();
+  //     maker.useAccountWithAddress(connectedAddress);
+  //   } catch (err) {
+  //     window.alert(err);
+  //   }
+  // }
+
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <Header/>

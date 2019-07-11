@@ -2,6 +2,7 @@ import React from 'react'
 import Header from '@makerdao/ui-components-header'
 import { Box, Flex, Text, Card, Grid, Button, Link } from '@makerdao/ui-components-core'
 import { useModal } from "react-modal-hook";
+import useMaker from '../hooks/useMaker';
 
 import { Breakout } from '../components/Typography'
 import ButtonCard from '../components/ButtonCard'
@@ -32,14 +33,15 @@ function Recommended() {
 }
 
 function Overview() {
+  const { account } = useMaker();
   const [showModal, hideModal] = useModal(({ in: open, ...rest }) => {
-    return <MigrateCDP open={open} onClose={hideModal}/>
+    return <MigrateCDP open={open} onClose={hideModal} account={account}/>
   })
 
   return <Flex flexDirection="column" minHeight="100vh">
     <Header/>
     <Box borderBottom="1px solid" borderColor="grey.300"/>
-    <div><Subheading/></div>
+    <div><Subheading account={account}/></div>
 
     <Box maxWidth="112.5rem" width="100%" mx="auto" px="m" flexGrow="1">
       <Box mt={{ s: "m", m: "2xl" }} maxWidth="64.2rem" width="100%">
