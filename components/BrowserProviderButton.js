@@ -7,6 +7,7 @@ import coinbaseWalletLogo from '../assets/icons/coinbase-wallet.png'
 import alphaWalletLogo from '../assets/icons/alpha-wallet-logo.png'
 import { wallets } from '../utils/web3'
 import IconButton from './IconButton'
+import lang from '../languages'
 
 export default function BrowserProviderButton ({ provider, ...props }) {
   const icon = useMemo(() => {
@@ -27,17 +28,17 @@ export default function BrowserProviderButton ({ provider, ...props }) {
 
   const name = useMemo(() => {
     if (provider === wallets.METAMASK) {
-      return 'MetaMask'
+      return lang.providers.metamask
     } else if (provider === wallets.TRUST) {
-      return 'Trust'
+      return lang.providers.trust
     } else if (provider === wallets.IMTOKEN) {
-      return 'ImToken'
+      return lang.providers.imtoken
     } else if (provider === wallets.COINBASE) {
-      return 'Coinbase Wallet'
+      return lang.providers.coinbase
     } else if (provider === wallets.ALPHA) {
-      return 'Alpha Wallet'
+      return lang.providers.alphawallet
     } else {
-      return 'Active Wallet'
+      return lang.providers.other
     }
   }, [provider])
 

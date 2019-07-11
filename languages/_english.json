@@ -1,0 +1,13 @@
+{
+  "providers": {
+    "metamask": "MetaMask",
+    "trust": "Trust",
+    "coinbase": "Coinbase Wallet",
+    "imtoken": "ImToken",
+    "alphawallet": "Alpha Wallet",
+    "ledger_nano": "Ledger Nano",
+    "trezor": "Trezor",
+    "wallet_connect": "Wallet Connect",
+    "other": "Active Wallet"
+  }
+}

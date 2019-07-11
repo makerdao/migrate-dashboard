@@ -42,26 +42,6 @@ const DatedInfo = ({ date, title, body }) => {
 }
 
 function Index() {
-  const {
-    maker,
-    authenticated: makerAuthenticated,
-    connectBrowserProvider
-  } = useMaker();
-
-  // const [providerName, setProviderName] = useState(0);
-  // useEffect(() => {
-  //   setProviderName(getWebClientProviderName())
-  // });
-  //
-  // async function connectBrowserWallet() {
-  //   try {
-  //     const connectedAddress = await connectBrowserProvider();
-  //     maker.useAccountWithAddress(connectedAddress);
-  //   } catch (err) {
-  //     window.alert(err);
-  //   }
-  // }
-
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <Header/>

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import lang from '../languages'
 import Link from 'next/link';
 import IconButton from '../components/IconButton';
 import walletConnect from '../assets/icons/walletConnect.svg'
@@ -42,7 +43,7 @@ function WalletConnect (props) {
       }}
       icon={<img src={walletConnect} />}
     >
-      Wallet Connect
+      {lang.providers.wallet_connect}
     </IconButton>
   );
 }
