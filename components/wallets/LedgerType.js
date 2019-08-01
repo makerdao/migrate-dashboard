@@ -7,12 +7,12 @@ import LedgerConnectCard from './LedgerConnectCard';
 import { BreakableText } from '../Typography';
 import LedgerLogo from '../../assets/icons/ledger.svg';
 import Cross from '../../assets/icons/cross.svg';
-
+// const LedgerLogoComponent = <img src={LedgerLogo} />
 // hack to get around button padding for now
-const StyledLedgerLogo = styled(LedgerLogo)`
-  margin-top: -5px;
-  margin-bottom: -5px;
-`;
+// const StyledLedgerLogo = styled(LedgerLogoComponent)`
+//   margin-top: -5px;
+//   margin-bottom: -5px;
+// `;
 
 const LEDGER_LIVE_PATH = "44'/60'/0'";
 const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
@@ -22,7 +22,7 @@ function LedgerType({ onClose, onPathSelect }) {
     <Grid gridRowGap="m" px="m" py="s" width={['auto', '52rem']}>
       <Flex justifyContent="flex-end">
         <Box onClick={onClose} css={{ cursor: 'pointer' }}>
-          <Cross />
+          <img src={Cross} />
         </Box>
       </Flex>
       <Grid gridRowGap="m">
@@ -30,7 +30,7 @@ function LedgerType({ onClose, onPathSelect }) {
 
         <Grid gridRowGap="s">
           <LedgerConnectCard
-            icon={<StyledLedgerLogo />}
+            icon={<img src={LedgerLogo} />}
             onClick={() => onPathSelect(LEDGER_LIVE_PATH)}
             title="Ledger live"
             subtitle={
@@ -39,7 +39,7 @@ function LedgerType({ onClose, onPathSelect }) {
             buttonText="Connect"
           />
           <LedgerConnectCard
-            icon={<StyledLedgerLogo />}
+            icon={<img src={LedgerLogo} />}
             onClick={() => onPathSelect(LEDGER_LEGACY_PATH)}
             title="Ledger legacy"
             subtitle={
