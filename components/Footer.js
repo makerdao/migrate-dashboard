@@ -1,3 +1,4 @@
+import React from 'react';
 import { Box, Flex, Text, Grid } from '@makerdao/ui-components-core'
 import dot from '../assets/icons/dot.svg'
 

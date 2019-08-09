@@ -1,17 +1,14 @@
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Header from '@makerdao/ui-components-header'
 import Footer from '@makerdao/ui-components-footer'
-import { Box, Flex, Text, Button, Grid } from '@makerdao/ui-components-core'
+import { Box, Flex, Text, Grid } from '@makerdao/ui-components-core'
 import Link from 'next/link'
-
+import { getWebClientProviderName } from '../utils/web3'
 import { Breakout } from '../components/Typography'
-import IconButton from '../components/IconButton'
-
-import metamask from '../assets/icons/metamask.svg'
-import trezor from '../assets/icons/trezor.svg'
-import ledger from '../assets/icons/ledger.svg'
-import walletConnect from '../assets/icons/walletConnect.svg'
 import useMaker from '../hooks/useMaker';
+
+import WalletManager from '../components/WalletManager'
 
 const Feature = ({ title, body }) => {
   return <Grid gridRowGap='s'>
@@ -45,20 +42,6 @@ const DatedInfo = ({ date, title, body }) => {
 }
 
 function Index() {
-  const {
-    maker,
-    authenticated: makerAuthenticated,
-    connectBrowserProvider
-  } = useMaker();
-
-  async function connectBrowserWallet() {
-    try {
-      const connectedAddress = await connectBrowserProvider();
-      maker.useAccountWithAddress(connectedAddress);
-    } catch (err) {
-      window.alert(err);
-    }
-  }
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <Header/>
@@ -69,12 +52,7 @@ function Index() {
             Upgrade your DAI, MKR, and CDPs to their respective updated versions, and claims funds after emergency shutdown and other system updates.
           </Breakout>
         </Box>
-        <Grid gridRowGap='s' alignSelf="center" justifySelf="center">
-          <Link href="/overview"><IconButton onClick={connectBrowserWallet} disabled={!makerAuthenticated} icon={<img src={metamask} css={{ marginTop: '-5px', marginBottom: '-5px' }}/>}>MetaMask</IconButton></Link>
-          <Link href="/overview"><IconButton icon={<img src={ledger}/>}>Ledger Nano</IconButton></Link>
-          <Link href="/overview"><IconButton icon={<img src={trezor}/>}>Trezor</IconButton></Link>
-          <Link href="/overview"><IconButton icon={<img src={walletConnect}/>}>Wallet Connect</IconButton></Link>
-        </Grid>
+        <WalletManager />
       </Grid>
       <Box bg="white" flexGrow="1">
         <Box maxWidth="113.4rem" width="100%" m="0 auto" px='m' mt="xl">

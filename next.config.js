@@ -1,3 +1,5 @@
+global.self = require('node-fetch')
+
 const config = {
   exportPathMap: function() {
     return {

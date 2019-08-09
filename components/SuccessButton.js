@@ -1,3 +1,4 @@
+import React from 'react';
 import checkmark from '../assets/icons/largeCheckmark.svg'
 import { Button } from '@makerdao/ui-components-core'
 

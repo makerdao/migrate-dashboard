@@ -1,3 +1,4 @@
+import React from 'react'
 import { Grid, Text, Button, Card, Table, Link } from '@makerdao/ui-components-core'
 
 import arrowTopRight from '../../../assets/icons/arrowTopRight.svg'
