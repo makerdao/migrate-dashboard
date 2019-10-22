@@ -1,26 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import { checkEthereumProvider } from '../utils/ethereum';
-
 import { MakerObjectContext } from '../providers/MakerProvider';
 
 function useMaker() {
-  const {
-    maker,
-    account,
-    network,
-  } = useContext(MakerObjectContext) || {};
-  const [authenticated, setAuthenticated] = useState(false);
-  useEffect(() => {
-    if (maker) {
-      maker.authenticate().then(() => {
-        setAuthenticated(true);
-      });
-
-      return () => {
-        setAuthenticated(false);
-      };
-    }
-  }, [maker]);
+  const { maker, account, network } = useContext(MakerObjectContext) || {};
 
   const _getMatchedAccount = address =>
     maker
@@ -67,7 +50,6 @@ function useMaker() {
 
   return {
     maker,
-    authenticated,
     connectBrowserProvider,
     account,
     network
