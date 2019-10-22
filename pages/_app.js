@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import App, { Container } from 'next/app'
 import { ModalProvider } from "react-modal-hook";
 import { TransitionGroup } from "react-transition-group";
@@ -24,7 +24,7 @@ export default class MyApp extends App {
   render () {
     const { Component, pageProps } = this.props
     return (
-      <Container>
+      <Fragment>
         <GlobalStyle/>
         <ThemeProvider theme={theme}>
           <MakerProvider
@@ -38,7 +38,7 @@ export default class MyApp extends App {
             </ModalProvider>
           </MakerProvider>
         </ThemeProvider>
-      </Container>
+      </Fragment>
     )
   }
 }

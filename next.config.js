@@ -1,13 +1,4 @@
-global.self = require('node-fetch')
-
-const config = {
-  exportPathMap: function() {
-    return {
-      '/': { page: '/' },
-      '/overview': { page: '/overview' },
-    };
-  }
-}
+const config = {}
 
 const { PHASE_PRODUCTION_SERVER } =
   process.env.NODE_ENV === 'development'
