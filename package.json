@@ -42,8 +42,9 @@
     "lint-staged": "^9.4.2"
   },
   "lint-staged": {
-    "*.{js,json}": [
-      "prettier --write --single-quote"
+    "**/*.js": [
+      "prettier --write --single-quote",
+      "eslint"
     ]
   },
   "husky": {
