@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const FadeInFromSide = styled.div`
   opacity: 0;
@@ -31,4 +31,4 @@ const FadeInFromSide = styled.div`
   `}
 `;
 
-export default FadeInFromSide
+export default FadeInFromSide;

@@ -8,22 +8,19 @@ function MakerProvider({ children, rpcUrl, network }) {
   const [maker, setMaker] = useState(null);
   const initAccount = account => setAccount({ ...account });
 
-  useEffect(
-    () => {
-      if (!rpcUrl) return;
-      instantiateMaker({ network, rpcUrl }).then(maker => {
-        setMaker(maker);
-        if (maker.service('accounts').hasAccount())
-          initAccount(maker.currentAccount());
+  useEffect(() => {
+    if (!rpcUrl) return;
+    instantiateMaker({ network, rpcUrl }).then(maker => {
+      setMaker(maker);
+      if (maker.service('accounts').hasAccount())
+        initAccount(maker.currentAccount());
 
-        maker.on('accounts/CHANGE', eventObj => {
-          const { account } = eventObj.payload;
-          initAccount(account);
-        });
+      maker.on('accounts/CHANGE', eventObj => {
+        const { account } = eventObj.payload;
+        initAccount(account);
       });
-    },
-    [rpcUrl]
-  );
+    });
+  }, [rpcUrl]);
   return (
     <MakerObjectContext.Provider value={{ maker, account, network }}>
       {children}

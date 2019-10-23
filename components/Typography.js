@@ -1,4 +1,4 @@
-import { Text } from '@makerdao/ui-components-core'
+import { Text } from '@makerdao/ui-components-core';
 import styled from 'styled-components';
 
 export const BreakableText = styled(Text)`
@@ -7,8 +7,16 @@ export const BreakableText = styled(Text)`
 `;
 
 export function Breakout({ children, ...props }) {
-  return <Text.p fontSize="2rem" color="darkLavender" lineHeight='1.3' letterSpacing="0.3px" mb="m" {...props}>
-    { children }
-  </Text.p>
+  return (
+    <Text.p
+      fontSize="2rem"
+      color="darkLavender"
+      lineHeight="1.3"
+      letterSpacing="0.3px"
+      mb="m"
+      {...props}
+    >
+      {children}
+    </Text.p>
+  );
 }
-

@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import lang from '../languages'
+import lang from '../languages';
 import Link from 'next/link';
 import IconButton from '../components/IconButton';
-import walletConnect from '../assets/icons/walletConnect.svg'
+import walletConnect from '../assets/icons/walletConnect.svg';
 import WalletConnector from '@walletconnect/browser';
 import WalletConnectQRCodeModal from '@walletconnect/qrcode-modal';
 
-let walletConnector
+let walletConnector;
 
 function getWalletConnectAccounts() {
   return new Promise((res, rej) => {
@@ -29,7 +29,7 @@ function getWalletConnectAccounts() {
   });
 }
 
-function WalletConnect (props) {
+function WalletConnect(props) {
   useEffect(() => {
     walletConnector = new WalletConnector({
       bridge: 'https://bridge.walletconnect.org'
@@ -38,8 +38,11 @@ function WalletConnect (props) {
   return (
     <IconButton
       onClick={async () => {
-        let response = await getWalletConnectAccounts()
-        props.onAccountChosen({ address: response.address }, props.providerName);
+        let response = await getWalletConnectAccounts();
+        props.onAccountChosen(
+          { address: response.address },
+          props.providerName
+        );
       }}
       icon={<img src={walletConnect} />}
     >

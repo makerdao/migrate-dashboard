@@ -1,6 +1,6 @@
 import React from 'react';
-import checkmark from '../assets/icons/largeCheckmark.svg'
-import { Button } from '@makerdao/ui-components-core'
+import checkmark from '../assets/icons/largeCheckmark.svg';
+import { Button } from '@makerdao/ui-components-core';
 
 const SuccessButton = () => {
   return (
@@ -10,4 +10,4 @@ const SuccessButton = () => {
   );
 };
 
-export default SuccessButton
+export default SuccessButton;

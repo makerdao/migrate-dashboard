@@ -34,7 +34,7 @@ function resolveModalTemplateToComponent(templates, template) {
   return templates[template] || templates.default;
 }
 
-function WalletProvider ({ children, modals, templates }) {
+function WalletProvider({ children, modals, templates }) {
   const ref = useRef();
   const [{ modalType, modalTemplate, modalProps }, dispatch] = useReducer(
     reducer,
