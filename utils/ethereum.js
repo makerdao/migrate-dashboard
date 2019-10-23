@@ -1,4 +1,3 @@
-
 export async function checkEthereumProvider() {
   return new Promise(async (res, rej) => {
     if (typeof window.ethereum !== 'undefined') {

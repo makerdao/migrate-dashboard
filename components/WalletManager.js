@@ -10,9 +10,10 @@ import { getWebClientProviderName } from '../utils/web3';
 import Router from 'next/router';
 import lang from '../languages';
 import { useLedger, useTrezor } from '../hooks/useHardwareWallet';
+import { connectBrowserProvider } from '../maker';
 
 function WalletManager() {
-  const { maker, connectBrowserProvider } = useMaker();
+  const { maker } = useMaker();
   const providerName = getWebClientProviderName();
 
   const onAccountChosen = useCallback(
@@ -28,7 +29,7 @@ function WalletManager() {
 
   async function connectBrowserWallet() {
     try {
-      const connectedAddress = await connectBrowserProvider();
+      const connectedAddress = await connectBrowserProvider(maker);
       onAccountChosen({ address: connectedAddress }, providerName);
     } catch (err) {
       window.alert(err);
