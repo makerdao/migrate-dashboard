@@ -37,6 +37,19 @@
   },
   "devDependencies": {
     "babel-plugin-inline-react-svg": "^1.1.0",
-    "babel-plugin-styled-components": "^1.10.0"
+    "babel-plugin-styled-components": "^1.10.0",
+    "husky": "^3.0.9",
+    "lint-staged": "^9.4.2"
+  },
+  "lint-staged": {
+    "*.{js,json}": [
+      "prettier --write --single-quote",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
