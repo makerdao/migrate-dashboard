@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import Link from 'next/link';
 import metamask from '../assets/icons/metamask.svg';
 import trustLogo from '../assets/icons/trust-logo.svg';
 import imTokenLogo from '../assets/icons/imtoken-logo.svg';
@@ -57,10 +56,8 @@ export default function BrowserProviderButton({ provider, ...props }) {
   }, [provider]);
 
   return (
-    <Link href="/overview">
-      <IconButton icon={icon} {...props}>
-        {name}
-      </IconButton>
-    </Link>
+    <IconButton icon={icon} {...props}>
+      {name}
+    </IconButton>
   );
 }
