@@ -78,7 +78,10 @@ class AddressTable extends Component {
           <tbody>
             <tr>
               <td>
-                <Text color='darkPurple' fontWeight='bold'> Cold </Text>
+                <Text color="darkPurple" fontWeight="bold">
+                  {' '}
+                  Cold{' '}
+                </Text>
               </td>
               <InlineTd title={coldAddress}>
                 {cutMiddle(coldAddress, 7, 5)}
@@ -91,7 +94,10 @@ class AddressTable extends Component {
             </tr>
             <tr>
               <td>
-                <Text color='darkPurple' fontWeight='bold'> Hot </Text>
+                <Text color="darkPurple" fontWeight="bold">
+                  {' '}
+                  Hot{' '}
+                </Text>
               </td>
               <InlineTd title={hotAddress}>
                 {cutMiddle(hotAddress, 7, 5)}

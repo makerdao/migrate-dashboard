@@ -17,7 +17,7 @@ function WalletManager() {
   const providerName = getWebClientProviderName();
 
   const onAccountChosen = useCallback(
-    async ({ address }, type) => {
+    async ({ address }) => {
       maker.useAccountWithAddress(address);
       Router.push(`/overview?${address}`);
     },

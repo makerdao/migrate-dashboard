@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import {
   Text,
   Grid,
@@ -34,9 +34,7 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
               </Table.tr>
               <Table.tr>
                 <Table.td>
-                  <Text>
-                    Stability Fee
-                  </Text>
+                  <Text>Stability Fee</Text>
                 </Table.td>
                 <Table.td textAlign="right">
                   <Text fontWeight="medium">23.32 DAI</Text>
@@ -71,9 +69,7 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
               </Table.tr>
               <Table.tr>
                 <Table.td>
-                  <Text>
-                    Stability Fee
-                  </Text>
+                  <Text>Stability Fee</Text>
                 </Table.td>
                 <Table.td textAlign="right">
                   <Text fontWeight="medium">23.32 MKR</Text>
@@ -114,4 +110,4 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
   );
 };
 
-export default PayAndMigrate
+export default PayAndMigrate;

@@ -1,16 +1,22 @@
-import React from 'react'
-import { Grid, Text, Button, Card, Table, Link } from '@makerdao/ui-components-core'
+import React from 'react';
+import {
+  Grid,
+  Text,
+  Button,
+  Card,
+  Table,
+  Link
+} from '@makerdao/ui-components-core';
 
-import arrowTopRight from '../../../assets/icons/arrowTopRight.svg'
+import arrowTopRight from '../../../assets/icons/arrowTopRight.svg';
 
 function Complete({ onReset, onClose }) {
   return (
     <Grid gridRowGap="m">
-      <Text.h2 textAlign="center">
-        Migration complete
-      </Text.h2>
+      <Text.h2 textAlign="center">Migration complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        CDP #3228 has been successfully migrated to Multi-collateral Dai and the new CDP Portal.
+        CDP #3228 has been successfully migrated to Multi-collateral Dai and the
+        new CDP Portal.
       </Text.p>
       <Button
         my="xs"
@@ -35,9 +41,7 @@ function Complete({ onReset, onClose }) {
             </Table.tr>
             <Table.tr>
               <Table.td>
-                <Text color="darkPurple">
-                  Stability Fee paid
-                </Text>
+                <Text color="darkPurple">Stability Fee paid</Text>
               </Table.td>
               <Table.td textAlign="right">
                 <Text fontWeight="medium" color="darkPurple">
@@ -49,21 +53,15 @@ function Complete({ onReset, onClose }) {
         </Table>
       </Card>
       <Grid gridRowGap="s" justifySelf="center">
-        <Button
-          mt="s"
-          onClick={onReset}
-        >
+        <Button mt="s" onClick={onReset}>
           Migrate another CDP
         </Button>
-        <Button
-          variant="secondary-outline"
-          onClick={onClose}
-        >
+        <Button variant="secondary-outline" onClick={onClose}>
           Exit
         </Button>
       </Grid>
     </Grid>
   );
-};
+}
 
-export default Complete
+export default Complete;

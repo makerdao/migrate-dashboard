@@ -23,7 +23,8 @@ export default ({ onNext, onPrev }) => {
         maxWidth="498px"
         m="0 auto"
       >
-        Select a CDP and pay back the stability fee in DAI or MKR to migrate it to Multi-collateral Dai and the new CDP Portal.
+        Select a CDP and pay back the stability fee in DAI or MKR to migrate it
+        to Multi-collateral Dai and the new CDP Portal.
       </Text.p>
       <Overflow x="scroll" y="visible">
         <Grid gridRowGap="s" mt="xs" pb="m">
@@ -94,10 +95,8 @@ export default ({ onNext, onPrev }) => {
         <Button variant="secondary-outline" onClick={onPrev}>
           Cancel
         </Button>
-        <Button onClick={onNext}>
-          Continue
-        </Button>
+        <Button onClick={onNext}>Continue</Button>
       </Grid>
     </Grid>
-  )
-}
+  );
+};
