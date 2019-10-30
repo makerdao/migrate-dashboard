@@ -58,9 +58,6 @@ function Migration({
         <Box gridArea="title" alignSelf="center">
           <Text.h4>{title}</Text.h4>
         </Box>
-        <Box gridArea="recommended" alignSelf="center" justifySelf="end">
-          {recommended && <Recommended />}
-        </Box>
         <Box gridArea="body">
           <Text.p t="body">{body}</Text.p>
         </Box>
@@ -69,20 +66,9 @@ function Migration({
   );
 }
 
-function Recommended() {
-  return (
-    <Flex alignItems="center">
-      <img src={checkmark} />
-      <Text.p t="subheading" color="makerTeal" ml="xs">
-        Recommended
-      </Text.p>
-    </Flex>
-  );
-}
-
 function Overview() {
   const { account } = useMaker();
-  const [showModal, hideModal] = useModal(({ in: open, ...rest }) => {
+  const [showModal, hideModal] = useModal(({ in: open }) => {
     return <MigrateCDP open={open} onClose={hideModal} account={account} />;
   });
 
@@ -110,35 +96,19 @@ function Overview() {
         >
           <Migration
             recommended
+            title="Migrate CDPs"
+            metadataTitle="CDPs to migrate"
+            metadataValue="2 (placeholder)"
+            body="Migrate your Sai CDPs to MCD Vaults."
+            onSelected={showModal}
+          />
+          {/*<Migration
             title="Dai Redeemer"
             body="Redeem your Dai holdings into either Single Collateral Dai (SCD) or Multi Collateral Dai (MCD)."
             metadataTitle="SCD Balance"
             metadataValue="1,400.00 DAI"
             onSelected={showModal}
-          />
-          <Migration
-            recommended
-            title="CDP Migrate"
-            body="Migrate your CDPs to the newest version of the CDP Portal."
-            metadataTitle="SCD Balance"
-            metadataValue="1,400.00 DAI"
-            onSelected={showModal}
-          />
-          <Migration
-            recommended
-            title="DSChief MKR Withdrawal"
-            body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet."
-            metadataTitle="SCD Balance"
-            metadataValue="1,400.00 DAI"
-            onSelected={showModal}
-          />
-          <Migration
-            title="Dai Redeemer"
-            body="Redeem your Dai holdings into either Single Collateral Dai (SCD) or Multi Collateral Dai (MCD)."
-            metadataTitle="SCD Balance"
-            metadataValue="1,400.00 DAI"
-            onSelected={showModal}
-          />
+          />*/}
         </Grid>
 
         <Box mt="xl">
