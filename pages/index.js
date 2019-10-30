@@ -94,7 +94,7 @@ function Index() {
           <Text.h1 mb="s">Migrate</Text.h1>
           <Breakout>
             Use Migrate after system updates to change your Dai and CDPs into
-            their new Multi-Collateral versions. Connect your wallet to view
+            their new versions. Connect your wallet to view
             available migrations for your account.
           </Breakout>
         </Box>
