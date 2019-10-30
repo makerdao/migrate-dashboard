@@ -12,7 +12,7 @@
     "test": "echo \"To DAI, to sleep - to sleep, perchance to dream\""
   },
   "dependencies": {
-    "@makerdao/dai": "0.19.0-rc1",
+    "@makerdao/dai": "0.19.0",
     "@makerdao/dai-plugin-ledger-web": "^0.9.7",
     "@makerdao/dai-plugin-trezor-web": "^0.9.6",
     "@makerdao/ui-components-core": "^0.3.1",
@@ -48,7 +48,6 @@
     ]
   },
   "husky": {
-    "hooks": {
-    }
+    "hooks": {}
   }
 }
