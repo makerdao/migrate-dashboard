@@ -104,8 +104,8 @@ function Overview() {
             title="Migrate CDPs"
             metadataTitle="CDPs to migrate"
             metadataValue={showCdpCount(cdps)}
-            body="Migrate your Sai CDPs to MCD Vaults."
-            onSelected={() => Router.replace('/migration/cdp')}
+            body="Migrate your Single Collateral Dai CDPs to Multi Collateral Dai Vaults."
+            onSelected={() => Router.push('/migration/cdp')}
           />
           {/*<Migration
             title="Dai Redeemer"
