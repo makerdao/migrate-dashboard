@@ -12,7 +12,30 @@ const RADIO_WIDTH = '2rem';
 const RADIO_CONTAINER_WIDTH = '4rem';
 const AESTHETIC_ROW_PADDING = '4rem';
 
-export default ({ onNext, onPrev }) => {
+export default ({ onNext, onPrev, cdps }) => {
+  const cdpComponents = cdps.map((cdp, index) => {
+    return (
+      <Card px="l" py="m" key={index}>
+        <Grid
+          gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(5, 1fr) ${AESTHETIC_ROW_PADDING}`}
+          gridColumnGap="m"
+          alignItems="center"
+          fontSize="m"
+          color="darkPurple"
+          css={`
+            white-space: nowrap;
+          `}
+        >
+          <Radio fontSize={RADIO_WIDTH} />
+          <span>#3223</span>
+          <span>168.50%</span>
+          <span>425.72 DAI</span>
+          <span>13.34 DAI</span>
+          <span>0.23 MKR</span>
+        </Grid>
+      </Card>
+    )
+  })
   return (
     <Grid maxWidth="912px" gridRowGap="m">
       <Text.h2 textAlign="center">Select CDP to Migrate</Text.h2>
@@ -47,44 +70,7 @@ export default ({ onNext, onPrev }) => {
             <Text t="subheading">Fee In DAI</Text>
             <Text t="subheading">Fee in MKR</Text>
           </Grid>
-          <Card px="l" py="m">
-            <Grid
-              gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(5, 1fr) ${AESTHETIC_ROW_PADDING}`}
-              gridColumnGap="m"
-              alignItems="center"
-              fontSize="m"
-              color="darkPurple"
-              css={`
-                white-space: nowrap;
-              `}
-            >
-              <Radio fontSize={RADIO_WIDTH} />
-              <span>#3223</span>
-              <span>168.50%</span>
-              <span>425.72 DAI</span>
-              <span>13.34 DAI</span>
-              <span>0.23 MKR</span>
-            </Grid>
-          </Card>
-          <Card px="l" py="m">
-            <Grid
-              gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(5, 1fr) ${AESTHETIC_ROW_PADDING}`}
-              gridColumnGap="m"
-              alignItems="center"
-              fontSize="m"
-              color="darkPurple"
-              css={`
-                white-space: nowrap;
-              `}
-            >
-              <Radio fontSize={RADIO_WIDTH} />
-              <span>#3223</span>
-              <span>168.50%</span>
-              <span>425.72 DAI</span>
-              <span>13.34 DAI</span>
-              <span>0.23 MKR</span>
-            </Grid>
-          </Card>
+          {cdpComponents}
         </Grid>
       </Overflow>
       <Grid

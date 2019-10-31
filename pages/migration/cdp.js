@@ -21,13 +21,28 @@ const steps = [
   props => <Complete {...props} />
 ];
 
-function MigrateCDP() {
-  const { account } = useMaker();
+function MigrateCDP(props) {
+  const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
+  const cdps = [];
 
   useEffect(() => {
-    // if (!account) Router.replace('/');
+    if (!account) Router.replace('/');
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (!maker || !account) return;
+      const mig = await maker.service('migration').getMigration('single-to-multi-cdp');
+      const allCDPs = await mig.check();
+      const accounts = Object.keys(allCDPs)
+      accounts.map((account, index) => {
+        allCDPs[account].map(async (cdpId, i) => {
+          cdps.push(await maker.getCdp(cdpId))
+        })
+      })
+    })();
+  }, [maker, account]);
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
@@ -35,7 +50,6 @@ function MigrateCDP() {
   };
   const toNextStep = () => setCurrentStep(currentStep + 1);
   const reset = () => setCurrentStep(0);
-
   return (
     <FlowBackground open={true}>
       <Grid gridRowGap="xl">
@@ -80,7 +94,8 @@ function MigrateCDP() {
                   onClose: () => Router.replace('/overview'),
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
-                  onReset: reset
+                  onReset: reset,
+                  cdps
                 })}
               </FadeInFromSide>
             );
