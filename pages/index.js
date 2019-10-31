@@ -16,8 +16,8 @@ function Index() {
         m="0 auto"
         px="m"
         pt={{ s: 'm', l: 'xl' }}
-        pb={{ s: 'xl', l: 'l' }}
-        gridTemplateColumns={{ s: '1fr', l: 'auto auto' }}
+        pb={{ s: 'xl', l: 'm' }}
+        gridTemplateColumns={{ s: '1fr', l: 'auto' }}
         gridColumnGap="xl"
         gridRowGap="m"
       >
@@ -25,16 +25,28 @@ function Index() {
           maxWidth="57.6rem"
           width="100%"
           mt="xl"
-          textAlign={{ s: 'center', l: 'left' }}
-          justifySelf={{ s: 'center', l: 'unset' }}
+          textAlign={{ s: 'center', l: 'center' }}
+          justifySelf={{ s: 'center', l: 'center' }}
         >
-          <Text.h1 mb="s">Migrate</Text.h1>
+          <Text.h1 alignSelf="center" mb="s">Migrate and Upgrade</Text.h1>
           <Breakout>
-            Use Migrate after system updates to change your Dai and CDPs into
+            Use Migrate after system updates to change your Dai, MKR, and CDPs into
             their new versions. Connect your wallet to view available migrations
-            for your account.
+            on your account.
           </Breakout>
         </Box>
+      </Grid>
+      <Text.h4 alignSelf="center" mb="s" color="#546978">Connect a wallet to get started</Text.h4>
+      <Grid
+        maxWidth="113.4rem"
+        width="100%"
+        m="0 auto"
+        px="m"
+        pb={{ s: 'xl', l: 'l' }}
+        gridTemplateColumns={{ s: '1fr', l: 'auto' }}
+        gridColumnGap="xl"
+        gridRowGap="m"
+      >
         <WalletManager />
       </Grid>
       <Footer />
