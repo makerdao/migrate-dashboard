@@ -8,5 +8,8 @@
   ],
   "routes": [
     {"src": "^/favicon.ico$", "dest": "/static/favicon.ico"}
-  ]
+  ],
+  "github": {
+    "enabled": false
+  }
 }
