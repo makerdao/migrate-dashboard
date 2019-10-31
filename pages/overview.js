@@ -111,7 +111,8 @@ function Overview() {
             metadataTitle="CDPs to migrate"
             metadataValue={showCdpCount(cdps)}
             body="Migrate your CDPs to the newest version of the CDP Portal."
-            onSelected={() => Router.replace('/migration/cdp')}
+            //body="Migrate your Single Collateral Dai CDPs to Multi Collateral Dai Vaults."
+            onSelected={() => Router.push('/migration/cdp')}
           />
           : false }
         { true ?
