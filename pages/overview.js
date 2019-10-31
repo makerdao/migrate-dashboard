@@ -60,9 +60,12 @@ function showCdpCount(cdps) {
   return reduce(cdps, (count, list) => count + list.length, 0);
 }
 
+
+
 function Overview() {
   const { maker, account } = useMaker();
   const [cdps, setCdps] = useState(null);
+  const [dai, setDai] = useState(null);
 
   useEffect(() => {
     if (maker && !account) Router.replace('/');
@@ -72,8 +75,10 @@ function Overview() {
     (async () => {
       if (!maker || !account) return;
       const mig = maker.service('migration');
+      console.log(mig.runAllChecks)
       const checks = await mig.runAllChecks();
       setCdps(checks['single-to-multi-cdp']);
+      setDai(checks['sdai-to-mdai'])
     })();
   }, [maker, account]);
 
@@ -99,15 +104,37 @@ function Overview() {
           gridTemplateColumns={{ s: '1fr', l: '1fr 1fr' }}
           gridGap="l"
         >
+        { true ?
           <Migration
             recommended
-            title="Migrate CDPs"
+            title="CDP Migrate"
             metadataTitle="CDPs to migrate"
             metadataValue={showCdpCount(cdps)}
-            body="Migrate your Sai CDPs to MCD Vaults."
+            body="Migrate your CDPs to the newest version of the CDP Portal."
             onSelected={() => Router.replace('/migration/cdp')}
           />
-          {/*<Migration
+          : false }
+        { true ?
+          <Migration
+            recommended
+            title="Single Collateral Dai Redeemer"
+            body="Redeem your Single Collateral Dai (SCD) into Multi Collateral Dai (MCD)."
+            metadataTitle="SCD Balance"
+            metadataValue={dai}
+            onSelected={() => Router.replace('/migration/dai')}
+          />
+          : false }
+        {/* { mkr ?
+          <Migration
+            recommended
+            title="DSChief MKR Withdrawal"
+            body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet."
+            metadataTitle="SCD Balance"
+            metadataValue="1,400.00 DAI"
+            onSelected={showModal}
+          />
+          : false }
+          <Migration
             title="Dai Redeemer"
             body="Redeem your Dai holdings into either Single Collateral Dai (SCD) or Multi Collateral Dai (MCD)."
             metadataTitle="SCD Balance"
