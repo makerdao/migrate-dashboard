@@ -9,6 +9,7 @@ import MakerProvider from '../providers/MakerProvider';
 import { WalletProvider } from '../providers/WalletProvider';
 import theme from '../utils/theme';
 import { wallets, templates } from '../components/wallets';
+import Version from '../components/Version';
 
 const GlobalStyle = createGlobalStyle`
   html {
@@ -37,6 +38,7 @@ export default class MyApp extends App {
             </ModalProvider>
           </MakerProvider>
         </ThemeProvider>
+        <Version />
       </Fragment>
     );
   }
