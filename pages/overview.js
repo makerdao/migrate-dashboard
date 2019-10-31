@@ -64,8 +64,9 @@ function Overview() {
   const { maker, account } = useMaker();
   const [cdps, setCdps] = useState(null);
 
-  // note that this doesn't prevent the rest of rendering from happening
-  if (typeof window !== 'undefined' && !account) Router.replace('/');
+  useEffect(() => {
+    if (!account) Router.replace('/');
+  }, []);
 
   useEffect(() => {
     (async () => {

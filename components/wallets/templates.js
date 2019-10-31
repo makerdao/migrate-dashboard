@@ -16,47 +16,11 @@ const animations = {
   ]
 };
 
-const Bg = styled(animated.div)`
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  overflow-y: scroll;
-`;
-
 const SimpleBg = styled(Bg)`
   display: flex;
   justify-content: center;
   align-items: center;
 `;
-
-const FullscreenModal = ({ show, onClose, modalProps, children }) => {
-  if (!show) return null;
-  const [fadeUpStart, fadeUpEnd] = animations.fadeUp;
-
-  const [animation, setAnimation] = useSpring(() => ({
-    to: fadeUpEnd,
-    from: fadeUpStart,
-    config: config.stiff
-  }));
-
-  const onCloseAnimated = () => {
-    setAnimation({
-      to: fadeUpStart,
-      onRest() {
-        onClose();
-      }
-    });
-  };
-
-  return (
-    <Bg onClick={onCloseAnimated} style={animation}>
-      {children({ ...modalProps, onClose: onCloseAnimated })}
-    </Bg>
-  );
-};
 
 const BasicModal = ({ show, onClose, modalProps, children }) => {
   if (!show) return null;
@@ -111,7 +75,6 @@ const BasicModal = ({ show, onClose, modalProps, children }) => {
 };
 
 const templates = {
-  fullscreen: FullscreenModal,
   basic: BasicModal,
   default: BasicModal
 };

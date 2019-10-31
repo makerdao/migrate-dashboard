@@ -6,7 +6,6 @@ import templates from './templates';
 
 const wallets = {
   ledgertype: args => <LedgerType {...args} />,
-
   hardwareaccountselect: args => <HardwareAccountSelect {...args} />
 };
 
