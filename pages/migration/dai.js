@@ -2,26 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Stepper, Grid, Text, Flex } from '@makerdao/ui-components-core';
 import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
-import Account from '../../components/Account';
-import FadeInFromSide from '../../components/FadeInFromSide';
-import SelectCDP from '../../components/migratecdp/SelectCDP';
-import DeployProxy from '../../components/migratecdp/DeployProxy';
-import PayAndMigrate from '../../components/migratecdp/PayAndMigrate';
-import Migrating from '../../components/migratecdp/Migrating';
-import Complete from '../../components/migratecdp/Complete';
 import useMaker from '../../hooks/useMaker';
+
+import FadeInFromSide from '../../components/FadeInFromSide';
 
 import crossCircle from '../../assets/icons/crossCircle.svg';
 
 const steps = [
-  props => <SelectCDP {...props} />,
-  props => <DeployProxy {...props} />,
-  props => <PayAndMigrate {...props} />,
-  props => <Migrating {...props} />,
-  props => <Complete {...props} />
+  props => <div {...props} />
 ];
 
-function MigrateCDP() {
+function MigrateDai() {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -60,7 +51,7 @@ function MigrateCDP() {
           </Flex>
         </Grid>
         <Stepper
-          steps={['Select CDP', 'Deploy Proxy', 'Pay & Migrate']}
+          steps={['SCD Redeemer', 'Confirmation']}
           selected={currentStep}
           m="0 auto"
           opacity={currentStep < 3 ? 1 : 0}
@@ -91,4 +82,4 @@ function MigrateCDP() {
   );
 }
 
-export default MigrateCDP;
+export default MigrateDai
