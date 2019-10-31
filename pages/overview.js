@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import Router from 'next/router';
 import Header from '@makerdao/ui-components-header';
-import { Box, Flex, Text, Grid, Button, Card, Link } from '@makerdao/ui-components-core';
+import {
+  Box,
+  Flex,
+  Text,
+  Grid,
+  Button,
+  Card,
+  Link
+} from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
 import reduce from 'lodash/reduce';
 import { Breakout } from '../components/Typography';
@@ -55,12 +63,14 @@ function Migration({
   );
 }
 
-function showCdpCount(cdps) {
-  if (cdps === null) return '...';
+function countCdps(cdps) {
   return reduce(cdps, (count, list) => count + list.length, 0);
 }
 
-
+function showCdpCount(cdps) {
+  if (cdps === null) return '...';
+  return countCdps(cdps);
+}
 
 function Overview() {
   const { maker, account } = useMaker();
@@ -77,9 +87,15 @@ function Overview() {
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
       setCdps(checks['single-to-multi-cdp']);
-      setDai(checks['sdai-to-mdai'])
+      setDai(checks['sdai-to-mdai']);
     })();
   }, [maker, account]);
+
+  // these should be > 0 intead of >= 0 in production
+  const shouldShowCdps = countCdps(cdps) >= 0;
+  const shouldShowDai = dai && dai.gte(0);
+  
+  const noMigrations = !shouldShowDai && !shouldShowCdps;
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -93,7 +109,8 @@ function Overview() {
         <Box mt={{ s: 'm', m: '2xl' }} maxWidth="64.2rem" width="100%">
           <Text.h2 mb="s">Migrate and Upgrade</Text.h2>
           <Breakout>
-            Use Migrate after system updates to move your Dai, MKR, and CDPs into their new versions.
+            Use Migrate after system updates to move your Dai, MKR, and CDPs
+            into their new versions.
           </Breakout>
         </Box>
 
@@ -102,28 +119,27 @@ function Overview() {
           gridTemplateColumns={{ s: '1fr', l: '1fr 1fr' }}
           gridGap="l"
         >
-        { cdps ?
-          <Migration
-            recommended
-            title="CDP Migrate"
-            metadataTitle="CDPs to migrate"
-            metadataValue={showCdpCount(cdps)}
-            body="Migrate your CDPs to the newest version of the CDP Portal."
-            //body="Migrate your Single Collateral Dai CDPs to Multi Collateral Dai Vaults."
-            onSelected={() => Router.push('/migration/cdp')}
-          />
-          : false }
-        { dai ?
-          <Migration
-            recommended
-            title="Single Collateral Dai Redeemer"
-            body="Redeem your Single Collateral Dai (SCD) into Multi Collateral Dai (MCD)."
-            metadataTitle="SCD Balance"
-            metadataValue={"$0.00"}
-            onSelected={() => Router.replace('/migration/dai')}
-          />
-          : false }
-        {/* { mkr ?
+          {shouldShowCdps && (
+            <Migration
+              recommended
+              title="CDP Migrate"
+              metadataTitle="CDPs to migrate"
+              metadataValue={showCdpCount(cdps)}
+              body="Migrate your Single Collateral Dai CDPs to Multi Collateral Dai Vaults."
+              onSelected={() => Router.push('/migration/cdp')}
+            />
+          )}
+          {shouldShowDai && (
+            <Migration
+              recommended
+              title="Single Collateral Dai Redeemer"
+              body="Redeem your Single Collateral Dai (SCD) into Multi Collateral Dai (MCD)."
+              metadataTitle="SCD Balance"
+              metadataValue={dai.toString()}
+              onSelected={() => Router.replace('/migration/dai')}
+            />
+          )}
+          {/* { mkr &&
           <Migration
             recommended
             title="DSChief MKR Withdrawal"
@@ -131,23 +147,23 @@ function Overview() {
             metadataTitle="SCD Balance"
             metadataValue="1,400.00 DAI"
             onSelected={showModal}
-          />
-          : false }
+          />}
         */}
         </Grid>
-        {!dai && !cdps
-          ? <Card mt="l">
+        {noMigrations && (
+          <Card mt="l">
             <Flex justifyContent="center" py="l" px="m">
               <Text.p textAlign="center" t="body">
-                You're all set! There are no migrations or redemptions to make using this wallet.
-                <br/>
-                <Text.span display={{ s: 'block', m: 'none' }} mt='m'/>
-                Please visit us at <Link>chat.makerdao.com</Link> if you have any questions.
+                You&apos;re all set! There are no migrations or redemptions to
+                make using this wallet.
+                <br />
+                <Text.span display={{ s: 'block', m: 'none' }} mt="m" />
+                Please visit us at <Link>chat.makerdao.com</Link> if you have
+                any questions.
               </Text.p>
             </Flex>
           </Card>
-          : false
-        }
+        )}
       </Box>
       <Footer mt="2xl" />
     </Flex>
