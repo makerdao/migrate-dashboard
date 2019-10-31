@@ -6,7 +6,7 @@ const Footer = ({ ...props }) => {
   return (
     <Box borderTop="default" minHeight="100%" mt="m" {...props}>
       <Grid
-        maxWidth="1090px"
+        maxWidth="1140px"
         gridTemplateColumns={{ s: '1fr', m: '1fr 1fr' }}
         m="0 auto"
         px="m"

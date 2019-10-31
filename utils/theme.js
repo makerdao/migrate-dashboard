@@ -1,4 +1,4 @@
-import { themeLight } from '@makerdao/ui-components-core'
+import { themeLight } from '@makerdao/ui-components-core';
 
 const theme = {
   widths: {
@@ -6,8 +6,8 @@ const theme = {
     app: '111.4rem'
   },
   ...themeLight
-}
-export default theme
+};
+export default theme;
 
 const is = n => n !== undefined && n !== null;
 
