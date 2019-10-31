@@ -1,14 +1,7 @@
 import React from 'react';
+import Router from 'next/router';
 import Header from '@makerdao/ui-components-header';
-import {
-  Box,
-  Flex,
-  Text,
-  Card,
-  Grid,
-  Button,
-  Link
-} from '@makerdao/ui-components-core';
+import { Box, Flex, Text, Grid, Button } from '@makerdao/ui-components-core';
 import { useModal } from 'react-modal-hook';
 import useMaker from '../hooks/useMaker';
 
@@ -17,8 +10,6 @@ import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import Footer from '../components/Footer';
 import MigrateCDP from '../components/modals/MigrateCDP';
-
-import checkmark from '../assets/icons/checkmark.svg';
 
 function Migration({
   title,
@@ -50,7 +41,7 @@ function Migration({
       }
     >
       <Grid
-        gridTemplateAreas={`"title recommended" "body body"`}
+        gridTemplateAreas='"title recommended" "body body"'
         gridTemplateColumns="1fr auto"
         gridColumnGap="m"
         gridRowGap="m"
@@ -71,6 +62,8 @@ function Overview() {
   const [showModal, hideModal] = useModal(({ in: open }) => {
     return <MigrateCDP open={open} onClose={hideModal} account={account} />;
   });
+
+  if (typeof window !== 'undefined' && !account) Router.replace('/');
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
