@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Router from 'next/router';
 import Header from '@makerdao/ui-components-header';
 import { Box, Flex, Text, Grid, Button } from '@makerdao/ui-components-core';
 import { useModal } from 'react-modal-hook';
 import useMaker from '../hooks/useMaker';
-
+import reduce from 'lodash/reduce';
 import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
@@ -57,13 +57,30 @@ function Migration({
   );
 }
 
+function showCdpCount(cdps) {
+  if (cdps === null) return '...';
+  return reduce(cdps, (count, list) => count + list.length, 0);
+}
+
 function Overview() {
-  const { account } = useMaker();
+  const { maker, account } = useMaker();
+  const [cdps, setCdps] = useState(null);
+
+  // note that this doesn't prevent the rest of rendering from happening
+  if (typeof window !== 'undefined' && !account) Router.replace('/');
+
   const [showModal, hideModal] = useModal(({ in: open }) => {
     return <MigrateCDP open={open} onClose={hideModal} account={account} />;
   });
 
-  if (typeof window !== 'undefined' && !account) Router.replace('/');
+  useEffect(() => {
+    (async () => {
+      if (!maker) return;
+      const mig = maker.service('migration');
+      const checks = await mig.runAllChecks();
+      setCdps(checks['single-to-multi-cdp']);
+    })();
+  }, [maker]);
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -91,7 +108,7 @@ function Overview() {
             recommended
             title="Migrate CDPs"
             metadataTitle="CDPs to migrate"
-            metadataValue="2 (placeholder)"
+            metadataValue={showCdpCount(cdps)}
             body="Migrate your Sai CDPs to MCD Vaults."
             onSelected={showModal}
           />

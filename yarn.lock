@@ -1013,6 +1013,15 @@
     hdkey "^1.0.0"
     web3-provider-engine "14.0.4"
 
+"@makerdao/dai-plugin-migrations@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-0.1.1.tgz#b42fdf0e70dcb302e403815b33e5274875d4f0ff"
+  integrity sha512-87Xy6rAEjIk/BsVTRL6aYxanqJ0Aa2tQESaM0UYamD8WrFq0ndvEt6mBpugsqMiYtDaajNnIIZWTr5iTK4Akxw==
+  dependencies:
+    "@makerdao/currency" "^0.9.5"
+    "@makerdao/services-core" "^0.9.5"
+    bignumber.js "^8.1.1"
+
 "@makerdao/dai-plugin-trezor-web@^0.9.6":
   version "0.9.6"
   resolved "https://registry.npmjs.org/@makerdao/dai-plugin-trezor-web/-/dai-plugin-trezor-web-0.9.6.tgz#e966a6297be3108a5287ad75fb2ace8c4ea7f972"
@@ -1070,7 +1079,7 @@
     js-sha3 "^0.8.0"
     lodash "^4.17.11"
 
-"@makerdao/services-core@^0.9.9":
+"@makerdao/services-core@^0.9.5", "@makerdao/services-core@^0.9.9":
   version "0.9.9"
   resolved "https://registry.yarnpkg.com/@makerdao/services-core/-/services-core-0.9.9.tgz#22bccab226cebfbe9649e34156f4aaa109cc0f86"
   integrity sha512-EFimChs0KpIFMW7wpB0foYA77YP785384h0RbQB517X14blNvgR1T1eZCxFH0YZWw5nISfxGh0lf6l1ImAdfEw==

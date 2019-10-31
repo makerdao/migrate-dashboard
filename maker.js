@@ -1,11 +1,12 @@
 import Maker from '@makerdao/dai';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
+import migrationPlugin from '@makerdao/dai-plugin-migrations';
 import { checkEthereumProvider } from './utils/ethereum';
 
 let _maker;
 
 export function getMaker() {
-  if (_maker === undefined) throw new Error('Maker has not been instatiated');
+  if (_maker === undefined) throw new Error('Maker has not been instantiated');
   return _maker;
 }
 
@@ -14,7 +15,7 @@ export async function instantiateMaker({ rpcUrl }) {
 
   const config = {
     log: false,
-    plugins: [trezorPlugin, ledgerPlugin],
+    plugins: [trezorPlugin, ledgerPlugin, migrationPlugin],
     smartContract: {
       addContracts: {}
     },
