@@ -1,4 +1,4 @@
-import React, { useState, use } from 'react';
+import React, { useState } from 'react';
 import {
   Stepper,
   Grid,
@@ -7,14 +7,15 @@ import {
   Box,
   Button
 } from '@makerdao/ui-components-core';
-import FlowBackground from './FlowBackground';
-import Account from '../Account';
-import FadeInFromSide from '../FadeInFromSide';
-import SelectCDP from './migratecdp/SelectCDP';
-import DeployProxy from './migratecdp/DeployProxy';
-import PayAndMigrate from './migratecdp/PayAndMigrate';
-import Migrating from './migratecdp/Migrating';
-import Complete from './migratecdp/Complete';
+import FlowBackground from '../../components/modals/FlowBackground';
+import Account from '../../components/Account';
+import FadeInFromSide from '../../components/FadeInFromSide';
+import SelectCDP from '../../components/modals/migratecdp/SelectCDP';
+import DeployProxy from '../../components/modals/migratecdp/DeployProxy';
+import PayAndMigrate from '../../components/modals/migratecdp/PayAndMigrate';
+import Migrating from '../../components/modals/migratecdp/Migrating';
+import Complete from '../../components/modals/migratecdp/Complete';
+import useMaker from '../../hooks/useMaker';
 
 import crossCircle from '../../assets/icons/crossCircle.svg';
 
@@ -26,7 +27,8 @@ const steps = [
   props => <Complete {...props} />
 ];
 
-function MigrateCDP({ open, onClose, account }) {
+function MigrateCDP({ onClose }) {
+  const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
 
   const toPrevStepOrClose = () => {
@@ -37,7 +39,7 @@ function MigrateCDP({ open, onClose, account }) {
   const reset = () => setCurrentStep(0);
 
   return (
-    <FlowBackground open={open}>
+    <FlowBackground open={true}>
       <Grid gridRowGap="xl">
         <Grid
           justifyContent="flex-end"

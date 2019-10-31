@@ -2,15 +2,14 @@ import React, { useEffect, useState } from 'react';
 import Router from 'next/router';
 import Header from '@makerdao/ui-components-header';
 import { Box, Flex, Text, Grid, Button } from '@makerdao/ui-components-core';
-import { useModal } from 'react-modal-hook';
 import useMaker from '../hooks/useMaker';
 import reduce from 'lodash/reduce';
 import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import Footer from '../components/Footer';
-import MigrateCDP from '../components/modals/MigrateCDP';
 
+// todo add href prop
 function Migration({
   title,
   body,
@@ -69,10 +68,6 @@ function Overview() {
   // note that this doesn't prevent the rest of rendering from happening
   if (typeof window !== 'undefined' && !account) Router.replace('/');
 
-  const [showModal, hideModal] = useModal(({ in: open }) => {
-    return <MigrateCDP open={open} onClose={hideModal} account={account} />;
-  });
-
   useEffect(() => {
     (async () => {
       if (!maker) return;
@@ -110,7 +105,7 @@ function Overview() {
             metadataTitle="CDPs to migrate"
             metadataValue={showCdpCount(cdps)}
             body="Migrate your Sai CDPs to MCD Vaults."
-            onSelected={showModal}
+            onSelected={() => Router.replace('/migration/cdp')}
           />
           {/*<Migration
             title="Dai Redeemer"
