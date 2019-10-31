@@ -37,7 +37,7 @@ function WalletManager() {
   }
 
   return (
-    <Grid px="m" py="xs" gridRowGap="s" justifyContent={['center', 'right']}>
+    <Grid px="m" py="xs" gridRowGap="s" justifyContent={['center', 'center']}>
       <BrowserProviderButton
         onClick={connectBrowserWallet}
         disabled={!maker}

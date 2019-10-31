@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Router from 'next/router';
 import Header from '@makerdao/ui-components-header';
-import { Box, Flex, Text, Grid, Button } from '@makerdao/ui-components-core';
+import { Box, Flex, Text, Grid, Button, Card, Link } from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
 import reduce from 'lodash/reduce';
 import { Breakout } from '../components/Typography';
@@ -60,9 +60,12 @@ function showCdpCount(cdps) {
   return reduce(cdps, (count, list) => count + list.length, 0);
 }
 
+
+
 function Overview() {
   const { maker, account } = useMaker();
   const [cdps, setCdps] = useState(null);
+  const [dai, setDai] = useState(null);
 
   useEffect(() => {
     if (maker && !account) Router.replace('/');
@@ -74,6 +77,7 @@ function Overview() {
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
       setCdps(checks['single-to-multi-cdp']);
+      setDai(checks['sdai-to-mdai'])
     })();
   }, [maker, account]);
 
@@ -87,10 +91,9 @@ function Overview() {
 
       <Box maxWidth="112.5rem" width="100%" mx="auto" px="m" flexGrow="1">
         <Box mt={{ s: 'm', m: '2xl' }} maxWidth="64.2rem" width="100%">
-          <Text.h2 mb="s">Migrate and Redeem</Text.h2>
+          <Text.h2 mb="s">Migrate and Upgrade</Text.h2>
           <Breakout>
-            Upgrade your DAI, MKR, and CDPs to their respective updated
-            versions. Redeem and withdraw collateral during emergency shutdown.
+            Use Migrate after system updates to move your Dai, MKR, and CDPs into their new versions.
           </Breakout>
         </Box>
 
@@ -99,41 +102,52 @@ function Overview() {
           gridTemplateColumns={{ s: '1fr', l: '1fr 1fr' }}
           gridGap="l"
         >
+        { cdps ?
           <Migration
             recommended
-            title="Migrate CDPs"
+            title="CDP Migrate"
             metadataTitle="CDPs to migrate"
             metadataValue={showCdpCount(cdps)}
-            body="Migrate your Single Collateral Dai CDPs to Multi Collateral Dai Vaults."
+            body="Migrate your CDPs to the newest version of the CDP Portal."
+            //body="Migrate your Single Collateral Dai CDPs to Multi Collateral Dai Vaults."
             onSelected={() => Router.push('/migration/cdp')}
           />
-          {/*<Migration
-            title="Dai Redeemer"
-            body="Redeem your Dai holdings into either Single Collateral Dai (SCD) or Multi Collateral Dai (MCD)."
+          : false }
+        { dai ?
+          <Migration
+            recommended
+            title="Single Collateral Dai Redeemer"
+            body="Redeem your Single Collateral Dai (SCD) into Multi Collateral Dai (MCD)."
+            metadataTitle="SCD Balance"
+            metadataValue={"$0.00"}
+            onSelected={() => Router.replace('/migration/dai')}
+          />
+          : false }
+        {/* { mkr ?
+          <Migration
+            recommended
+            title="DSChief MKR Withdrawal"
+            body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet."
             metadataTitle="SCD Balance"
             metadataValue="1,400.00 DAI"
             onSelected={showModal}
-          />*/}
+          />
+          : false }
+        */}
         </Grid>
-
-        <Box mt="xl">
-          <Text.p t="body" fontSize="s" color="steelLight" textAlign="center">
-            No other migrations or redemptions to make in this wallet.
-          </Text.p>
-        </Box>
-
-        {/*
-        <Card mt="l">
-        <Flex justifyContent="center" py="l" px="m">
-          <Text.p textAlign="center" t="body">
-            You're all set! There are no migrations or redemptions to make using this wallet.
-            <br/>
-            <Text.span display={{ s: 'block', m: 'none' }} mt='m'/>
-            Please visit us at <Link>chat.makerdao.com</Link> if you have any questions.
-          </Text.p>
-        </Flex>
-      </Card>
-      */}
+        {!dai && !cdps
+          ? <Card mt="l">
+            <Flex justifyContent="center" py="l" px="m">
+              <Text.p textAlign="center" t="body">
+                You're all set! There are no migrations or redemptions to make using this wallet.
+                <br/>
+                <Text.span display={{ s: 'block', m: 'none' }} mt='m'/>
+                Please visit us at <Link>chat.makerdao.com</Link> if you have any questions.
+              </Text.p>
+            </Flex>
+          </Card>
+          : false
+        }
       </Box>
       <Footer mt="2xl" />
     </Flex>
