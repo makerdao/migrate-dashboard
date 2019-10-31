@@ -19,7 +19,7 @@ function WalletManager() {
   const onAccountChosen = useCallback(
     async ({ address }) => {
       maker.useAccountWithAddress(address);
-      Router.push(`/overview?${address}`);
+      Router.push('/overview');
     },
     [maker]
   );
