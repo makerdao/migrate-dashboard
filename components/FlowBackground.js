@@ -15,7 +15,6 @@ function FlowBackground({ children, open }) {
 
   return (
     <Position
-      position="fixed"
       top="0"
       left="0"
       style={{ pointerEvents: open ? 'unset' : 'none' }}

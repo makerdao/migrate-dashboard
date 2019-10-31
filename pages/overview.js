@@ -9,7 +9,6 @@ import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import Footer from '../components/Footer';
 
-// todo add href prop
 function Migration({
   title,
   body,

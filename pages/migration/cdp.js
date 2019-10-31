@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Stepper,
   Grid,
@@ -7,14 +7,15 @@ import {
   Box,
   Button
 } from '@makerdao/ui-components-core';
-import FlowBackground from '../../components/modals/FlowBackground';
+import Router from 'next/router';
+import FlowBackground from '../../components/FlowBackground';
 import Account from '../../components/Account';
 import FadeInFromSide from '../../components/FadeInFromSide';
-import SelectCDP from '../../components/modals/migratecdp/SelectCDP';
-import DeployProxy from '../../components/modals/migratecdp/DeployProxy';
-import PayAndMigrate from '../../components/modals/migratecdp/PayAndMigrate';
-import Migrating from '../../components/modals/migratecdp/Migrating';
-import Complete from '../../components/modals/migratecdp/Complete';
+import SelectCDP from '../../components/migratecdp/SelectCDP';
+import DeployProxy from '../../components/migratecdp/DeployProxy';
+import PayAndMigrate from '../../components/migratecdp/PayAndMigrate';
+import Migrating from '../../components/migratecdp/Migrating';
+import Complete from '../../components/migratecdp/Complete';
 import useMaker from '../../hooks/useMaker';
 
 import crossCircle from '../../assets/icons/crossCircle.svg';
@@ -27,12 +28,16 @@ const steps = [
   props => <Complete {...props} />
 ];
 
-function MigrateCDP({ onClose }) {
+function MigrateCDP() {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
 
+  useEffect(() => {
+    if (!account) Router.replace('/');
+  }, []);
+
   const toPrevStepOrClose = () => {
-    if (currentStep <= 0) return onClose();
+    if (currentStep <= 0) Router.replace('/overview');
     setCurrentStep(currentStep - 1);
   };
   const toNextStep = () => setCurrentStep(currentStep + 1);
@@ -48,10 +53,10 @@ function MigrateCDP({ onClose }) {
           pt="xl"
           px="m"
         >
-          <Account account={account} />
+          {account ? <Account account={account} /> : null}
           <Flex
             alignItems="center"
-            onClick={onClose}
+            onClick={() => Router.replace('/overview')}
             css={{ cursor: 'pointer' }}
           >
             <img src={crossCircle} />
@@ -73,12 +78,13 @@ function MigrateCDP({ onClose }) {
           {steps.map((step, index) => {
             return (
               <FadeInFromSide
+                key={index}
                 active={currentStep === index}
                 toLeft={index < currentStep}
                 toRight={index > currentStep}
               >
                 {step({
-                  onClose,
+                  onClose: () => Router.replace('/overview'),
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
                   onReset: reset

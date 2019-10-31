@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Grid, Text, Button, Link } from '@makerdao/ui-components-core';
 
-import arrowTopRight from '../../../assets/icons/arrowTopRight.svg';
+import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
 
 function Migrating({ onNext, onReset, onClose }) {
   return (

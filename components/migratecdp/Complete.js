@@ -8,7 +8,7 @@ import {
   Link
 } from '@makerdao/ui-components-core';
 
-import arrowTopRight from '../../../assets/icons/arrowTopRight.svg';
+import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
 
 function Complete({ onReset, onClose }) {
   return (

@@ -7,9 +7,9 @@ import {
   Button
 } from '@makerdao/ui-components-core';
 import FlowBackground from './FlowBackground';
-import Account from '../Account';
+import Account from './Account';
 
-import crossCircle from '../../assets/icons/crossCircle.svg';
+import crossCircle from '../assets/icons/crossCircle.svg';
 
 function FlowExample({ open, onClose, account }) {
   return (

@@ -1,6 +1,7 @@
 import { ThemeProvider } from 'styled-components';
 import NextDocument, { Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
+import useMaker from '../hooks/useMaker';
 
 export default class MyDocument extends NextDocument {
   static getInitialProps({ renderPage }) {
