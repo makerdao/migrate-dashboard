@@ -20,7 +20,7 @@ function MakerProvider({ children, rpcUrl, network }) {
         initAccount(account);
       });
     });
-  }, [rpcUrl]);
+  }, [rpcUrl, network]);
   return (
     <MakerObjectContext.Provider value={{ maker, account, network }}>
       {children}
