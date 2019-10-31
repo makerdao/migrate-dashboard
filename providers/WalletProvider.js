@@ -1,9 +1,9 @@
-import React, { createContext, useReducer, useRef, useEffect } from 'react';
 import {
+  clearAllBodyScrollLocks,
   disableBodyScroll,
-  enableBodyScroll,
-  clearAllBodyScrollLocks
+  enableBodyScroll
 } from 'body-scroll-lock';
+import React, { createContext, useEffect, useReducer, useRef } from 'react';
 
 function resolveModalTypeToComponent(modals, type) {
   if (!modals || !type || !modals[type]) return null;

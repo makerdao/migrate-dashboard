@@ -6,9 +6,6 @@ import {
   Button,
   Checkbox,
   Link,
-  Flex,
-  Tooltip,
-  Card,
   CardTabs
 } from '@makerdao/ui-components-core';
 

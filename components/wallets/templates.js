@@ -16,6 +16,16 @@ const animations = {
   ]
 };
 
+const Bg = styled(animated.div)`
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  overflow-y: scroll;
+`;
+
 const SimpleBg = styled(Bg)`
   display: flex;
   justify-content: center;

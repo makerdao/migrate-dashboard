@@ -1,15 +1,8 @@
 import React, { Fragment } from 'react';
-import App, { Container } from 'next/app';
+import App from 'next/app';
 import { ModalProvider } from 'react-modal-hook';
 import { TransitionGroup } from 'react-transition-group';
 import { ThemeProvider, createGlobalStyle } from 'styled-components';
-import {
-  themeLight,
-  Box,
-  Flex,
-  Text,
-  Link
-} from '@makerdao/ui-components-core';
 import { colors } from '@makerdao/design-system-constants';
 import '@makerdao/ui-components-core/dist/styles/global.css';
 import MakerProvider from '../providers/MakerProvider';

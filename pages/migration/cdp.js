@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Stepper,
-  Grid,
-  Text,
-  Flex,
-  Box,
-  Button
-} from '@makerdao/ui-components-core';
+import { Stepper, Grid, Text, Flex } from '@makerdao/ui-components-core';
 import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
 import Account from '../../components/Account';
