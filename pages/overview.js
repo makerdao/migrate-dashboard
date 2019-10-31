@@ -65,17 +65,17 @@ function Overview() {
   const [cdps, setCdps] = useState(null);
 
   useEffect(() => {
-    if (!account) Router.replace('/');
-  }, []);
+    if (maker && !account) Router.replace('/');
+  }, [maker, account]);
 
   useEffect(() => {
     (async () => {
-      if (!maker) return;
+      if (!maker || !account) return;
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
       setCdps(checks['single-to-multi-cdp']);
     })();
-  }, [maker]);
+  }, [maker, account]);
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
