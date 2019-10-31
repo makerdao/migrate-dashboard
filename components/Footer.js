@@ -1,12 +1,12 @@
 import React from 'react';
-import { Box, Flex, Text, Grid } from '@makerdao/ui-components-core';
+import { Box, Text, Grid } from '@makerdao/ui-components-core';
 import dot from '../assets/icons/dot.svg';
 
 const Footer = ({ ...props }) => {
   return (
     <Box borderTop="default" minHeight="100%" mt="m" {...props}>
       <Grid
-        maxWidth="1090px"
+        maxWidth="1140px"
         gridTemplateColumns={{ s: '1fr', m: '1fr 1fr' }}
         m="0 auto"
         px="m"
@@ -21,7 +21,7 @@ const Footer = ({ ...props }) => {
           justifySelf={{ s: 'center', m: 'start' }}
         >
           <Text t="caption">Terms</Text> <img src={dot} />{' '}
-          <Text t="caption">Private Policy</Text> <img src={dot} />{' '}
+          <Text t="caption">Privacy Policy</Text> <img src={dot} />{' '}
           <Text t="caption">Status</Text>
         </Grid>
         <Box order={{ s: 1, m: 2 }} justifySelf={{ s: 'center', m: 'end' }}>

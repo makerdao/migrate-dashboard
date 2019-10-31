@@ -5,6 +5,10 @@ jobs:
       - image: circleci/node:lts
     steps:
       - checkout
-      - run: npm i yarn
       - run: yarn
       - run: yarn test
+      - run:
+          name: Deploy to Now
+          command: |
+            npm i --no-save now
+            ./scripts/now-deploy.sh
