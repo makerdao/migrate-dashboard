@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Position } from '@makerdao/ui-components-core';
 
 const transitionDuration = 300;
@@ -20,9 +20,8 @@ function FlowBackground({ children, open }) {
       style={{ pointerEvents: open ? 'unset' : 'none' }}
     >
       <Box
-        height="100vh"
         width="100vw"
-        bg="backgroundGrey"
+        bg="lightGrey"
         opacity={isActive ? 1 : 0}
         transition={`opacity ${transitionDuration}ms, transform ${transitionDuration}ms ease-in-out`}
         css={`
