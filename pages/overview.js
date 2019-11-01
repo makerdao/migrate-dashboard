@@ -73,10 +73,15 @@ function showCdpCount(cdps) {
   return countCdps(cdps);
 }
 
+function showSaiAmount(sai) {
+  if (sai === null) return '...';
+  return round(sai.toNumber(), 2) + ' SAI';
+}
+
 function Overview() {
   const { maker, account } = useMaker();
   const [cdps, setCdps] = useState(null);
-  const [dai, setDai] = useState(null);
+  const [sai, setSai] = useState(null);
 
   useEffect(() => {
     if (maker && !account) Router.replace('/');
@@ -88,13 +93,13 @@ function Overview() {
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
       setCdps(checks['single-to-multi-cdp']);
-      setDai(checks['sdai-to-mdai']);
+      setSai(checks['sdai-to-mdai']);
     })();
   }, [maker, account]);
 
-  // these should be > 0 intead of >= 0 in production
-  const shouldShowCdps = countCdps(cdps) >= 0;
-  const shouldShowDai = dai && dai.gte(0);
+  // mocking as true for development
+  const shouldShowCdps = true; // countCdps(cdps) >= 0;
+  const shouldShowDai = true; // dai && dai.gt(0);
 
   const noMigrations = !shouldShowDai && !shouldShowCdps;
 
@@ -134,9 +139,9 @@ function Overview() {
             <Migration
               recommended
               title="Single Collateral Dai Redeemer"
-              body="Redeem your Single Collateral Dai (SCD) into Multi Collateral Dai (MCD)."
-              metadataTitle="SCD Balance"
-              metadataValue={round(dai.toNumber(), 2) + ' SAI'}
+              body="Redeem your Single Collateral Dai (Sai) into Multi Collateral Dai."
+              metadataTitle="Sai Balance"
+              metadataValue={showSaiAmount(sai)}
               onSelected={() => Router.replace('/migration/dai')}
             />
           )}
