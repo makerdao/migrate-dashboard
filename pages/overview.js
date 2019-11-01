@@ -12,6 +12,7 @@ import {
 } from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
 import reduce from 'lodash/reduce';
+import round from 'lodash/round';
 import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
@@ -135,7 +136,7 @@ function Overview() {
               title="Single Collateral Dai Redeemer"
               body="Redeem your Single Collateral Dai (SCD) into Multi Collateral Dai (MCD)."
               metadataTitle="SCD Balance"
-              metadataValue={dai.toString()}
+              metadataValue={round(dai.toNumber(), 2) + ' SAI'}
               onSelected={() => Router.replace('/migration/dai')}
             />
           )}
