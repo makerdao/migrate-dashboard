@@ -1,6 +1,7 @@
 {
   "name": "migrate-dashboard",
   "version": "0.1.0",
+  "license": "AGPL",
   "main": "index.js",
   "repository": "git@github.com:makerdao/migrate-dashboard.git",
   "author": "andrea@makerdao.com",
