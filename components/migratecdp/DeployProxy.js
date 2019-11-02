@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Box, Text, Card, Button, Grid } from '@makerdao/ui-components-core';
 import SuccessButton from '../SuccessButton';
+import useProxy from '../../hooks/useProxy';
 
 function DeployProxy({ onPrev, onNext }) {
   const [hasProxy, setHasProxy] = useState(false);
