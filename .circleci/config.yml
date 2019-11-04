@@ -76,15 +76,15 @@ workflows:
     - test:
         requires:
         - install
-    # - deploy_staging:
-    #     requires:
-    #     - test
-    #     filters:
-    #       branches:
-    #         ignore: master
+    - deploy_staging:
+        requires:
+        - test
+        filters:
+          branches:
+            ignore: master
     - deploy_prod:
         requires:
         - test
         filters:
           branches:
-            only: TO-748-CICD-migrate-prod-TO11
+            only: master
