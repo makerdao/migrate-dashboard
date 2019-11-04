@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Text,
   Grid,
@@ -8,9 +8,34 @@ import {
   Link,
   CardTabs
 } from '@makerdao/ui-components-core';
+import { MKR } from '@makerdao/dai-plugin-mcd';
+import { MAX_UINT_BN } from '../../utils/constants';
+import useMaker from '../../hooks/useMaker';
+import LoadingToggle from '../LoadingToggle';
 
 const PayAndMigrate = ({ onPrev, onNext }) => {
   const [hasReadTOS, setHasReadTOS] = useState(false);
+  const [mkrApprovePending, setMkrApprovePending] = useState(null);
+  const [proxyDetails, setProxyDetails] = useState({});
+
+  const { maker, account } = useMaker();
+
+  useEffect(() => {
+    (async () => {
+      if (maker) {
+        // assuming they have a proxy
+        const proxyAddress = await maker.service('proxy').currentProxy();
+        const connectedWaleltAllowance = await maker
+          .getToken(MKR)
+          .allowance(account.address, proxyAddress);
+        const proxyHasMkrAllowance = connectedWaleltAllowance.eq(MAX_UINT_BN);
+        setProxyDetails({
+          hasMkrAllowance: proxyHasMkrAllowance,
+          address: proxyAddress
+        });
+      }
+    })();
+  }, [maker]);
 
   return (
     <Grid maxWidth="912px" gridRowGap="l">
@@ -39,6 +64,33 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
               </Table.tr>
             </Table.tbody>
           </Table>
+          <Grid>
+            <LoadingToggle
+              completeText={'MKR unlocked'}
+              loadingText={'Unlocking MKR'}
+              defaultText={'Unlock MKR to continue'}
+              tokenDisplayName={'MKR'}
+              isLoading={mkrApprovePending}
+              isComplete={proxyDetails.hasMkrAllowance}
+              onToggle={async () => {
+                setMkrApprovePending(true);
+                try {
+                  await maker
+                    .getToken(MKR)
+                    .approveUnlimited(proxyDetails.address);
+                  setProxyDetails(proxyDetails => ({
+                    ...proxyDetails,
+                    hasMkrAllowance: true
+                  }));
+                } catch (err) {
+                  console.log('tx failed', err);
+                }
+                setMkrApprovePending(false);
+              }}
+              disabled={false}
+              data-testid="allowance-toggle"
+            />
+          </Grid>
           <Grid alignItems="center" gridTemplateColumns="auto 1fr">
             <Checkbox
               mr="s"
