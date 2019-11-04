@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Text,
   Grid,
@@ -19,6 +19,20 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
   const [proxyDetails, setProxyDetails] = useState({});
 
   const { maker, account } = useMaker();
+
+  const giveProxyMkrAllowance = useCallback(async () => {
+    setMkrApprovePending(true);
+    try {
+      await maker.getToken(MKR).approveUnlimited(proxyDetails.address);
+      setProxyDetails(proxyDetails => ({
+        ...proxyDetails,
+        hasMkrAllowance: true
+      }));
+    } catch (err) {
+      console.log('tx failed', err);
+    }
+    setMkrApprovePending(false);
+  }, [account]);
 
   useEffect(() => {
     (async () => {
@@ -72,22 +86,8 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
               tokenDisplayName={'MKR'}
               isLoading={mkrApprovePending}
               isComplete={proxyDetails.hasMkrAllowance}
-              onToggle={async () => {
-                setMkrApprovePending(true);
-                try {
-                  await maker
-                    .getToken(MKR)
-                    .approveUnlimited(proxyDetails.address);
-                  setProxyDetails(proxyDetails => ({
-                    ...proxyDetails,
-                    hasMkrAllowance: true
-                  }));
-                } catch (err) {
-                  console.log('tx failed', err);
-                }
-                setMkrApprovePending(false);
-              }}
-              disabled={false}
+              onToggle={giveProxyMkrAllowance}
+              disabled={proxyDetails.hasMkrAllowance}
               data-testid="allowance-toggle"
             />
           </Grid>
@@ -151,7 +151,11 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
         >
           Cancel
         </Button>
-        <Button justifySelf="center" disabled={!hasReadTOS} onClick={onNext}>
+        <Button
+          justifySelf="center"
+          disabled={!hasReadTOS || !proxyDetails.hasMkrAllowance}
+          onClick={onNext}
+        >
           Pay and Migrate
         </Button>
       </Grid>
