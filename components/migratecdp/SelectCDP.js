@@ -7,6 +7,7 @@ import {
   Radio,
   Overflow
 } from '@makerdao/ui-components-core';
+import useMaker from '../../hooks/useMaker';
 
 const RADIO_WIDTH = '2rem';
 const RADIO_CONTAINER_WIDTH = '4rem';
@@ -27,11 +28,15 @@ export default ({ onNext, onPrev, cdps }) => {
           `}
         >
           <Radio fontSize={RADIO_WIDTH} />
-          <span>#3223</span>
-          <span>168.50%</span>
-          <span>425.72 DAI</span>
-          <span>13.34 DAI</span>
-          <span>0.23 MKR</span>
+          <span>{cdp.id}</span>
+          {/* Collateralization */}
+          <span>{cdp.collateralizationRatio}%</span>
+          {/* Debt Value */}
+          <span>{cdp.debtValue} DAI</span>
+          {/* Fee in DAI */}
+          <span>{cdp.govFeeDai} DAI</span>
+          {/* Fee in MKR */}
+          <span>{cdp.govFeeMKR} MKR</span>
         </Grid>
       </Card>
     )

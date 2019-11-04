@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Maker from '@makerdao/dai'
 import { Stepper, Grid, Text, Flex } from '@makerdao/ui-components-core';
 import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
@@ -21,11 +22,24 @@ const steps = [
   props => <Complete {...props} />
 ];
 
+async function getCdpData(cdp, maker) {
+  const debtValue = (await cdp.getDebtValue()).toNumber().toFixed(2)
+  const govFeeMKR = (await cdp.getGovernanceFee()).toNumber().toFixed(2)
+  const govFeeDai = (await cdp.getGovernanceFee(Maker.USD)).toNumber().toFixed(2)
+  const collateralizationRatio = ((await cdp.getCollateralizationRatio()) * 100).toFixed(2)
+  return {
+    collateralizationRatio,
+    debtValue,
+    govFeeDai,
+    govFeeMKR
+  }
+}
+
 function MigrateCDP(props) {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
-  const cdps = [];
-
+  const [cdps, setCdps] = useState([])
+  window.maker = maker
   useEffect(() => {
     if (!account) Router.replace('/');
   }, []);
@@ -36,9 +50,13 @@ function MigrateCDP(props) {
       const mig = await maker.service('migration').getMigration('single-to-multi-cdp');
       const allCDPs = await mig.check();
       const accounts = Object.keys(allCDPs)
-      accounts.map((account, index) => {
+      const fetchedCDPs = []
+      await accounts.map((account, index) => {
         allCDPs[account].map(async (cdpId, i) => {
-          cdps.push(await maker.getCdp(cdpId))
+          let cdp = await maker.getCdp(cdpId)
+          let data = await getCdpData(cdp, maker)
+          fetchedCDPs.push({...cdp, ...data})
+          setCdps(fetchedCDPs)
         })
       })
     })();
@@ -95,7 +113,8 @@ function MigrateCDP(props) {
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
                   onReset: reset,
-                  cdps
+                  cdps,
+                  maker
                 })}
               </FadeInFromSide>
             );
