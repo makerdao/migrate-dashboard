@@ -5,15 +5,16 @@ import {
   Card,
   Button,
   Radio,
-  Overflow
+  Overflow,
+  Link
 } from '@makerdao/ui-components-core';
-import useMaker from '../../hooks/useMaker';
+
 
 const RADIO_WIDTH = '2rem';
 const RADIO_CONTAINER_WIDTH = '4rem';
 const AESTHETIC_ROW_PADDING = '4rem';
 
-export default ({ onNext, onPrev, cdps }) => {
+export default ({ onNext, onPrev, cdps, saiAvailable }) => {
   const cdpComponents = cdps.map((cdp, index) => {
     return (
       <Card px="l" py="m" key={index}>
@@ -27,7 +28,7 @@ export default ({ onNext, onPrev, cdps }) => {
             white-space: nowrap;
           `}
         >
-          <Radio fontSize={RADIO_WIDTH} />
+          <Radio disabled={cdp.debtValue > saiAvailable} fontSize={RADIO_WIDTH} />
           <span>{cdp.id}</span>
           {/* Collateralization */}
           <span>{cdp.collateralizationRatio}%</span>
@@ -78,6 +79,12 @@ export default ({ onNext, onPrev, cdps }) => {
           {cdpComponents}
         </Grid>
       </Overflow>
+      <Grid
+        color="steelLight"
+        textAlign="center"
+      >
+        <Link>Why can't I select some CDPs?</Link>
+      </Grid>
       <Grid
         justifySelf="center"
         gridTemplateColumns="auto auto"
