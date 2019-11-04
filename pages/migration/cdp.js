@@ -27,13 +27,11 @@ async function getCdpData(cdp, maker) {
   const govFeeMKR = (await cdp.getGovernanceFee()).toNumber().toFixed(2)
   const govFeeDai = (await cdp.getGovernanceFee(Maker.USD)).toNumber().toFixed(2)
   const collateralizationRatio = ((await cdp.getCollateralizationRatio()) * 100).toFixed(2)
-  // const isSafe = (await cdp.isSafe())
   return {
     collateralizationRatio,
     debtValue,
     govFeeDai,
     govFeeMKR
-    // isSafe
   }
 }
 
