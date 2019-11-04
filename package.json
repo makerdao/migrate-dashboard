@@ -5,6 +5,9 @@
   "main": "index.js",
   "repository": "git@github.com:makerdao/migrate-dashboard.git",
   "author": "andrea@makerdao.com",
+  "engines": {
+    "node": "12"
+  },
   "scripts": {
     "dev": "next",
     "build": "next build",
