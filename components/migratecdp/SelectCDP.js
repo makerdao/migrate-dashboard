@@ -14,7 +14,7 @@ const RADIO_WIDTH = '2rem';
 const RADIO_CONTAINER_WIDTH = '4rem';
 const AESTHETIC_ROW_PADDING = '4rem';
 
-export default ({ onNext, onPrev, cdps, saiAvailable }) => {
+export default ({ onNext, onPrev, onSelect, cdps, saiAvailable }) => {
   const cdpComponents = cdps.map((cdp, index) => {
     return (
       <Card px="l" py="m" key={index}>
@@ -28,7 +28,7 @@ export default ({ onNext, onPrev, cdps, saiAvailable }) => {
             white-space: nowrap;
           `}
         >
-          <Radio disabled={cdp.debtValue > saiAvailable} fontSize={RADIO_WIDTH} />
+          <Radio disabled={cdp.debtValue > saiAvailable} onChange={() => onSelect(cdp)} fontSize={RADIO_WIDTH} />
           <span>{cdp.id}</span>
           {/* Collateralization */}
           <span>{cdp.collateralizationRatio}%</span>
@@ -93,7 +93,7 @@ export default ({ onNext, onPrev, cdps, saiAvailable }) => {
         <Button variant="secondary-outline" onClick={onPrev}>
           Cancel
         </Button>
-        <Button onClick={onNext}>Continue</Button>
+        <Button onClick={() => onNext()}>Continue</Button>
       </Grid>
     </Grid>
   );

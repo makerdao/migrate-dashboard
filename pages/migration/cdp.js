@@ -39,6 +39,7 @@ function MigrateCDP(props) {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [cdps, setCdps] = useState([]);
+  const [selectedCDP, setSelectedCDP] = useState({})
   const [saiAvailable, setSaiAvailable] = useState(0)
   useEffect(() => {
     if (!account) Router.replace('/');
@@ -64,12 +65,17 @@ function MigrateCDP(props) {
     })();
   }, [maker, account]);
 
+  const ownedByProxy = (cdp) => {
+    return 'dsProxyAddress' in cdp
+  }
+
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
-    setCurrentStep(currentStep - 1);
+    setCurrentStep(ownedByProxy(selectedCDP) ? currentStep - 2 : currentStep - 1);
   };
-  const toNextStep = () => setCurrentStep(currentStep + 1);
+  const toNextStep = () => setCurrentStep(ownedByProxy(selectedCDP) ? currentStep + 2 : currentStep + 1);
   const reset = () => setCurrentStep(0);
+  const selectCDP = (cdp) => {setSelectedCDP(cdp)};
   return (
     <FlowBackground open={true}>
       <Grid gridRowGap="xl">
@@ -114,9 +120,9 @@ function MigrateCDP(props) {
                   onClose: () => Router.replace('/overview'),
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
+                  onSelect: selectCDP,
                   onReset: reset,
                   cdps,
-                  maker,
                   saiAvailable
                 })}
               </FadeInFromSide>
