@@ -16,7 +16,7 @@ const initialState = {
 };
 
 export default function useProxy() {
-  const { lang } = useLanguage();
+  const lang = {};
   const { maker, account, newTxListener } = useMaker();
   const blockHeight = useBlockHeight(0);
 
