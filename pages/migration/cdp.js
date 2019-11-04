@@ -27,11 +27,13 @@ async function getCdpData(cdp, maker) {
   const govFeeMKR = (await cdp.getGovernanceFee()).toNumber().toFixed(2)
   const govFeeDai = (await cdp.getGovernanceFee(Maker.USD)).toNumber().toFixed(2)
   const collateralizationRatio = ((await cdp.getCollateralizationRatio()) * 100).toFixed(2)
+  const isSafe = (await cdp.isSafe())
   return {
     collateralizationRatio,
     debtValue,
     govFeeDai,
-    govFeeMKR
+    govFeeMKR,
+    isSafe
   }
 }
 
@@ -39,7 +41,6 @@ function MigrateCDP(props) {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [cdps, setCdps] = useState([])
-  window.maker = maker
   useEffect(() => {
     if (!account) Router.replace('/');
   }, []);
