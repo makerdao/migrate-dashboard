@@ -74,7 +74,7 @@ function showCdpCount(cdps) {
 }
 
 function showSaiAmount(sai) {
-  if (sai === null) return '...';
+  if (sai === null || sai === 'undefined') return '...';
   return round(sai.toNumber(), 2) + ' SAI';
 }
 
@@ -93,7 +93,7 @@ function Overview() {
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
       setCdps(checks['single-to-multi-cdp']);
-      setSai(checks['sdai-to-mdai']);
+      setSai(checks['sai-to-dai']);
     })();
   }, [maker, account]);
 
