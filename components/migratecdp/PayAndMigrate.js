@@ -40,7 +40,7 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
   return (
     <Grid maxWidth="912px" gridRowGap="l">
       <Text.h2 textAlign="center">Confirm CDP Migration</Text.h2>
-      <CardTabs headers={['Pay with Dai', 'Pay with MKR']}>
+      <CardTabs headers={['Pay with MKR']}>
         <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
           <Table width="100%">
             <Table.tbody>
