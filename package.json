@@ -6,7 +6,7 @@
   "repository": "git@github.com:makerdao/migrate-dashboard.git",
   "author": "andrea@makerdao.com",
   "engines": {
-    "node": "12"
+    "node": "10"
   },
   "scripts": {
     "dev": "next",
