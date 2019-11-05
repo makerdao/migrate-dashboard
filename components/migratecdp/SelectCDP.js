@@ -46,7 +46,7 @@ function ListItem({ cdp, onSelect, saiAvailable, checked }) {
     <Card px={['0', 'l']} py={['0', 'm']}>
       <Box display={['none', 'block']}>
         <Grid
-          gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(5, 1fr) ${AESTHETIC_ROW_PADDING}`}
+          gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(4, 1fr) ${AESTHETIC_ROW_PADDING}`}
           gridColumnGap="m"
           alignItems="center"
           fontSize="m"
@@ -71,7 +71,7 @@ function ListItem({ cdp, onSelect, saiAvailable, checked }) {
           {/* Debt Value */}
           <span>{cdp.debtValue} DAI</span>
           {/* Fee in DAI */}
-          <span>{cdp.govFeeDai} DAI</span>
+          {/* <span>{cdp.govFeeDai} DAI</span> */}
           {/* Fee in MKR */}
           <span>{cdp.govFeeMKR} MKR</span>
         </Grid>
@@ -122,7 +122,7 @@ export default ({
             <Grid
               p="l"
               pb="0"
-              gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(5, 1fr) ${AESTHETIC_ROW_PADDING}`}
+              gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(4, 1fr) ${AESTHETIC_ROW_PADDING}`}
               gridColumnGap="m"
               alignItems="center"
               fontWeight="medium"
@@ -146,7 +146,7 @@ export default ({
               <Text t="subheading">CDP ID</Text>
               <Text t="subheading">Current Ratio</Text>
               <Text t="subheading">Dai Debt</Text>
-              <Text t="subheading">Fee In DAI</Text>
+              {/* <Text t="subheading">Fee In DAI</Text> */}
               <Text t="subheading">Fee in MKR</Text>
             </Grid>
           </Box>
