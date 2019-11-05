@@ -34,6 +34,7 @@ const ProxyAndTransfer = ({
       setCDPTransferred(true);
       setIsTransferringCDP(false);
     } catch (err) {
+      setIsTransferringCDP(false);
       console.log('cdp transfer tx failed', err);
     }
   }, [selectedCDP]);
