@@ -59,12 +59,12 @@ function MigrateCDP() {
       const saiAvailable = (await mig.migrationSaiAvailable()).toNumber();
       setSaiAvailable(saiAvailable);
       const accounts = Object.keys(allCDPs);
-      const fetchedCDPs = [];
+      let fetchedCDPs = [];
       await accounts.map(account => {
         allCDPs[account].map(async cdpId => {
           let cdp = await maker.getCdp(cdpId);
           let data = await getCdpData(cdp, maker);
-          fetchedCDPs.push({ ...cdp, ...data });
+          fetchedCDPs = fetchedCDPs.concat({ ...cdp, ...data });
           setCdps(fetchedCDPs);
         });
       });
@@ -115,8 +115,8 @@ function MigrateCDP() {
         <Stepper
           steps={['Select CDP', 'Deploy Proxy', 'Pay & Migrate']}
           selected={currentStep}
-          mt={{s: '10px'}}
-          m='0 auto'
+          mt={{ s: '10px' }}
+          m="0 auto"
           p={['0 80px', '0']}
           opacity={currentStep < 3 ? 1 : 0}
           transition="opacity 0.2s"

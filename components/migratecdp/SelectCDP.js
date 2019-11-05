@@ -27,7 +27,7 @@ const Label = styled(Box)`
 function ListItemRow({ label, value, dark }) {
   return (
     <Flex
-      alignItems='center'
+      alignItems="center"
       justifyContent="space-between"
       bg={dark ? getColor('lightGrey') : 'white'}
       px="m"
@@ -39,7 +39,7 @@ function ListItemRow({ label, value, dark }) {
   );
 }
 
-function ListItem({ cdp, onSelect, saiAvailable }) {
+function ListItem({ cdp, onSelect, saiAvailable, checked }) {
   return (
     <Card px={['0', 'l']} py={['0', 'm']}>
       <Box display={['none', 'block']}>
@@ -57,6 +57,7 @@ function ListItem({ cdp, onSelect, saiAvailable }) {
             disabled={cdp.debtValue > saiAvailable}
             onChange={() => onSelect(cdp)}
             fontSize={RADIO_WIDTH}
+            checked={checked}
           />
           <span>{cdp.id}</span>
           {/* Collateralization */}
@@ -70,11 +71,7 @@ function ListItem({ cdp, onSelect, saiAvailable }) {
         </Grid>
       </Box>
       <Box display={['block', 'none']}>
-        <Flex
-          pt="m"
-          pl="m"
-          alignItems='center'
-        >
+        <Flex pt="m" pl="m" alignItems="center">
           <Radio
             disabled={cdp.debtValue > saiAvailable}
             onChange={() => onSelect(cdp)}
@@ -94,7 +91,14 @@ function ListItem({ cdp, onSelect, saiAvailable }) {
   );
 }
 
-export default ({ onNext, onPrev, onSelect, cdps, saiAvailable }) => {
+export default ({
+  onNext,
+  onPrev,
+  onSelect,
+  cdps,
+  saiAvailable,
+  selectedCDP
+}) => {
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['16px', '0']}>
       <Text.h2 textAlign="center">Select CDP to Migrate</Text.h2>
@@ -132,7 +136,12 @@ export default ({ onNext, onPrev, onSelect, cdps, saiAvailable }) => {
             </Grid>
           </Box>
           {cdps.map(cdp => (
-            <ListItem cdp={cdp} key={cdp.id} {...{ onSelect, saiAvailable }} />
+            <ListItem
+              cdp={cdp}
+              checked={selectedCDP.id === cdp.id}
+              key={cdp.id}
+              {...{ onSelect, saiAvailable }}
+            />
           ))}
         </Grid>
       </Overflow>

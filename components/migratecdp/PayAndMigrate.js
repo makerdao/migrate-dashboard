@@ -73,7 +73,7 @@ const PayAndMigrate = ({ onPrev, onNext, selectedCDP }) => {
                   <Text>Stability Fee</Text>
                 </Table.td>
                 <Table.td textAlign="right">
-                  <Text fontWeight="medium">23.32 DAI</Text>
+                  <Text fontWeight="medium">{selectedCDP.govFeeMKR} MKR</Text>
                 </Table.td>
               </Table.tr>
             </Table.tbody>
@@ -91,41 +91,6 @@ const PayAndMigrate = ({ onPrev, onNext, selectedCDP }) => {
               data-testid="allowance-toggle"
             />
           </Grid>
-          <Grid alignItems="center" gridTemplateColumns="auto 1fr">
-            <Checkbox
-              mr="s"
-              fontSize="l"
-              checked={hasReadTOS}
-              onChange={evt => setHasReadTOS(evt.target.checked)}
-            />
-            <Text t="caption" color="steel">
-              I have read and accept the <Link>Terms of Service</Link>.
-            </Text>
-          </Grid>
-        </Grid>
-        <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
-          <Table width="100%">
-            <Table.tbody>
-              <Table.tr>
-                <Table.td>
-                  <Text>CDP ID</Text>
-                </Table.td>
-                <Table.td textAlign="right">
-                  <Text fontWeight="medium">
-                    <Link>3228</Link>
-                  </Text>
-                </Table.td>
-              </Table.tr>
-              <Table.tr>
-                <Table.td>
-                  <Text>Stability Fee</Text>
-                </Table.td>
-                <Table.td textAlign="right">
-                  <Text fontWeight="medium">23.32 MKR</Text>
-                </Table.td>
-              </Table.tr>
-            </Table.tbody>
-          </Table>
           <Grid alignItems="center" gridTemplateColumns="auto 1fr">
             <Checkbox
               mr="s"
