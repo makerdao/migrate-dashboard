@@ -44,7 +44,9 @@ function MigrateCDP() {
   const [currentStep, setCurrentStep] = useState(0);
   const [cdps, setCdps] = useState([]);
   const [selectedCDP, setSelectedCDP] = useState({});
+  const [migrationTxObject, setMigrationTxObject] = useState({});
   const [saiAvailable, setSaiAvailable] = useState(0);
+
   useEffect(() => {
     if (!account) Router.replace('/');
   }, [account]);
@@ -135,13 +137,16 @@ function MigrateCDP() {
               >
                 {step({
                   onClose: () => Router.replace('/overview'),
+
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
                   onSelect: selectCDP,
                   onReset: reset,
                   cdps,
                   saiAvailable,
-                  selectedCDP
+                  selectedCDP,
+                  migrationTxObject,
+                  setMigrationTxObject
                 })}
               </FadeInFromSide>
             );

@@ -13,9 +13,14 @@ import { MAX_UINT_BN } from '../../utils/constants';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
 
-const PayAndMigrate = ({ onPrev, onNext, selectedCDP }) => {
+const PayAndMigrate = ({
+  onPrev,
+  onNext,
+  selectedCDP,
+  setMigrationTxObject
+}) => {
   const [hasReadTOS, setHasReadTOS] = useState(false);
-  const [mkrApprovePending, setMkrApprovePending] = useState(null);
+  const [mkrApprovePending, setMkrApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
 
   const { maker, account } = useMaker();
@@ -29,10 +34,24 @@ const PayAndMigrate = ({ onPrev, onNext, selectedCDP }) => {
         hasMkrAllowance: true
       }));
     } catch (err) {
-      console.log('tx failed', err);
+      console.log('unlock mkr tx failed', err);
     }
     setMkrApprovePending(false);
   }, [account, maker]);
+
+  const migrateCdp = useCallback(async () => {
+    try {
+      console.log(selectedCDP, 'selectedCDP');
+      const mig = await maker
+        .service('migration')
+        .getMigration('single-to-multi-cdp');
+      const migrationTxObject = mig.execute(selectedCDP.id);
+      setMigrationTxObject(migrationTxObject);
+      await migrationTxObject;
+    } catch (err) {
+      console.log('migrate tx failed', err);
+    }
+  }, [account, maker, selectedCDP]);
 
   useEffect(() => {
     (async () => {
@@ -119,7 +138,10 @@ const PayAndMigrate = ({ onPrev, onNext, selectedCDP }) => {
         <Button
           justifySelf="center"
           disabled={!hasReadTOS || !proxyDetails.hasMkrAllowance}
-          onClick={onNext}
+          onClick={() => {
+            migrateCdp();
+            onNext();
+          }}
         >
           Pay and Migrate
         </Button>
