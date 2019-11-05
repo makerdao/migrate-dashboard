@@ -7,19 +7,8 @@ import {
   Tooltip
 } from '@makerdao/ui-components-core';
 
-const lang = {};
-
-import { ReactComponent as Checkmark } from '../images/checkmark.svg';
 import TooltipContents from './TooltipContents';
 import SuccessButton from './SuccessButton';
-
-const ProxySuccessButton = () => {
-  return (
-    <Button variant="primary-outline" width="13.0rem" mt="xs" disabled>
-      <Checkmark />
-    </Button>
-  );
-};
 
 const ProxyAndTransfer = ({
   proxyAddress,
@@ -31,10 +20,11 @@ const ProxyAndTransfer = ({
   hasAllowance,
   labels,
   isSettingAllowance,
-  selectedCDP
+  selectedCDP,
+  cdpTransferred,
+  setCDPTransferred
 }) => {
   const { setup_text, confirmations_text } = labels;
-  const [cdpTransferred, setCDPTransferred] = useState(false);
   const [isTransferringCDP, setIsTransferringCDP] = useState(false);
   const transferCDP = useCallback(async () => {
     try {

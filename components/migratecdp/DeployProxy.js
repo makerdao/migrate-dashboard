@@ -16,15 +16,11 @@ function DeployProxy({ onPrev, onNext, selectedCDP }) {
     hasProxy
   } = useProxy();
 
+  const [cdpTransferred, setCDPTransferred] = useState(false);
+
   const blockHeight = useBlockHeight(0);
-  console.log('startingBlockHeight', startingBlockHeight);
-  console.log('blockHeight', blockHeight);
   async function deployProxy() {
     await setupProxy();
-    // dispatch({
-    //   type: 'set-proxy-address',
-    //   payload: { address: proxyAddress }
-    // });
   }
 
   const labels = {
@@ -50,6 +46,8 @@ function DeployProxy({ onPrev, onNext, selectedCDP }) {
         proxyDeployed={proxyDeployed}
         proxyErrors={proxyErrors}
         selectedCDP={selectedCDP}
+        cdpTransferred={cdpTransferred}
+        setCDPTransferred={setCDPTransferred}
       />
       <Grid
         justifySelf="center"
@@ -60,7 +58,7 @@ function DeployProxy({ onPrev, onNext, selectedCDP }) {
         <Button variant="secondary-outline" onClick={onPrev}>
           Cancel
         </Button>
-        <Button onClick={onNext} disabled={!hasProxy}>
+        <Button onClick={onNext} disabled={!hasProxy || !cdpTransferred}>
           Continue
         </Button>
       </Grid>
