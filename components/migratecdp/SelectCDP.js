@@ -1,21 +1,48 @@
 import React from 'react';
+import styled from 'styled-components';
 import {
   Text,
   Grid,
   Card,
   Button,
   Radio,
-  Overflow
+  Overflow,
+  Link,
+  Box,
+  Flex
 } from '@makerdao/ui-components-core';
+import { getColor } from '../../utils/theme';
 
 const RADIO_WIDTH = '2rem';
 const RADIO_CONTAINER_WIDTH = '4rem';
 const AESTHETIC_ROW_PADDING = '4rem';
 
-export default ({ onNext, onPrev, cdps }) => {
-  const cdpComponents = cdps.map((cdp, index) => {
-    return (
-      <Card px="l" py="m" key={index}>
+const Label = styled(Box)`
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 13px;
+  color: ${getColor('steel')};
+`;
+
+function ListItemRow({ label, value, dark }) {
+  return (
+    <Flex
+      alignItems="center"
+      justifyContent="space-between"
+      bg={dark ? getColor('lightGrey') : 'white'}
+      px="m"
+      py="s"
+    >
+      <Label>{label}</Label>
+      <div>{value}</div>
+    </Flex>
+  );
+}
+
+function ListItem({ cdp, onSelect, saiAvailable, checked }) {
+  return (
+    <Card px={['0', 'l']} py={['0', 'm']}>
+      <Box display={['none', 'block']}>
         <Grid
           gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(5, 1fr) ${AESTHETIC_ROW_PADDING}`}
           gridColumnGap="m"
@@ -26,18 +53,55 @@ export default ({ onNext, onPrev, cdps }) => {
             white-space: nowrap;
           `}
         >
-          <Radio fontSize={RADIO_WIDTH} />
-          <span>#3223</span>
-          <span>168.50%</span>
-          <span>425.72 DAI</span>
-          <span>13.34 DAI</span>
-          <span>0.23 MKR</span>
+          <Radio
+            disabled={cdp.debtValue > saiAvailable}
+            onChange={() => onSelect(cdp)}
+            fontSize={RADIO_WIDTH}
+            checked={checked}
+          />
+          <span>{cdp.id}</span>
+          {/* Collateralization */}
+          <span>
+            {cdp.collateralizationRatio === 'Infinity'
+              ? '---'
+              : cdp.collateralizationRatio + '%'}
+          </span>
+          {/* Debt Value */}
+          <span>{cdp.debtValue} DAI</span>
+          {/* Fee in DAI */}
+          <span>{cdp.govFeeDai} DAI</span>
+          {/* Fee in MKR */}
+          <span>{cdp.govFeeMKR} MKR</span>
         </Grid>
-      </Card>
-    )
-  })
+      </Box>
+      <Box display={['block', 'none']}>
+        <Flex pt="m" pl="m" alignItems="center">
+          <Radio
+            disabled={cdp.debtValue > saiAvailable}
+            onChange={() => onSelect(cdp)}
+            fontSize={RADIO_WIDTH}
+            mr="9px"
+          />
+          <Text fontSize="20px">CDP {cdp.id}</Text>
+        </Flex>
+        <ListItemRow label="Current Ratio" value={cdp.collateralizationRatio} />
+        <ListItemRow label="Dai Drawn" value={cdp.debtValue + ' DAI'} dark />
+        <ListItemRow label="Fee in MKR" value={cdp.govFeeMKR + ' MKR'} />
+      </Box>
+    </Card>
+  );
+}
+
+export default ({
+  onNext,
+  onPrev,
+  onSelect,
+  cdps,
+  saiAvailable,
+  selectedCDP
+}) => {
   return (
-    <Grid maxWidth="912px" gridRowGap="m">
+    <Grid maxWidth="912px" gridRowGap="m" px={['16px', '0']}>
       <Text.h2 textAlign="center">Select CDP to Migrate</Text.h2>
       <Text.p
         textAlign="center"
@@ -51,28 +115,40 @@ export default ({ onNext, onPrev, cdps }) => {
       </Text.p>
       <Overflow x="scroll" y="visible">
         <Grid gridRowGap="s" mt="xs" pb="m">
-          <Grid
-            p="l"
-            pb="0"
-            gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(5, 1fr) ${AESTHETIC_ROW_PADDING}`}
-            gridColumnGap="m"
-            alignItems="center"
-            fontWeight="medium"
-            color="steelLight"
-            css={`
-              white-space: nowrap;
-            `}
-          >
-            <span />
-            <Text t="subheading">CDP ID</Text>
-            <Text t="subheading">Current Ratio</Text>
-            <Text t="subheading">Dai Debt</Text>
-            <Text t="subheading">Fee In DAI</Text>
-            <Text t="subheading">Fee in MKR</Text>
-          </Grid>
-          {cdpComponents}
+          <Box display={['none', 'block']}>
+            <Grid
+              p="l"
+              pb="0"
+              gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(5, 1fr) ${AESTHETIC_ROW_PADDING}`}
+              gridColumnGap="m"
+              alignItems="center"
+              fontWeight="medium"
+              color="steelLight"
+              css={`
+                white-space: nowrap;
+              `}
+            >
+              <span />
+              <Text t="subheading">CDP ID</Text>
+              <Text t="subheading">Current Ratio</Text>
+              <Text t="subheading">Dai Debt</Text>
+              <Text t="subheading">Fee In DAI</Text>
+              <Text t="subheading">Fee in MKR</Text>
+            </Grid>
+          </Box>
+          {cdps.map(cdp => (
+            <ListItem
+              cdp={cdp}
+              checked={selectedCDP.id === cdp.id}
+              key={cdp.id}
+              {...{ onSelect, saiAvailable }}
+            />
+          ))}
         </Grid>
       </Overflow>
+      <Grid color="steelLight" textAlign="center">
+        <Link>Why can't I select some CDPs?</Link>
+      </Grid>
       <Grid
         justifySelf="center"
         gridTemplateColumns="auto auto"
@@ -81,7 +157,7 @@ export default ({ onNext, onPrev, cdps }) => {
         <Button variant="secondary-outline" onClick={onPrev}>
           Cancel
         </Button>
-        <Button onClick={onNext}>Continue</Button>
+        <Button onClick={() => onNext()}>Continue</Button>
       </Grid>
     </Grid>
   );

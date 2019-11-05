@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Maker from '@makerdao/dai';
 import { Stepper, Grid, Text, Flex } from '@makerdao/ui-components-core';
 import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
@@ -21,43 +22,85 @@ const steps = [
   props => <Complete {...props} />
 ];
 
-function MigrateCDP(props) {
+async function getCdpData(cdp) {
+  const debtValue = (await cdp.getDebtValue()).toNumber().toFixed(2);
+  const govFeeMKR = (await cdp.getGovernanceFee()).toNumber().toFixed(2);
+  const govFeeDai = (await cdp.getGovernanceFee(Maker.USD))
+    .toNumber()
+    .toFixed(2);
+  const collateralizationRatio = (
+    (await cdp.getCollateralizationRatio()) * 100
+  ).toFixed(2);
+  return {
+    collateralizationRatio,
+    debtValue,
+    govFeeDai,
+    govFeeMKR
+  };
+}
+
+function MigrateCDP() {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
-  const cdps = [];
+  const [cdps, setCdps] = useState([]);
+  const [selectedCDP, setSelectedCDP] = useState({});
+  const [migrationTxObject, setMigrationTxObject] = useState({});
+  const [saiAvailable, setSaiAvailable] = useState(0);
 
   useEffect(() => {
     if (!account) Router.replace('/');
-  }, []);
+  }, [account]);
 
   useEffect(() => {
     (async () => {
       if (!maker || !account) return;
-      const mig = await maker.service('migration').getMigration('single-to-multi-cdp');
+      const mig = await maker
+        .service('migration')
+        .getMigration('single-to-multi-cdp');
       const allCDPs = await mig.check();
-      const accounts = Object.keys(allCDPs)
-      accounts.map((account, index) => {
-        allCDPs[account].map(async (cdpId, i) => {
-          cdps.push(await maker.getCdp(cdpId))
-        })
-      })
+      const saiAvailable = (await mig.migrationSaiAvailable()).toNumber();
+      setSaiAvailable(saiAvailable);
+      const accounts = Object.keys(allCDPs);
+      let fetchedCDPs = [];
+      await accounts.map(account => {
+        allCDPs[account].map(async cdpId => {
+          let cdp = await maker.getCdp(cdpId);
+          let data = await getCdpData(cdp, maker);
+          fetchedCDPs = fetchedCDPs
+            .concat({ ...cdp, ...data })
+            .sort((a, b) => parseFloat(b.debtValue) - parseFloat(a.debtValue));
+          setCdps(fetchedCDPs);
+        });
+      });
     })();
   }, [maker, account]);
 
+  const ownedByProxy = cdp => {
+    return 'dsProxyAddress' in cdp;
+  };
+
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
-    setCurrentStep(currentStep - 1);
+    setCurrentStep(
+      ownedByProxy(selectedCDP) ? currentStep - 2 : currentStep - 1
+    );
   };
-  const toNextStep = () => setCurrentStep(currentStep + 1);
+  const toNextStep = () =>
+    setCurrentStep(
+      ownedByProxy(selectedCDP) ? currentStep + 2 : currentStep + 1
+    );
   const reset = () => setCurrentStep(0);
+  const selectCDP = cdp => {
+    setSelectedCDP(cdp);
+  };
   return (
     <FlowBackground open={true}>
-      <Grid gridRowGap="xl">
+      <Grid gridRowGap={['m', 'xl']}>
         <Grid
-          justifyContent="flex-end"
+          justifyContent={['space-between', 'flex-end']}
           gridTemplateColumns="auto auto"
           gridColumnGap="m"
-          pt="xl"
+          pt={['m', 'xl']}
           px="m"
         >
           {account ? <Account account={account} /> : null}
@@ -68,7 +111,7 @@ function MigrateCDP(props) {
           >
             <img src={crossCircle} />
             &nbsp;
-            <Text color="steel" fontWeight="medium">
+            <Text color="steel" fontWeight="medium" display={{ s: 'none' }}>
               Close
             </Text>
           </Flex>
@@ -76,7 +119,9 @@ function MigrateCDP(props) {
         <Stepper
           steps={['Select CDP', 'Deploy Proxy', 'Pay & Migrate']}
           selected={currentStep}
+          mt={{ s: '10px' }}
           m="0 auto"
+          p={['0 80px', '0']}
           opacity={currentStep < 3 ? 1 : 0}
           transition="opacity 0.2s"
         />
@@ -92,10 +137,16 @@ function MigrateCDP(props) {
               >
                 {step({
                   onClose: () => Router.replace('/overview'),
+
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
+                  onSelect: selectCDP,
                   onReset: reset,
-                  cdps
+                  cdps,
+                  saiAvailable,
+                  selectedCDP,
+                  migrationTxObject,
+                  setMigrationTxObject
                 })}
               </FadeInFromSide>
             );
