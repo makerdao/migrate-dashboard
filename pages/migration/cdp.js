@@ -65,7 +65,6 @@ function MigrateCDP() {
       await accounts.map(account => {
         allCDPs[account].map(async cdpId => {
           let cdp = await maker.getCdp(cdpId);
-          console.log('cdp in useEffect', cdp);
           let data = await getCdpData(cdp, maker);
           fetchedCDPs = fetchedCDPs
             .concat({ ...cdp, ...data, give: cdp.give })

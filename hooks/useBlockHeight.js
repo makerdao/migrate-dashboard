@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import useMaker from './useMaker';
 
+//TODO: rewrite to just use dai.js instead of multicall
 const useBlockHeight = (initialState = null) => {
   const { maker } = useMaker();
   const [blockHeight, setblockHeight] = useState(initialState);

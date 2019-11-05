@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Text,
   Card,
@@ -34,13 +34,17 @@ const ProxyAndTransfer = ({
   selectedCDP
 }) => {
   const { setup_text, confirmations_text } = labels;
-  const cdpTransferred = false; //todo: use react state
-  const isTransferringCDP = false; //todo: use react state
+  const [cdpTransferred, setCDPTransferred] = useState(false);
+  const [isTransferringCDP, setIsTransferringCDP] = useState(false);
   const transferCDP = useCallback(async () => {
     try {
-      const give = await selectedCDP.give(proxyAddress);
+      const give = selectedCDP.give(proxyAddress);
+      setIsTransferringCDP(true);
+      await give;
+      setCDPTransferred(true);
+      setIsTransferringCDP(false);
     } catch (err) {
-      console.log('transfer tx failed', err);
+      console.log('cdp transfer tx failed', err);
     }
   }, [selectedCDP]);
   return (
