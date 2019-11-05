@@ -43,6 +43,7 @@ function MigrateCDP() {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [cdps, setCdps] = useState([]);
+  const [loadingCdps, setLoadingCdps] = useState(true);
   const [selectedCDP, setSelectedCDP] = useState({});
   const [migrationTxObject, setMigrationTxObject] = useState({});
   const [saiAvailable, setSaiAvailable] = useState(0);
@@ -62,16 +63,23 @@ function MigrateCDP() {
       setSaiAvailable(saiAvailable);
       const accounts = Object.keys(allCDPs);
       let fetchedCDPs = [];
-      await accounts.map(account => {
-        allCDPs[account].map(async cdpId => {
-          let cdp = await maker.getCdp(cdpId);
-          let data = await getCdpData(cdp, maker);
-          fetchedCDPs = fetchedCDPs
-            .concat({ ...cdp, ...data })
-            .sort((a, b) => parseFloat(b.debtValue) - parseFloat(a.debtValue));
-          setCdps(fetchedCDPs);
-        });
-      });
+      await Promise.all(
+        accounts.map(account =>
+          Promise.all(
+            allCDPs[account].map(async cdpId => {
+              let cdp = await maker.getCdp(cdpId);
+              let data = await getCdpData(cdp, maker);
+              fetchedCDPs = fetchedCDPs
+                .concat({ ...cdp, ...data })
+                .sort(
+                  (a, b) => parseFloat(b.debtValue) - parseFloat(a.debtValue)
+                );
+              setCdps(fetchedCDPs);
+            })
+          )
+        )
+      );
+      setLoadingCdps(false);
     })();
   }, [maker, account]);
 
@@ -143,6 +151,7 @@ function MigrateCDP() {
                   onSelect: selectCDP,
                   onReset: reset,
                   cdps,
+                  loadingCdps,
                   saiAvailable,
                   selectedCDP,
                   migrationTxObject,

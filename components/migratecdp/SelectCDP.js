@@ -9,8 +9,10 @@ import {
   Overflow,
   Link,
   Box,
-  Flex
+  Flex,
+  Loader
 } from '@makerdao/ui-components-core';
+import { colors } from '@makerdao/design-system-constants';
 import { getColor } from '../../utils/theme';
 
 const RADIO_WIDTH = '2rem';
@@ -97,6 +99,7 @@ export default ({
   onPrev,
   onSelect,
   cdps,
+  loadingCdps,
   saiAvailable,
   selectedCDP
 }) => {
@@ -128,7 +131,18 @@ export default ({
                 white-space: nowrap;
               `}
             >
-              <span />
+              {loadingCdps ? (
+                <Loader
+                  display="inline-block"
+                  size="1.8rem"
+                  color={getColor('makerTeal')}
+                  justifySelf="end"
+                  m="auto"
+                  bg={colors.lightGrey}
+                />
+              ) : (
+                <span />
+              )}
               <Text t="subheading">CDP ID</Text>
               <Text t="subheading">Current Ratio</Text>
               <Text t="subheading">Dai Debt</Text>
@@ -157,7 +171,12 @@ export default ({
         <Button variant="secondary-outline" onClick={onPrev}>
           Cancel
         </Button>
-        <Button onClick={() => onNext()}>Continue</Button>
+        <Button
+          disabled={Object.keys(selectedCDP).length === 0}
+          onClick={onNext}
+        >
+          Continue
+        </Button>
       </Grid>
     </Grid>
   );
