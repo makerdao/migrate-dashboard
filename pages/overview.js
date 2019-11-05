@@ -74,7 +74,7 @@ function showCdpCount(cdps) {
 }
 
 function showSaiAmount(sai) {
-  if (sai === null || sai === 'undefined') return '...';
+  if (sai === null) return '...';
   return round(sai.toNumber(), 2) + ' SAI';
 }
 

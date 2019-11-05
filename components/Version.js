@@ -29,7 +29,7 @@ export default function Version() {
 
   return (
     <Grid maxWidth="1140px" m="0 auto">
-      <Box mt='1em' mb='1em' textAlign='right'>
+      <Box mt='1em' mb='1em' textAlign={['center', 'right']}>
         <Text t="subheading">
           <Link target="_blank" rel="noopener noreferrer" href={commitUrl}>
             {COMMIT_SHA.substring(0, 6)}: {message}

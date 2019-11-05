@@ -1,3 +1,4 @@
+import React from 'react';
 import { Flex, Text } from '@makerdao/ui-components-core';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
@@ -9,7 +10,7 @@ function Account({ account }) {
     <Flex alignItems="center" justifyContent="center">
       <Jazzicon diameter={20} seed={jsNumberForAddress(address)} />
       <Text display="block" ml="xs" color="steel">
-        {type} {cutMiddle(address)}
+        {type} {cutMiddle(address, 6)}
       </Text>
     </Flex>
   );
