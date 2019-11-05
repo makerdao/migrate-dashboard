@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   Text,
   Card,
@@ -30,12 +30,19 @@ const ProxyAndTransfer = ({
   setAllowance,
   hasAllowance,
   labels,
-  isSettingAllowance
+  isSettingAllowance,
+  selectedCDP
 }) => {
   const { setup_text, confirmations_text } = labels;
-  const transferCdp = ()=>{};
-  const proxyTransferred = false;
-  const isTransferringProxy = false;
+  const cdpTransferred = false; //todo: use react state
+  const isTransferringCDP = false; //todo: use react state
+  const transferCDP = useCallback(async () => {
+    try {
+      const give = await selectedCDP.give(proxyAddress);
+    } catch (err) {
+      console.log('transfer tx failed', err);
+    }
+  }, [selectedCDP]);
   return (
     <Card px={{ s: 'l', m: '2xl' }} py="l" mb="xl">
       <Grid gridRowGap="xs">
@@ -50,7 +57,7 @@ const ProxyAndTransfer = ({
             width="13.0rem"
             mt="xs"
             onClick={deployProxy}
-            disabled={proxyLoading || isTransferringProxy || !!proxyErrors}
+            disabled={proxyLoading || isTransferringCDP || !!proxyErrors}
             loading={proxyLoading || !!proxyErrors}
           >
             Deploy
@@ -92,15 +99,15 @@ const ProxyAndTransfer = ({
         <Text.p color="darkLavender" fontSize="l" lineHeight="normal">
           add text here
         </Text.p>
-        {proxyTransferred ? (
+        {cdpTransferred ? (
           <SuccessButton />
         ) : (
           <Button
             width="13.0rem"
             mt="xs"
-            onClick={transferCdp}
-            disabled={!proxyAddress || proxyLoading || isTransferringProxy}
-            loading={isSettingAllowance}
+            onClick={transferCDP}
+            disabled={!proxyAddress || proxyLoading || isTransferringCDP}
+            loading={isTransferringCDP}
           >
             Transfer
           </Button>
