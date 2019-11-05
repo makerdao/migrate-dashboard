@@ -17,9 +17,8 @@ const initialState = {
 
 export default function useProxy() {
   const lang = {};
-  const { maker, account, newTxListener } = useMaker();
+  const { maker, account} = useMaker();
   const blockHeight = useBlockHeight(0);
-
   const [
     {
       initialProxyCheck,
@@ -41,7 +40,7 @@ export default function useProxy() {
 
     const txPromise = maker.service('proxy').ensureProxy();
 
-    newTxListener(txPromise, lang.transactions.setting_up_proxy);
+    //newTxListener(txPromise, "Setting up proxy");
     const address = await txPromise;
 
     updateState({

@@ -11,8 +11,9 @@ const lang = {};
 
 import { ReactComponent as Checkmark } from '../images/checkmark.svg';
 import TooltipContents from './TooltipContents';
+import SuccessButton from './SuccessButton';
 
-const proxySuccessButton = () => {
+const ProxySuccessButton = () => {
   return (
     <Button variant="primary-outline" width="13.0rem" mt="xs" disabled>
       <Checkmark />
@@ -32,7 +33,6 @@ const ProxyAndTransfer = ({
   isSettingAllowance
 }) => {
   const { setup_text, allowance_text, confirmations_text } = labels;
-
   return (
     <Card px={{ s: 'l', m: '2xl' }} py="l" mb="xl">
       <Grid gridRowGap="xs">
@@ -41,7 +41,7 @@ const ProxyAndTransfer = ({
           {setup_text}
         </Text.p>
         {proxyAddress ? (
-          <proxySuccessButton />
+          <SuccessButton/>
         ) : (
           <Button
             width="13.0rem"
@@ -50,19 +50,19 @@ const ProxyAndTransfer = ({
             disabled={proxyLoading || isSettingAllowance || !!proxyErrors}
             loading={proxyLoading || !!proxyErrors}
           >
-            todo: add text
+            Deploy
           </Button>
         )}
         <Text.p t="subheading" lineHeight="normal">
           {proxyErrors && (
             <>
-              {lang.cdp_create.proxy_failure_not_mined}
+              This transaction is taking longer than usual...
               <Tooltip
                 fontSize="m"
                 ml="2xs"
                 content={
                   <TooltipContents>
-                    {lang.cdp_create.proxy_failure_not_mined_info}
+                    Transactions to the network may sometimes take longer than expected. This can be for a variety of reasons but may be due to a congested network or a transaction sent with a low gas price. Some wallets enable users to resend a transaction with a higher gas price, otherwise check for your transaction on etherscan and come back again later
                   </TooltipContents>
                 }
               />
@@ -70,14 +70,14 @@ const ProxyAndTransfer = ({
           )}
           {proxyLoading && confirmations_text}
           {proxyDeployed &&
-            lang.formatString(lang.cdp_create.confirmed_with_confirmations, 10)}
+            "Confirmed with 10 confirmations"}
           {(proxyLoading || proxyDeployed) && (
             <Tooltip
               fontSize="m"
               ml="2xs"
               content={
                 <TooltipContents>
-                  {lang.cdp_create.waiting_for_confirmations_info}
+                  Waiting for confirmations reduces the risk of your Maker Collateral Vault address changing. We require users to wait 10 block confirmations to ensure it's been created successfully. This will often take around 2 minutes.
                 </TooltipContents>
               }
             />

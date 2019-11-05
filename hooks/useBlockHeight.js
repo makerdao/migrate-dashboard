@@ -7,6 +7,7 @@ const useBlockHeight = (initialState = null) => {
 
   useEffect(() => {
     if (maker && maker.service('multicall').watcher) {
+      console.log('maker && maker.service(\'multicall\').watcher');
       const subscription = maker
         .service('multicall')
         .watcher.onNewBlock(blockHeight => setblockHeight(blockHeight));
