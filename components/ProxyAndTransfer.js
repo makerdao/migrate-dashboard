@@ -32,7 +32,10 @@ const ProxyAndTransfer = ({
   labels,
   isSettingAllowance
 }) => {
-  const { setup_text, allowance_text, confirmations_text } = labels;
+  const { setup_text, confirmations_text } = labels;
+  const transferCdp = ()=>{};
+  const proxyTransferred = false;
+  const isTransferringProxy = false;
   return (
     <Card px={{ s: 'l', m: '2xl' }} py="l" mb="xl">
       <Grid gridRowGap="xs">
@@ -47,7 +50,7 @@ const ProxyAndTransfer = ({
             width="13.0rem"
             mt="xs"
             onClick={deployProxy}
-            disabled={proxyLoading || isSettingAllowance || !!proxyErrors}
+            disabled={proxyLoading || isTransferringProxy || !!proxyErrors}
             loading={proxyLoading || !!proxyErrors}
           >
             Deploy
@@ -83,6 +86,25 @@ const ProxyAndTransfer = ({
             />
           )}
         </Text.p>
+      </Grid>
+      <Grid gridRowGap="xs" mt="l">
+        <Text.h4>Transfer Vault ownership to proxy</Text.h4>
+        <Text.p color="darkLavender" fontSize="l" lineHeight="normal">
+          add text here
+        </Text.p>
+        {proxyTransferred ? (
+          <SuccessButton />
+        ) : (
+          <Button
+            width="13.0rem"
+            mt="xs"
+            onClick={transferCdp}
+            disabled={!proxyAddress || proxyLoading || isTransferringProxy}
+            loading={isSettingAllowance}
+          >
+            Transfer
+          </Button>
+        )}
       </Grid>
     </Card>
   );
