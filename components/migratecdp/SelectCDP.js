@@ -7,13 +7,13 @@ import {
   Button,
   Radio,
   Overflow,
-  Link,
   Box,
   Flex,
   Loader
 } from '@makerdao/ui-components-core';
 import { colors } from '@makerdao/design-system-constants';
 import { getColor } from '../../utils/theme';
+import round from 'lodash/round';
 
 const RADIO_WIDTH = '2rem';
 const RADIO_CONTAINER_WIDTH = '4rem';
@@ -103,6 +103,8 @@ export default ({
   saiAvailable,
   selectedCDP
 }) => {
+  const hasTooLargeCdp = cdps.some(c => c.debtValue > saiAvailable);
+
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['16px', '0']}>
       <Text.h2 textAlign="center">Select CDP to Migrate</Text.h2>
@@ -160,9 +162,12 @@ export default ({
           ))}
         </Grid>
       </Overflow>
-      <Grid color="steelLight" textAlign="center">
-        <Link>Why can't I select some CDPs?</Link>
-      </Grid>
+      {hasTooLargeCdp && (
+        <Grid color="steelLight" textAlign="center">
+          CDPs with more than {round(saiAvailable, 2)} SAI in debt cannot be
+          migrated at this time. Please try again later.
+        </Grid>
+      )}
       <Grid
         justifySelf="center"
         gridTemplateColumns="auto auto"
