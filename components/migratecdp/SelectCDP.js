@@ -61,7 +61,11 @@ function ListItem({ cdp, onSelect, saiAvailable, checked }) {
           />
           <span>{cdp.id}</span>
           {/* Collateralization */}
-          <span>{cdp.collateralizationRatio}%</span>
+          <span>
+            {cdp.collateralizationRatio === 'Infinity'
+              ? '---'
+              : cdp.collateralizationRatio + '%'}
+          </span>
           {/* Debt Value */}
           <span>{cdp.debtValue} DAI</span>
           {/* Fee in DAI */}
@@ -80,10 +84,7 @@ function ListItem({ cdp, onSelect, saiAvailable, checked }) {
           />
           <Text fontSize="20px">CDP {cdp.id}</Text>
         </Flex>
-        <ListItemRow
-          label="Current Ratio"
-          value={cdp.collateralizationRatio + '%'}
-        />
+        <ListItemRow label="Current Ratio" value={cdp.collateralizationRatio} />
         <ListItemRow label="Dai Drawn" value={cdp.debtValue + ' DAI'} dark />
         <ListItemRow label="Fee in MKR" value={cdp.govFeeMKR + ' MKR'} />
       </Box>

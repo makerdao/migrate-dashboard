@@ -64,7 +64,9 @@ function MigrateCDP() {
         allCDPs[account].map(async cdpId => {
           let cdp = await maker.getCdp(cdpId);
           let data = await getCdpData(cdp, maker);
-          fetchedCDPs = fetchedCDPs.concat({ ...cdp, ...data });
+          fetchedCDPs = fetchedCDPs
+            .concat({ ...cdp, ...data })
+            .sort((a, b) => parseFloat(b.debtValue) - parseFloat(a.debtValue));
           setCdps(fetchedCDPs);
         });
       });
