@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Text,
   Grid,
@@ -13,7 +13,7 @@ import { MAX_UINT_BN } from '../../utils/constants';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
 
-const PayAndMigrate = ({ onPrev, onNext }) => {
+const PayAndMigrate = ({ onPrev, onNext, selectedCDP }) => {
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [mkrApprovePending, setMkrApprovePending] = useState(null);
   const [proxyDetails, setProxyDetails] = useState({});
@@ -32,7 +32,7 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
       console.log('tx failed', err);
     }
     setMkrApprovePending(false);
-  }, [account]);
+  }, [account, maker]);
 
   useEffect(() => {
     (async () => {
@@ -64,7 +64,7 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
                 </Table.td>
                 <Table.td textAlign="right">
                   <Text fontWeight="medium">
-                    <Link>3228</Link>
+                    <Link>{selectedCDP.id}</Link>
                   </Text>
                 </Table.td>
               </Table.tr>

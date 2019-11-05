@@ -138,7 +138,8 @@ function MigrateCDP() {
                   onSelect: selectCDP,
                   onReset: reset,
                   cdps,
-                  saiAvailable
+                  saiAvailable,
+                  selectedCDP
                 })}
               </FadeInFromSide>
             );
