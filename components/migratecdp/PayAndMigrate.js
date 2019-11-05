@@ -55,7 +55,7 @@ const PayAndMigrate = ({
 
   useEffect(() => {
     (async () => {
-      if (maker) {
+      if (maker && account) {
         // assuming they have a proxy
         const proxyAddress = await maker.service('proxy').currentProxy();
         const connectedWaleltAllowance = await maker
@@ -68,7 +68,7 @@ const PayAndMigrate = ({
         });
       }
     })();
-  }, [maker]);
+  }, [account, maker]);
 
   return (
     <Grid maxWidth="912px" gridRowGap="l">
