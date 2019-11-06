@@ -23,11 +23,11 @@ const steps = [
 
 async function getCdpData(cdp) {
   const debtValue = (await cdp.getDebtValue()).toNumber().toFixed(2);
-  const govFeeMKRExact = (await cdp.getGovernanceFee()).toNumber();
+  const govFeeMKRExact = await cdp.getGovernanceFee();
   const govFeeMKR =
-    govFeeMKRExact > 0.01
-      ? govFeeMKRExact.toFixed(2)
-      : round(govFeeMKRExact, 6);
+    govFeeMKRExact.toNumber() > 0.01
+      ? govFeeMKRExact.toNumber().toFixed(2)
+      : round(govFeeMKRExact.toNumber(), 6);
   // const govFeeDai = (await cdp.getGovernanceFee(Maker.USD))
   //   .toNumber()
   //   .toFixed(2);
@@ -38,7 +38,8 @@ async function getCdpData(cdp) {
     collateralizationRatio,
     debtValue,
     // govFeeDai,
-    govFeeMKR
+    govFeeMKR,
+    govFeeMKRExact
   };
 }
 

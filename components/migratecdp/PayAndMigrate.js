@@ -12,6 +12,8 @@ import { MKR } from '@makerdao/dai-plugin-mcd';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
 
+const APPROVAL_FUDGE = 1.1;
+
 const PayAndMigrate = ({
   onPrev,
   onNext,
@@ -21,13 +23,15 @@ const PayAndMigrate = ({
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [mkrApprovePending, setMkrApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
-
   const { maker, account } = useMaker();
+  const { govFeeMKRExact } = selectedCDP;
 
   const giveProxyMkrAllowance = useCallback(async () => {
     setMkrApprovePending(true);
     try {
-      await maker.getToken(MKR).approveUnlimited(proxyDetails.address);
+      await maker
+        .getToken(MKR)
+        .approve(proxyDetails.address, govFeeMKRExact.times(APPROVAL_FUDGE));
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasMkrAllowance: true
@@ -36,11 +40,10 @@ const PayAndMigrate = ({
       console.log('unlock mkr tx failed', err);
     }
     setMkrApprovePending(false);
-  }, [account, maker]);
+  }, [maker, proxyDetails, govFeeMKRExact]);
 
   const migrateCdp = useCallback(async () => {
     try {
-      console.log(selectedCDP, 'selectedCDP');
       const mig = await maker
         .service('migration')
         .getMigration('single-to-multi-cdp');
@@ -60,11 +63,13 @@ const PayAndMigrate = ({
         const connectedWalletAllowance = await maker
           .getToken(MKR)
           .allowance(account.address, proxyAddress);
-        const hasMkrAllowance = connectedWalletAllowance.gt(1000000);
+        const hasMkrAllowance = connectedWalletAllowance.gte(
+          govFeeMKRExact.times(APPROVAL_FUDGE)
+        );
         setProxyDetails({ hasMkrAllowance, address: proxyAddress });
       }
     })();
-  }, [account, maker]);
+  }, [account, maker, govFeeMKRExact]);
 
   return (
     <Grid maxWidth="912px" gridRowGap="l">
