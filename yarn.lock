@@ -965,10 +965,10 @@
     "@makerdao/services-core" "^0.9.9"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-migrations@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-0.1.3.tgz#862893af9b69991b98e6cfb61d4fc47afa655904"
-  integrity sha512-RDCcg060GpgAjqLfCnVlG3MjDcXTH2MjrCMGXHA1L0AlusyFnTy7ZOjWbxhegjYmtTg2ZEZgJYDWIqouVoxHpA==
+"@makerdao/dai-plugin-migrations@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-0.1.4.tgz#dca46fec4bf0dd6fd4a94c653b4fb3d1ceb4b03a"
+  integrity sha512-AS8szwEELfL+vUfJeHelq/G83bqZZh92gw+ELzGTt84ArDsV9ahiZTUwE4DGCVJw7+2UVHS/f763ID16vAoO/w==
   dependencies:
     "@makerdao/currency" "^0.9.5"
     "@makerdao/services-core" "^0.9.5"
@@ -1040,10 +1040,10 @@
     lodash "^4.17.15"
     toposort "^2.0.2"
 
-"@makerdao/ui-components-core@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@makerdao/ui-components-core/-/ui-components-core-0.3.1.tgz#4e0c9d851bfaaffb0b97920578a05e4f59deb323"
-  integrity sha512-SZ7wObYKHsPmsNVNBl7Iv7tNkLbM0ptIDkbPJNF3nXVggeAQQMgHU0T30HOuJwv7YyjhcNGpluha9WD+L66HKQ==
+"@makerdao/ui-components-core@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@makerdao/ui-components-core/-/ui-components-core-0.3.2.tgz#63e6a2636b115576e4e01efc9c73a4b006beef98"
+  integrity sha512-iu4PiAW1zMoakxKY1hGTlnJ2BkcGR9nTybxbrcQoXYIXwvaQiL5dKAlReysX593PY1eA2g3phMp9aQ3AQYIEng==
   dependencies:
     "@makerdao/design-system-constants" "0.2.0"
     react-onclickoutside "^6.7.1"

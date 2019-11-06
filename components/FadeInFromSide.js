@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 
 const FadeInFromSide = styled.div`
@@ -31,4 +32,6 @@ const FadeInFromSide = styled.div`
   `}
 `;
 
-export default FadeInFromSide;
+export default ({ children, ...props }) => {
+  return <FadeInFromSide {...props}>{props.active && children}</FadeInFromSide>;
+};

@@ -7,13 +7,13 @@ import {
   Button,
   Radio,
   Overflow,
-  Link,
   Box,
   Flex,
   Loader
 } from '@makerdao/ui-components-core';
 import { colors } from '@makerdao/design-system-constants';
 import { getColor } from '../../utils/theme';
+import round from 'lodash/round';
 
 const RADIO_WIDTH = '2rem';
 const RADIO_CONTAINER_WIDTH = '4rem';
@@ -46,7 +46,7 @@ function ListItem({ cdp, onSelect, saiAvailable, checked }) {
     <Card px={['0', 'l']} py={['0', 'm']}>
       <Box display={['none', 'block']}>
         <Grid
-          gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(5, 1fr) ${AESTHETIC_ROW_PADDING}`}
+          gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(4, 1fr) ${AESTHETIC_ROW_PADDING}`}
           gridColumnGap="m"
           alignItems="center"
           fontSize="m"
@@ -71,17 +71,18 @@ function ListItem({ cdp, onSelect, saiAvailable, checked }) {
           {/* Debt Value */}
           <span>{cdp.debtValue} DAI</span>
           {/* Fee in DAI */}
-          <span>{cdp.govFeeDai} DAI</span>
+          {/* <span>{cdp.govFeeDai} DAI</span> */}
           {/* Fee in MKR */}
           <span>{cdp.govFeeMKR} MKR</span>
         </Grid>
       </Box>
-      <Box display={['block', 'none']}>
+      <Box display={['block', 'none']} onClick={() => onSelect(cdp)}>
         <Flex pt="m" pl="m" alignItems="center">
           <Radio
             disabled={cdp.debtValue > saiAvailable}
             onChange={() => onSelect(cdp)}
             fontSize={RADIO_WIDTH}
+            checked={checked}
             mr="9px"
           />
           <Text fontSize="20px">CDP {cdp.id}</Text>
@@ -103,6 +104,8 @@ export default ({
   saiAvailable,
   selectedCDP
 }) => {
+  const hasTooLargeCdp = cdps.some(c => c.debtValue > saiAvailable);
+
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['16px', '0']}>
       <Text.h2 textAlign="center">Select CDP to Migrate</Text.h2>
@@ -122,7 +125,7 @@ export default ({
             <Grid
               p="l"
               pb="0"
-              gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(5, 1fr) ${AESTHETIC_ROW_PADDING}`}
+              gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(4, 1fr) ${AESTHETIC_ROW_PADDING}`}
               gridColumnGap="m"
               alignItems="center"
               fontWeight="medium"
@@ -131,25 +134,24 @@ export default ({
                 white-space: nowrap;
               `}
             >
-              {loadingCdps ? (
-                <Loader
-                  display="inline-block"
-                  size="1.8rem"
-                  color={getColor('makerTeal')}
-                  justifySelf="end"
-                  m="auto"
-                  bg={colors.lightGrey}
-                />
-              ) : (
-                <span />
-              )}
+
               <Text t="subheading">CDP ID</Text>
               <Text t="subheading">Current Ratio</Text>
               <Text t="subheading">Dai Debt</Text>
-              <Text t="subheading">Fee In DAI</Text>
+              {/* <Text t="subheading">Fee In DAI</Text> */}
               <Text t="subheading">Fee in MKR</Text>
             </Grid>
           </Box>
+          {loadingCdps && (
+            <Loader
+              display="inline-block"
+              size="1.8rem"
+              color={getColor('makerTeal')}
+              justifySelf="end"
+              m="auto"
+              bg={colors.lightGrey}
+            />
+          )}
           {cdps.map(cdp => (
             <ListItem
               cdp={cdp}
@@ -160,9 +162,12 @@ export default ({
           ))}
         </Grid>
       </Overflow>
-      <Grid color="steelLight" textAlign="center">
-        <Link>Why can't I select some CDPs?</Link>
-      </Grid>
+      {hasTooLargeCdp && (
+        <Grid color="steelLight" textAlign="center">
+          CDPs with more than {round(saiAvailable, 2)} SAI in debt cannot be
+          migrated at this time. Please try again later.
+        </Grid>
+      )}
       <Grid
         justifySelf="center"
         gridTemplateColumns="auto auto"

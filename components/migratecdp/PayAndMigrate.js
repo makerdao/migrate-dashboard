@@ -9,9 +9,10 @@ import {
   CardTabs
 } from '@makerdao/ui-components-core';
 import { MKR } from '@makerdao/dai-plugin-mcd';
-import { MAX_UINT_BN } from '../../utils/constants';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
+
+const APPROVAL_FUDGE = 1.1;
 
 const PayAndMigrate = ({
   onPrev,
@@ -22,13 +23,15 @@ const PayAndMigrate = ({
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [mkrApprovePending, setMkrApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
-
   const { maker, account } = useMaker();
+  const { govFeeMKRExact } = selectedCDP;
 
   const giveProxyMkrAllowance = useCallback(async () => {
     setMkrApprovePending(true);
     try {
-      await maker.getToken(MKR).approveUnlimited(proxyDetails.address);
+      await maker
+        .getToken(MKR)
+        .approve(proxyDetails.address, govFeeMKRExact.times(APPROVAL_FUDGE));
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasMkrAllowance: true
@@ -37,11 +40,10 @@ const PayAndMigrate = ({
       console.log('unlock mkr tx failed', err);
     }
     setMkrApprovePending(false);
-  }, [account, maker]);
+  }, [maker, proxyDetails, govFeeMKRExact]);
 
   const migrateCdp = useCallback(async () => {
     try {
-      console.log(selectedCDP, 'selectedCDP');
       const mig = await maker
         .service('migration')
         .getMigration('single-to-multi-cdp');
@@ -55,20 +57,19 @@ const PayAndMigrate = ({
 
   useEffect(() => {
     (async () => {
-      if (maker) {
+      if (maker && account) {
         // assuming they have a proxy
         const proxyAddress = await maker.service('proxy').currentProxy();
-        const connectedWaleltAllowance = await maker
+        const connectedWalletAllowance = await maker
           .getToken(MKR)
           .allowance(account.address, proxyAddress);
-        const proxyHasMkrAllowance = connectedWaleltAllowance.eq(MAX_UINT_BN);
-        setProxyDetails({
-          hasMkrAllowance: proxyHasMkrAllowance,
-          address: proxyAddress
-        });
+        const hasMkrAllowance = connectedWalletAllowance.gte(
+          govFeeMKRExact.times(APPROVAL_FUDGE)
+        );
+        setProxyDetails({ hasMkrAllowance, address: proxyAddress });
       }
     })();
-  }, [maker]);
+  }, [account, maker, govFeeMKRExact]);
 
   return (
     <Grid maxWidth="912px" gridRowGap="l">
