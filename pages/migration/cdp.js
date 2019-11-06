@@ -51,7 +51,7 @@ async function getAllCdpData(allCdps, maker) {
     cdpIds.map(async id => {
       const cdp = await maker.getCdp(id);
       const data = await getCdpData(cdp);
-      return { ...cdp, ...data };
+      return { ...cdp, ...data, give: cdp.give };
     })
   );
   return allCdpData.sort(
