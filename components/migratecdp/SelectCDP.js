@@ -42,7 +42,7 @@ function ListItemRow({ label, value, dark }) {
 
 function ListItem({ cdp, onSelect, saiAvailable, checked }) {
   return (
-    <Card px={['0', 'l']} py={['0', 'm']}>
+    <Card px={['0', 'l']} py={['0', 'm']} borderColor={checked ? '#1AAB9B' : '#D4D9E1'} border={checked ? '2px solid' : '1px solid'}>
       <Box display={['none', 'block']}>
         <Grid
           gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(4, 1fr) ${AESTHETIC_ROW_PADDING}`}
@@ -173,7 +173,7 @@ export default ({
         gridColumnGap="m"
       >
         <Button variant="secondary-outline" onClick={onPrev}>
-          Cancel
+          Back
         </Button>
         <Button
           disabled={Object.keys(selectedCDP).length === 0}

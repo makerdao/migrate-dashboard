@@ -119,7 +119,12 @@ function MigrateCDP() {
           pt={['m', 'xl']}
           px="m"
         >
-          <Box bg={['white', 'rgba(0,0,0,0)']} p={['s']} style={{borderRadius: 6}}>
+          <Box
+            bg={['white', 'rgba(0,0,0,0)']}
+            p={['s']}
+            border={'1px solid #D8DFE3'}
+            style={{borderRadius: 6}}
+          >
             {account ? <Account account={account} /> : null}
           </Box>
           <Flex
