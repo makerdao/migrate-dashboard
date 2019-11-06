@@ -74,7 +74,7 @@ const PayAndMigrate = ({
   }, [account, maker, govFeeMKRExact]);
 
   return (
-    <Grid maxWidth="912px" gridRowGap="l">
+    <Grid maxWidth="912px" gridRowGap="l" px={['s', 0]} mx={[0, 'auto']} width={['100vw', 'auto']}>
       <Text.h2 textAlign="center">Confirm CDP Migration</Text.h2>
       <CardTabs headers={['Pay with MKR']}>
         <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">

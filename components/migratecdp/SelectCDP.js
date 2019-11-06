@@ -107,7 +107,7 @@ export default ({
   const hasTooLargeCdp = cdps.some(c => c.debtValue > saiAvailable);
 
   return (
-    <Grid maxWidth="912px" gridRowGap="m" px={['16px', '0']}>
+    <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
       <Text.h2 textAlign="center">Select CDP to Migrate</Text.h2>
       <Text.p
         textAlign="center"

@@ -5,7 +5,12 @@ import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
 
 function Migrating({ onNext, onPrev, onReset, onClose, migrationTxObject }) {
   return (
-    <Grid gridRowGap="m">
+    <Grid
+      gridRowGap="m"
+      px={['s', 0]}
+      mx={[0, 'auto']}
+      width={['100vw', 'auto']}
+    >
       <Text.h2 textAlign="center">Your CDP is being migrated</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender">
         The estimated time is 8 minutes.
