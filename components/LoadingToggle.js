@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Text, Loader, Toggle } from '@makerdao/ui-components-core';
-import theme from '../utils/theme';
+import { getColor } from '../utils/theme';
 
 function LoadingToggle({
   defaultText,
@@ -24,7 +24,7 @@ function LoadingToggle({
         <Loader
           display="inline-block"
           size="1.8rem"
-          color={theme.colors.makerTeal}
+          color={getColor('makerTeal')}
           mr="xs"
           justifySelf="end"
         />

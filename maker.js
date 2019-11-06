@@ -23,7 +23,8 @@ export async function instantiateMaker({ rpcUrl }) {
     provider: {
       url: rpcUrl,
       type: 'HTTP'
-    }
+    },
+    multicall: true
   };
 
   const maker = await Maker.create('http', config);

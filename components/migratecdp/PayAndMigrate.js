@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Text,
   Grid,
@@ -9,47 +9,69 @@ import {
   CardTabs
 } from '@makerdao/ui-components-core';
 import { MKR } from '@makerdao/dai-plugin-mcd';
-import { MAX_UINT_BN } from '../../utils/constants';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
 
-const PayAndMigrate = ({ onPrev, onNext }) => {
-  const [hasReadTOS, setHasReadTOS] = useState(false);
-  const [mkrApprovePending, setMkrApprovePending] = useState(null);
-  const [proxyDetails, setProxyDetails] = useState({});
+const APPROVAL_FUDGE = 1.1;
 
+const PayAndMigrate = ({
+  onPrev,
+  onNext,
+  selectedCDP,
+  setMigrationTxObject
+}) => {
+  const [hasReadTOS, setHasReadTOS] = useState(false);
+  const [mkrApprovePending, setMkrApprovePending] = useState(false);
+  const [proxyDetails, setProxyDetails] = useState({});
   const { maker, account } = useMaker();
+  const { govFeeMKRExact } = selectedCDP;
 
   const giveProxyMkrAllowance = useCallback(async () => {
     setMkrApprovePending(true);
     try {
-      await maker.getToken(MKR).approveUnlimited(proxyDetails.address);
+      await maker
+        .getToken(MKR)
+        .approve(proxyDetails.address, govFeeMKRExact.times(APPROVAL_FUDGE));
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasMkrAllowance: true
       }));
     } catch (err) {
-      console.log('tx failed', err);
+      console.log('unlock mkr tx failed', err);
     }
     setMkrApprovePending(false);
-  }, [account]);
+  }, [maker, proxyDetails, govFeeMKRExact]);
+
+  const migrateCdp = useCallback(async () => {
+    try {
+      const mig = await maker
+        .service('migration')
+        .getMigration('single-to-multi-cdp');
+      const migrationTxObject = mig.execute(selectedCDP.id);
+      setMigrationTxObject(migrationTxObject);
+      await migrationTxObject;
+    } catch (err) {
+      console.log('migrate tx failed', err);
+    }
+  }, [account, maker, selectedCDP]);
 
   useEffect(() => {
     (async () => {
-      if (maker) {
+      if (maker && account) {
         // assuming they have a proxy
         const proxyAddress = await maker.service('proxy').currentProxy();
-        const connectedWaleltAllowance = await maker
-          .getToken(MKR)
-          .allowance(account.address, proxyAddress);
-        const proxyHasMkrAllowance = connectedWaleltAllowance.eq(MAX_UINT_BN);
-        setProxyDetails({
-          hasMkrAllowance: proxyHasMkrAllowance,
-          address: proxyAddress
-        });
+        if (proxyAddress){
+          const connectedWalletAllowance = await maker
+            .getToken(MKR)
+            .allowance(account.address, proxyAddress);
+          const hasMkrAllowance = connectedWalletAllowance.gte(
+            govFeeMKRExact.times(APPROVAL_FUDGE)
+          );
+          setProxyDetails({ hasMkrAllowance, address: proxyAddress });
+        }
       }
     })();
-  }, [maker]);
+  }, [account, maker, govFeeMKRExact]);
 
   return (
     <Grid maxWidth="912px" gridRowGap="l">
@@ -64,7 +86,7 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
                 </Table.td>
                 <Table.td textAlign="right">
                   <Text fontWeight="medium">
-                    <Link>3228</Link>
+                    <Link>{selectedCDP.id}</Link>
                   </Text>
                 </Table.td>
               </Table.tr>
@@ -73,7 +95,7 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
                   <Text>Stability Fee</Text>
                 </Table.td>
                 <Table.td textAlign="right">
-                  <Text fontWeight="medium">23.32 DAI</Text>
+                  <Text fontWeight="medium">{selectedCDP.govFeeMKR} MKR</Text>
                 </Table.td>
               </Table.tr>
             </Table.tbody>
@@ -103,41 +125,6 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
             </Text>
           </Grid>
         </Grid>
-        <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
-          <Table width="100%">
-            <Table.tbody>
-              <Table.tr>
-                <Table.td>
-                  <Text>CDP ID</Text>
-                </Table.td>
-                <Table.td textAlign="right">
-                  <Text fontWeight="medium">
-                    <Link>3228</Link>
-                  </Text>
-                </Table.td>
-              </Table.tr>
-              <Table.tr>
-                <Table.td>
-                  <Text>Stability Fee</Text>
-                </Table.td>
-                <Table.td textAlign="right">
-                  <Text fontWeight="medium">23.32 MKR</Text>
-                </Table.td>
-              </Table.tr>
-            </Table.tbody>
-          </Table>
-          <Grid alignItems="center" gridTemplateColumns="auto 1fr">
-            <Checkbox
-              mr="s"
-              fontSize="l"
-              checked={hasReadTOS}
-              onChange={evt => setHasReadTOS(evt.target.checked)}
-            />
-            <Text t="caption" color="steel">
-              I have read and accept the <Link>Terms of Service</Link>.
-            </Text>
-          </Grid>
-        </Grid>
       </CardTabs>
       <Grid
         gridTemplateColumns="auto auto"
@@ -154,7 +141,10 @@ const PayAndMigrate = ({ onPrev, onNext }) => {
         <Button
           justifySelf="center"
           disabled={!hasReadTOS || !proxyDetails.hasMkrAllowance}
-          onClick={onNext}
+          onClick={() => {
+            migrateCdp();
+            onNext();
+          }}
         >
           Pay and Migrate
         </Button>
