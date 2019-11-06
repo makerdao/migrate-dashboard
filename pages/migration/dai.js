@@ -3,13 +3,17 @@ import { Stepper, Grid, Text, Flex } from '@makerdao/ui-components-core';
 import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
 import useMaker from '../../hooks/useMaker';
+import Account from '../../components/Account';
+import SCDRedeem from '../../components/migratesai/SCDRedeem';
+import Confirmation from '../../components/migratesai/Confirmation';
 
 import FadeInFromSide from '../../components/FadeInFromSide';
 
 import crossCircle from '../../assets/icons/crossCircle.svg';
 
 const steps = [
-  props => <div {...props} />
+  props => <SCDRedeem {...props} />,
+  props => <Confirmation {...props} />,
 ];
 
 function MigrateDai() {
