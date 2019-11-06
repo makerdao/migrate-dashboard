@@ -21,7 +21,8 @@ const steps = [
 ];
 
 async function getCdpData(cdp) {
-  const debtValue = (await cdp.getDebtValue()).toNumber().toFixed(2);
+  const debtValueExact = await cdp.getDebtValue();
+  const debtValue = debtValueExact.toNumber().toFixed(2);
   const govFeeMKRExact = await cdp.getGovernanceFee();
   const govFeeMKR =
     govFeeMKRExact.toNumber() > 0.01
@@ -35,11 +36,26 @@ async function getCdpData(cdp) {
   ).toFixed(2);
   return {
     collateralizationRatio,
+    debtValueExact,
     debtValue,
     // govFeeDai,
     govFeeMKR,
     govFeeMKRExact
   };
+}
+
+async function getAllCdpData(allCdps, maker) {
+  const cdpIds = Object.values(allCdps).flat();
+  const allCdpData = await Promise.all(
+    cdpIds.map(async id => {
+      const cdp = await maker.getCdp(id);
+      const data = await getCdpData(cdp);
+      return { ...cdp, ...data };
+    })
+  );
+  return allCdpData.sort(
+    (a, b) => b.debtValueExact.toNumber() - a.debtValueExact.toNumber()
+  );
 }
 
 function MigrateCDP() {
@@ -58,30 +74,14 @@ function MigrateCDP() {
   useEffect(() => {
     (async () => {
       if (!maker || !account) return;
+      // FIXME this is redundant
       const mig = await maker
         .service('migration')
         .getMigration('single-to-multi-cdp');
-      const allCDPs = await mig.check();
+      const allCdps = await mig.check();
       const saiAvailable = (await mig.migrationSaiAvailable()).toNumber();
       setSaiAvailable(saiAvailable);
-      const accounts = Object.keys(allCDPs);
-      let fetchedCDPs = [];
-      await Promise.all(
-        accounts.map(account =>
-          Promise.all(
-            allCDPs[account].map(async cdpId => {
-              let cdp = await maker.getCdp(cdpId);
-              let data = await getCdpData(cdp, maker);
-              fetchedCDPs = fetchedCDPs
-                .concat({ ...cdp, ...data, give: cdp.give })
-                .sort(
-                  (a, b) => parseFloat(b.debtValue) - parseFloat(a.debtValue)
-                );
-              setCdps(fetchedCDPs);
-            })
-          )
-        )
-      );
+      setCdps(await getAllCdpData(allCdps, maker));
       setLoadingCdps(false);
     })();
   }, [maker, account]);
@@ -90,7 +90,7 @@ function MigrateCDP() {
     return 'dsProxyAddress' in cdp;
   };
 
-  const toPrevStepOrClose = () => {
+  const onPrev = () => {
     if (currentStep <= 0) Router.replace('/overview');
     setCurrentStep(
       ownedByProxy(selectedCDP) && currentStep === 2
@@ -98,16 +98,15 @@ function MigrateCDP() {
         : currentStep - 1
     );
   };
-  const toNextStep = () =>
+
+  const onNext = () =>
     setCurrentStep(
       ownedByProxy(selectedCDP) && currentStep === 0
         ? currentStep + 2
         : currentStep + 1
     );
-  const reset = () => setCurrentStep(0);
-  const selectCDP = cdp => {
-    setSelectedCDP(cdp);
-  };
+  const onReset = () => setCurrentStep(0);
+
   return (
     <FlowBackground open={true}>
       <Grid gridRowGap={['m', 'xl']}>
@@ -133,11 +132,10 @@ function MigrateCDP() {
               >
                 {step({
                   onClose: () => Router.replace('/overview'),
-
-                  onPrev: toPrevStepOrClose,
-                  onNext: toNextStep,
-                  onSelect: selectCDP,
-                  onReset: reset,
+                  onPrev,
+                  onNext,
+                  onSelect: setSelectedCDP,
+                  onReset,
                   cdps,
                   loadingCdps,
                   saiAvailable,
