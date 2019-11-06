@@ -1,11 +1,18 @@
 import React from 'react';
 import checkmark from '../assets/icons/largeCheckmark.svg';
-import { Button } from '@makerdao/ui-components-core';
+import { Button, Text } from '@makerdao/ui-components-core';
 
 const SuccessButton = () => {
   return (
-    <Button variant="primary-outline" width="13.0rem" mt="xs" disabled>
+    <Button
+      variant="primary-outline"
+      justifySelf={['center', 'left']}
+      width={["26.0rem", "13.0rem"]}
+      mt="xs"
+      disabled
+    >
       <img src={checkmark} />
+      <Text ml={'s'} display={['inline', 'none']} color='teal.500'>Transaction Complete</Text>
     </Button>
   );
 };

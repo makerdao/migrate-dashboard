@@ -122,7 +122,7 @@ function MigrateCDP() {
           <Box
             bg={['white', 'rgba(0,0,0,0)']}
             p={['s']}
-            border={'1px solid #D8DFE3'}
+            border={['1px solid #D8DFE3', 'none']}
             style={{borderRadius: 6}}
           >
             {account ? <Account account={account} /> : null}

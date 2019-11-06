@@ -111,7 +111,8 @@ const ProxyAndTransfer = ({
           <SuccessButton />
         ) : (
           <Button
-            width="13.0rem"
+            justifySelf={['center', 'left']}
+            width={["26.0rem", "13.0rem"]}
             mt="xs"
             onClick={transferCDP}
             disabled={!proxyAddress || proxyLoading || isTransferringCDP}
