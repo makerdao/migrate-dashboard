@@ -17,6 +17,7 @@ import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import Footer from '../components/Footer';
+import useStore from '../hooks/useStore';
 
 function Migration({
   title,
@@ -69,7 +70,7 @@ function countCdps(cdps) {
 }
 
 function showCdpCount(cdps) {
-  if (cdps === null) return '...';
+  if (!cdps) return '...';
   return countCdps(cdps);
 }
 
@@ -80,9 +81,9 @@ function showAmount(tok) {
 
 function Overview() {
   const { maker, account } = useMaker();
-  const [cdps, setCdps] = useState(null);
   const [sai, setSai] = useState(null);
   const [dai, setDai] = useState(null);
+  const [{ cdpMigrationCheck: cdps }, dispatch] = useStore();
 
   useEffect(() => {
     if (maker && !account) Router.replace('/');
@@ -93,13 +94,15 @@ function Overview() {
       if (!maker || !account) return;
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
-      setCdps(checks['single-to-multi-cdp']);
+      dispatch({type: 'assign', payload: {
+        cdpMigrationCheck: checks['single-to-multi-cdp']
+      }});
       setSai(checks['sai-to-dai']);
 
       const daiBalance = await maker.getToken('MDAI').balance();
       setDai(daiBalance);
     })();
-  }, [maker, account]);
+  }, [maker, account, dispatch]);
 
   // mocking as true for development
   const shouldShowCdps = true; // countCdps(cdps) >= 0;

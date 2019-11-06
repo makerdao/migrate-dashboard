@@ -11,6 +11,7 @@ import Migrating from '../../components/migratecdp/Migrating';
 import Complete from '../../components/migratecdp/Complete';
 import useMaker from '../../hooks/useMaker';
 import round from 'lodash/round';
+import useStore from '../../hooks/useStore';
 
 const steps = [
   props => <SelectCDP {...props} />,
@@ -71,20 +72,20 @@ function MigrateCDP() {
     if (!account) Router.replace('/');
   }, [account]);
 
+  const [{ cdpMigrationCheck }] = useStore();
+
   useEffect(() => {
     (async () => {
       if (!maker || !account) return;
-      // FIXME this is redundant
       const mig = await maker
         .service('migration')
         .getMigration('single-to-multi-cdp');
-      const allCdps = await mig.check();
       const saiAvailable = (await mig.migrationSaiAvailable()).toNumber();
       setSaiAvailable(saiAvailable);
-      setCdps(await getAllCdpData(allCdps, maker));
+      setCdps(await getAllCdpData(cdpMigrationCheck, maker));
       setLoadingCdps(false);
     })();
-  }, [maker, account]);
+  }, [maker, account, cdpMigrationCheck]);
 
   const ownedByProxy = cdp => {
     return 'dsProxyAddress' in cdp;
