@@ -5,7 +5,7 @@ import { TransitionGroup } from 'react-transition-group';
 import { ThemeProvider, createGlobalStyle } from 'styled-components';
 import '@makerdao/ui-components-core/dist/styles/global.css';
 import MakerProvider from '../providers/MakerProvider';
-import { WalletProvider } from '../providers/WalletProvider';
+import WalletProvider from '../providers/WalletProvider';
 import theme, { getColor } from '../utils/theme';
 import { wallets, templates } from '../components/wallets';
 import Version from '../components/Version';
