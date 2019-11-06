@@ -60,7 +60,7 @@ const PayAndMigrate = ({
       if (maker && account) {
         // assuming they have a proxy
         const proxyAddress = await maker.service('proxy').currentProxy();
-        if (proxyAddress){
+        if (proxyAddress) {
           const connectedWalletAllowance = await maker
             .getToken(MKR)
             .allowance(account.address, proxyAddress);
@@ -120,7 +120,11 @@ const PayAndMigrate = ({
               checked={hasReadTOS}
               onChange={evt => setHasReadTOS(evt.target.checked)}
             />
-            <Text t="caption" color="steel">
+            <Text
+              t="caption"
+              color="steel"
+              onClick={() => setHasReadTOS(!hasReadTOS)}
+            >
               I have read and accept the <Link>Terms of Service</Link>.
             </Text>
           </Grid>

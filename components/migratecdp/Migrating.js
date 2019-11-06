@@ -8,8 +8,7 @@ function Migrating({ onNext, onPrev, onReset, onClose, migrationTxObject }) {
     <Grid gridRowGap="m">
       <Text.h2 textAlign="center">Your CDP is being migrated</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender">
-        The estimated time is 8 minutes. You can safely leave this page and
-        return.
+        The estimated time is 8 minutes.
       </Text.p>
       <Button
         justifySelf="center"
@@ -21,12 +20,6 @@ function Migrating({ onNext, onPrev, onReset, onClose, migrationTxObject }) {
         View transaction details <img src={arrowTopRight} />
       </Button>
 
-      <Grid gridRowGap="s" justifySelf="center">
-        <Button onClick={onReset}>Migrate another CDP</Button>
-        <Button variant="secondary-outline" onClick={onClose}>
-          Exit
-        </Button>
-      </Grid>
       {/* DELETE ME AFTER: */}
       <Link onClick={onNext}>next</Link>
       <Link onClick={onPrev}>back</Link>
