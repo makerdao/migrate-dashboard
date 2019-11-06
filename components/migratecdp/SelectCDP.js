@@ -136,7 +136,7 @@ export default ({
               <span />
               <Text t="subheading">CDP ID</Text>
               <Text t="subheading">Current Ratio</Text>
-              <Text t="subheading">Dai Debt</Text>
+              <Text t="subheading">Dai Drawn</Text>
               {/* <Text t="subheading">Fee In DAI</Text> */}
               <Text t="subheading">Fee in MKR</Text>
             </Grid>
