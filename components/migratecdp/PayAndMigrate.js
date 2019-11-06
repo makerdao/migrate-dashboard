@@ -60,13 +60,15 @@ const PayAndMigrate = ({
       if (maker && account) {
         // assuming they have a proxy
         const proxyAddress = await maker.service('proxy').currentProxy();
-        const connectedWalletAllowance = await maker
-          .getToken(MKR)
-          .allowance(account.address, proxyAddress);
-        const hasMkrAllowance = connectedWalletAllowance.gte(
-          govFeeMKRExact.times(APPROVAL_FUDGE)
-        );
-        setProxyDetails({ hasMkrAllowance, address: proxyAddress });
+        if (proxyAddress){
+          const connectedWalletAllowance = await maker
+            .getToken(MKR)
+            .allowance(account.address, proxyAddress);
+          const hasMkrAllowance = connectedWalletAllowance.gte(
+            govFeeMKRExact.times(APPROVAL_FUDGE)
+          );
+          setProxyDetails({ hasMkrAllowance, address: proxyAddress });
+        }
       }
     })();
   }, [account, maker, govFeeMKRExact]);
