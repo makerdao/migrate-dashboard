@@ -93,7 +93,7 @@ function Overview() {
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
       setCdps(checks['single-to-multi-cdp']);
-      setSai(checks['sdai-to-mdai']);
+      setSai(checks['sai-to-dai']);
     })();
   }, [maker, account]);
 
