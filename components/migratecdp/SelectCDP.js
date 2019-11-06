@@ -11,7 +11,6 @@ import {
   Flex,
   Loader
 } from '@makerdao/ui-components-core';
-import { colors } from '@makerdao/design-system-constants';
 import { getColor } from '../../utils/theme';
 import round from 'lodash/round';
 
@@ -134,7 +133,7 @@ export default ({
                 white-space: nowrap;
               `}
             >
-
+              <span />
               <Text t="subheading">CDP ID</Text>
               <Text t="subheading">Current Ratio</Text>
               <Text t="subheading">Dai Debt</Text>
@@ -149,7 +148,7 @@ export default ({
               color={getColor('makerTeal')}
               justifySelf="end"
               m="auto"
-              bg={colors.lightGrey}
+              bg={getColor('lightGrey')}
             />
           )}
           {cdps.map(cdp => (
