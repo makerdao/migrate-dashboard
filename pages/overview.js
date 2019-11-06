@@ -31,10 +31,9 @@ function Migration({
       minHeight="25.3rem"
       buttonTag={
         <Grid gridRowGap="2xs">
-          <Text t="subheading" color="darkLavender">
-            {metadataTitle}
+          <Text t="heading" color="teal.500" alignSelf="center">
+            {metadataValue} {metadataTitle}
           </Text>
-          <Text t="body">{metadataValue}</Text>
         </Grid>
       }
       button={
@@ -46,6 +45,7 @@ function Migration({
           Continue
         </Button>
       }
+      flipped
     >
       <Grid
         gridTemplateAreas='"title recommended" "body body"'
@@ -74,8 +74,8 @@ function showCdpCount(cdps) {
 }
 
 function showSaiAmount(sai) {
-  if (sai === null || sai === 'undefined') return '...';
-  return round(sai.toNumber(), 2) + ' SAI';
+  if (sai === null) return '...';
+  return round(sai.toNumber(), 2);
 }
 
 function Overview() {
@@ -93,7 +93,7 @@ function Overview() {
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
       setCdps(checks['single-to-multi-cdp']);
-      setSai(checks['sai-to-dai']);
+      setSai(checks['sdai-to-mdai']);
     })();
   }, [maker, account]);
 
@@ -140,7 +140,7 @@ function Overview() {
               recommended
               title="Single Collateral Dai Redeemer"
               body="Redeem your Single Collateral Dai (Sai) into Multi Collateral Dai."
-              metadataTitle="Sai Balance"
+              metadataTitle="SCD to redeem"
               metadataValue={showSaiAmount(sai)}
               onSelected={() => Router.replace('/migration/dai')}
             />
