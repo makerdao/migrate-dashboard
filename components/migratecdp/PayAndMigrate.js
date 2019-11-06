@@ -12,7 +12,7 @@ import { MKR } from '@makerdao/dai-plugin-mcd';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
 
-const APPROVAL_FUDGE = 1.1;
+const APPROVAL_FUDGE = 2;
 
 const PayAndMigrate = ({
   onPrev,
