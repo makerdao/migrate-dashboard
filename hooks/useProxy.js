@@ -18,7 +18,6 @@ const initialState = {
 export default function useProxy() {
   const lang = {};
   const { maker, account} = useMaker();
-  const blockHeight = useBlockHeight(0);
   const [
     {
       initialProxyCheck,
@@ -42,7 +41,9 @@ export default function useProxy() {
 
     //newTxListener(txPromise, "Setting up proxy");
     const address = await txPromise;
-
+    
+    const txObject = maker.service('transactionManager').getTransaction(txPromise);
+    const blockHeight = txObject.receipt.blockNumber;
     updateState({
       startingBlockHeight: blockHeight,
       proxyAddress: address
