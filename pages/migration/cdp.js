@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Maker from '@makerdao/dai';
 import { Stepper, Grid, Text, Flex } from '@makerdao/ui-components-core';
 import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
@@ -11,7 +10,7 @@ import PayAndMigrate from '../../components/migratecdp/PayAndMigrate';
 import Migrating from '../../components/migratecdp/Migrating';
 import Complete from '../../components/migratecdp/Complete';
 import useMaker from '../../hooks/useMaker';
-
+import round from 'lodash/round';
 import crossCircle from '../../assets/icons/crossCircle.svg';
 
 const steps = [
@@ -24,17 +23,21 @@ const steps = [
 
 async function getCdpData(cdp) {
   const debtValue = (await cdp.getDebtValue()).toNumber().toFixed(2);
-  const govFeeMKR = (await cdp.getGovernanceFee()).toNumber().toFixed(2);
-  const govFeeDai = (await cdp.getGovernanceFee(Maker.USD))
-    .toNumber()
-    .toFixed(2);
+  const govFeeMKRExact = (await cdp.getGovernanceFee()).toNumber();
+  const govFeeMKR =
+    govFeeMKRExact > 0.01
+      ? govFeeMKRExact.toFixed(2)
+      : round(govFeeMKRExact, 6);
+  // const govFeeDai = (await cdp.getGovernanceFee(Maker.USD))
+  //   .toNumber()
+  //   .toFixed(2);
   const collateralizationRatio = (
     (await cdp.getCollateralizationRatio()) * 100
   ).toFixed(2);
   return {
     collateralizationRatio,
     debtValue,
-    govFeeDai,
+    // govFeeDai,
     govFeeMKR
   };
 }
