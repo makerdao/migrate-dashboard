@@ -147,7 +147,7 @@ function Overview() {
               body="Redeem your Single Collateral Dai (Sai) into Multi Collateral Dai."
               metadataTitle="SCD to redeem"
               metadataValue={showAmount(sai)}
-              onSelected={() => Router.replace('/migration/dai')}
+              onSelected={() => Router.push('/migration/dai')}
             />
           )}
           {shouldShowReverse && (
