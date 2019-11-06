@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Stepper, Grid, Text, Flex, Box } from '@makerdao/ui-components-core';
+import { Stepper, Grid, Flex } from '@makerdao/ui-components-core';
 import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
-import Account from '../../components/Account';
+import FlowHeader from '../../components/FlowHeader';
 import FadeInFromSide from '../../components/FadeInFromSide';
 import SelectCDP from '../../components/migratecdp/SelectCDP';
 import DeployProxy from '../../components/migratecdp/DeployProxy';
@@ -11,7 +11,6 @@ import Migrating from '../../components/migratecdp/Migrating';
 import Complete from '../../components/migratecdp/Complete';
 import useMaker from '../../hooks/useMaker';
 import round from 'lodash/round';
-import crossCircle from '../../assets/icons/crossCircle.svg';
 
 const steps = [
   props => <SelectCDP {...props} />,
@@ -112,33 +111,7 @@ function MigrateCDP() {
   return (
     <FlowBackground open={true}>
       <Grid gridRowGap={['m', 'xl']}>
-        <Grid
-          justifyContent={['space-between', 'flex-end']}
-          gridTemplateColumns="auto auto"
-          gridColumnGap="m"
-          pt={['m', 'xl']}
-          px="m"
-        >
-          <Box
-            bg={['white', 'rgba(0,0,0,0)']}
-            p={['s']}
-            border={['1px solid #D8DFE3', 'none']}
-            style={{borderRadius: 6}}
-          >
-            {account ? <Account account={account} /> : null}
-          </Box>
-          <Flex
-            alignItems="center"
-            onClick={() => Router.replace('/overview')}
-            css={{ cursor: 'pointer' }}
-          >
-            <img src={crossCircle} />
-            &nbsp;
-            <Text color="steel" fontWeight="medium" display={{ s: 'none' }}>
-              Close
-            </Text>
-          </Flex>
-        </Grid>
+        <FlowHeader account={account} />
         <Stepper
           steps={['Select CDP', 'Deploy Proxy', 'Pay & Migrate']}
           selected={currentStep}
