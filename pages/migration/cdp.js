@@ -113,7 +113,7 @@ function MigrateCDP() {
   useEffect(() => {
     if (migrationTxObject instanceof Promise) {
       migrationTxObject
-        .then(() => maker.service('transactionManager').confirm(migrationTxObject, 3))
+        // .then(() => maker.service('transactionManager').confirm(migrationTxObject, 3))
         .then(() => setCurrentStep(currentStep + 1));
     }
   }, [migrationTxObject]);
