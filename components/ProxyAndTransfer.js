@@ -9,6 +9,7 @@ import {
 
 import TooltipContents from './TooltipContents';
 import SuccessButton from './SuccessButton';
+import useMaker from '../hooks/useMaker';
 
 const ProxyAndTransfer = ({
   proxyAddress,
@@ -26,8 +27,10 @@ const ProxyAndTransfer = ({
 }) => {
   const { setup_text, confirmations_text } = labels;
   const [isTransferringCDP, setIsTransferringCDP] = useState(false);
+  const { maker } = useMaker();
   const transferCDP = useCallback(async () => {
     try {
+      if (!proxyAddress) proxyAddress = await maker.service('proxy').getProxyAddress();
       const give = selectedCDP.give(proxyAddress);
       setIsTransferringCDP(true);
       await give;
