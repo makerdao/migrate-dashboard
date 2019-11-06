@@ -1,11 +1,6 @@
 import { Box, Flex, Text } from '@makerdao/ui-components-core';
 
-function ButtonCard({ children, buttonTag, button, flipped, ...props }) {
-  const formatButtons = (isFlipped) => {
-    if (isFlipped) return [button, buttonTag]
-    return [buttonTag, button]
-  }
-  const buttons = formatButtons(flipped)
+function ButtonCard({ children, buttonTag, button, ...props }) {
   return (
     <Flex
       flexDirection="column"
@@ -19,7 +14,8 @@ function ButtonCard({ children, buttonTag, button, flipped, ...props }) {
       </Box>
       <Box px="m" py="m" borderTop="default">
         <Flex justifyContent="space-between">
-          {buttons}
+          {button}
+          {buttonTag}
         </Flex>
       </Box>
     </Flex>

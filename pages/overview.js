@@ -45,7 +45,6 @@ function Migration({
           Continue
         </Button>
       }
-      flipped
     >
       <Grid
         gridTemplateAreas='"title recommended" "body body"'
