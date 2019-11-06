@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Stepper, Grid, Text, Flex } from '@makerdao/ui-components-core';
+import { Stepper, Grid, Text, Flex, Box } from '@makerdao/ui-components-core';
 import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
 import Account from '../../components/Account';
@@ -119,7 +119,9 @@ function MigrateCDP() {
           pt={['m', 'xl']}
           px="m"
         >
-          {account ? <Account account={account} /> : null}
+          <Box bg={['white', 'rgba(0,0,0,0)']} p={['s']} style={{borderRadius: 6}}>
+            {account ? <Account account={account} /> : null}
+          </Box>
           <Flex
             alignItems="center"
             onClick={() => Router.replace('/overview')}
