@@ -82,6 +82,7 @@ function ListItem({ cdp, onSelect, saiAvailable, checked }) {
             disabled={cdp.debtValue > saiAvailable}
             onChange={() => onSelect(cdp)}
             fontSize={RADIO_WIDTH}
+            checked={checked}
             mr="9px"
           />
           <Text fontSize="20px">CDP {cdp.id}</Text>
