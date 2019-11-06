@@ -1,12 +1,11 @@
-import { useState } from 'react';
-import { Box, Text, Card, Button, Grid } from '@makerdao/ui-components-core';
-import SuccessButton from '../SuccessButton';
+import React, { useState } from 'react';
+import { Box, Text, Button, Grid } from '@makerdao/ui-components-core';
 import useProxy from '../../hooks/useProxy';
 import useBlockHeight from '../../hooks/useBlockHeight';
 import ProxyAndTransfer from '../ProxyAndTransfer';
 
 function DeployProxy({ onPrev, onNext, selectedCDP }) {
-    const {
+  const {
     proxyAddress,
     setupProxy,
     proxyLoading,
@@ -24,17 +23,20 @@ function DeployProxy({ onPrev, onNext, selectedCDP }) {
   }
 
   const labels = {
-    setup_text: "Proxies are used in the CDP Portal to bundle multiple transactions into one, saving transaction time and gas costs. This only has to be done once.",
+    setup_text:
+      'Proxies are used in the CDP Portal to bundle multiple transactions into one, saving transaction time and gas costs. This only has to be done once.',
     confirmations_text: `
-      Waiting for confirmations... ${startingBlockHeight === 0
-        ? 0
-        : blockHeight - startingBlockHeight > 10
-        ? 10
-        : blockHeight - startingBlockHeight} of 10`
+      Waiting for confirmations... ${
+        startingBlockHeight === 0
+          ? 0
+          : blockHeight - startingBlockHeight > 10
+          ? 10
+          : blockHeight - startingBlockHeight
+      } of 10`
   };
 
   return (
-    <Box maxWidth="71.8rem">
+    <Box maxWidth="71.8rem" mx={['s', 0]}>
       <Text.h2 textAlign="center" mb="xl">
         Set up proxy contract
       </Text.h2>

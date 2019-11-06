@@ -11,7 +11,6 @@ import {
   Flex,
   Loader
 } from '@makerdao/ui-components-core';
-import { colors } from '@makerdao/design-system-constants';
 import { getColor } from '../../utils/theme';
 import round from 'lodash/round';
 
@@ -107,7 +106,7 @@ export default ({
   const hasTooLargeCdp = cdps.some(c => c.debtValue > saiAvailable);
 
   return (
-    <Grid maxWidth="912px" gridRowGap="m" px={['16px', '0']}>
+    <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
       <Text.h2 textAlign="center">Select CDP to Migrate</Text.h2>
       <Text.p
         textAlign="center"
@@ -134,10 +133,10 @@ export default ({
                 white-space: nowrap;
               `}
             >
-
+              <span />
               <Text t="subheading">CDP ID</Text>
               <Text t="subheading">Current Ratio</Text>
-              <Text t="subheading">Dai Debt</Text>
+              <Text t="subheading">Dai Drawn</Text>
               {/* <Text t="subheading">Fee In DAI</Text> */}
               <Text t="subheading">Fee in MKR</Text>
             </Grid>
@@ -149,7 +148,7 @@ export default ({
               color={getColor('makerTeal')}
               justifySelf="end"
               m="auto"
-              bg={colors.lightGrey}
+              bg={getColor('lightGrey')}
             />
           )}
           {cdps.map(cdp => (

@@ -9,6 +9,7 @@ import {
 
 import TooltipContents from './TooltipContents';
 import SuccessButton from './SuccessButton';
+import useMaker from '../hooks/useMaker';
 
 const ProxyAndTransfer = ({
   proxyAddress,
@@ -26,8 +27,11 @@ const ProxyAndTransfer = ({
 }) => {
   const { setup_text, confirmations_text } = labels;
   const [isTransferringCDP, setIsTransferringCDP] = useState(false);
+  const { maker } = useMaker();
   const transferCDP = useCallback(async () => {
     try {
+      if (!proxyAddress)
+        proxyAddress = await maker.service('proxy').getProxyAddress();
       const give = selectedCDP.give(proxyAddress);
       setIsTransferringCDP(true);
       await give;
@@ -46,7 +50,7 @@ const ProxyAndTransfer = ({
           {setup_text}
         </Text.p>
         {proxyAddress ? (
-          <SuccessButton/>
+          <SuccessButton />
         ) : (
           <Button
             width="13.0rem"
@@ -67,22 +71,29 @@ const ProxyAndTransfer = ({
                 ml="2xs"
                 content={
                   <TooltipContents>
-                    Transactions to the network may sometimes take longer than expected. This can be for a variety of reasons but may be due to a congested network or a transaction sent with a low gas price. Some wallets enable users to resend a transaction with a higher gas price, otherwise check for your transaction on etherscan and come back again later
+                    Transactions to the network may sometimes take longer than
+                    expected. This can be for a variety of reasons but may be
+                    due to a congested network or a transaction sent with a low
+                    gas price. Some wallets enable users to resend a transaction
+                    with a higher gas price, otherwise check for your
+                    transaction on etherscan and come back again later
                   </TooltipContents>
                 }
               />
             </>
           )}
           {proxyLoading && confirmations_text}
-          {proxyDeployed &&
-            "Confirmed with 10 confirmations"}
+          {proxyDeployed && 'Confirmed with 10 confirmations'}
           {(proxyLoading || proxyDeployed) && (
             <Tooltip
               fontSize="m"
               ml="2xs"
               content={
                 <TooltipContents>
-                  Waiting for confirmations reduces the risk of your Maker Collateral Vault address changing. We require users to wait 10 block confirmations to ensure it's been created successfully. This will often take around 2 minutes.
+                  Waiting for confirmations reduces the risk of your Maker
+                  Collateral Vault address changing. We require users to wait 10
+                  block confirmations to ensure it's been created successfully.
+                  This will often take around 2 minutes.
                 </TooltipContents>
               }
             />
@@ -90,9 +101,11 @@ const ProxyAndTransfer = ({
         </Text.p>
       </Grid>
       <Grid gridRowGap="xs" mt="l">
-        <Text.h4>Transfer Vault ownership to proxy</Text.h4>
+        <Text.h4>Transfer CDP ownership to proxy</Text.h4>
         <Text.p color="darkLavender" fontSize="l" lineHeight="normal">
-          add text here
+          Proxies are used in the CDP Portal to bundle multiple transactions
+          into one, saving transaction time and gas costs. This only has to be
+          done once.
         </Text.p>
         {cdpTransferred ? (
           <SuccessButton />
