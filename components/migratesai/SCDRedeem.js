@@ -7,7 +7,7 @@ export default ({
   onPrev
 }) => {
   const [{ saiBalance }] = useStore();
-  console.log('sai balance:', saiBalance.toString());
+  if (saiBalance) console.log('sai balance:', saiBalance.toString());
   return (
     <Box maxWidth="71.8rem" mx={['s', 0]}>
       <Text.h2 textAlign="center" mb="xl">
