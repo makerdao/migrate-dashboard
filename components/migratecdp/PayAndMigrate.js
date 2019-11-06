@@ -9,7 +9,6 @@ import {
   CardTabs
 } from '@makerdao/ui-components-core';
 import { MKR } from '@makerdao/dai-plugin-mcd';
-import { MAX_UINT_BN } from '../../utils/constants';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
 
@@ -58,14 +57,11 @@ const PayAndMigrate = ({
       if (maker && account) {
         // assuming they have a proxy
         const proxyAddress = await maker.service('proxy').currentProxy();
-        const connectedWaleltAllowance = await maker
+        const connectedWalletAllowance = await maker
           .getToken(MKR)
           .allowance(account.address, proxyAddress);
-        const proxyHasMkrAllowance = connectedWaleltAllowance.eq(MAX_UINT_BN);
-        setProxyDetails({
-          hasMkrAllowance: proxyHasMkrAllowance,
-          address: proxyAddress
-        });
+        const hasMkrAllowance = connectedWalletAllowance.gt(1000000);
+        setProxyDetails({ hasMkrAllowance, address: proxyAddress });
       }
     })();
   }, [account, maker]);
