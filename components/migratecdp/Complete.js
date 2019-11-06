@@ -10,13 +10,19 @@ import {
 
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
 
-function Complete({ onReset, onClose }) {
+function Complete({ onReset, onClose, selectedCDP: cdp }) {
   return (
     <Grid gridRowGap="m">
       <Text.h2 textAlign="center">Migration complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        CDP #3228 has been successfully migrated to Multi-collateral Dai and the
-        new CDP Portal.
+        CDP {cdp.id} has been successfully migrated to Multi-collateral Dai.{' '}
+        <a
+          href={`https://oasis.app/borrow/${cdp.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View on Oasis
+        </a>
       </Text.p>
       <Button
         my="xs"
@@ -36,7 +42,7 @@ function Complete({ onReset, onClose }) {
                 <Text color="darkPurple">CDP ID</Text>
               </Table.td>
               <Table.td textAlign="right">
-                <Link fontWeight="medium">#3228</Link>
+                <Link fontWeight="medium">{cdp.id}</Link>
               </Table.td>
             </Table.tr>
             <Table.tr>
@@ -45,7 +51,7 @@ function Complete({ onReset, onClose }) {
               </Table.td>
               <Table.td textAlign="right">
                 <Text fontWeight="medium" color="darkPurple">
-                  23.32 DAI
+                  {cdp.govFeeMKR} MKR
                 </Text>
               </Table.td>
             </Table.tr>
