@@ -75,15 +75,14 @@ function showCdpCount(cdps) {
 }
 
 function showAmount(tok) {
-  if (tok === null) return '...';
+  if (!tok) return '...';
   return round(tok.toNumber(), 2);
 }
 
 function Overview() {
   const { maker, account } = useMaker();
-  const [sai, setSai] = useState(null);
   const [dai, setDai] = useState(null);
-  const [{ cdpMigrationCheck: cdps }, dispatch] = useStore();
+  const [{ cdpMigrationCheck: cdps, saiBalance }, dispatch] = useStore();
 
   useEffect(() => {
     if (maker && !account) Router.replace('/');
@@ -94,10 +93,13 @@ function Overview() {
       if (!maker || !account) return;
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
-      dispatch({type: 'assign', payload: {
-        cdpMigrationCheck: checks['single-to-multi-cdp']
-      }});
-      setSai(checks['sai-to-dai']);
+      dispatch({
+        type: 'assign',
+        payload: {
+          cdpMigrationCheck: checks['single-to-multi-cdp'],
+          saiBalance: checks['sai-to-dai']
+        }
+      });
 
       const daiBalance = await maker.getToken('MDAI').balance();
       setDai(daiBalance);
@@ -121,8 +123,10 @@ function Overview() {
 
       <Box maxWidth="112.5rem" width="100%" mx="auto" px="m" flexGrow="1">
         <Box mt={{ s: 'm', m: '2xl' }} maxWidth="64.2rem" width="100%">
-          <Text.h2 mb="s" textAlign={{s: 'center', l: 'left'}}>Migrate and Upgrade</Text.h2>
-          <Breakout textAlign={{s: 'center', l: 'left'}}>
+          <Text.h2 mb="s" textAlign={{ s: 'center', l: 'left' }}>
+            Migrate and Upgrade
+          </Text.h2>
+          <Breakout textAlign={{ s: 'center', l: 'left' }}>
             Use Migrate after system updates to move your Dai, MKR, and CDPs
             into their new versions.
           </Breakout>
@@ -149,7 +153,7 @@ function Overview() {
               title="Single Collateral Dai Redeemer"
               body="Redeem your Single Collateral Dai (Sai) into Multi Collateral Dai."
               metadataTitle="SCD to redeem"
-              metadataValue={showAmount(sai)}
+              metadataValue={showAmount(saiBalance)}
               onSelected={() => Router.push('/migration/dai')}
             />
           )}
@@ -163,7 +167,7 @@ function Overview() {
               onSelected={() => {
                 window.location = 'https://oasis.app/trade/account';
               }}
-              buttonLabel='Visit Oasis'
+              buttonLabel="Visit Oasis"
             />
           )}
           {/* { mkr &&
