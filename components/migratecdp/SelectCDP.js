@@ -76,7 +76,7 @@ function ListItem({ cdp, onSelect, saiAvailable, checked }) {
           <span>{cdp.govFeeMKR} MKR</span>
         </Grid>
       </Box>
-      <Box display={['block', 'none']}>
+      <Box display={['block', 'none']} onClick={() => onSelect(cdp)}>
         <Flex pt="m" pl="m" alignItems="center">
           <Radio
             disabled={cdp.debtValue > saiAvailable}
@@ -134,18 +134,7 @@ export default ({
                 white-space: nowrap;
               `}
             >
-              {loadingCdps ? (
-                <Loader
-                  display="inline-block"
-                  size="1.8rem"
-                  color={getColor('makerTeal')}
-                  justifySelf="end"
-                  m="auto"
-                  bg={colors.lightGrey}
-                />
-              ) : (
-                <span />
-              )}
+
               <Text t="subheading">CDP ID</Text>
               <Text t="subheading">Current Ratio</Text>
               <Text t="subheading">Dai Debt</Text>
@@ -153,6 +142,16 @@ export default ({
               <Text t="subheading">Fee in MKR</Text>
             </Grid>
           </Box>
+          {loadingCdps && (
+            <Loader
+              display="inline-block"
+              size="1.8rem"
+              color={getColor('makerTeal')}
+              justifySelf="end"
+              m="auto"
+              bg={colors.lightGrey}
+            />
+          )}
           {cdps.map(cdp => (
             <ListItem
               cdp={cdp}
