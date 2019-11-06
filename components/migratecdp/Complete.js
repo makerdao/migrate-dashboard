@@ -12,7 +12,7 @@ import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
 
 function Complete({ onReset, onClose, selectedCDP: cdp }) {
   return (
-    <Grid gridRowGap="m">
+    <Grid gridRowGap="m" mx={'s'}>
       <Text.h2 textAlign="center">Migration complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
         CDP {cdp.id} has been successfully migrated to Multi-collateral Dai.{' '}
@@ -34,7 +34,7 @@ function Complete({ onReset, onClose, selectedCDP: cdp }) {
       >
         View transaction details <img src={arrowTopRight} />
       </Button>
-      <Card px="l" py="s" width="100%" maxWidth="400px" justifySelf="center">
+      <Card px="l" py="s" width="100%" maxWidth="400px" justifySelf="center" >
         <Table width="100%">
           <tbody>
             <Table.tr>
