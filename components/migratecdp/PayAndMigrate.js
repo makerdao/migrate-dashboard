@@ -49,7 +49,6 @@ const PayAndMigrate = ({
         .getMigration('single-to-multi-cdp');
       const migrationTxObject = mig.execute(selectedCDP.id);
       setMigrationTxObject(migrationTxObject);
-      await migrationTxObject;
     } catch (err) {
       console.log('migrate tx failed', err);
     }
