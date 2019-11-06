@@ -112,8 +112,8 @@ function Overview() {
 
       <Box maxWidth="112.5rem" width="100%" mx="auto" px="m" flexGrow="1">
         <Box mt={{ s: 'm', m: '2xl' }} maxWidth="64.2rem" width="100%">
-          <Text.h2 mb="s">Migrate and Upgrade</Text.h2>
-          <Breakout>
+          <Text.h2 mb="s" textAlign={{s: 'center', l: 'left'}}>Migrate and Upgrade</Text.h2>
+          <Breakout textAlign={{s: 'center', l: 'left'}}>
             Use Migrate after system updates to move your Dai, MKR, and CDPs
             into their new versions.
           </Breakout>
