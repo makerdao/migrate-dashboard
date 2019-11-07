@@ -32,7 +32,7 @@ export default function useValidatedInput(
     minFloat: {
       validate: (value, schemaValue) => parseFloat(value) <= schemaValue,
       message: (value, schemaValue) =>
-        `Amount must be greater than {prettifyFloat(schemaValue, 5)}`
+        `Amount must be greater than ${prettifyFloat(schemaValue, 5)}`
     }
   };
 

@@ -20,7 +20,7 @@ export default ({
   const [amount, setAmount, onAmountChange, amountErrors] = useValidatedInput(
     '',
     {
-      maxFloat: saiBalance,
+      maxFloat: saiBalance && saiBalance.toNumber(),
       minFloat: 0,
       isFloat: true
     },
@@ -29,6 +29,7 @@ export default ({
         "Insufficient SAI balance"
     }
   );
+  const [{},dispatch] = useStore();
   return (
     <Box maxWidth="71.8rem" mx={['s', 0]}>
       <Text.h2 textAlign="center" mb="xl">
@@ -40,11 +41,12 @@ export default ({
       </Text>
       	 <Input
           type="number"
+          value={amount}
           min="0"
           placeholder="0.00 SAI"
           onChange={onAmountChange}
           failureMessage={amountErrors}
-          after={<Link fontWeight="medium" onClick={setAmount(saiBalance)}>
+          after={<Link fontWeight="medium" onClick={() => setAmount(saiBalance)}>
       				Set max
     			</Link>}
          />
@@ -64,7 +66,18 @@ export default ({
         <Button variant="secondary-outline" onClick={onPrev}>
           Cancel
         </Button>
-        <Button onClick={onNext}>
+        <Button
+        disabled={!amount || amountErrors}
+        onClick={()=>{
+        	console.log('dispatch', dispatch);
+        	dispatch({
+		        type: 'assign',
+		        payload: {
+		        	saiAmountToMigrate: amount
+		        }
+		      });
+        	onNext();
+        }}>
           Continue
         </Button>
       </Grid>
