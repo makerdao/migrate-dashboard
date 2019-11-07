@@ -11,7 +11,6 @@ import {
   Flex,
   Loader
 } from '@makerdao/ui-components-core';
-import { colors } from '@makerdao/design-system-constants';
 import { getColor } from '../../utils/theme';
 import round from 'lodash/round';
 
@@ -43,7 +42,12 @@ function ListItemRow({ label, value, dark }) {
 
 function ListItem({ cdp, onSelect, saiAvailable, checked }) {
   return (
-    <Card px={['0', 'l']} py={['0', 'm']}>
+    <Card
+      px={['0', 'l']}
+      py={['0', 'm']}
+      borderColor={checked ? '#1AAB9B' : '#D4D9E1'}
+      border={checked ? '2px solid' : '1px solid'}
+    >
       <Box display={['none', 'block']}>
         <Grid
           gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(4, 1fr) ${AESTHETIC_ROW_PADDING}`}
@@ -87,7 +91,10 @@ function ListItem({ cdp, onSelect, saiAvailable, checked }) {
           />
           <Text fontSize="20px">CDP {cdp.id}</Text>
         </Flex>
-        <ListItemRow label="Current Ratio" value={cdp.collateralizationRatio} />
+        <ListItemRow
+          label="Current Ratio"
+          value={cdp.collateralizationRatio + '%'}
+        />
         <ListItemRow label="Dai Drawn" value={cdp.debtValue + ' DAI'} dark />
         <ListItemRow label="Fee in MKR" value={cdp.govFeeMKR + ' MKR'} />
       </Box>
@@ -134,10 +141,10 @@ export default ({
                 white-space: nowrap;
               `}
             >
-
+              <span />
               <Text t="subheading">CDP ID</Text>
               <Text t="subheading">Current Ratio</Text>
-              <Text t="subheading">Dai Debt</Text>
+              <Text t="subheading">Dai Drawn</Text>
               {/* <Text t="subheading">Fee In DAI</Text> */}
               <Text t="subheading">Fee in MKR</Text>
             </Grid>
@@ -149,7 +156,7 @@ export default ({
               color={getColor('makerTeal')}
               justifySelf="end"
               m="auto"
-              bg={colors.lightGrey}
+              bg={getColor('lightGrey')}
             />
           )}
           {cdps.map(cdp => (
@@ -174,7 +181,7 @@ export default ({
         gridColumnGap="m"
       >
         <Button variant="secondary-outline" onClick={onPrev}>
-          Cancel
+          Back
         </Button>
         <Button
           disabled={Object.keys(selectedCDP).length === 0}

@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Stepper, Grid, Text, Flex } from '@makerdao/ui-components-core';
+import { Stepper, Grid, Flex } from '@makerdao/ui-components-core';
 import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
+import FlowHeader from '../../components/FlowHeader';
 import useMaker from '../../hooks/useMaker';
-
+import SCDRedeem from '../../components/migratesai/SCDRedeem';
+import Confirmation from '../../components/migratesai/Confirmation';
 import FadeInFromSide from '../../components/FadeInFromSide';
 
-import crossCircle from '../../assets/icons/crossCircle.svg';
-
 const steps = [
-  props => <div {...props} />
+  props => <SCDRedeem {...props} />,
+  props => <Confirmation {...props} />
 ];
 
 function MigrateDai() {
@@ -30,30 +31,12 @@ function MigrateDai() {
   return (
     <FlowBackground open={true}>
       <Grid gridRowGap="xl">
-        <Grid
-          justifyContent="flex-end"
-          gridTemplateColumns="auto auto"
-          gridColumnGap="m"
-          pt="xl"
-          px="m"
-        >
-          {account ? <Account account={account} /> : null}
-          <Flex
-            alignItems="center"
-            onClick={() => Router.replace('/overview')}
-            css={{ cursor: 'pointer' }}
-          >
-            <img src={crossCircle} />
-            &nbsp;
-            <Text color="steel" fontWeight="medium">
-              Close
-            </Text>
-          </Flex>
-        </Grid>
+        <FlowHeader account={account} />
         <Stepper
           steps={['SCD Redeemer', 'Confirmation']}
           selected={currentStep}
           m="0 auto"
+          p={['0 80px', '0']}
           opacity={currentStep < 3 ? 1 : 0}
           transition="opacity 0.2s"
         />
@@ -82,4 +65,4 @@ function MigrateDai() {
   );
 }
 
-export default MigrateDai
+export default MigrateDai;

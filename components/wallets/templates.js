@@ -33,7 +33,6 @@ const SimpleBg = styled(Bg)`
 `;
 
 const BasicModal = ({ show, onClose, modalProps, children }) => {
-  if (!show) return null;
   const [fadeStart, fadeEnd] = animations.fade;
   const [fadeUpStart, fadeUpEnd] = animations.fadeUp;
 
@@ -55,6 +54,8 @@ const BasicModal = ({ show, onClose, modalProps, children }) => {
     from: fadeUpStart,
     config: config.stiff
   }));
+  
+  if (!show) return null;
 
   const onCloseAnimated = () => {
     setBgAnimation({

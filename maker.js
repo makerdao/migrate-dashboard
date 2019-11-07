@@ -4,11 +4,11 @@ import migrationPlugin from '@makerdao/dai-plugin-migrations';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import { checkEthereumProvider } from './utils/ethereum';
 
-let _maker;
+let maker;
 
 export function getMaker() {
-  if (_maker === undefined) throw new Error('Maker has not been instantiated');
-  return _maker;
+  if (maker === undefined) throw new Error('Maker has not been instantiated');
+  return maker;
 }
 
 export async function instantiateMaker({ rpcUrl }) {
@@ -27,13 +27,8 @@ export async function instantiateMaker({ rpcUrl }) {
     multicall: true
   };
 
-  const maker = await Maker.create('http', config);
-
-  // for debugging
-  window.maker = maker;
-
-  _maker = maker;
-
+  maker = await Maker.create('http', config);
+  window.maker = maker; // for debugging
   return maker;
 }
 

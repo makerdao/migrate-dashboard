@@ -17,6 +17,7 @@ import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import Footer from '../components/Footer';
+import useStore from '../hooks/useStore';
 
 function Migration({
   title,
@@ -24,7 +25,8 @@ function Migration({
   recommended,
   metadataTitle,
   metadataValue,
-  onSelected
+  onSelected,
+  buttonLabel = 'Continue'
 }) {
   return (
     <ButtonCard
@@ -42,10 +44,9 @@ function Migration({
           variant={recommended ? 'primary' : 'secondary-outline'}
           onClick={onSelected}
         >
-          Continue
+          {buttonLabel}
         </Button>
       }
-      flipped
     >
       <Grid
         gridTemplateAreas='"title recommended" "body body"'
@@ -69,19 +70,19 @@ function countCdps(cdps) {
 }
 
 function showCdpCount(cdps) {
-  if (cdps === null) return '...';
+  if (!cdps) return '...';
   return countCdps(cdps);
 }
 
-function showSaiAmount(sai) {
-  if (sai === null) return '...';
-  return round(sai.toNumber(), 2);
+function showAmount(tok) {
+  if (!tok) return '...';
+  return round(tok.toNumber(), 2);
 }
 
 function Overview() {
   const { maker, account } = useMaker();
-  const [cdps, setCdps] = useState(null);
-  const [sai, setSai] = useState(null);
+  const [dai, setDai] = useState(null);
+  const [{ cdpMigrationCheck: cdps, saiBalance }, dispatch] = useStore();
 
   useEffect(() => {
     if (maker && !account) Router.replace('/');
@@ -92,16 +93,25 @@ function Overview() {
       if (!maker || !account) return;
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
-      setCdps(checks['single-to-multi-cdp']);
-      setSai(checks['sai-to-dai']);
+      dispatch({
+        type: 'assign',
+        payload: {
+          cdpMigrationCheck: checks['single-to-multi-cdp'],
+          saiBalance: checks['sai-to-dai']
+        }
+      });
+
+      const daiBalance = await maker.getToken('MDAI').balance();
+      setDai(daiBalance);
     })();
-  }, [maker, account]);
+  }, [maker, account, dispatch]);
 
   // mocking as true for development
   const shouldShowCdps = true; // countCdps(cdps) >= 0;
   const shouldShowDai = true; // dai && dai.gt(0);
+  const shouldShowReverse = true;
 
-  const noMigrations = !shouldShowDai && !shouldShowCdps;
+  const noMigrations = !shouldShowDai && !shouldShowCdps && !shouldShowReverse;
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -113,8 +123,10 @@ function Overview() {
 
       <Box maxWidth="112.5rem" width="100%" mx="auto" px="m" flexGrow="1">
         <Box mt={{ s: 'm', m: '2xl' }} maxWidth="64.2rem" width="100%">
-          <Text.h2 mb="s">Migrate and Upgrade</Text.h2>
-          <Breakout>
+          <Text.h2 mb="s" textAlign={{ s: 'center', l: 'left' }}>
+            Migrate and Upgrade
+          </Text.h2>
+          <Breakout textAlign={{ s: 'center', l: 'left' }}>
             Use Migrate after system updates to move your Dai, MKR, and CDPs
             into their new versions.
           </Breakout>
@@ -128,7 +140,7 @@ function Overview() {
           {shouldShowCdps && (
             <Migration
               recommended
-              title="CDP Migrate"
+              title="Migrate CDPs"
               metadataTitle="CDPs to migrate"
               metadataValue={showCdpCount(cdps)}
               body="Migrate your Single Collateral Dai CDPs to Multi Collateral Dai Vaults."
@@ -141,8 +153,21 @@ function Overview() {
               title="Single Collateral Dai Redeemer"
               body="Redeem your Single Collateral Dai (Sai) into Multi Collateral Dai."
               metadataTitle="SCD to redeem"
-              metadataValue={showSaiAmount(sai)}
-              onSelected={() => Router.replace('/migration/dai')}
+              metadataValue={showAmount(saiBalance)}
+              onSelected={() => Router.push('/migration/dai')}
+            />
+          )}
+          {shouldShowReverse && (
+            <Migration
+              recommended
+              title="Downgrade Multi Collateral Dai"
+              body="Downgrade your Multi Collateral Dai into Single Collateral Dai (Sai)."
+              metadataTitle="Dai to redeem"
+              metadataValue={showAmount(dai)}
+              onSelected={() => {
+                window.location = 'https://oasis.app/trade/account';
+              }}
+              buttonLabel="Visit Oasis"
             />
           )}
           {/* { mkr &&

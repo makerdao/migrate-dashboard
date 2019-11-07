@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Stepper, Grid, Text, Flex } from '@makerdao/ui-components-core';
+import { Stepper, Grid, Flex } from '@makerdao/ui-components-core';
 import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
-import Account from '../../components/Account';
+import FlowHeader from '../../components/FlowHeader';
 import FadeInFromSide from '../../components/FadeInFromSide';
 import SelectCDP from '../../components/migratecdp/SelectCDP';
 import DeployProxy from '../../components/migratecdp/DeployProxy';
@@ -11,7 +11,7 @@ import Migrating from '../../components/migratecdp/Migrating';
 import Complete from '../../components/migratecdp/Complete';
 import useMaker from '../../hooks/useMaker';
 import round from 'lodash/round';
-import crossCircle from '../../assets/icons/crossCircle.svg';
+import useStore from '../../hooks/useStore';
 
 const steps = [
   props => <SelectCDP {...props} />,
@@ -22,7 +22,8 @@ const steps = [
 ];
 
 async function getCdpData(cdp) {
-  const debtValue = (await cdp.getDebtValue()).toNumber().toFixed(2);
+  const debtValueExact = await cdp.getDebtValue();
+  const debtValue = debtValueExact.toNumber().toFixed(2);
   const govFeeMKRExact = await cdp.getGovernanceFee();
   const govFeeMKR =
     govFeeMKRExact.toNumber() > 0.01
@@ -36,11 +37,26 @@ async function getCdpData(cdp) {
   ).toFixed(2);
   return {
     collateralizationRatio,
+    debtValueExact,
     debtValue,
     // govFeeDai,
     govFeeMKR,
     govFeeMKRExact
   };
+}
+
+async function getAllCdpData(allCdps, maker) {
+  const cdpIds = Object.values(allCdps).flat();
+  const allCdpData = await Promise.all(
+    cdpIds.map(async id => {
+      const cdp = await maker.getCdp(id);
+      const data = await getCdpData(cdp);
+      return { ...cdp, ...data, give: cdp.give };
+    })
+  );
+  return allCdpData.sort(
+    (a, b) => b.debtValueExact.toNumber() - a.debtValueExact.toNumber()
+  );
 }
 
 function MigrateCDP() {
@@ -56,42 +72,26 @@ function MigrateCDP() {
     if (!account) Router.replace('/');
   }, [account]);
 
+  const [{ cdpMigrationCheck }] = useStore();
+
   useEffect(() => {
     (async () => {
       if (!maker || !account) return;
       const mig = await maker
         .service('migration')
         .getMigration('single-to-multi-cdp');
-      const allCDPs = await mig.check();
       const saiAvailable = (await mig.migrationSaiAvailable()).toNumber();
       setSaiAvailable(saiAvailable);
-      const accounts = Object.keys(allCDPs);
-      let fetchedCDPs = [];
-      await Promise.all(
-        accounts.map(account =>
-          Promise.all(
-            allCDPs[account].map(async cdpId => {
-              let cdp = await maker.getCdp(cdpId);
-              let data = await getCdpData(cdp, maker);
-              fetchedCDPs = fetchedCDPs
-                .concat({ ...cdp, ...data, give: cdp.give })
-                .sort(
-                  (a, b) => parseFloat(b.debtValue) - parseFloat(a.debtValue)
-                );
-              setCdps(fetchedCDPs);
-            })
-          )
-        )
-      );
+      setCdps(await getAllCdpData(cdpMigrationCheck, maker));
       setLoadingCdps(false);
     })();
-  }, [maker, account]);
+  }, [maker, account, cdpMigrationCheck]);
 
   const ownedByProxy = cdp => {
     return 'dsProxyAddress' in cdp;
   };
 
-  const toPrevStepOrClose = () => {
+  const onPrev = () => {
     if (currentStep <= 0) Router.replace('/overview');
     setCurrentStep(
       ownedByProxy(selectedCDP) && currentStep === 2
@@ -99,16 +99,14 @@ function MigrateCDP() {
         : currentStep - 1
     );
   };
-  const toNextStep = () =>
+
+  const onNext = () =>
     setCurrentStep(
       ownedByProxy(selectedCDP) && currentStep === 0
         ? currentStep + 2
         : currentStep + 1
     );
-  const reset = () => setCurrentStep(0);
-  const selectCDP = cdp => {
-    setSelectedCDP(cdp);
-  };
+  const onReset = () => setCurrentStep(0);
 
   useEffect(() => {
     if (migrationTxObject instanceof Promise) {
@@ -121,26 +119,7 @@ function MigrateCDP() {
   return (
     <FlowBackground open={true}>
       <Grid gridRowGap={['m', 'xl']}>
-        <Grid
-          justifyContent={['space-between', 'flex-end']}
-          gridTemplateColumns="auto auto"
-          gridColumnGap="m"
-          pt={['m', 'xl']}
-          px="m"
-        >
-          {account ? <Account account={account} /> : null}
-          <Flex
-            alignItems="center"
-            onClick={() => Router.replace('/overview')}
-            css={{ cursor: 'pointer' }}
-          >
-            <img src={crossCircle} />
-            &nbsp;
-            <Text color="steel" fontWeight="medium" display={{ s: 'none' }}>
-              Close
-            </Text>
-          </Flex>
-        </Grid>
+        <FlowHeader account={account} />
         <Stepper
           steps={['Select CDP', 'Deploy Proxy', 'Pay & Migrate']}
           selected={currentStep}
@@ -162,11 +141,10 @@ function MigrateCDP() {
               >
                 {step({
                   onClose: () => Router.replace('/overview'),
-
-                  onPrev: toPrevStepOrClose,
-                  onNext: toNextStep,
-                  onSelect: selectCDP,
-                  onReset: reset,
+                  onPrev,
+                  onNext,
+                  onSelect: setSelectedCDP,
+                  onReset,
                   cdps,
                   loadingCdps,
                   saiAvailable,

@@ -28,7 +28,7 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const WalletStateContext = createContext(initialState);
+export const WalletStateContext = createContext(initialState);
 
 function resolveModalTemplateToComponent(templates, template) {
   return templates[template] || templates.default;
@@ -81,4 +81,4 @@ function WalletProvider({ children, modals, templates }) {
   );
 }
 
-export { WalletStateContext, WalletProvider };
+export default WalletProvider;

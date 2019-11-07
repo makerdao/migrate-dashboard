@@ -49,7 +49,7 @@ export default function useProxy() {
       proxyAddress: address
     });
 
-    await maker.service('transactionManager').confirm(txPromise, 7);
+    await maker.service('transactionManager').confirm(txPromise, 10);
     const proxyAddress = await maker.service('proxy').getProxyAddress();
 
     updateState({ proxyDeployed: true, proxyAddress });
