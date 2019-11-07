@@ -108,6 +108,14 @@ function MigrateCDP() {
     );
   const onReset = () => setCurrentStep(0);
 
+  useEffect(() => {
+    if (migrationTxObject instanceof Promise) {
+      migrationTxObject
+        .then(() => maker.service('transactionManager').confirm(migrationTxObject, 3))
+        .then(() => setCurrentStep(currentStep + 1));
+    }
+  }, [migrationTxObject]);
+
   return (
     <FlowBackground open={true}>
       <Grid gridRowGap={['m', 'xl']}>

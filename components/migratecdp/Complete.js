@@ -4,25 +4,18 @@ import {
   Text,
   Button,
   Card,
-  Table,
-  Link
+  Table
 } from '@makerdao/ui-components-core';
 
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
+import blueArrowTopRight from '../../assets/icons/blueArrowTopRight.svg';
 
 function Complete({ onReset, onClose, selectedCDP: cdp }) {
   return (
     <Grid gridRowGap="m" mx={'s'}>
       <Text.h2 textAlign="center">Migration complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        CDP {cdp.id} has been successfully migrated to Multi-collateral Dai.{' '}
-        <a
-          href={`https://oasis.app/borrow/${cdp.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          View on Oasis
-        </a>
+        CDP #{cdp.id} has been successfully migrated to Multi-collateral Dai and the new CDP Portal.{' '}
       </Text.p>
       <Button
         my="xs"
@@ -39,20 +32,18 @@ function Complete({ onReset, onClose, selectedCDP: cdp }) {
           <tbody>
             <Table.tr>
               <Table.td>
-                <Text color="darkPurple">CDP ID</Text>
+                <Text color="darkPurple">Your new Vault ID</Text>
               </Table.td>
               <Table.td textAlign="right">
-                <Link fontWeight="medium">{cdp.id}</Link>
-              </Table.td>
-            </Table.tr>
-            <Table.tr>
-              <Table.td>
-                <Text color="darkPurple">Stability Fee paid</Text>
-              </Table.td>
-              <Table.td textAlign="right">
-                <Text fontWeight="medium" color="darkPurple">
-                  {cdp.govFeeMKR} MKR
-                </Text>
+                <a
+                  fontWeight="medium"
+                  href={`https://oasis.app/borrow/${cdp.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{textDecoration: 'none'}}
+                >
+                  #{cdp.id} <img src={blueArrowTopRight} style={{fill: '#0000EE'}} />
+                </a>
               </Table.td>
             </Table.tr>
           </tbody>
