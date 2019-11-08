@@ -111,10 +111,12 @@ function MigrateCDP() {
   useEffect(() => {
     if (migrationTxObject instanceof Promise) {
       migrationTxObject
-        .then(() => maker.service('transactionManager').confirm(migrationTxObject, 3))
-        .then(() => setCurrentStep(currentStep + 1));
+        .then(() =>
+          maker.service('transactionManager').confirm(migrationTxObject, 3)
+        )
+        .then(() => setCurrentStep(c => c + 1));
     }
-  }, [migrationTxObject]);
+  }, [migrationTxObject, maker]);
 
   return (
     <FlowBackground open={true}>
