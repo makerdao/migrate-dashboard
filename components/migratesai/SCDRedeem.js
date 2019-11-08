@@ -3,15 +3,6 @@ import { Box, Text, Button, Grid, Card, Input, Link } from '@makerdao/ui-compone
 import useStore from '../../hooks/useStore';
 import useValidatedInput from '../../hooks/useValidatedInput';
 
-
-function SetMax({ ...props }) {
-  return (
-    <Link fontWeight="medium" {...props}>
-      Set max
-    </Link>
-  );
-}
-
 export default ({
   onNext,
   onPrev
@@ -46,7 +37,7 @@ export default ({
           placeholder="0.00 SAI"
           onChange={onAmountChange}
           failureMessage={amountErrors}
-          after={<Link fontWeight="medium" onClick={() => setAmount(saiBalance)}>
+          after={<Link fontWeight="medium" onClick={() => setAmount(saiBalance.toNumber())}>
       				Set max
     			</Link>}
          />
@@ -69,7 +60,6 @@ export default ({
         <Button
         disabled={!amount || amountErrors}
         onClick={()=>{
-        	console.log('dispatch', dispatch);
         	dispatch({
 		        type: 'assign',
 		        payload: {

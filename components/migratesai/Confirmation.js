@@ -1,11 +1,13 @@
 import React from 'react';
 import { Box, Text, Button, Grid } from '@makerdao/ui-components-core';
-
+import useStore from '../../hooks/useStore';
 
 export default ({
   onNext,
   onPrev
 }) => {
+  const [{ saiAmountToMigrate }] = useStore();
+  console.log('saiAmountToMigrate', saiAmountToMigrate);
   return (
     <Box maxWidth="71.8rem" mx={['s', 0]}>
       <Text.h2 textAlign="center" mb="xl">
