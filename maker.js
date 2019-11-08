@@ -3,8 +3,11 @@ import daiPlugin from '@makerdao/dai-plugin-mcd';
 import migrationPlugin from '@makerdao/dai-plugin-migrations';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import { checkEthereumProvider } from './utils/ethereum';
+import { createCurrency } from '@makerdao/currency';
 
 let maker;
+
+const SAI = createCurrency('SAI');
 
 export function getMaker() {
   if (maker === undefined) throw new Error('Maker has not been instantiated');
@@ -16,7 +19,12 @@ export async function instantiateMaker({ rpcUrl }) {
 
   const config = {
     log: false,
-    plugins: [trezorPlugin, ledgerPlugin, daiPlugin, migrationPlugin],
+    plugins: [
+    trezorPlugin,
+    ledgerPlugin,
+    [daiPlugin,{ cdpTypes: [{currency: SAI, ilk: 'SAI' }] }],
+    migrationPlugin,
+    ],
     smartContract: {
       addContracts: {}
     },
