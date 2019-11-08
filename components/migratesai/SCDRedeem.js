@@ -3,6 +3,7 @@ import { Box, Text, Button, Grid, Card, Input, Link } from '@makerdao/ui-compone
 import useStore from '../../hooks/useStore';
 import useMaker from '../../hooks/useMaker';
 import useValidatedInput from '../../hooks/useValidatedInput';
+import { TextBlock } from '../Typography';
 
 export default ({
   onNext,
@@ -46,17 +47,23 @@ export default ({
   }, [maker]);
 
   return (
-    <Box maxWidth="71.8rem" mx={['s', 0]}>
-      <Text.h2 textAlign="center" mb="xl">
+    <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
+      <Text.h2 textAlign="center">
         Upgrade Single Collateral Dai
       </Text.h2>
-      <Text textAlign="center" mb="xl">
-        How much Single-collateral Dai would you like to upgrade to Multi-collateral Dai
-      </Text>
+      <Text.p
+        textAlign="center"
+        t="body"
+        fontSize="1.8rem"
+        maxWidth="498px"
+        m="0 auto"
+      >
+        How much Single-collateral Sai would you like to upgrade to Multi-collateral Dai?
+      </Text.p>
       <Card px={{ s: 'l', m: '2xl' }} py="l" mb="xl">
-      <Text>
-      	Enter the amount you would like to upgrade.
-      </Text>
+	    <Text>
+	     Enter the amount you would like to upgrade.
+	    </Text>
       	 <Input
           type="number"
           value={amount}
@@ -68,26 +75,30 @@ export default ({
       				Set max
     			</Link>}
          />
-       <Text.p>
-      	Sai Balance
-      </Text.p>
-      <Text.p>
-      {saiBalance ? `${saiBalance.toNumber().toFixed(2)} SAI` : '...'}
-      </Text.p>
+	       <Text t="subheading">
+	      	Sai Balance
+	      </Text>
+	      <Text
+	      	t="caption"
+	         display="inline-block"
+	         ml="s"
+	         color="darkLavender">
+	      {saiBalance ? `${saiBalance.toNumber().toFixed(2)} SAI` : '...'}
+	      </Text>
       </Card>
       <Card px={{ s: 'l', m: '2xl' }} py="l" mb="xl">
-      <Text.p>
+      <TextBlock t="h5" lineHeight="normal">
       	SAI to DAI exchange rate
-      </Text.p>
-       <Text.p>
+      </TextBlock>
+      <TextBlock t="body">
       	1:1
-      </Text.p>
-      <Text.p>
+      </TextBlock>
+      <TextBlock t="h5" lineHeight="normal">
       Max SAI to DAI availibility
-      </Text.p>
-      <Text.p>
+      </TextBlock>
+      <TextBlock t="body">
       {maxLiquidity ? `${maxLiquidity.toFixed(2)} Dai` : '...'}
-      </Text.p>
+      </TextBlock>
       </Card>
       <Grid
         justifySelf="center"
@@ -112,6 +123,6 @@ export default ({
           Continue
         </Button>
       </Grid>
-    </Box>
+    </Grid>
   );
 };

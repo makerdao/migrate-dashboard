@@ -20,3 +20,7 @@ export function Breakout({ children, ...props }) {
     </Text.p>
   );
 }
+
+export const TextBlock = styled(Text)`
+  display: block;
+`;
