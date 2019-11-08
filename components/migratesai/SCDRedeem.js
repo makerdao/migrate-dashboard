@@ -9,19 +9,23 @@ export default ({
   onPrev
 }) => {
   const [{ saiBalance }] = useStore();
+  const [maxLiquidity, setMaxLiquidity] = useState(null);
+  const maxOverall = Math.min(saiBalance && saiBalance.toNumber(), maxLiquidity);
   const [amount, setAmount, onAmountChange, amountErrors] = useValidatedInput(
     '',
     {
-      maxFloat: saiBalance && saiBalance.toNumber(),
+      maxFloat: maxOverall,
       minFloat: 0,
       isFloat: true
     },
     {
-      maxFloat: () =>
-        "Insufficient SAI balance"
+      maxFloat: amount => {
+        return amount > saiBalance.toNumber()
+          ? "Insufficient Sai balance"
+          : "Amount exceeds Dai availibility";
+      }
     }
   );
-  const [maxLiquidity, setMaxLiquidity] = useState(null);
   const [{},dispatch] = useStore();
   const { maker } = useMaker();
    useEffect(() => {
@@ -60,7 +64,7 @@ export default ({
           placeholder="0.00 SAI"
           onChange={onAmountChange}
           failureMessage={amountErrors}
-          after={<Link fontWeight="medium" onClick={() => setAmount(saiBalance.toNumber())}>
+          after={<Link fontWeight="medium" onClick={() => setAmount(maxOverall)}>
       				Set max
     			</Link>}
          />
@@ -79,7 +83,7 @@ export default ({
       	1:1
       </Text.p>
       <Text.p>
-      Max SAI to DAI Liquidity
+      Max SAI to DAI availibility
       </Text.p>
       <Text.p>
       {maxLiquidity ? `${maxLiquidity.toFixed(2)} Dai` : '...'}
