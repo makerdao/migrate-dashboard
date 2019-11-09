@@ -1,7 +1,6 @@
 import { useReducer, useEffect } from 'react';
 
 import useActionState from './useActionState';
-import useBlockHeight from './useBlockHeight';
 import useMaker from './useMaker';
 
 import debug from 'debug';
@@ -16,7 +15,6 @@ const initialState = {
 };
 
 export default function useProxy() {
-  const lang = {};
   const { maker, account} = useMaker();
   const [
     {

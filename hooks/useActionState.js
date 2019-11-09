@@ -1,8 +1,7 @@
 import { useState, useCallback } from 'react';
 
 export default function useActionState(
-  action,
-  errorMessage = 'An error occurred. Please try again.'
+  action
 ) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');

@@ -17,12 +17,12 @@ export default function useValidatedInput(
   const [value, setValue] = useState(initialValue);
   const [errors, setErrors] = useState('');
 
-  const defaultErrorMessage = () => "Please enter a valid input";
+  const defaultErrorMessage = () => 'Please enter a valid input';
 
   const defaultValidators = {
     isFloat: {
       validate: value => isNaN(parseFloat(value)),
-      message: () => "Please enter a valid number"
+      message: () => 'Please enter a valid number'
     },
     maxFloat: {
       validate: (value, schemaValue) => parseFloat(value) > schemaValue,
@@ -65,7 +65,7 @@ export default function useValidatedInput(
     });
 
     return [...fromDefault, ...fromCustom];
-  }, [validationSchema, customMessages]);
+  }, [validationSchema, defaultValidators, customMessages]);
 
   const validate = useCallback(
     value => {
@@ -81,7 +81,7 @@ export default function useValidatedInput(
 
       return errors.join(', ');
     },
-    [validationSchema, customMessages]
+    [validators, validationSchema]
   );
 
   const onChange = useCallback(

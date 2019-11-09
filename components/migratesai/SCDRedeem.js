@@ -28,8 +28,8 @@ export default ({ onNext, onPrev }) => {
     {
       maxFloat: amount => {
         return amount > saiBalance.toNumber()
-          ? "Insufficient Sai balance"
-          : "Amount exceeds Dai availibility";
+          ? 'Insufficient Sai balance'
+          : 'Amount exceeds Dai availibility';
       }
     }
   );
