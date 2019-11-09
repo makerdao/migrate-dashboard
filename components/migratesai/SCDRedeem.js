@@ -13,6 +13,7 @@ import useMaker from '../../hooks/useMaker';
 import useValidatedInput from '../../hooks/useValidatedInput';
 import { TextBlock } from '../Typography';
 
+
 export default ({ onNext, onPrev }) => {
   const [{ saiBalance }] = useStore();
   const [maxLiquidity, setMaxLiquidity] = useState(null);
@@ -62,47 +63,64 @@ export default ({ onNext, onPrev }) => {
         textAlign="center"
         t="body"
         fontSize="1.8rem"
-        maxWidth="498px"
         m="0 auto"
       >
         How much Single-collateral Sai would you like to upgrade to
-        Multi-collateral Dai
+        Multi-collateral Dai?
       </Text.p>
+      <Grid
+        gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
+        gridGap="m"
+        my="l"
+      >
       <Card px={{ s: 'l', m: '2xl' }} py="l" mb="xl">
-        <Text>Enter the amount you would like to upgrade.</Text>
-        <Input
-          type="number"
-          value={amount}
-          min="0"
-          placeholder="0.00 SAI"
-          onChange={onAmountChange}
-          failureMessage={amountErrors}
-          after={
-            <Link
-              fontWeight="medium"
-              onClick={() => setAmount(maxOverall)}
-            >
-              Set max
-            </Link>
-          }
-        />
-        <Text t="subheading">Sai Balance</Text>
-        <Text
-	      	t="caption"
-	         display="inline-block"
-	         ml="s"
-	         color="darkLavender">
-          {saiBalance ? `${saiBalance.toNumber().toFixed(2)} SAI` : '...'}
-        </Text>
+	      <Grid gridRowGap="s">
+	        <TextBlock t="h5" lineHeight="normal">Enter the amount you would like to upgrade.</TextBlock>
+	        <Input
+	          type="number"
+	          value={amount}
+	          min="0"
+	          placeholder="0.00 SAI"
+	          onChange={onAmountChange}
+	          failureMessage={amountErrors}
+	          after={
+	            <Link
+	              fontWeight="medium"
+	              onClick={() => setAmount(maxOverall)}
+	            >
+	              Set max
+	            </Link>
+	          }
+	        />
+	        <Grid gridRowGap="xs">
+	        	<Box>
+			        <Text t="subheading">Sai Balance</Text>
+			        <Text
+				      	t="caption"
+				         display="inline-block"
+				         ml="s"
+				         color="darkLavender">
+			          {saiBalance ? `${saiBalance.toNumber().toFixed(2)} SAI` : '...'}
+			        </Text>
+			    </Box>
+		    </Grid>
+	      </Grid>
       </Card>
       <Card px={{ s: 'l', m: '2xl' }} py="l" mb="xl">
-        <TextBlock t="h5" lineHeight="normal">SAI to DAI exchange rate</TextBlock>
-        <TextBlock t="body">1:1</TextBlock>
-        <TextBlock t="h5" lineHeight="normal">Max SAI to DAI availability</TextBlock>
-        <TextBlock t="body">
-          {maxLiquidity ? `${maxLiquidity.toFixed(2)} Dai` : '...'}
-        </TextBlock>
+	      <Grid gridRowGap="m">
+		      <Grid gridRowGap="xs">
+		        <TextBlock t="h5" lineHeight="normal">SAI to DAI exchange rate</TextBlock>
+		        <TextBlock t="body">1:1</TextBlock>
+		      </Grid>
+		      <Grid gridRowGap="xs">
+		        <TextBlock t="h5" lineHeight="normal">Max SAI to DAI availability</TextBlock>
+		        <TextBlock t="body">
+		          {maxLiquidity ? `${maxLiquidity.toFixed(2)} Dai` : '...'}
+		        </TextBlock>
+		      </Grid>
+	      </Grid>
       </Card>
+      </Grid>
       <Grid
         justifySelf="center"
         justifyContent="center"

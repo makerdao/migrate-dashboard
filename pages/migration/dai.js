@@ -33,7 +33,7 @@ function MigrateDai() {
       <Grid gridRowGap="xl">
         <FlowHeader account={account} />
         <Stepper
-          steps={['SCD Redeemer', 'Confirmation']}
+          steps={['Sai Upgrade', 'Confirmation']}
           selected={currentStep}
           m="0 auto"
           p={['0 80px', '0']}
