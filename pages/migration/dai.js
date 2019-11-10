@@ -18,6 +18,7 @@ const steps = [
 function MigrateDai() {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
+  const [migrationTxObject, setMigrationTxObject] = useState({});
 
   useEffect(() => {
     if (!account) Router.replace('/');
@@ -57,7 +58,8 @@ function MigrateDai() {
                   onClose: () => Router.replace('/overview'),
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
-                  onReset: reset
+                  onReset: reset,
+                  setMigrationTxObject
                 })}
               </FadeInFromSide>
             );

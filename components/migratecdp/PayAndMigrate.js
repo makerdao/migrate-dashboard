@@ -128,9 +128,8 @@ const PayAndMigrate = ({
             <Text
               t="caption"
               color="steel"
-              onClick={() => setHasReadTOS(!hasReadTOS)}
             >
-              I have read and accept the <Link>Terms of Service</Link>.
+              I have read and accept the <Link target="_blank" href="https://migrate.makerdao.com/terms">Terms of Service</Link>.
             </Text>
           </Grid>
         </Grid>

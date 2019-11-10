@@ -6,7 +6,8 @@ import LoadingToggle from '../LoadingToggle';
 
 export default ({
   onNext,
-  onPrev
+  onPrev,
+  migrationTxObject
 }) => {
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
@@ -29,6 +30,18 @@ export default ({
     }
     setSaiApprovePending(false);
   }, [maker, proxyDetails, saiAmountToMigrate]);
+
+  const upgradeSai = useCallback(async () => {
+    try {
+      const mig = await maker
+        .service('migration')
+        .getMigration('sai-to-dai');
+      const migrationTxObject = mig.execute(saiAmountToMigrate);
+      setMigrationTxObject(migrationTxObject);
+    } catch (err) {
+      console.log('migrate tx failed', err);
+    }
+  }, [account, maker, saiAmountToMigrate]);
 
   useEffect(() => {
     (async () => {
@@ -53,7 +66,7 @@ export default ({
   const daiAmount = (saiAmount * exchangeRate[0] / exchangeRate[1]).toFixed(2)
 
   return (
-    <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]} minWidth="38rem">
+    <Grid maxWidth="600px" gridRowGap="m" px={['s', 0]} minWidth="38rem">
       <Text.h2 textAlign="center" m="s">
         Confirm Transaction
       </Text.h2>
@@ -110,9 +123,8 @@ export default ({
             <Text
               t="caption"
               color="steel"
-              onClick={() => setHasReadTOS(!hasReadTOS)}
             >
-              I have read and accept the <Link>Terms of Service</Link>.
+              I have read and accept the <Link target="_blank" href="https://migrate.makerdao.com/terms">Terms of Service</Link>.
             </Text>
           </Grid>
         </Card>
@@ -128,7 +140,10 @@ export default ({
         </Button>
         <Button
           disabled={!hasReadTOS || !proxyDetails.hasSaiAllowance}
-          onClick={onNext}
+          onClick={() => {
+            upgradeSai()
+            onNext()
+          }}
         >
           Continue
         </Button>
