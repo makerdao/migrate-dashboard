@@ -1,14 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Text, Button, Grid, Table, Link, Card, Checkbox } from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
+import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
 
 export default ({
   onNext,
   onPrev
 }) => {
+  const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
+  const [saiApprovePending, setSaiApprovePending] = useState(false);
+  const [proxyDetails, setProxyDetails] = useState({});
   const [{ saiAmountToMigrate }] = useStore();
+
+  const giveProxySaiAllowance = useCallback(async () => {
+    setSaiApprovePending(true);
+    try {
+      await maker
+        .getToken('SAI')
+        .approve(proxyDetails.address, saiAmountToMigrate);
+      setProxyDetails(proxyDetails => ({
+        ...proxyDetails,
+        hasSaiAllowance: true
+      }));
+    } catch (err) {
+      console.log('unlock sai tx failed', err);
+    }
+    setSaiApprovePending(false);
+  }, [maker, proxyDetails, saiAmountToMigrate]);
+
+  useEffect(() => {
+    (async () => {
+      if (maker && account) {
+        // assuming they have a proxy
+        const proxyAddress = await maker.service('proxy').currentProxy();
+        if (proxyAddress) {
+          const connectedWalletAllowance = await maker
+            .getToken('SAI')
+            .allowance(account.address, proxyAddress);
+          const hasSaiAllowance = connectedWalletAllowance.gte(
+            saiAmountToMigrate
+          );
+          setProxyDetails({ hasSaiAllowance, address: proxyAddress });
+        }
+      }
+    })();
+  }, [account, maker, saiAmountToMigrate]);
+
   const exchangeRate = [1.00, 1.00]
   const saiAmount = parseInt(saiAmountToMigrate).toFixed(2)
   const daiAmount = (saiAmount * exchangeRate[0] / exchangeRate[1]).toFixed(2)
@@ -52,10 +91,10 @@ export default ({
             loadingText={'Unlocking SAI'}
             defaultText={'Unlock SAI to continue'}
             tokenDisplayName={'SAI'}
-            // isLoading={mkrApprovePending}
-            // isComplete={proxyDetails.hasMkrAllowance}
-            // onToggle={giveProxyMkrAllowance}
-            // disabled={proxyDetails.hasMkrAllowance || !proxyDetails.address}
+            isLoading={saiApprovePending}
+            isComplete={proxyDetails.hasSaiAllowance}
+            onToggle={giveProxySaiAllowance}
+            disabled={proxyDetails.hasSaiAllowance || !proxyDetails.address}
             data-testid="allowance-toggle"
           />
           </Grid>
