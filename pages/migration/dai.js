@@ -18,7 +18,7 @@ function MigrateDai() {
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
-    // if (!account) Router.replace('/');
+    if (!account) Router.replace('/');
   }, []);
 
   const toPrevStepOrClose = () => {
@@ -30,12 +30,13 @@ function MigrateDai() {
 
   return (
     <FlowBackground open={true}>
-      <Grid gridRowGap="xl">
+      <Grid gridRowGap={{ s: "s", l: "xl" }}>
         <FlowHeader account={account} />
         <Stepper
           steps={['Sai Upgrade', 'Confirmation']}
           selected={currentStep}
           m="0 auto"
+          mt={"m"}
           p={['0 80px', '0']}
           opacity={currentStep < 3 ? 1 : 0}
           transition="opacity 0.2s"

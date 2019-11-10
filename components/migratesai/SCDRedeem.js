@@ -64,6 +64,7 @@ export default ({ onNext, onPrev }) => {
         t="body"
         fontSize="1.8rem"
         m="0 auto"
+        display={{ s: "none", m: 'block' }}
       >
         How much Single-collateral Sai would you like to upgrade to
         Multi-collateral Dai?
@@ -71,9 +72,9 @@ export default ({ onNext, onPrev }) => {
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
         gridGap="m"
-        my="l"
+        my={{ s: "s", l: "l"}}
       >
-      <Card px={{ s: 'l', m: '2xl' }} py="l" mb="xl">
+      <Card px={{ s: 'l', m: '2xl' }} py="l" mb={{ s: 'xs', l: "xl"}}>
 	      <Grid gridRowGap="s">
 	        <TextBlock t="h5" lineHeight="normal">Enter the amount you would like to upgrade.</TextBlock>
 	        <Input
@@ -106,7 +107,7 @@ export default ({ onNext, onPrev }) => {
 		    </Grid>
 	      </Grid>
       </Card>
-      <Card px={{ s: 'l', m: '2xl' }} py="l" mb="xl">
+      <Card px={{ s: 'l', m: '2xl' }} py={{ s: "m", l: "l"}} mb={{ s: 'xs', l: "xl"}}>
 	      <Grid gridRowGap="m">
 		      <Grid gridRowGap="xs">
 		        <TextBlock t="h5" lineHeight="normal">SAI to DAI exchange rate</TextBlock>
