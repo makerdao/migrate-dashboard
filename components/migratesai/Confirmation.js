@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, Button, Grid, Table, Link, Card, Checkbox } from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
 import LoadingToggle from '../LoadingToggle';
@@ -7,10 +7,11 @@ export default ({
   onNext,
   onPrev
 }) => {
+  const [hasReadTOS, setHasReadTOS] = useState(false);
   const [{ saiAmountToMigrate }] = useStore();
-  const exchangeRate = [1, 1]
+  const exchangeRate = [1.00, 1.00]
   const saiAmount = parseInt(saiAmountToMigrate).toFixed(2)
-  const daiAmount = saiAmount * exchangeRate[0] / exchangeRate[1]
+  const daiAmount = (saiAmount * exchangeRate[0] / exchangeRate[1]).toFixed(2)
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]} minWidth="38rem">
@@ -64,13 +65,13 @@ export default ({
             <Checkbox
               mr="s"
               fontSize="l"
-              checked={true}
-              // onChange={evt => setHasReadTOS(evt.target.checked)}
+              checked={hasReadTOS}
+              onChange={evt => setHasReadTOS(evt.target.checked)}
             />
             <Text
               t="caption"
               color="steel"
-              // onClick={() => setHasReadTOS(!hasReadTOS)}
+              onClick={() => setHasReadTOS(!hasReadTOS)}
             >
               I have read and accept the <Link>Terms of Service</Link>.
             </Text>
