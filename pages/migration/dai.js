@@ -6,11 +6,13 @@ import FlowHeader from '../../components/FlowHeader';
 import useMaker from '../../hooks/useMaker';
 import SCDRedeem from '../../components/migratesai/SCDRedeem';
 import Confirmation from '../../components/migratesai/Confirmation';
+import Upgrading from '../../components/migratesai/Upgrading'
 import FadeInFromSide from '../../components/FadeInFromSide';
 
 const steps = [
   props => <SCDRedeem {...props} />,
-  props => <Confirmation {...props} />
+  props => <Confirmation {...props} />,
+  props => <Upgrading {...props} />
 ];
 
 function MigrateDai() {
@@ -38,7 +40,7 @@ function MigrateDai() {
           m="0 auto"
           mt={"m"}
           p={['0 80px', '0']}
-          opacity={currentStep < 3 ? 1 : 0}
+          opacity={currentStep < 1 ? 1 : 0}
           transition="opacity 0.2s"
         />
 

@@ -126,7 +126,10 @@ export default ({
         <Button variant="secondary-outline" onClick={onPrev}>
           Back
         </Button>
-        <Button onClick={onNext}>
+        <Button
+          disabled={!hasReadTOS || !proxyDetails.hasSaiAllowance}
+          onClick={onNext}
+        >
           Continue
         </Button>
       </Grid>

@@ -11,12 +11,12 @@ export default ({ onNext, onPrev, onReset, onClose, migrationTxObject }) => {
       mx={[0, 'auto']}
       width={['100vw', 'auto']}
     >
-      <Text.h2 textAlign="center">Your CDP is being migrated</Text.h2>
+      <Text.h2 textAlign="center">Your Sai is being upgraded</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
         The estimated time is 8 minutes.
       </Text.p>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        You can safely leave this page.
+        Please wait for this transaction to confirm before leaving.
       </Text.p>
       <Button
         justifySelf="center"
@@ -30,11 +30,12 @@ export default ({ onNext, onPrev, onReset, onClose, migrationTxObject }) => {
 
 
       {/* DELETE ME AFTER: */}
-      <Link onClick={onNext}>next</Link>
+      {/*<Link onClick={onNext}>next</Link>
       <Link onClick={onPrev}>back</Link>
-      <Button onClick={onClose} width={["26.0rem", "13.0rem"]} justifySelf={'center'}>
+       <Button onClick={onClose} width={["26.0rem", "13.0rem"]} justifySelf={'center'}>
         Exit
       </Button>
+      */}
     </Grid>
   );
 }
