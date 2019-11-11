@@ -141,7 +141,9 @@ function Overview() {
             <Migration
               recommended
               title="Migrate CDPs"
-              metadataTitle="CDPs to migrate"
+              metadataTitle={`CDP${
+                countCdps(cdps) === 1 ? '' : 's'
+              } to migrate`}
               metadataValue={showCdpCount(cdps)}
               body="Migrate your Single Collateral Dai CDPs to Multi Collateral Dai Vaults."
               onSelected={() => Router.push('/migration/cdp')}
