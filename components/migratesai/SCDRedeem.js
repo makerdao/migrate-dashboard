@@ -74,7 +74,7 @@ export default ({ onNext, onPrev }) => {
         gridGap="m"
         my={{ s: "s", l: "l"}}
       >
-      <Card px={{ s: 'l', m: '2xl' }} py="l" mb={{ s: 'xs', l: "xl"}}>
+      <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
 	      <Grid gridRowGap="s">
 	        <TextBlock t="h5" lineHeight="normal">Enter the amount you would like to upgrade.</TextBlock>
 	        <Input
@@ -107,7 +107,7 @@ export default ({ onNext, onPrev }) => {
 		    </Grid>
 	      </Grid>
       </Card>
-      <Card px={{ s: 'l', m: '2xl' }} py={{ s: "m", l: "l"}} mb={{ s: 'xs', l: "xl"}}>
+      <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
 	      <Grid gridRowGap="m">
 		      <Grid gridRowGap="xs">
 		        <TextBlock t="h5" lineHeight="normal">SAI to DAI exchange rate</TextBlock>
