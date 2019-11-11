@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "now-build": "next build && next export",
+    "now-build": "echo Please run 'yarn next-build' instead && yarn next-build",
+    "next-build": "next build && next export",
     "start": "next start",
     "test": "echo \"To DAI, to sleep - to sleep, perchance to dream\""
   },
