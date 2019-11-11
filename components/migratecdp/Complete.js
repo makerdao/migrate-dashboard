@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Text, Button, Card, Table } from '@makerdao/ui-components-core';
-
+import { OASIS_HOSTNAME } from '../../utils/constants';
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
 import blueArrowTopRight from '../../assets/icons/blueArrowTopRight.svg';
 
@@ -31,7 +31,7 @@ function Complete({ onReset, onClose, selectedCDP: cdp, newCdpId }) {
               <Table.td textAlign="right">
                 <a
                   fontWeight="medium"
-                  href={`https://staging.oasis.app/borrow/${newCdpId}`}
+                  href={`${OASIS_HOSTNAME}/borrow/${newCdpId}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ textDecoration: 'none' }}

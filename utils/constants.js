@@ -8,3 +8,5 @@ export const AccountTypes = {
   TREZOR: 'trezor',
   METAMASK: 'browser'
 };
+
+export const OASIS_HOSTNAME = 'https://staging.oasis.app';

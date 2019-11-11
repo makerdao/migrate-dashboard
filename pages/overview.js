@@ -18,6 +18,7 @@ import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import Footer from '../components/Footer';
 import useStore from '../hooks/useStore';
+import { OASIS_HOSTNAME } from '../utils/constants';
 
 function Migration({
   title,
@@ -167,7 +168,7 @@ function Overview() {
               metadataTitle="Dai to redeem"
               metadataValue={showAmount(dai)}
               onSelected={() => {
-                window.location = 'https://oasis.app/trade/account';
+                window.location = `${OASIS_HOSTNAME}/trade`;
               }}
               buttonLabel="Visit Oasis"
             />
