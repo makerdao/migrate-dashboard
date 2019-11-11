@@ -67,6 +67,7 @@ function MigrateCDP() {
   const [selectedCDP, setSelectedCDP] = useState({});
   const [migrationTxObject, setMigrationTxObject] = useState({});
   const [saiAvailable, setSaiAvailable] = useState(0);
+  const [newCdpId, setNewCdpId] = useState();
 
   useEffect(() => {
     if (!account) Router.replace('/');
@@ -111,9 +112,12 @@ function MigrateCDP() {
   useEffect(() => {
     if (migrationTxObject instanceof Promise) {
       migrationTxObject
-        .then(() =>
-          maker.service('transactionManager').confirm(migrationTxObject, 3)
-        )
+        .then(id => {
+          setNewCdpId(id);
+          return maker
+            .service('transactionManager')
+            .confirm(migrationTxObject, 3);
+        })
         .then(() => setCurrentStep(c => c + 1));
     }
   }, [migrationTxObject, maker]);
@@ -152,7 +156,8 @@ function MigrateCDP() {
                   saiAvailable,
                   selectedCDP,
                   migrationTxObject,
-                  setMigrationTxObject
+                  setMigrationTxObject,
+                  newCdpId
                 })}
               </FadeInFromSide>
             );

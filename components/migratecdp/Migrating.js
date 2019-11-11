@@ -15,9 +15,6 @@ export default ({ onNext, onPrev, onReset, onClose, migrationTxObject }) => {
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
         The estimated time is 8 minutes.
       </Text.p>
-      <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        You can safely leave this page.
-      </Text.p>
       <Button
         justifySelf="center"
         fontSize="s"
@@ -28,13 +25,16 @@ export default ({ onNext, onPrev, onReset, onClose, migrationTxObject }) => {
         View transaction details <img src={arrowTopRight} />
       </Button>
 
-
       {/* DELETE ME AFTER: */}
       <Link onClick={onNext}>next</Link>
       <Link onClick={onPrev}>back</Link>
-      <Button onClick={onClose} width={["26.0rem", "13.0rem"]} justifySelf={'center'}>
+      <Button
+        onClick={onClose}
+        width={['26.0rem', '13.0rem']}
+        justifySelf={'center'}
+      >
         Exit
       </Button>
     </Grid>
   );
-}
+};

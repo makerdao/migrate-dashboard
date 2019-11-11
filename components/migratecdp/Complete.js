@@ -1,21 +1,15 @@
 import React from 'react';
-import {
-  Grid,
-  Text,
-  Button,
-  Card,
-  Table
-} from '@makerdao/ui-components-core';
+import { Grid, Text, Button, Card, Table } from '@makerdao/ui-components-core';
 
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
 import blueArrowTopRight from '../../assets/icons/blueArrowTopRight.svg';
 
-function Complete({ onReset, onClose, selectedCDP: cdp }) {
+function Complete({ onReset, onClose, selectedCDP: cdp, newCdpId }) {
   return (
     <Grid gridRowGap="m" mx={'s'}>
       <Text.h2 textAlign="center">Migration complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        CDP #{cdp.id} has been successfully migrated to Multi-collateral Dai and the new CDP Portal.{' '}
+        CDP #{cdp.id} has been successfully migrated to Multi-collateral Dai.{' '}
       </Text.p>
       <Button
         my="xs"
@@ -27,7 +21,7 @@ function Complete({ onReset, onClose, selectedCDP: cdp }) {
       >
         View transaction details <img src={arrowTopRight} />
       </Button>
-      <Card px="l" py="s" width="100%" maxWidth="400px" justifySelf="center" >
+      <Card px="l" py="s" width="100%" maxWidth="400px" justifySelf="center">
         <Table width="100%">
           <tbody>
             <Table.tr>
@@ -37,12 +31,13 @@ function Complete({ onReset, onClose, selectedCDP: cdp }) {
               <Table.td textAlign="right">
                 <a
                   fontWeight="medium"
-                  href={`https://oasis.app/borrow/${cdp.id}`}
+                  href={`https://staging.oasis.app/borrow/${newCdpId}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{textDecoration: 'none'}}
+                  style={{ textDecoration: 'none' }}
                 >
-                  #{cdp.id} <img src={blueArrowTopRight} style={{fill: '#0000EE'}} />
+                  #{newCdpId}{' '}
+                  <img src={blueArrowTopRight} style={{ fill: '#0000EE' }} />
                 </a>
               </Table.td>
             </Table.tr>
