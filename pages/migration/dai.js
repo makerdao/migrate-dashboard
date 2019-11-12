@@ -18,13 +18,24 @@ const steps = [
 ];
 
 function MigrateDai() {
-  const { account } = useMaker();
+  const { account, maker } = useMaker();
+  const [loadingTx, setLoadingTx] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [migrationTxObject, setMigrationTxObject] = useState({});
+  const [migrationTxHash, setMigrationTxHash] = useState(null);
 
   useEffect(() => {
     if (!account) Router.replace('/');
   }, []);
+
+  useEffect(() => {
+    if (migrationTxObject instanceof Promise) {
+      migrationTxObject.then(tx => {
+        setMigrationTxHash(tx.hash);
+        setLoadingTx(false);
+      });
+    }
+  }, [migrationTxObject, maker]);
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
@@ -35,13 +46,13 @@ function MigrateDai() {
 
   return (
     <FlowBackground open={true}>
-      <Grid gridRowGap={{ s: "s", l: "xl" }}>
+      <Grid gridRowGap={{ s: 's', l: 'xl' }}>
         <FlowHeader account={account} />
         <Stepper
           steps={['Sai Upgrade', 'Confirmation']}
           selected={currentStep}
           m="0 auto"
-          mt={"m"}
+          mt={'m'}
           p={['0 80px', '0']}
           opacity={currentStep < 1 ? 1 : 0}
           transition="opacity 0.2s"
@@ -61,7 +72,11 @@ function MigrateDai() {
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
                   onReset: reset,
-                  setMigrationTxObject
+                  setMigrationTxObject,
+                  migrationTxObject,
+                  migrationTxHash,
+                  setLoadingTx,
+                  loadingTx
                 })}
               </FadeInFromSide>
             );

@@ -19,6 +19,7 @@ const PayAndMigrate = ({
   onNext,
   selectedCDP,
   setMigrationTxObject,
+  setMigrationTxHash,
   setLoadingTx
 }) => {
   const [hasReadTOS, setHasReadTOS] = useState(false);
@@ -49,8 +50,11 @@ const PayAndMigrate = ({
         .service('migration')
         .getMigration('single-to-multi-cdp');
       const migrationTxObject = mig.execute(selectedCDP.id);
+      maker.service('transactionManager').listen(migrationTxObject, {
+        pending: tx => setMigrationTxHash(tx.hash)
+      });
       setMigrationTxObject(migrationTxObject);
-      setLoadingTx(true)
+      setLoadingTx(true);
     } catch (err) {
       console.log('migrate tx failed', err);
     }
@@ -127,11 +131,12 @@ const PayAndMigrate = ({
               checked={hasReadTOS}
               onChange={evt => setHasReadTOS(evt.target.checked)}
             />
-            <Text
-              t="caption"
-              color="steel"
-            >
-              I have read and accept the <Link target="_blank" href="https://migrate.makerdao.com/terms">Terms of Service</Link>.
+            <Text t="caption" color="steel">
+              I have read and accept the{' '}
+              <Link target="_blank" href="https://migrate.makerdao.com/terms">
+                Terms of Service
+              </Link>
+              .
             </Text>
           </Grid>
         </Grid>

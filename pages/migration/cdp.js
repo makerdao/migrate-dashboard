@@ -66,6 +66,7 @@ function MigrateCDP() {
   const [loadingCdps, setLoadingCdps] = useState(true);
   const [loadingTx, setLoadingTx] = useState(false);
   const [selectedCDP, setSelectedCDP] = useState({});
+  const [migrationTxHash, setMigrationTxHash] = useState(null);
   const [migrationTxObject, setMigrationTxObject] = useState({});
   const [saiAvailable, setSaiAvailable] = useState(0);
   const [newCdpId, setNewCdpId] = useState({});
@@ -115,7 +116,7 @@ function MigrateCDP() {
       migrationTxObject
         .then(id => {
           setNewCdpId(id);
-          setLoadingTx(false)
+          setLoadingTx(false);
           return maker
             .service('transactionManager')
             .confirm(migrationTxObject, 3);
@@ -127,7 +128,11 @@ function MigrateCDP() {
   return (
     <FlowBackground open={true}>
       <Grid gridRowGap={['m', 'xl']}>
-        <FlowHeader account={account} loading={loadingTx} hash={newCdpId.hash}/>
+        <FlowHeader
+          account={account}
+          loading={loadingTx}
+          hash={newCdpId.hash}
+        />
         <Stepper
           steps={['Select CDP', 'Deploy Proxy', 'Pay & Migrate']}
           selected={currentStep}
@@ -161,7 +166,9 @@ function MigrateCDP() {
                   setMigrationTxObject,
                   newCdpId,
                   setLoadingTx,
-                  loadingTx
+                  loadingTx,
+                  setMigrationTxHash,
+                  migrationTxHash
                 })}
               </FadeInFromSide>
             );
