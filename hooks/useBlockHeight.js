@@ -3,12 +3,12 @@ import useMaker from './useMaker';
 
 const useBlockHeight = (initialState = null) => {
   const { maker } = useMaker();
-  const [blockHeight, setblockHeight] = useState(initialState);
+  const [blockHeight, setBlockHeight] = useState(initialState);
 
   useEffect(() => {
     if (maker) {
       maker.service('web3').onNewBlock(blockHeight => {
-        setblockHeight(blockHeight);
+        setBlockHeight(blockHeight);
       });
     }
   }, [maker]);
