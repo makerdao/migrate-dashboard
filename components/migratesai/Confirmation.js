@@ -7,7 +7,7 @@ import LoadingToggle from '../LoadingToggle';
 export default ({
   onNext,
   onPrev,
-  migrationTxObject
+  setMigrationTxObject
 }) => {
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
