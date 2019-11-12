@@ -9,13 +9,15 @@ import {
 
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
 import blueArrowTopRight from '../../assets/icons/blueArrowTopRight.svg';
+import useStore from '../../hooks/useStore';
 
 function Complete({ onReset, onClose, selectedCDP: cdp }) {
+  const [{ saiAmountToMigrate }] = useStore();
   return (
     <Grid gridRowGap="m" mx={'s'}>
       <Text.h2 textAlign="center">Upgrade complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        You've successfully upgraded your Singe-Collateral Dai for Multi-Collateral Dai.
+        You've successfully upgraded your Single-Collateral Dai for Multi-Collateral Dai.
       </Text.p>
       <Button
         my="xs"
@@ -34,7 +36,7 @@ function Complete({ onReset, onClose, selectedCDP: cdp }) {
               <Table.tr>
                 <Table.td>
                   <Text display={'block'}>Sent: Single Collateral Dai</Text>
-                  <Text t="heading" display={'block'} fontWeight="bold">{`foobar`}</Text>
+                  <Text t="heading" display={'block'} fontWeight="bold">{`${parseFloat(saiAmountToMigrate).toFixed(2)} SAI`}</Text>
                 </Table.td>
               </Table.tr>
               <Table.tr>
@@ -46,18 +48,16 @@ function Complete({ onReset, onClose, selectedCDP: cdp }) {
               <Table.tr>
                 <Table.td>
                   <Text display={'block'}>Received: Multi Collateral Dai</Text>
-                  <Text t="heading" display={'block'} fontWeight="bold">{`foobar`}</Text>
+                  <Text t="heading" display={'block'} fontWeight="bold">{`${parseFloat(saiAmountToMigrate).toFixed(2)} DAI`}</Text>
                 </Table.td>
               </Table.tr>
             </Table.tbody>
           </Table>
         </Grid>
       </Card>
-      <Grid gridRowGap="s" justifySelf="center">
-        <Button mt="s" onClick={onClose}>
+        <Button mt="s" onClick={onClose} width={['26.0rem', '13.0rem']} justifySelf={'center'}>
           Exit
         </Button>
-      </Grid>
     </Grid>
   );
 }
