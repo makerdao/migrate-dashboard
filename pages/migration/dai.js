@@ -6,13 +6,15 @@ import FlowHeader from '../../components/FlowHeader';
 import useMaker from '../../hooks/useMaker';
 import SCDRedeem from '../../components/migratesai/SCDRedeem';
 import Confirmation from '../../components/migratesai/Confirmation';
-import Upgrading from '../../components/migratesai/Upgrading'
+import Upgrading from '../../components/migratesai/Upgrading';
+import Complete from '../../components/migratesai/Complete';
 import FadeInFromSide from '../../components/FadeInFromSide';
 
 const steps = [
   props => <SCDRedeem {...props} />,
   props => <Confirmation {...props} />,
-  props => <Upgrading {...props} />
+  props => <Upgrading {...props} />,
+  props => <Complete {...props} />
 ];
 
 function MigrateDai() {
