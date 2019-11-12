@@ -80,6 +80,7 @@ export default ({ onNext, onPrev }) => {
 	        <Input
 	          type="number"
 	          value={amount}
+	          disabled={!saiBalance}
 	          min="0"
 	          placeholder="0.00 SAI"
 	          onChange={onAmountChange}

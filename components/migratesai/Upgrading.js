@@ -30,12 +30,12 @@ export default ({ onNext, onPrev, onReset, onClose, migrationTxObject }) => {
 
 
       {/* DELETE ME AFTER: */}
-      {/*<Link onClick={onNext}>next</Link>
+      <Link onClick={onNext}>next</Link>
       <Link onClick={onPrev}>back</Link>
        <Button onClick={onClose} width={["26.0rem", "13.0rem"]} justifySelf={'center'}>
         Exit
       </Button>
-      */}
+      
     </Grid>
   );
 }
