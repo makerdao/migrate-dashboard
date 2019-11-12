@@ -18,7 +18,8 @@ const PayAndMigrate = ({
   onPrev,
   onNext,
   selectedCDP,
-  setMigrationTxObject
+  setMigrationTxObject,
+  setLoadingTx
 }) => {
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [mkrApprovePending, setMkrApprovePending] = useState(false);
@@ -49,6 +50,7 @@ const PayAndMigrate = ({
         .getMigration('single-to-multi-cdp');
       const migrationTxObject = mig.execute(selectedCDP.id);
       setMigrationTxObject(migrationTxObject);
+      setLoadingTx(true)
     } catch (err) {
       console.log('migrate tx failed', err);
     }
