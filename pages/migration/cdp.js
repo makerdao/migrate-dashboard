@@ -120,7 +120,7 @@ function MigrateCDP() {
             .service('transactionManager')
             .confirm(migrationTxObject, 3);
         })
-        // .then(() => setCurrentStep(c => c + 1));
+        .then(() => setCurrentStep(c => c + 1));
     }
   }, [migrationTxObject, maker]);
 
