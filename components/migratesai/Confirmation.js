@@ -1,14 +1,18 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Text, Button, Grid, Table, Link, Card, Checkbox } from '@makerdao/ui-components-core';
+import {
+  Text,
+  Button,
+  Grid,
+  Table,
+  Link,
+  Card,
+  Checkbox
+} from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
 
-export default ({
-  onNext,
-  onPrev,
-  setMigrationTxObject
-}) => {
+export default ({ onNext, onPrev, setMigrationTxObject }) => {
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [saiApprovePending, setSaiApprovePending] = useState(false);
@@ -33,9 +37,7 @@ export default ({
 
   const upgradeSai = useCallback(async () => {
     try {
-      const mig = await maker
-        .service('migration')
-        .getMigration('sai-to-dai');
+      const mig = await maker.service('migration').getMigration('sai-to-dai');
       const migrationTxObject = mig.execute(saiAmountToMigrate);
       setMigrationTxObject(migrationTxObject);
     } catch (err) {
@@ -61,9 +63,11 @@ export default ({
     })();
   }, [account, maker, saiAmountToMigrate]);
 
-  const exchangeRate = [1.00, 1.00]
-  const saiAmount = parseInt(saiAmountToMigrate).toFixed(2)
-  const daiAmount = (saiAmount * exchangeRate[0] / exchangeRate[1]).toFixed(2)
+  const exchangeRate = [1.0, 1.0];
+  const saiAmount = parseInt(saiAmountToMigrate).toFixed(2);
+  const daiAmount = ((saiAmount * exchangeRate[0]) / exchangeRate[1]).toFixed(
+    2
+  );
 
   return (
     <Grid maxWidth="600px" gridRowGap="m" px={['s', 0]} minWidth="38rem">
@@ -72,25 +76,40 @@ export default ({
       </Text.h2>
       <Grid gridRowGap="s">
         <Card>
-          <Grid gridRowGap="s" color="darkPurple" px={{ s: "m" }} py={{ s: "xs" }}>
+          <Grid
+            gridRowGap="s"
+            color="darkPurple"
+            px={{ s: 'm' }}
+            py={{ s: 'xs' }}
+          >
             <Table p={0}>
               <Table.tbody>
                 <Table.tr>
                   <Table.td>
                     <Text display={'block'}>Sending</Text>
-                    <Text t="heading" display={'block'} fontWeight="bold">{`${saiAmount} Single Collateral Dai`}</Text>
+                    <Text
+                      t="heading"
+                      display={'block'}
+                      fontWeight="bold"
+                    >{`${saiAmount} Single Collateral Dai`}</Text>
                   </Table.td>
                 </Table.tr>
                 <Table.tr>
                   <Table.td>
                     <Text display={'block'}>Exchange Rate</Text>
-                    <Text t="heading" display={'block'} fontWeight="bold">1:1</Text>
+                    <Text t="heading" display={'block'} fontWeight="bold">
+                      1:1
+                    </Text>
                   </Table.td>
                 </Table.tr>
                 <Table.tr>
                   <Table.td>
                     <Text display={'block'}>Receiving</Text>
-                    <Text t="heading" display={'block'} fontWeight="bold">{`${daiAmount} Multi Collateral Dai`}</Text>
+                    <Text
+                      t="heading"
+                      display={'block'}
+                      fontWeight="bold"
+                    >{`${daiAmount} Multi Collateral Dai`}</Text>
                   </Table.td>
                 </Table.tr>
               </Table.tbody>
@@ -98,33 +117,39 @@ export default ({
           </Grid>
         </Card>
         <Card>
-        <Grid px={"m"} py={"m"}>
-          <LoadingToggle
-            completeText={'SAI unlocked'}
-            loadingText={'Unlocking SAI'}
-            defaultText={'Unlock SAI to continue'}
-            tokenDisplayName={'SAI'}
-            isLoading={saiApprovePending}
-            isComplete={proxyDetails.hasSaiAllowance}
-            onToggle={giveProxySaiAllowance}
-            disabled={proxyDetails.hasSaiAllowance || !proxyDetails.address}
-            data-testid="allowance-toggle"
-          />
+          <Grid px={'m'} py={'m'}>
+            <LoadingToggle
+              completeText={'SAI unlocked'}
+              loadingText={'Unlocking SAI'}
+              defaultText={'Unlock SAI to continue'}
+              tokenDisplayName={'SAI'}
+              isLoading={saiApprovePending}
+              isComplete={proxyDetails.hasSaiAllowance}
+              onToggle={giveProxySaiAllowance}
+              disabled={proxyDetails.hasSaiAllowance || !proxyDetails.address}
+              data-testid="allowance-toggle"
+            />
           </Grid>
         </Card>
         <Card>
-          <Grid alignItems="center" gridTemplateColumns="auto 1fr" px={"m"} py={"m"}>
+          <Grid
+            alignItems="center"
+            gridTemplateColumns="auto 1fr"
+            px={'m'}
+            py={'m'}
+          >
             <Checkbox
               mr="s"
               fontSize="l"
               checked={hasReadTOS}
               onChange={evt => setHasReadTOS(evt.target.checked)}
             />
-            <Text
-              t="caption"
-              color="steel"
-            >
-              I have read and accept the <Link target="_blank" href="https://migrate.makerdao.com/terms">Terms of Service</Link>.
+            <Text t="caption" color="steel">
+              I have read and accept the{' '}
+              <Link target="_blank" href="https://migrate.makerdao.com/terms">
+                Terms of Service
+              </Link>
+              .
             </Text>
           </Grid>
         </Card>
@@ -141,8 +166,8 @@ export default ({
         <Button
           disabled={!hasReadTOS || !proxyDetails.hasSaiAllowance}
           onClick={() => {
-            upgradeSai()
-            onNext()
+            upgradeSai();
+            onNext();
           }}
         >
           Continue
