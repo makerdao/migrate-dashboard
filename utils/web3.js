@@ -1,3 +1,5 @@
+import lang from '../languages';
+
 export const wallets = {
   IMTOKEN: 'imtoken',
   ALPHA: 'alphawallet',
@@ -37,15 +39,38 @@ export function getWebClientProviderName() {
 
     if (
       window.web3.currentProvider.host &&
-        window.web3.currentProvider.host.indexOf('infura') !== -1
+      window.web3.currentProvider.host.indexOf('infura') !== -1
     )
       return wallets.INFURA;
 
     if (
       window.web3.currentProvider.host &&
-        window.web3.currentProvider.host.indexOf('localhost') !== -1
+      window.web3.currentProvider.host.indexOf('localhost') !== -1
     )
       return wallets.LOCALHOST;
   }
   return wallets.OTHER;
+}
+
+export function walletName(providerName) {
+  switch (providerName) {
+    case wallets.METAMASK:
+      return lang.providers.metamask;
+    case wallets.TRUST:
+      return lang.providers.trust;
+    case wallets.IMTOKEN:
+      return lang.providers.imtoken;
+    case wallets.COINBASE:
+      return lang.providers.coinbase;
+    case wallets.ALPHA:
+      return lang.providers.alphawallet;
+    default:
+      return lang.providers.other;
+  }
+}
+
+export function shortWalletName(providerName) {
+  const name = walletName(providerName);
+  if (name === lang.providers.other) return 'Wallet';
+  return name.split(' ')[0];
 }

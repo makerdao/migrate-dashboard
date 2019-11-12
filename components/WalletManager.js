@@ -6,15 +6,13 @@ import BrowserProviderButton from '../components/BrowserProviderButton';
 import WalletConnectButton from '../components/WalletConnect';
 import Trezor from '../assets/icons/trezor.svg';
 import Ledger from '../assets/icons/ledger.svg';
-import { getWebClientProviderName } from '../utils/web3';
 import Router from 'next/router';
 import lang from '../languages';
 import { useLedger, useTrezor } from '../hooks/useHardwareWallet';
 import { connectBrowserProvider } from '../maker';
 
-function WalletManager() {
+function WalletManager({ providerName }) {
   const { maker } = useMaker();
-  const providerName = getWebClientProviderName();
 
   const onAccountChosen = useCallback(
     async ({ address }) => {

@@ -4,9 +4,8 @@ import trustLogo from '../assets/icons/trust-logo.svg';
 import imTokenLogo from '../assets/icons/imtoken-logo.svg';
 import coinbaseWalletLogo from '../assets/icons/coinbase-wallet.png';
 import alphaWalletLogo from '../assets/icons/alpha-wallet-logo.png';
-import { wallets } from '../utils/web3';
+import { wallets, walletName } from '../utils/web3';
 import IconButton from './IconButton';
-import lang from '../languages';
 
 export default function BrowserProviderButton({ provider, ...props }) {
   const icon = useMemo(() => {
@@ -39,25 +38,9 @@ export default function BrowserProviderButton({ provider, ...props }) {
     }
   }, [provider]);
 
-  const name = useMemo(() => {
-    if (provider === wallets.METAMASK) {
-      return lang.providers.metamask;
-    } else if (provider === wallets.TRUST) {
-      return lang.providers.trust;
-    } else if (provider === wallets.IMTOKEN) {
-      return lang.providers.imtoken;
-    } else if (provider === wallets.COINBASE) {
-      return lang.providers.coinbase;
-    } else if (provider === wallets.ALPHA) {
-      return lang.providers.alphawallet;
-    } else {
-      return lang.providers.other;
-    }
-  }, [provider]);
-
   return (
     <IconButton icon={icon} {...props}>
-      {name}
+      {walletName(provider)}
     </IconButton>
   );
 }

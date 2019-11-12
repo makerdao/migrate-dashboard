@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Header from '@makerdao/ui-components-header';
 import Footer from '@makerdao/ui-components-footer';
 import { Box, Flex, Text, Grid } from '@makerdao/ui-components-core';
 import { Breakout } from '../components/Typography';
-
 import WalletManager from '../components/WalletManager';
+import useStore from '../hooks/useStore';
+import { getWebClientProviderName } from '../utils/web3';
 
 function Index() {
+  const [{ providerName }, dispatch] = useStore();
+  useEffect(() => {
+    dispatch({
+      type: 'assign',
+      payload: {
+        providerName: getWebClientProviderName()
+      }
+    });
+  }, [dispatch]);
+
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <Header />
@@ -28,15 +39,19 @@ function Index() {
           textAlign={{ s: 'center', l: 'center' }}
           justifySelf={{ s: 'center', l: 'center' }}
         >
-          <Text.h1 alignSelf="center" mb="s">Migrate and Upgrade</Text.h1>
+          <Text.h1 alignSelf="center" mb="s">
+            Migrate and Upgrade
+          </Text.h1>
           <Breakout>
-            Use Migrate after system updates to change your Dai, MKR, and CDPs into
-            their new versions. Connect your wallet to view available migrations
-            on your account.
+            Use Migrate after system updates to change your Dai, MKR, and CDPs
+            into their new versions. Connect your wallet to view available
+            migrations on your account.
           </Breakout>
         </Box>
       </Grid>
-      <Text.h4 alignSelf="center" mb="s" color="#546978">Connect a wallet to get started</Text.h4>
+      <Text.h4 alignSelf="center" mb="s" color="#546978">
+        Connect a wallet to get started
+      </Text.h4>
       <Grid
         maxWidth="113.4rem"
         width="100%"
@@ -47,7 +62,7 @@ function Index() {
         gridColumnGap="xl"
         gridRowGap="m"
       >
-        <WalletManager />
+        <WalletManager providerName={providerName} />
       </Grid>
       <Footer />
     </Flex>

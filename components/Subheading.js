@@ -1,5 +1,5 @@
+import React from 'react';
 import { Flex, Card, Text } from '@makerdao/ui-components-core';
-
 import Account from './Account';
 
 const NoAccount = () => {
