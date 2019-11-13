@@ -6,48 +6,38 @@ import FlowHeader from '../../components/FlowHeader';
 import useMaker from '../../hooks/useMaker';
 import SCDRedeem from '../../components/migratesai/SCDRedeem';
 import Confirmation from '../../components/migratesai/Confirmation';
-import Upgrading from '../../components/migratesai/Upgrading';
+import InProgress from '../../components/InProgress';
 import Complete from '../../components/migratesai/Complete';
 import FadeInFromSide from '../../components/FadeInFromSide';
 
 const steps = [
   props => <SCDRedeem {...props} />,
   props => <Confirmation {...props} />,
-  props => <Upgrading {...props} />,
+  props => <InProgress {...props} title="Your Sai is being upgraded" />,
   props => <Complete {...props} />
 ];
 
 function MigrateDai() {
-  const { account, maker } = useMaker();
-  const [loadingTx, setLoadingTx] = useState(false);
+  const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [migrationTxObject, setMigrationTxObject] = useState({});
-  const [migrationTxHash, setMigrationTxHash] = useState(null);
+  const [migrationTxHash, setMigrationTxHash] = useState();
 
   useEffect(() => {
     if (!account) Router.replace('/');
-  }, []);
-
-  useEffect(() => {
-    if (migrationTxObject instanceof Promise) {
-      migrationTxObject.then(tx => {
-        setMigrationTxHash(tx.hash);
-        setLoadingTx(false);
-      });
-    }
-  }, [migrationTxObject, maker]);
+  }, []); // eslint-disable-line
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
-    setCurrentStep(currentStep - 1);
+    setCurrentStep(s => s - 1);
   };
-  const toNextStep = () => setCurrentStep(currentStep + 1);
+  const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
 
   return (
     <FlowBackground open={true}>
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
-        <FlowHeader account={account} />
+        <FlowHeader account={account} showClose={currentStep <= 1} />
         <Stepper
           steps={['Sai Upgrade', 'Confirmation']}
           selected={currentStep}
@@ -74,9 +64,8 @@ function MigrateDai() {
                   onReset: reset,
                   setMigrationTxObject,
                   migrationTxObject,
-                  migrationTxHash,
-                  setLoadingTx,
-                  loadingTx
+                  setMigrationTxHash,
+                  migrationTxHash
                 })}
               </FadeInFromSide>
             );
