@@ -44,14 +44,14 @@ export default ({
     try {
       const mig = await maker.service('migration').getMigration('sai-to-dai');
       const migrationTxObject = mig.execute(saiAmountToMigrate);
-      setMigrationTxObject(migrationTxObject);
       maker.service('transactionManager').listen(migrationTxObject, {
         pending: tx => setMigrationTxHash(tx.hash)
       });
+      migrationTxObject.then(onNext);
     } catch (err) {
       console.log('migrate tx failed', err);
     }
-  }, [maker, saiAmountToMigrate, setMigrationTxHash, setMigrationTxObject]);
+  }, [maker, onNext, saiAmountToMigrate, setMigrationTxHash]);
 
   useEffect(() => {
     (async () => {
@@ -72,7 +72,7 @@ export default ({
   }, [account, maker, saiAmountToMigrate]);
 
   const exchangeRate = [1, 1];
-  const saiAmount = parseInt(saiAmountToMigrate).toFixed(2);
+  const saiAmount = parseFloat(saiAmountToMigrate).toFixed(2);
   const daiAmount = ((saiAmount * exchangeRate[0]) / exchangeRate[1]).toFixed(
     2
   );

@@ -18,30 +18,20 @@ const steps = [
 ];
 
 function MigrateDai() {
-  const { account, maker } = useMaker();
-  const [loadingTx, setLoadingTx] = useState(false);
+  const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [migrationTxObject, setMigrationTxObject] = useState({});
-  const [migrationTxHash, setMigrationTxHash] = useState(null);
+  const [migrationTxHash, setMigrationTxHash] = useState();
 
   useEffect(() => {
     if (!account) Router.replace('/');
   }, []); // eslint-disable-line
 
-  useEffect(() => {
-    if (migrationTxObject instanceof Promise) {
-      migrationTxObject.then(tx => {
-        setMigrationTxHash(tx.hash);
-        setLoadingTx(false);
-      });
-    }
-  }, [migrationTxObject, maker]);
-
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
-    setCurrentStep(currentStep - 1);
+    setCurrentStep(s => s - 1);
   };
-  const toNextStep = () => setCurrentStep(currentStep + 1);
+  const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
 
   return (
@@ -74,9 +64,8 @@ function MigrateDai() {
                   onReset: reset,
                   setMigrationTxObject,
                   migrationTxObject,
-                  migrationTxHash,
-                  setLoadingTx,
-                  loadingTx
+                  setMigrationTxHash,
+                  migrationTxHash
                 })}
               </FadeInFromSide>
             );

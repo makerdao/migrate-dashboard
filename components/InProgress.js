@@ -5,7 +5,7 @@ import useWaitTime from '../hooks/useWaitTime';
 import { etherscanLink } from '../utils/ethereum';
 import arrowTopRight from '../assets/icons/arrowTopRight.svg';
 
-export default ({ loadingTx, migrationTxHash, title }) => {
+export default ({ migrationTxHash, title }) => {
   const { maker, network } = useMaker();
   const waitTime = useWaitTime(maker);
 
@@ -20,7 +20,7 @@ export default ({ loadingTx, migrationTxHash, title }) => {
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
         The estimated time is {waitTime || 'being calculated'}.
       </Text.p>
-      {!loadingTx && migrationTxHash && (
+      {migrationTxHash && (
         <Link
           justifySelf="center"
           target="_blank"
