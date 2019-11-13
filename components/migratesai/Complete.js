@@ -2,10 +2,10 @@ import React from 'react';
 import { Grid, Text, Button, Card, Table } from '@makerdao/ui-components-core';
 
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
-import blueArrowTopRight from '../../assets/icons/blueArrowTopRight.svg';
 import useStore from '../../hooks/useStore';
+import { prettifyNumber } from '../../utils/ui';
 
-function Complete({ onReset, onClose, selectedCDP: cdp }) {
+function Complete({ onClose }) {
   const [{ saiAmountToMigrate }] = useStore();
   return (
     <Grid gridRowGap="m" mx={'s'}>
@@ -40,7 +40,7 @@ function Complete({ onReset, onClose, selectedCDP: cdp }) {
                     t="heading"
                     display={'block'}
                     fontWeight="bold"
-                  >{`${parseFloat(saiAmountToMigrate).toFixed(2)} SAI`}</Text>
+                  >{`${prettifyNumber(saiAmountToMigrate)} SAI`}</Text>
                 </Table.td>
               </Table.tr>
               <Table.tr>
@@ -58,7 +58,7 @@ function Complete({ onReset, onClose, selectedCDP: cdp }) {
                     t="heading"
                     display={'block'}
                     fontWeight="bold"
-                  >{`${parseFloat(saiAmountToMigrate).toFixed(2)} DAI`}</Text>
+                  >{`${prettifyNumber(saiAmountToMigrate)} DAI`}</Text>
                 </Table.td>
               </Table.tr>
             </Table.tbody>

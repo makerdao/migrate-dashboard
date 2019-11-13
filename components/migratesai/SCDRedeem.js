@@ -65,7 +65,7 @@ export default ({ onNext, onPrev }) => {
         t="body"
         fontSize="1.8rem"
         m="0 auto"
-        display={{ s: "none", m: 'block' }}
+        display={{ s: 'none', m: 'block' }}
       >
         How much Single-collateral Sai would you like to upgrade to
         Multi-collateral Dai?
@@ -73,7 +73,7 @@ export default ({ onNext, onPrev }) => {
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
         gridGap="m"
-        my={{ s: "s", l: "l"}}
+        my={{ s: 's', l: 'l'}}
       >
       <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
 	      <Grid gridRowGap="s">

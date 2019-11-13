@@ -17,10 +17,7 @@ const ProxyAndTransfer = ({
   proxyLoading,
   proxyDeployed,
   proxyErrors,
-  setAllowance,
-  hasAllowance,
   labels,
-  isSettingAllowance,
   selectedCDP,
   cdpTransferred,
   setCDPTransferred

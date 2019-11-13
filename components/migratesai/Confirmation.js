@@ -11,6 +11,7 @@ import {
 import useStore from '../../hooks/useStore';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
+import { prettifyNumber } from '../../utils/ui';
 
 export default ({
   onNext,
@@ -72,7 +73,7 @@ export default ({
   }, [account, maker, saiAmountToMigrate]);
 
   const exchangeRate = [1, 1];
-  const saiAmount = parseFloat(saiAmountToMigrate).toFixed(2);
+  const saiAmount = prettifyNumber(saiAmountToMigrate);
   const daiAmount = ((saiAmount * exchangeRate[0]) / exchangeRate[1]).toFixed(
     2
   );
