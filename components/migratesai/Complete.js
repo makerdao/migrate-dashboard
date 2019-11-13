@@ -1,11 +1,23 @@
 import React from 'react';
-import { Grid, Text, Button, Card, Table } from '@makerdao/ui-components-core';
+import {
+  Grid,
+  Text,
+  Button,
+  Card,
+  Table,
+  Link
+} from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
 import { prettifyNumber } from '../../utils/ui';
-function Complete({ onClose }) {
+import { etherscanLink } from '../../utils/ethereum';
+import useMaker from '../../hooks/useMaker';
+
+function Complete({ onClose, migrationTxHash }) {
+  const { network } = useMaker();
   const [{ saiAmountToMigrate }] = useStore();
   const amount = prettifyNumber(saiAmountToMigrate);
+
   return (
     <Grid gridRowGap="m" mx={'s'}>
       <Text.h2 textAlign="center">Upgrade complete</Text.h2>
@@ -13,16 +25,22 @@ function Complete({ onClose }) {
         You&apos;ve successfully upgraded your Single-Collateral Dai for
         Multi-Collateral Dai.
       </Text.p>
-      <Button
-        my="xs"
+      <Link
         justifySelf="center"
-        fontSize="s"
-        py="xs"
-        px="s"
-        variant="secondary"
+        target="_blank"
+        href={etherscanLink(migrationTxHash, network)}
       >
-        View transaction details <img src={arrowTopRight} />
-      </Button>
+        <Button
+          my="xs"
+          justifySelf="center"
+          fontSize="s"
+          py="xs"
+          px="s"
+          variant="secondary"
+        >
+          View transaction details <img src={arrowTopRight} />
+        </Button>
+      </Link>
       <Card>
         <Grid
           gridRowGap="s"
@@ -60,9 +78,14 @@ function Complete({ onClose }) {
           </Table>
         </Grid>
       </Card>
-        <Button mt="s" onClick={onClose} width={['26.0rem', '13.0rem']} justifySelf={'center'}>
-          Exit
-        </Button>
+      <Button
+        mt="s"
+        onClick={onClose}
+        width={['26.0rem', '13.0rem']}
+        justifySelf={'center'}
+      >
+        Exit
+      </Button>
     </Grid>
   );
 }

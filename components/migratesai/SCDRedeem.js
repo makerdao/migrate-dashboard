@@ -75,7 +75,7 @@ export default ({ onNext, onPrev }) => {
         my={{ s: 's', l: 'l' }}
       >
         <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
-          <Grid gridRowGap="s">
+          <Grid gridRowGap="m">
             <TextBlock t="h5" lineHeight="normal">
               Enter the amount you would like to upgrade.
             </TextBlock>
@@ -88,7 +88,11 @@ export default ({ onNext, onPrev }) => {
               onChange={onAmountChange}
               failureMessage={amountErrors}
               after={
-                <Link fontWeight="medium" onClick={() => setAmount(maxOverall)}>
+                <Link
+                  color="blue"
+                  fontWeight="medium"
+                  onClick={() => setAmount(maxOverall)}
+                >
                   Set max
                 </Link>
               }
@@ -102,9 +106,7 @@ export default ({ onNext, onPrev }) => {
                   ml="s"
                   color="darkLavender"
                 >
-                  {saiBalance
-                    ? prettifyNumber(saiBalance)
-                    : '...'}
+                  {saiBalance ? prettifyNumber(saiBalance) : '...'}
                 </Text>
               </Box>
             </Grid>

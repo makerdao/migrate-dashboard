@@ -20,7 +20,7 @@ const steps = [
 function MigrateDai() {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
-  const [migrationTxHash, setMigrationTxHash] = useState();
+  const [migrationTxHash, setMigrationTxHash] = useState(null);
 
   useEffect(() => {
     if (!account) Router.replace('/');
