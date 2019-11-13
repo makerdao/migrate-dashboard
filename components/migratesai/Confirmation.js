@@ -64,7 +64,7 @@ export default ({ onNext, onPrev, setMigrationTxObject }) => {
   }, [account, maker, saiAmountToMigrate]);
 
   const exchangeRate = [1, 1];
-  const saiAmount = parseInt(saiAmountToMigrate).toFixed(2);
+  const saiAmount = parseFloat(saiAmountToMigrate).toFixed(2);
   const daiAmount = ((saiAmount * exchangeRate[0]) / exchangeRate[1]).toFixed(
     2
   );
