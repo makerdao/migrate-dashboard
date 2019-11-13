@@ -119,7 +119,7 @@ function MigrateCDP() {
           setLoadingTx(false);
           return maker
             .service('transactionManager')
-            .confirm(migrationTxObject, 3);
+            .confirm(migrationTxObject, 1);
         })
         .then(() => setCurrentStep(c => c + 1));
     }
@@ -132,6 +132,7 @@ function MigrateCDP() {
           account={account}
           loading={loadingTx}
           hash={newCdpId.hash}
+          showClose={currentStep <= 2}
         />
         <Stepper
           steps={['Select CDP', 'Deploy Proxy', 'Pay & Migrate']}

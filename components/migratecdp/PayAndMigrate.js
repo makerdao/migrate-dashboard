@@ -58,7 +58,13 @@ const PayAndMigrate = ({
     } catch (err) {
       console.log('migrate tx failed', err);
     }
-  }, [account, maker, selectedCDP]);
+  }, [
+    maker,
+    selectedCDP.id,
+    setLoadingTx,
+    setMigrationTxHash,
+    setMigrationTxObject
+  ]);
 
   useEffect(() => {
     (async () => {
@@ -129,9 +135,13 @@ const PayAndMigrate = ({
               mr="s"
               fontSize="l"
               checked={hasReadTOS}
-              onChange={evt => setHasReadTOS(evt.target.checked)}
+              onChange={() => setHasReadTOS(!hasReadTOS)}
             />
-            <Text t="caption" color="steel">
+            <Text
+              t="caption"
+              color="steel"
+              onClick={() => setHasReadTOS(!hasReadTOS)}
+            >
               I have read and accept the{' '}
               <Link target="_blank" href="https://migrate.makerdao.com/terms">
                 Terms of Service
@@ -151,7 +161,7 @@ const PayAndMigrate = ({
           variant="secondary-outline"
           onClick={onPrev}
         >
-          Cancel
+          Back
         </Button>
         <Button
           justifySelf="center"
