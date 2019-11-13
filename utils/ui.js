@@ -21,3 +21,31 @@ export function prettifyFloat(num, decimalPlaces = 2) {
     ? `${num.toFixed(decimalPlaces)}...`
     : num;
 }
+
+export function cleanSymbol(s) {
+  if (s === 'MDAI') return 'DAI';
+  if (s === 'DAI') return 'SAI';
+  return s;
+}
+
+export function prettifyNumber(
+  _num = null,
+  truncate = false,
+  decimalPlaces = 2,
+  keepSymbol = true
+) {
+  if (_num === null) return null;
+  let symbol = ' ';
+  if (_num.symbol !== undefined) symbol += cleanSymbol(_num.symbol);
+  const num = parseFloat(_num.toString());
+  if (num > Number.MAX_SAFE_INTEGER) return 'NUMBER TOO BIG';
+  let formattedNumber;
+  if (truncate) {
+    if (num > 999999) formattedNumber = (num / 1000000).toFixed(1) + ' M';
+    else if (num > 999) formattedNumber = (num / 1000).toFixed(1) + ' K';
+    else formattedNumber = num.toFixed(decimalPlaces);
+  } else {
+    formattedNumber = num.toLocaleString();
+  }
+  return keepSymbol ? formattedNumber + symbol : formattedNumber;
+}

@@ -12,6 +12,7 @@ import useStore from '../../hooks/useStore';
 import useMaker from '../../hooks/useMaker';
 import useValidatedInput from '../../hooks/useValidatedInput';
 import { TextBlock } from '../Typography';
+import { prettifyNumber } from '../../utils/ui';
 
 
 export default ({ onNext, onPrev }) => {
@@ -102,7 +103,7 @@ export default ({ onNext, onPrev }) => {
 				         display="inline-block"
 				         ml="s"
 				         color="darkLavender">
-			          {saiBalance ? `${saiBalance.toNumber().toFixed(2)} SAI` : '...'}
+			          {saiBalance ? prettifyNumber(saiBalance) : '...'}
 			        </Text>
 			    </Box>
 		    </Grid>
@@ -117,7 +118,7 @@ export default ({ onNext, onPrev }) => {
 		      <Grid gridRowGap="xs">
 		        <TextBlock t="h5" lineHeight="normal">Max SAI to DAI availability</TextBlock>
 		        <TextBlock t="body">
-		          {maxLiquidity ? `${maxLiquidity.toFixed(2)} Dai` : '...'}
+		          {maxLiquidity ? `${prettifyNumber(maxLiquidity)} Dai` : '...'}
 		        </TextBlock>
 		      </Grid>
 	      </Grid>
