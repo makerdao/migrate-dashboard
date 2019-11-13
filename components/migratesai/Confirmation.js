@@ -13,7 +13,7 @@ import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
 import { prettifyNumber } from '../../utils/ui';
 
-export default ({ onNext, onPrev, setMigrationTxHash, amounts }) => {
+export default ({ onNext, onPrev, setMigrationTxHash }) => {
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [saiApprovePending, setSaiApprovePending] = useState(false);

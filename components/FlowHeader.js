@@ -35,7 +35,7 @@ const TxLoader = ({ hash }) => {
   );
 };
 
-export default function FlowHeader({ account, loading, hash, showClose }) {
+export default function FlowHeader({ account, showClose }) {
   return (
     <Grid
       justifyContent={['space-between', 'flex-end']}
@@ -51,7 +51,6 @@ export default function FlowHeader({ account, loading, hash, showClose }) {
         style={{ borderRadius: 6 }}
       >
         {account && <Account account={account} />}
-        {/* loading && <TxLoader hash={hash} /> */}
       </Box>
       {showClose && (
         <Flex
