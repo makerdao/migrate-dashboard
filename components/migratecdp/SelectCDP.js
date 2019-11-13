@@ -13,6 +13,7 @@ import {
 } from '@makerdao/ui-components-core';
 import { getColor } from '../../utils/theme';
 import round from 'lodash/round';
+import useStore from '../../hooks/useStore';
 
 const RADIO_WIDTH = '2rem';
 const RADIO_CONTAINER_WIDTH = '4rem';
@@ -40,7 +41,7 @@ function ListItemRow({ label, value, dark }) {
   );
 }
 
-function ListItem({ cdp, onSelect, saiAvailable, checked }) {
+function ListItem({ cdp, onSelect, checked, selectable }) {
   return (
     <Card
       px={['0', 'l']}
@@ -60,7 +61,7 @@ function ListItem({ cdp, onSelect, saiAvailable, checked }) {
           `}
         >
           <Radio
-            disabled={cdp.debtValue > saiAvailable}
+            disabled={!selectable}
             onChange={() => onSelect(cdp)}
             fontSize={RADIO_WIDTH}
             checked={checked}
@@ -83,7 +84,7 @@ function ListItem({ cdp, onSelect, saiAvailable, checked }) {
       <Box display={['block', 'none']} onClick={() => onSelect(cdp)}>
         <Flex pt="s" pl="m" alignItems="center">
           <Radio
-            disabled={cdp.debtValue > saiAvailable}
+            disabled={!selectable}
             onChange={() => onSelect(cdp)}
             fontSize={RADIO_WIDTH}
             checked={checked}
@@ -108,10 +109,9 @@ export default ({
   onSelect,
   cdps,
   loadingCdps,
-  saiAvailable,
   selectedCDP
 }) => {
-  const hasTooLargeCdp = cdps.some(c => c.debtValue > saiAvailable);
+  const [{ saiAvailable }] = useStore();
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
@@ -163,18 +163,17 @@ export default ({
             <ListItem
               cdp={cdp}
               checked={selectedCDP === cdp}
+              selectable={cdp.debtValue < saiAvailable}
               key={cdp.id}
-              {...{ onSelect, saiAvailable }}
+              onSelect={onSelect}
             />
           ))}
         </Grid>
       </Overflow>
-      {hasTooLargeCdp && (
-        <Grid color="steelLight" textAlign="center">
-          CDPs with more than {round(saiAvailable, 2)} SAI in debt cannot be
-          migrated at this time. Please try again later.
-        </Grid>
-      )}
+      <Grid color="steelLight" textAlign="center">
+        CDPs with more than {round(saiAvailable, 2)} SAI in debt cannot be
+        migrated at this time.
+      </Grid>
       <Grid
         justifySelf="center"
         gridTemplateColumns="auto auto"

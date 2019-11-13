@@ -5,10 +5,13 @@ import { Box, Flex, Text, Grid } from '@makerdao/ui-components-core';
 import { Breakout } from '../components/Typography';
 import WalletManager from '../components/WalletManager';
 import useStore from '../hooks/useStore';
+import useMaker from '../hooks/useMaker';
 import { getWebClientProviderName } from '../utils/web3';
 
 function Index() {
-  const [{ providerName }, dispatch] = useStore();
+  const [store, dispatch] = useStore();
+  const { providerName, saiAvailable } = store;
+
   useEffect(() => {
     dispatch({
       type: 'assign',
@@ -17,6 +20,23 @@ function Index() {
       }
     });
   }, [dispatch]);
+
+  const { maker } = useMaker();
+
+  useEffect(() => {
+    (async () => {
+      if (!maker) return;
+      const mig = await maker
+        .service('migration')
+        .getMigration('single-to-multi-cdp');
+      dispatch({
+        type: 'assign',
+        payload: {
+          saiAvailable: (await mig.migrationSaiAvailable()).toNumber()
+        }
+      });
+    })();
+  }, [dispatch, maker]);
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -64,6 +84,11 @@ function Index() {
       >
         <WalletManager providerName={providerName} />
       </Grid>
+      {saiAvailable && (
+        <Text m="0 auto" mb="m">
+          Sai available: {saiAvailable.toFixed(2)}
+        </Text>
+      )}
       <Footer />
     </Flex>
   );
