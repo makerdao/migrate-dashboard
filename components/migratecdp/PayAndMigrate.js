@@ -18,7 +18,9 @@ const PayAndMigrate = ({
   onPrev,
   onNext,
   selectedCDP,
-  setMigrationTxObject
+  setMigrationTxObject,
+  setMigrationTxHash,
+  setLoadingTx
 }) => {
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [mkrApprovePending, setMkrApprovePending] = useState(false);
@@ -48,11 +50,21 @@ const PayAndMigrate = ({
         .service('migration')
         .getMigration('single-to-multi-cdp');
       const migrationTxObject = mig.execute(selectedCDP.id);
+      maker.service('transactionManager').listen(migrationTxObject, {
+        pending: tx => setMigrationTxHash(tx.hash)
+      });
       setMigrationTxObject(migrationTxObject);
+      setLoadingTx(true);
     } catch (err) {
       console.log('migrate tx failed', err);
     }
-  }, [account, maker, selectedCDP]);
+  }, [
+    maker,
+    selectedCDP.id,
+    setLoadingTx,
+    setMigrationTxHash,
+    setMigrationTxObject
+  ]);
 
   useEffect(() => {
     (async () => {
@@ -123,13 +135,18 @@ const PayAndMigrate = ({
               mr="s"
               fontSize="l"
               checked={hasReadTOS}
-              onChange={evt => setHasReadTOS(evt.target.checked)}
+              onChange={() => setHasReadTOS(!hasReadTOS)}
             />
             <Text
               t="caption"
               color="steel"
+              onClick={() => setHasReadTOS(!hasReadTOS)}
             >
-              I have read and accept the <Link target="_blank" href="https://migrate.makerdao.com/terms">Terms of Service</Link>.
+              I have read and accept the{' '}
+              <Link target="_blank" href="https://migrate.makerdao.com/terms">
+                Terms of Service
+              </Link>
+              .
             </Text>
           </Grid>
         </Grid>
@@ -144,7 +161,7 @@ const PayAndMigrate = ({
           variant="secondary-outline"
           onClick={onPrev}
         >
-          Cancel
+          Back
         </Button>
         <Button
           justifySelf="center"

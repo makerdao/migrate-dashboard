@@ -81,7 +81,7 @@ function ListItem({ cdp, onSelect, saiAvailable, checked }) {
         </Grid>
       </Box>
       <Box display={['block', 'none']} onClick={() => onSelect(cdp)}>
-        <Flex pt="m" pl="m" alignItems="center">
+        <Flex pt="s" pl="m" alignItems="center">
           <Radio
             disabled={cdp.debtValue > saiAvailable}
             onChange={() => onSelect(cdp)}
@@ -162,7 +162,7 @@ export default ({
           {cdps.map(cdp => (
             <ListItem
               cdp={cdp}
-              checked={selectedCDP.id === cdp.id}
+              checked={selectedCDP === cdp}
               key={cdp.id}
               {...{ onSelect, saiAvailable }}
             />

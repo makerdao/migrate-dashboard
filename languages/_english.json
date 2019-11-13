@@ -7,7 +7,7 @@
     "alphawallet": "Alpha Wallet",
     "ledger_nano": "Ledger Nano",
     "trezor": "Trezor",
-    "wallet_connect": "Wallet Connect",
+    "wallet_connect": "WalletConnect",
     "other": "Active Wallet"
   }
 }

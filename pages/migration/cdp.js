@@ -59,15 +59,19 @@ async function getAllCdpData(allCdps, maker) {
   );
 }
 
+const ownedByProxy = cdp => 'dsProxyAddress' in cdp;
+
 function MigrateCDP() {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [cdps, setCdps] = useState([]);
   const [loadingCdps, setLoadingCdps] = useState(true);
+  const [loadingTx, setLoadingTx] = useState(false);
   const [selectedCDP, setSelectedCDP] = useState({});
+  const [migrationTxHash, setMigrationTxHash] = useState(null);
   const [migrationTxObject, setMigrationTxObject] = useState({});
   const [saiAvailable, setSaiAvailable] = useState(0);
-  const [newCdpId, setNewCdpId] = useState();
+  const [newCdpId, setNewCdpId] = useState({});
 
   useEffect(() => {
     if (!account) Router.replace('/');
@@ -88,10 +92,6 @@ function MigrateCDP() {
     })();
   }, [maker, account, cdpMigrationCheck]);
 
-  const ownedByProxy = cdp => {
-    return 'dsProxyAddress' in cdp;
-  };
-
   const onPrev = () => {
     if (currentStep <= 0) Router.replace('/overview');
     setCurrentStep(
@@ -111,21 +111,24 @@ function MigrateCDP() {
 
   useEffect(() => {
     if (migrationTxObject instanceof Promise) {
-      migrationTxObject
-        .then(id => {
-          setNewCdpId(id);
-          return maker
-            .service('transactionManager')
-            .confirm(migrationTxObject, 3);
-        })
-        .then(() => setCurrentStep(c => c + 1));
+      migrationTxObject.then(id => {
+        setNewCdpId(id);
+        setLoadingTx(false);
+        setCurrentStep(c => c + 1);
+        setCdps(cdps => cdps.filter(c => c !== selectedCDP));
+      });
     }
-  }, [migrationTxObject, maker]);
+  }, [migrationTxObject, maker, selectedCDP]);
 
   return (
     <FlowBackground open={true}>
       <Grid gridRowGap={['m', 'xl']}>
-        <FlowHeader account={account} />
+        <FlowHeader
+          account={account}
+          loading={loadingTx}
+          hash={newCdpId.hash}
+          showClose={currentStep <= 2}
+        />
         <Stepper
           steps={['Select CDP', 'Deploy Proxy', 'Pay & Migrate']}
           selected={currentStep}
@@ -157,7 +160,11 @@ function MigrateCDP() {
                   selectedCDP,
                   migrationTxObject,
                   setMigrationTxObject,
-                  newCdpId
+                  newCdpId,
+                  setLoadingTx,
+                  loadingTx,
+                  setMigrationTxHash,
+                  migrationTxHash
                 })}
               </FadeInFromSide>
             );
