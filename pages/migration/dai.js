@@ -6,14 +6,14 @@ import FlowHeader from '../../components/FlowHeader';
 import useMaker from '../../hooks/useMaker';
 import SCDRedeem from '../../components/migratesai/SCDRedeem';
 import Confirmation from '../../components/migratesai/Confirmation';
-import Upgrading from '../../components/migratesai/Upgrading';
+import InProgress from '../../components/InProgress';
 import Complete from '../../components/migratesai/Complete';
 import FadeInFromSide from '../../components/FadeInFromSide';
 
 const steps = [
   props => <SCDRedeem {...props} />,
   props => <Confirmation {...props} />,
-  props => <Upgrading {...props} />,
+  props => <InProgress {...props} title="Your Sai is being upgraded" />,
   props => <Complete {...props} />
 ];
 
@@ -26,7 +26,7 @@ function MigrateDai() {
 
   useEffect(() => {
     if (!account) Router.replace('/');
-  }, []);
+  }, []); // eslint-disable-line
 
   useEffect(() => {
     if (migrationTxObject instanceof Promise) {
@@ -47,7 +47,7 @@ function MigrateDai() {
   return (
     <FlowBackground open={true}>
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
-        <FlowHeader account={account} />
+        <FlowHeader account={account} showClose={currentStep <= 1} />
         <Stepper
           steps={['Sai Upgrade', 'Confirmation']}
           selected={currentStep}

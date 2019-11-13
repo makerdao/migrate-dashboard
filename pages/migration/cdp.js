@@ -7,7 +7,7 @@ import FadeInFromSide from '../../components/FadeInFromSide';
 import SelectCDP from '../../components/migratecdp/SelectCDP';
 import DeployProxy from '../../components/migratecdp/DeployProxy';
 import PayAndMigrate from '../../components/migratecdp/PayAndMigrate';
-import Migrating from '../../components/migratecdp/Migrating';
+import InProgress from '../../components/InProgress';
 import Complete from '../../components/migratecdp/Complete';
 import useMaker from '../../hooks/useMaker';
 import round from 'lodash/round';
@@ -17,7 +17,7 @@ const steps = [
   props => <SelectCDP {...props} />,
   props => <DeployProxy {...props} />,
   props => <PayAndMigrate {...props} />,
-  props => <Migrating {...props} />,
+  props => <InProgress {...props} title="Your CDP is being migrated" />,
   props => <Complete {...props} />
 ];
 

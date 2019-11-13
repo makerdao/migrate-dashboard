@@ -1,12 +1,11 @@
 import React from 'react';
 import { Grid, Text, Button, Link } from '@makerdao/ui-components-core';
+import useMaker from '../hooks/useMaker';
+import useWaitTime from '../hooks/useWaitTime';
+import { etherscanLink } from '../utils/ethereum';
+import arrowTopRight from '../assets/icons/arrowTopRight.svg';
 
-import useMaker from '../../hooks/useMaker';
-import useWaitTime from '../../hooks/useWaitTime';
-import { etherscanLink } from '../../utils/ethereum';
-import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
-
-export default ({ loadingTx, migrationTxHash }) => {
+export default ({ loadingTx, migrationTxHash, title }) => {
   const { maker, network } = useMaker();
   const waitTime = useWaitTime(maker);
 
@@ -17,7 +16,7 @@ export default ({ loadingTx, migrationTxHash }) => {
       mx={[0, 'auto']}
       width={['100vw', 'auto']}
     >
-      <Text.h2 textAlign="center">Your CDP is being migrated</Text.h2>
+      <Text.h2 textAlign="center">{title}</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
         The estimated time is {waitTime || 'being calculated'}.
       </Text.p>

@@ -12,7 +12,12 @@ import useStore from '../../hooks/useStore';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
 
-export default ({ onNext, onPrev, setMigrationTxObject }) => {
+export default ({
+  onNext,
+  onPrev,
+  setMigrationTxObject,
+  setMigrationTxHash
+}) => {
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [saiApprovePending, setSaiApprovePending] = useState(false);
@@ -40,10 +45,13 @@ export default ({ onNext, onPrev, setMigrationTxObject }) => {
       const mig = await maker.service('migration').getMigration('sai-to-dai');
       const migrationTxObject = mig.execute(saiAmountToMigrate);
       setMigrationTxObject(migrationTxObject);
+      maker.service('transactionManager').listen(migrationTxObject, {
+        pending: tx => setMigrationTxHash(tx.hash)
+      });
     } catch (err) {
       console.log('migrate tx failed', err);
     }
-  }, [maker, saiAmountToMigrate, setMigrationTxObject]);
+  }, [maker, saiAmountToMigrate, setMigrationTxHash, setMigrationTxObject]);
 
   useEffect(() => {
     (async () => {
