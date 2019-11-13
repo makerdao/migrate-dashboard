@@ -12,6 +12,7 @@ import Complete from '../../components/migratecdp/Complete';
 import useMaker from '../../hooks/useMaker';
 import round from 'lodash/round';
 import useStore from '../../hooks/useStore';
+import { prettifyNumber } from '../../utils/ui';
 
 const steps = [
   props => <SelectCDP {...props} />,
@@ -23,11 +24,11 @@ const steps = [
 
 async function getCdpData(cdp) {
   const debtValueExact = await cdp.getDebtValue();
-  const debtValue = debtValueExact.toNumber().toFixed(2);
+  const debtValue = prettifyNumber(debtValueExact.toString());
   const govFeeMKRExact = await cdp.getGovernanceFee();
   const govFeeMKR =
     govFeeMKRExact.toNumber() > 0.01
-      ? govFeeMKRExact.toNumber().toFixed(2)
+      ? prettifyNumber(govFeeMKRExact)
       : round(govFeeMKRExact.toNumber(), 6);
   // const govFeeDai = (await cdp.getGovernanceFee(Maker.USD))
   //   .toNumber()

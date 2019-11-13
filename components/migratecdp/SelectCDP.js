@@ -12,8 +12,8 @@ import {
   Loader
 } from '@makerdao/ui-components-core';
 import { getColor } from '../../utils/theme';
-import round from 'lodash/round';
 import useStore from '../../hooks/useStore';
+import { prettifyNumber } from '../../utils/ui';
 
 const RADIO_WIDTH = '2rem';
 const RADIO_CONTAINER_WIDTH = '4rem';
@@ -174,7 +174,7 @@ export default ({
         </Grid>
       </Overflow>
       <Grid color="steelLight" textAlign="center">
-        CDPs with less than 20 or more than {round(saiAvailable, 2)} SAI of debt
+        CDPs with less than 20 or more than {prettifyNumber(saiAvailable)} SAI of debt
         cannot be migrated at this time.
       </Grid>
       <Grid

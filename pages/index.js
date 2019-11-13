@@ -7,6 +7,7 @@ import WalletManager from '../components/WalletManager';
 import useStore from '../hooks/useStore';
 import useMaker from '../hooks/useMaker';
 import { getWebClientProviderName } from '../utils/web3';
+import { prettifyNumber } from '../utils/ui';
 
 function Index() {
   const [store, dispatch] = useStore();
@@ -86,7 +87,7 @@ function Index() {
       </Grid>
       {saiAvailable && (
         <Text m="0 auto" mb="m">
-          Sai available: {saiAvailable.toFixed(2)}
+          Sai available: {prettifyNumber(saiAvailable)}
         </Text>
       )}
       <Footer />

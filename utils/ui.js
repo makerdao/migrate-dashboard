@@ -45,7 +45,9 @@ export function prettifyNumber(
     else if (num > 999) formattedNumber = (num / 1000).toFixed(1) + ' K';
     else formattedNumber = num.toFixed(decimalPlaces);
   } else {
-    formattedNumber = num.toLocaleString();
+    formattedNumber = num.toLocaleString(undefined, {
+      maximumFractionDigits: decimalPlaces
+    });
   }
   return keepSymbol ? formattedNumber + symbol : formattedNumber;
 }
