@@ -86,9 +86,11 @@ function showAmount(tok) {
 
 function Overview() {
   const { maker, account } = useMaker();
-  const [dai, setDai] = useState(null);
   const [initialFetchComplete, setInitialFetchComplete] = useState(false);
-  const [{ cdpMigrationCheck: cdps, saiBalance }, dispatch] = useStore();
+  const [
+    { cdpMigrationCheck: cdps, saiBalance, daiBalance },
+    dispatch
+  ] = useStore();
 
   useEffect(() => {
     if (maker && !account) Router.replace('/');
@@ -99,23 +101,23 @@ function Overview() {
       if (!maker || !account) return;
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
-      const daiBalance = await maker.getToken('MDAI').balance();
+      const _daiBalance = await maker.getToken('MDAI').balance();
       setInitialFetchComplete(true);
 
       dispatch({
         type: 'assign',
         payload: {
           cdpMigrationCheck: checks['single-to-multi-cdp'],
-          saiBalance: checks['sai-to-dai']
+          saiBalance: checks['sai-to-dai'],
+          daiBalance: _daiBalance
         }
       });
-      setDai(daiBalance);
     })();
   }, [maker, account, dispatch]);
 
   const shouldShowCdps = countCdps(cdps) > 0;
   const shouldShowDai = saiBalance && saiBalance.gt(0);
-  const shouldShowReverse = dai && dai.gt(0);
+  const shouldShowReverse = daiBalance && daiBalance.gt(0);
   const noMigrations = !shouldShowDai && !shouldShowCdps && !shouldShowReverse;
 
   return (
@@ -170,7 +172,7 @@ function Overview() {
               title="Downgrade Multi Collateral Dai"
               body="Downgrade your Multi Collateral Dai into Single Collateral Dai (Sai)."
               metadataTitle="Dai to redeem"
-              metadataValue={showAmount(dai)}
+              metadataValue={showAmount(daiBalance)}
               onSelected={() => {
                 if (DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION)
                   window.location = `${OASIS_HOSTNAME}/trade`;
