@@ -50,8 +50,8 @@ export default function FlowHeader({ account, loading, hash, showClose }) {
         border={['1px solid #D8DFE3', 'none']}
         style={{ borderRadius: 6 }}
       >
-        {account && !loading ? <Account account={account} /> : null}
-        {loading && <TxLoader hash={hash} />}
+        {account && <Account account={account} />}
+        {/* loading && <TxLoader hash={hash} /> */}
       </Box>
       {showClose && (
         <Flex
