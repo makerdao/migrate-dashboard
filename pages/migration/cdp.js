@@ -26,6 +26,7 @@ const steps = [
 async function getCdpData(cdp) {
   const debtValueExact = await cdp.getDebtValue();
   const debtValue = prettifyNumber(debtValueExact.toString());
+  const collateralValueExact = await cdp.getCollateralValue(USD);
   const govFeeMKRExact = await cdp.getGovernanceFee();
   const govFeeMKR =
     govFeeMKRExact.toNumber() > 0.01
@@ -47,6 +48,7 @@ async function getCdpData(cdp) {
       : prettifyNumber(collateralizationRatioExact);
 
   return {
+    collateralValueExact,
     collateralizationRatio,
     debtValueExact,
     debtValue,

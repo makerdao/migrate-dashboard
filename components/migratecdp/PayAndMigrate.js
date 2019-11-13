@@ -9,6 +9,7 @@ import {
   CardTabs
 } from '@makerdao/ui-components-core';
 import { MKR } from '@makerdao/dai-plugin-mcd';
+import { prettifyNumber } from '../../utils/ui';
 import useMaker from '../../hooks/useMaker';
 import useStore from '../../hooks/useStore';
 import { addToastWithTimeout } from '../Toast';
@@ -87,6 +88,15 @@ const PayAndMigrate = ({
       }
     })();
   }, [account, maker, govFeeMKRExact]);
+
+  const maxCost =
+    parseFloat(selectedCDP.govFeeDai) +
+    parseFloat(selectedCDP.govFeeDai) * 0.05;
+
+  const minNewCollatRatio = selectedCDP.collateralValueExact
+    .dividedBy(selectedCDP.debtValueExact.plus(maxCost))
+    .times(100)
+    .toNumber();
 
   return (
     <Grid
@@ -173,8 +183,7 @@ const PayAndMigrate = ({
                 </Table.td>
                 <Table.td textAlign="right">
                   <Text fontWeight="medium">
-                    {selectedCDP.govFeeMKR} MKR
-                    {/* TODO: ({selectedCDP.govFeeDai} DAI) */}
+                    {selectedCDP.govFeeMKR} MKR ({selectedCDP.govFeeDai} DAI)
                   </Text>
                 </Table.td>
               </Table.tr>
@@ -182,9 +191,10 @@ const PayAndMigrate = ({
                 <Table.td>
                   <Text>Max Cost (5% Slippage)</Text>
                 </Table.td>
-                {/* TODO */}
                 <Table.td textAlign="right">
-                  <Text fontWeight="medium">TODO</Text>
+                  <Text fontWeight="medium">
+                    {prettifyNumber(maxCost, false, 4)}
+                  </Text>
                 </Table.td>
               </Table.tr>
               <Table.tr>
@@ -199,28 +209,16 @@ const PayAndMigrate = ({
               </Table.tr>
               <Table.tr>
                 <Table.td>
-                  <Text>New Col. Ratio</Text>
+                  <Text>Min New Col. Ratio</Text>
                 </Table.td>
-                {/* TODO */}
                 <Table.td textAlign="right">
-                  <Text fontWeight="medium">TODO</Text>
+                  <Text fontWeight="medium">
+                    {prettifyNumber(minNewCollatRatio, false, 2, false)} %
+                  </Text>
                 </Table.td>
               </Table.tr>
             </Table.tbody>
           </Table>
-          {/* <Grid>
-            <LoadingToggle
-              completeText={'MKR unlocked'}
-              loadingText={'Unlocking MKR'}
-              defaultText={'Unlock MKR to continue'}
-              tokenDisplayName={'MKR'}
-              isLoading={mkrApprovePending}
-              isComplete={proxyDetails.hasMkrAllowance}
-              onToggle={giveProxyMkrAllowance}
-              disabled={proxyDetails.hasMkrAllowance || !proxyDetails.address}
-              data-testid="allowance-toggle"
-            />
-          </Grid> */}
           <Grid alignItems="center" gridTemplateColumns="auto 1fr">
             <Checkbox
               mr="s"
