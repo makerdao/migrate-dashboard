@@ -74,7 +74,7 @@ async function getAllCdpData(allCdps, maker) {
 
 const ownedByProxy = cdp => 'dsProxyAddress' in cdp;
 
-function MigrateCDP() {
+export default function() {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [cdps, setCdps] = useState([]);
@@ -163,5 +163,3 @@ function MigrateCDP() {
     </FlowBackground>
   );
 }
-
-export default MigrateCDP;

@@ -21,7 +21,7 @@ const steps = [
   props => <Complete {...props} />
 ];
 
-function MigrateDai() {
+export default function() {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [migrationTxHash, setMigrationTxHash] = useState(null);
@@ -76,5 +76,3 @@ function MigrateDai() {
     </FlowBackground>
   );
 }
-
-export default MigrateDai;
