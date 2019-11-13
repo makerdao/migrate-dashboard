@@ -2,6 +2,8 @@ import Maker from '@makerdao/dai';
 import daiPlugin from '@makerdao/dai-plugin-mcd';
 import migrationPlugin from '@makerdao/dai-plugin-migrations';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
+import walletLinkPlugin from '@makerdao/dai-plugin-walletlink';
+import walletConnectPlugin from '@makerdao/dai-plugin-walletconnect';
 import { checkEthereumProvider } from './utils/ethereum';
 import { createCurrency } from '@makerdao/currency';
 
@@ -22,6 +24,8 @@ export async function instantiateMaker({ rpcUrl }) {
     plugins: [
     trezorPlugin,
     ledgerPlugin,
+    walletLinkPlugin,
+    walletConnectPlugin,
     [daiPlugin,{ cdpTypes: [{currency: SAI, ilk: 'SAI' }] }],
     migrationPlugin,
     ],
