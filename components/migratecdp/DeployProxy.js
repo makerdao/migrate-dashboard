@@ -16,11 +16,7 @@ function DeployProxy({ onPrev, onNext, selectedCDP }) {
   } = useProxy();
 
   const [cdpTransferred, setCDPTransferred] = useState(false);
-
   const blockHeight = useBlockHeight(0);
-  async function deployProxy() {
-    await setupProxy();
-  }
 
   const labels = {
     setup_text:
@@ -42,7 +38,7 @@ function DeployProxy({ onPrev, onNext, selectedCDP }) {
       </Text.h2>
       <ProxyAndTransfer
         proxyAddress={proxyAddress}
-        deployProxy={deployProxy}
+        deployProxy={setupProxy}
         labels={labels}
         proxyLoading={proxyLoading}
         proxyDeployed={proxyDeployed}

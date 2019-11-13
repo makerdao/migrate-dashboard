@@ -70,7 +70,6 @@ function MigrateCDP() {
   const [selectedCDP, setSelectedCDP] = useState({});
   const [migrationTxHash, setMigrationTxHash] = useState(null);
   const [migrationTxObject, setMigrationTxObject] = useState({});
-  const [saiAvailable, setSaiAvailable] = useState(0);
   const [newCdpId, setNewCdpId] = useState({});
 
   useEffect(() => {
@@ -82,11 +81,6 @@ function MigrateCDP() {
   useEffect(() => {
     (async () => {
       if (!maker || !account) return;
-      const mig = await maker
-        .service('migration')
-        .getMigration('single-to-multi-cdp');
-      const saiAvailable = (await mig.migrationSaiAvailable()).toNumber();
-      setSaiAvailable(saiAvailable);
       setCdps(await getAllCdpData(cdpMigrationCheck, maker));
       setLoadingCdps(false);
     })();
@@ -156,7 +150,6 @@ function MigrateCDP() {
                   onReset,
                   cdps,
                   loadingCdps,
-                  saiAvailable,
                   selectedCDP,
                   migrationTxObject,
                   setMigrationTxObject,
