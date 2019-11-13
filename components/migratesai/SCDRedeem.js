@@ -14,7 +14,7 @@ import useValidatedInput from '../../hooks/useValidatedInput';
 import { TextBlock } from '../Typography';
 
 export default ({ onNext, onPrev }) => {
-  const [{ saiBalance }] = useStore();
+  const [{ saiBalance }, dispatch] = useStore();
   const [maxLiquidity, setMaxLiquidity] = useState(null);
   const maxOverall = Math.min(
     saiBalance && saiBalance.toNumber(),
@@ -35,7 +35,6 @@ export default ({ onNext, onPrev }) => {
       }
     }
   );
-  const [, dispatch] = useStore();
   const { maker } = useMaker();
   useEffect(() => {
     (async () => {

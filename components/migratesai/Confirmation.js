@@ -12,12 +12,7 @@ import useStore from '../../hooks/useStore';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
 
-export default ({
-  onNext,
-  onPrev,
-  setMigrationTxObject,
-  setMigrationTxHash
-}) => {
+export default ({ onNext, onPrev, setMigrationTxHash, amounts }) => {
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [saiApprovePending, setSaiApprovePending] = useState(false);
@@ -71,11 +66,7 @@ export default ({
     })();
   }, [account, maker, saiAmountToMigrate]);
 
-  const exchangeRate = [1, 1];
-  const saiAmount = parseFloat(saiAmountToMigrate).toFixed(2);
-  const daiAmount = ((saiAmount * exchangeRate[0]) / exchangeRate[1]).toFixed(
-    2
-  );
+  const amount = parseFloat(saiAmountToMigrate).toFixed(2);
 
   return (
     <Grid maxWidth="600px" gridRowGap="m" px={['s', 0]} minWidth="38rem">
@@ -99,14 +90,14 @@ export default ({
                       t="heading"
                       display={'block'}
                       fontWeight="bold"
-                    >{`${saiAmount} Single Collateral Dai`}</Text>
+                    >{`${amount} Single Collateral Dai`}</Text>
                   </Table.td>
                 </Table.tr>
                 <Table.tr>
                   <Table.td>
                     <Text display={'block'}>Exchange Rate</Text>
                     <Text t="heading" display={'block'} fontWeight="bold">
-                      {exchangeRate[0]}:{exchangeRate[1]}
+                      1:1
                     </Text>
                   </Table.td>
                 </Table.tr>
@@ -117,7 +108,7 @@ export default ({
                       t="heading"
                       display={'block'}
                       fontWeight="bold"
-                    >{`${daiAmount} Multi Collateral Dai`}</Text>
+                    >{`${amount} Multi Collateral Dai`}</Text>
                   </Table.td>
                 </Table.tr>
               </Table.tbody>

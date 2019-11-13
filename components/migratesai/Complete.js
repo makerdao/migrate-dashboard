@@ -1,15 +1,16 @@
 import React from 'react';
 import { Grid, Text, Button, Card, Table } from '@makerdao/ui-components-core';
-
+import useStore from '../../hooks/useStore';
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
-import blueArrowTopRight from '../../assets/icons/blueArrowTopRight.svg';
 
-function Complete({ onReset, onClose, selectedCDP: cdp }) {
+function Complete({ onClose }) {
+  const [{ saiAmountToMigrate }] = useStore();
+  const amount = parseFloat(saiAmountToMigrate).toFixed(2);
   return (
     <Grid gridRowGap="m" mx={'s'}>
       <Text.h2 textAlign="center">Upgrade complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        You've successfully upgraded your Single-Collateral Dai for
+        You&apos;ve successfully upgraded your Single-Collateral Dai for
         Multi-Collateral Dai.
       </Text.p>
       <Button
@@ -34,11 +35,9 @@ function Complete({ onReset, onClose, selectedCDP: cdp }) {
               <Table.tr>
                 <Table.td>
                   <Text display={'block'}>Sent: Single Collateral Dai</Text>
-                  <Text
-                    t="heading"
-                    display={'block'}
-                    fontWeight="bold"
-                  >{`foobar`}</Text>
+                  <Text t="heading" display={'block'} fontWeight="bold">
+                    {amount}
+                  </Text>
                 </Table.td>
               </Table.tr>
               <Table.tr>
@@ -52,11 +51,9 @@ function Complete({ onReset, onClose, selectedCDP: cdp }) {
               <Table.tr>
                 <Table.td>
                   <Text display={'block'}>Received: Multi Collateral Dai</Text>
-                  <Text
-                    t="heading"
-                    display={'block'}
-                    fontWeight="bold"
-                  >{`foobar`}</Text>
+                  <Text t="heading" display={'block'} fontWeight="bold">
+                    {amount}
+                  </Text>
                 </Table.td>
               </Table.tr>
             </Table.tbody>
