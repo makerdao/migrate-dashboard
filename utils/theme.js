@@ -5,7 +5,11 @@ const theme = {
     ...themeLight.widths,
     app: '111.4rem'
   },
-  ...themeLight
+  ...themeLight,
+  footer: {
+    ...themeLight.footer,
+    backgroundColor: '#f6f8f9'
+  }
 };
 export default theme;
 

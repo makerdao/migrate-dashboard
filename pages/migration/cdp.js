@@ -33,9 +33,7 @@ async function getCdpData(cdp) {
   // const govFeeDai = (await cdp.getGovernanceFee(Maker.USD))
   //   .toNumber()
   //   .toFixed(2);
-  const collateralizationRatio = (
-    (await cdp.getCollateralizationRatio()) * 100
-  ).toFixed(2);
+  const collateralizationRatio = (await cdp.getCollateralizationRatio()) * 100;
   return {
     collateralizationRatio,
     debtValueExact,

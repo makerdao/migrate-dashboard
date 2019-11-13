@@ -69,9 +69,9 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
           <span>{cdp.id}</span>
           {/* Collateralization */}
           <span>
-            {cdp.collateralizationRatio === 'Infinity'
+            {cdp.collateralizationRatio === Infinity
               ? '---'
-              : cdp.collateralizationRatio + '%'}
+              : prettifyNumber(cdp.collateralizationRatio) + '%'}
           </span>
           {/* Debt Value */}
           <span>{cdp.debtValue} DAI</span>
@@ -94,7 +94,11 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
         </Flex>
         <ListItemRow
           label="Current Ratio"
-          value={cdp.collateralizationRatio + '%'}
+          value={
+            cdp.collateralizationRatio === Infinity
+              ? '---'
+              : prettifyNumber(cdp.collateralizationRatio) + '%'
+          }
         />
         <ListItemRow label="Dai Drawn" value={cdp.debtValue + ' DAI'} dark />
         <ListItemRow label="Fee in MKR" value={cdp.govFeeMKR + ' MKR'} />
@@ -154,6 +158,8 @@ export default ({
           </Box>
           {loadingCdps && (
             <Loader
+              mt="2rem"
+              mb="2rem"
               display="inline-block"
               size="1.8rem"
               color={getColor('makerTeal')}
@@ -174,8 +180,8 @@ export default ({
         </Grid>
       </Overflow>
       <Grid color="steelLight" textAlign="center">
-        CDPs with less than 20 or more than {prettifyNumber(saiAvailable)} SAI of debt
-        cannot be migrated at this time.
+        CDPs with less than 20 or more than {prettifyNumber(saiAvailable)} SAI
+        of debt cannot be migrated at this time.
       </Grid>
       <Grid
         justifySelf="center"
