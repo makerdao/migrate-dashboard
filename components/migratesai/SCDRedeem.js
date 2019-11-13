@@ -14,11 +14,13 @@ import useValidatedInput from '../../hooks/useValidatedInput';
 import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
 
-
 export default ({ onNext, onPrev }) => {
-  const [{ saiBalance }] = useStore();
+  const [{ saiBalance }, dispatch] = useStore();
   const [maxLiquidity, setMaxLiquidity] = useState(null);
-  const maxOverall = Math.min(saiBalance && saiBalance.toNumber(), maxLiquidity);
+  const maxOverall = Math.min(
+    saiBalance && saiBalance.toNumber(),
+    maxLiquidity
+  );
   const [amount, setAmount, onAmountChange, amountErrors] = useValidatedInput(
     '',
     {
@@ -34,7 +36,6 @@ export default ({ onNext, onPrev }) => {
       }
     }
   );
-  const [, dispatch] = useStore();
   const { maker } = useMaker();
   useEffect(() => {
     (async () => {
@@ -57,9 +58,7 @@ export default ({ onNext, onPrev }) => {
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
-      <Text.h2 textAlign="center">
-        Upgrade Single Collateral Dai
-      </Text.h2>
+      <Text.h2 textAlign="center">Upgrade Single Collateral Dai</Text.h2>
       <Text.p
         textAlign="center"
         t="body"
@@ -73,56 +72,62 @@ export default ({ onNext, onPrev }) => {
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
         gridGap="m"
-        my={{ s: 's', l: 'l'}}
+        my={{ s: 's', l: 'l' }}
       >
-      <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
-	      <Grid gridRowGap="s">
-	        <TextBlock t="h5" lineHeight="normal">Enter the amount you would like to upgrade.</TextBlock>
-	        <Input
-	          type="number"
-	          value={amount}
-	          disabled={!saiBalance}
-	          min="0"
-	          placeholder="0.00 SAI"
-	          onChange={onAmountChange}
-	          failureMessage={amountErrors}
-	          after={
-	            <Link
-	              fontWeight="medium"
-	              onClick={() => setAmount(maxOverall)}
-	            >
-	              Set max
-	            </Link>
-	          }
-	        />
-	        <Grid gridRowGap="xs">
-	        	<Box>
-			        <Text t="subheading">Sai Balance</Text>
-			        <Text
-				      	t="caption"
-				         display="inline-block"
-				         ml="s"
-				         color="darkLavender">
-			          {saiBalance ? prettifyNumber(saiBalance) : '...'}
-			        </Text>
-			    </Box>
-		    </Grid>
-	      </Grid>
-      </Card>
-      <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
-	      <Grid gridRowGap="m">
-		      <Grid gridRowGap="xs">
-		        <TextBlock t="h5" lineHeight="normal">SAI to DAI exchange rate</TextBlock>
-		        <TextBlock t="body">1:1</TextBlock>
-		      </Grid>
-		      <Grid gridRowGap="xs">
-		        <TextBlock t="h5" lineHeight="normal">Max SAI to DAI availability</TextBlock>
-		        <TextBlock t="body">
-		          {maxLiquidity ? `${prettifyNumber(maxLiquidity)} Dai` : '...'}
-		        </TextBlock>
-		      </Grid>
-	      </Grid>
-      </Card>
+        <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
+          <Grid gridRowGap="s">
+            <TextBlock t="h5" lineHeight="normal">
+              Enter the amount you would like to upgrade.
+            </TextBlock>
+            <Input
+              type="number"
+              value={amount}
+              disabled={!saiBalance}
+              min="0"
+              placeholder="0.00 SAI"
+              onChange={onAmountChange}
+              failureMessage={amountErrors}
+              after={
+                <Link fontWeight="medium" onClick={() => setAmount(maxOverall)}>
+                  Set max
+                </Link>
+              }
+            />
+            <Grid gridRowGap="xs">
+              <Box>
+                <Text t="subheading">Sai Balance</Text>
+                <Text
+                  t="caption"
+                  display="inline-block"
+                  ml="s"
+                  color="darkLavender"
+                >
+                  {saiBalance
+                    ? prettifyNumber(saiBalance)
+                    : '...'}
+                </Text>
+              </Box>
+            </Grid>
+          </Grid>
+        </Card>
+        <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
+          <Grid gridRowGap="m">
+            <Grid gridRowGap="xs">
+              <TextBlock t="h5" lineHeight="normal">
+                SAI to DAI exchange rate
+              </TextBlock>
+              <TextBlock t="body">1:1</TextBlock>
+            </Grid>
+            <Grid gridRowGap="xs">
+              <TextBlock t="h5" lineHeight="normal">
+                Max SAI to DAI availability
+              </TextBlock>
+              <TextBlock t="body">
+                {maxLiquidity ? `${prettifyNumber(maxLiquidity)} Dai` : '...'}
+              </TextBlock>
+            </Grid>
+          </Grid>
+        </Card>
       </Grid>
       <Grid
         justifySelf="center"
