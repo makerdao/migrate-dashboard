@@ -20,7 +20,6 @@ const steps = [
 function MigrateDai() {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
-  const [migrationTxObject, setMigrationTxObject] = useState({});
   const [migrationTxHash, setMigrationTxHash] = useState();
 
   useEffect(() => {
@@ -62,8 +61,6 @@ function MigrateDai() {
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
                   onReset: reset,
-                  setMigrationTxObject,
-                  migrationTxObject,
                   setMigrationTxHash,
                   migrationTxHash
                 })}

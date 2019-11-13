@@ -19,8 +19,7 @@ const PayAndMigrate = ({
   onNext,
   selectedCDP,
   setMigrationTxObject,
-  setMigrationTxHash,
-  setLoadingTx
+  setMigrationTxHash
 }) => {
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [mkrApprovePending, setMkrApprovePending] = useState(false);
@@ -54,17 +53,10 @@ const PayAndMigrate = ({
         pending: tx => setMigrationTxHash(tx.hash)
       });
       setMigrationTxObject(migrationTxObject);
-      setLoadingTx(true);
     } catch (err) {
       console.log('migrate tx failed', err);
     }
-  }, [
-    maker,
-    selectedCDP.id,
-    setLoadingTx,
-    setMigrationTxHash,
-    setMigrationTxObject
-  ]);
+  }, [maker, selectedCDP.id, setMigrationTxHash, setMigrationTxObject]);
 
   useEffect(() => {
     (async () => {

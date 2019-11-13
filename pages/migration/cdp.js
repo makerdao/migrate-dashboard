@@ -66,7 +66,6 @@ function MigrateCDP() {
   const [currentStep, setCurrentStep] = useState(0);
   const [cdps, setCdps] = useState([]);
   const [loadingCdps, setLoadingCdps] = useState(true);
-  const [loadingTx, setLoadingTx] = useState(false);
   const [selectedCDP, setSelectedCDP] = useState({});
   const [migrationTxHash, setMigrationTxHash] = useState(null);
   const [migrationTxObject, setMigrationTxObject] = useState({});
@@ -107,7 +106,6 @@ function MigrateCDP() {
     if (migrationTxObject instanceof Promise) {
       migrationTxObject.then(id => {
         setNewCdpId(id);
-        setLoadingTx(false);
         setCurrentStep(c => c + 1);
         setCdps(cdps => cdps.filter(c => c !== selectedCDP));
       });
@@ -119,7 +117,6 @@ function MigrateCDP() {
       <Grid gridRowGap={['m', 'xl']}>
         <FlowHeader
           account={account}
-          loading={loadingTx}
           hash={newCdpId.hash}
           showClose={currentStep <= 2}
         />
@@ -154,8 +151,6 @@ function MigrateCDP() {
                   migrationTxObject,
                   setMigrationTxObject,
                   newCdpId,
-                  setLoadingTx,
-                  loadingTx,
                   setMigrationTxHash,
                   migrationTxHash
                 })}
