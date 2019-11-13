@@ -1,4 +1,4 @@
-import React, { useMaker } from 'react';
+import React from 'react';
 import {
   Grid,
   Text,
@@ -11,6 +11,7 @@ import { OASIS_HOSTNAME } from '../../utils/constants';
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
 import blueArrowTopRight from '../../assets/icons/blueArrowTopRight.svg';
 import { etherscanLink } from '../../utils/ethereum';
+import useMaker from '../../hooks/useMaker';
 
 function Complete({
   onReset,
