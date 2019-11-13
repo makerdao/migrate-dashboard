@@ -18,7 +18,8 @@ function Complete({
   onClose,
   selectedCDP: cdp,
   newCdpId,
-  migrationTxHash
+  migrationTxHash,
+  cdps
 }) {
   const { network } = useMaker();
 
@@ -68,9 +69,11 @@ function Complete({
         </Table>
       </Card>
       <Grid gridRowGap="s" justifySelf="center">
-        <Button mt="s" onClick={onReset}>
-          Migrate another CDP
-        </Button>
+        {cdps.length > 0 && (
+          <Button mt="s" onClick={onReset}>
+            Migrate another CDP
+          </Button>
+        )}
         <Button variant="secondary-outline" onClick={onClose}>
           Exit
         </Button>

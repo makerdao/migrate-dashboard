@@ -162,7 +162,7 @@ export default ({
           {cdps.map(cdp => (
             <ListItem
               cdp={cdp}
-              checked={selectedCDP.id === cdp.id}
+              checked={selectedCDP === cdp}
               key={cdp.id}
               {...{ onSelect, saiAvailable }}
             />

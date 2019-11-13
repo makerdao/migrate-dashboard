@@ -59,6 +59,8 @@ async function getAllCdpData(allCdps, maker) {
   );
 }
 
+const ownedByProxy = cdp => 'dsProxyAddress' in cdp;
+
 function MigrateCDP() {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
@@ -90,10 +92,6 @@ function MigrateCDP() {
     })();
   }, [maker, account, cdpMigrationCheck]);
 
-  const ownedByProxy = cdp => {
-    return 'dsProxyAddress' in cdp;
-  };
-
   const onPrev = () => {
     if (currentStep <= 0) Router.replace('/overview');
     setCurrentStep(
@@ -113,17 +111,14 @@ function MigrateCDP() {
 
   useEffect(() => {
     if (migrationTxObject instanceof Promise) {
-      migrationTxObject
-        .then(id => {
-          setNewCdpId(id);
-          setLoadingTx(false);
-          return maker
-            .service('transactionManager')
-            .confirm(migrationTxObject, 1);
-        })
-        .then(() => setCurrentStep(c => c + 1));
+      migrationTxObject.then(id => {
+        setNewCdpId(id);
+        setLoadingTx(false);
+        setCurrentStep(c => c + 1);
+        setCdps(cdps => cdps.filter(c => c !== selectedCDP));
+      });
     }
-  }, [migrationTxObject, maker]);
+  }, [migrationTxObject, maker, selectedCDP]);
 
   return (
     <FlowBackground open={true}>
