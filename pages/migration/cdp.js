@@ -78,7 +78,7 @@ function MigrateCDP() {
 
   useEffect(() => {
     (async () => {
-      if (!maker || !account) return;
+      if (!maker || !account || !cdpMigrationCheck) return;
       setCdps(await getAllCdpData(cdpMigrationCheck, maker));
       setLoadingCdps(false);
     })();
