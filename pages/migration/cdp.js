@@ -102,16 +102,6 @@ function MigrateCDP() {
     );
   const onReset = () => setCurrentStep(0);
 
-  useEffect(() => {
-    if (migrationTxObject instanceof Promise) {
-      migrationTxObject.then(id => {
-        setNewCdpId(id);
-        setCurrentStep(c => c + 1);
-        setCdps(cdps => cdps.filter(c => c !== selectedCDP));
-      });
-    }
-  }, [migrationTxObject, maker, selectedCDP]);
-
   return (
     <FlowBackground open={true}>
       <Grid gridRowGap={['m', 'xl']}>
@@ -152,7 +142,9 @@ function MigrateCDP() {
                   setMigrationTxObject,
                   newCdpId,
                   setMigrationTxHash,
-                  migrationTxHash
+                  migrationTxHash,
+                  setNewCdpId,
+                  setCdps
                 })}
               </FadeInFromSide>
             );
