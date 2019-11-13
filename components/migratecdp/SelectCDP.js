@@ -174,9 +174,8 @@ export default ({
         </Grid>
       </Overflow>
       <Grid color="steelLight" textAlign="center">
-        CDPs with more than {round(saiAvailable, 2)} SAI of debt cannot be
-        migrated at this time. CDPs with less than 20 SAI of debt cannot be
-        migrated at all with this app.
+        CDPs with less than 20 or more than {round(saiAvailable, 2)} SAI of debt
+        cannot be migrated at this time.
       </Grid>
       <Grid
         justifySelf="center"
