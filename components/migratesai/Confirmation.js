@@ -19,7 +19,7 @@ export default ({ onNext, onPrev, setMigrationTxHash }) => {
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [saiApprovePending, setSaiApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
-  const [{ saiAmountToMigrate }] = useStore();
+  const [{ saiAmountToMigrate }, dispatch] = useStore();
 
   const giveProxySaiAllowance = useCallback(async () => {
     setSaiApprovePending(true);
@@ -37,7 +37,7 @@ export default ({ onNext, onPrev, setMigrationTxHash }) => {
       addToastWithTimeout(errMsg, dispatch);
     }
     setSaiApprovePending(false);
-  }, [maker, proxyDetails, saiAmountToMigrate]);
+  }, [dispatch, maker, proxyDetails.address, saiAmountToMigrate]);
 
   const upgradeSai = useCallback(async () => {
     try {
@@ -53,7 +53,7 @@ export default ({ onNext, onPrev, setMigrationTxHash }) => {
       addToastWithTimeout(errMsg, dispatch);
       onPrev();
     }
-  }, [maker, onNext, saiAmountToMigrate, setMigrationTxHash]);
+  }, [dispatch, maker, onNext, onPrev, saiAmountToMigrate, setMigrationTxHash]);
 
   useEffect(() => {
     (async () => {
