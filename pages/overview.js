@@ -12,13 +12,15 @@ import {
 } from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
 import reduce from 'lodash/reduce';
-import round from 'lodash/round';
+import { prettifyNumber } from '../utils/ui';
 import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import Footer from '../components/Footer';
 import useStore from '../hooks/useStore';
 import { OASIS_HOSTNAME } from '../utils/constants';
+
+const DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION = true;
 
 function Migration({
   title,
@@ -77,7 +79,7 @@ function showCdpCount(cdps) {
 
 function showAmount(tok) {
   if (!tok) return '...';
-  return round(tok.toNumber(), 2);
+  return prettifyNumber(tok, false, 2, false);
 }
 
 function Overview() {
@@ -168,9 +170,13 @@ function Overview() {
               metadataTitle="Dai to redeem"
               metadataValue={showAmount(dai)}
               onSelected={() => {
-                window.location = `${OASIS_HOSTNAME}/trade`;
+                if (DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION)
+                  window.location = `${OASIS_HOSTNAME}/trade`;
+                else Router.push('/migration/sai');
               }}
-              buttonLabel="Visit Oasis"
+              buttonLabel={
+                DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION ? 'Visit Oasis' : undefined
+              }
             />
           )}
           {/* { mkr &&
