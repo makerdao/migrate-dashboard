@@ -155,7 +155,7 @@ function Overview() {
               recommended
               title="Single Collateral Dai Redeemer"
               body="Redeem your Single Collateral Dai (Sai) into Multi Collateral Dai."
-              metadataTitle="SCD to redeem"
+              metadataTitle="Sai to redeem"
               metadataValue={showAmount(saiBalance)}
               onSelected={() => Router.push('/migration/dai')}
             />
