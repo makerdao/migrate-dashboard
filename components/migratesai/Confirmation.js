@@ -43,7 +43,7 @@ export default ({ onNext, onPrev, setMigrationTxObject }) => {
     } catch (err) {
       console.log('migrate tx failed', err);
     }
-  }, [account, maker, saiAmountToMigrate]);
+  }, [maker, saiAmountToMigrate, setMigrationTxObject]);
 
   useEffect(() => {
     (async () => {
@@ -63,7 +63,7 @@ export default ({ onNext, onPrev, setMigrationTxObject }) => {
     })();
   }, [account, maker, saiAmountToMigrate]);
 
-  const exchangeRate = [1.0, 1.0];
+  const exchangeRate = [1, 1];
   const saiAmount = parseInt(saiAmountToMigrate).toFixed(2);
   const daiAmount = ((saiAmount * exchangeRate[0]) / exchangeRate[1]).toFixed(
     2
@@ -98,7 +98,7 @@ export default ({ onNext, onPrev, setMigrationTxObject }) => {
                   <Table.td>
                     <Text display={'block'}>Exchange Rate</Text>
                     <Text t="heading" display={'block'} fontWeight="bold">
-                      1:1
+                      {exchangeRate[0]}:{exchangeRate[1]}
                     </Text>
                   </Table.td>
                 </Table.tr>
@@ -142,9 +142,13 @@ export default ({ onNext, onPrev, setMigrationTxObject }) => {
               mr="s"
               fontSize="l"
               checked={hasReadTOS}
-              onChange={evt => setHasReadTOS(evt.target.checked)}
+              onChange={() => setHasReadTOS(!hasReadTOS)}
             />
-            <Text t="caption" color="steel">
+            <Text
+              t="caption"
+              color="steel"
+              onClick={() => setHasReadTOS(!hasReadTOS)}
+            >
               I have read and accept the{' '}
               <Link target="_blank" href="https://migrate.makerdao.com/terms">
                 Terms of Service
