@@ -1,5 +1,5 @@
 //////////////////
-/// SAI to DAI ///
+/// DAI to SAI ///
 //////////////////
 
 import React, { useState, useEffect } from 'react';
@@ -8,16 +8,16 @@ import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
 import FlowHeader from '../../components/FlowHeader';
 import useMaker from '../../hooks/useMaker';
-import SCDRedeem from '../../components/migratesai/SCDRedeem';
-import Confirmation from '../../components/migratesai/Confirmation';
+import DaiConvert from '../../components/migratedai/DaiConvert';
+import Confirmation from '../../components/migratedai/Confirmation';
 import InProgress from '../../components/InProgress';
-import Complete from '../../components/migratesai/Complete';
+import Complete from '../../components/migratedai/Complete';
 import FadeInFromSide from '../../components/FadeInFromSide';
 
 const steps = [
-  props => <SCDRedeem {...props} />,
+  props => <DaiConvert {...props} />,
   props => <Confirmation {...props} />,
-  props => <InProgress {...props} title="Your Sai is being upgraded" />,
+  props => <InProgress {...props} title="Your Dai is being converted" />,
   props => <Complete {...props} />
 ];
 
@@ -42,7 +42,7 @@ function MigrateDai() {
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
         <FlowHeader account={account} showClose={currentStep <= 1} />
         <Stepper
-          steps={['Sai Upgrade', 'Confirmation']}
+          steps={['Dai to Sai', 'Confirmation']}
           selected={currentStep}
           m="0 auto"
           mt={'m'}
