@@ -44,7 +44,7 @@ const PayAndMigrate = ({
     setMkrApprovePending(false);
   }, [maker, proxyDetails, govFeeMKRExact]);
 
-  const migrateCdp = useCallback(async () => {
+  const migrateCdp = async () => {
     try {
       const mig = await maker
         .service('migration')
@@ -53,15 +53,14 @@ const PayAndMigrate = ({
       maker.service('transactionManager').listen(migrationTxObject, {
         pending: tx => setMigrationTxHash(tx.hash)
       });
-      migrationTxObject.then(id => {
-        setNewCdpId(id);
-        setCdps(cdps => cdps.filter(c => c !== selectedCDP));
-        onNext();
-      });
+      const newId = await migrationTxObject;
+      setNewCdpId(newId);
+      setCdps(cdps => cdps.filter(c => c !== selectedCDP));
+      onNext();
     } catch (err) {
       console.log('migrate tx failed', err);
     }
-  }, [maker, onNext, selectedCDP, setCdps, setMigrationTxHash, setNewCdpId]);
+  };
 
   useEffect(() => {
     (async () => {
