@@ -109,11 +109,9 @@ function Overview() {
     })();
   }, [maker, account, dispatch]);
 
-  // mocking as true for development
-  const shouldShowCdps = true; // countCdps(cdps) >= 0;
-  const shouldShowDai = true; // dai && dai.gt(0);
-  const shouldShowReverse = true;
-
+  const shouldShowCdps = countCdps(cdps) > 0;
+  const shouldShowDai = saiBalance && saiBalance.gt(0);
+  const shouldShowReverse = dai && dai.gt(0);
   const noMigrations = !shouldShowDai && !shouldShowCdps && !shouldShowReverse;
 
   return (
