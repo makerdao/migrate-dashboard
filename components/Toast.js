@@ -90,7 +90,6 @@ export const addToastWithTimeout = (_message, dispatch) => {
 
 const Toasts = () => {
   const [{ toast }] = useStore();
-  console.log(toast, 'toast toast');
   if (!toast) return <span />;
   return (
     <Container>

@@ -28,7 +28,7 @@ async function getCdpData(cdp) {
   const govFeeMKRExact = await cdp.getGovernanceFee();
   const govFeeMKR =
     govFeeMKRExact.toNumber() > 0.01
-      ? prettifyNumber(govFeeMKRExact)
+      ? prettifyNumber(govFeeMKRExact, false, 2, false)
       : round(govFeeMKRExact.toNumber(), 6);
   // const govFeeDai = (await cdp.getGovernanceFee(Maker.USD))
   //   .toNumber()
