@@ -8,10 +8,12 @@ import {
   Grid,
   Button,
   Card,
-  Link
+  Link,
+  Loader
 } from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
 import reduce from 'lodash/reduce';
+import { getColor } from '../utils/theme';
 import { prettifyNumber } from '../utils/ui';
 import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
@@ -85,6 +87,7 @@ function showAmount(tok) {
 function Overview() {
   const { maker, account } = useMaker();
   const [dai, setDai] = useState(null);
+  const [initialFetchComplete, setInitialFetchComplete] = useState(false);
   const [{ cdpMigrationCheck: cdps, saiBalance }, dispatch] = useStore();
 
   useEffect(() => {
@@ -96,6 +99,9 @@ function Overview() {
       if (!maker || !account) return;
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
+      const daiBalance = await maker.getToken('MDAI').balance();
+      setInitialFetchComplete(true);
+
       dispatch({
         type: 'assign',
         payload: {
@@ -103,8 +109,6 @@ function Overview() {
           saiBalance: checks['sai-to-dai']
         }
       });
-
-      const daiBalance = await maker.getToken('MDAI').balance();
       setDai(daiBalance);
     })();
   }, [maker, account, dispatch]);
@@ -188,19 +192,31 @@ function Overview() {
           />}
         */}
         </Grid>
-        {noMigrations && (
-          <Card mt="l">
-            <Flex justifyContent="center" py="l" px="m">
-              <Text.p textAlign="center" t="body">
-                You&apos;re all set! There are no migrations or redemptions to
-                make using this wallet.
-                <br />
-                <Text.span display={{ s: 'block', m: 'none' }} mt="m" />
-                Please visit us at <Link>chat.makerdao.com</Link> if you have
-                any questions.
-              </Text.p>
-            </Flex>
-          </Card>
+        {initialFetchComplete ? (
+          noMigrations && (
+            <Card mt="l">
+              <Flex justifyContent="center" py="l" px="m">
+                <Text.p textAlign="center" t="body">
+                  You&apos;re all set! There are no migrations or redemptions to
+                  make using this wallet.
+                  <br />
+                  <Text.span display={{ s: 'block', m: 'none' }} mt="m" />
+                  Please visit us at <Link>chat.makerdao.com</Link> if you have
+                  any questions.
+                </Text.p>
+              </Flex>
+            </Card>
+          )
+        ) : (
+          <Loader
+            mt="4rem"
+            mb="4rem"
+            size="1.8rem"
+            color={getColor('makerTeal')}
+            justifySelf="end"
+            m="auto"
+            bg={getColor('lightGrey')}
+          />
         )}
       </Box>
       <Footer mt="2xl" />
