@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Stepper, Grid, Flex } from '@makerdao/ui-components-core';
 import Router from 'next/router';
+import { USD } from '../../maker';
 import FlowBackground from '../../components/FlowBackground';
 import FlowHeader from '../../components/FlowHeader';
 import FadeInFromSide from '../../components/FadeInFromSide';
@@ -30,15 +31,26 @@ async function getCdpData(cdp) {
     govFeeMKRExact.toNumber() > 0.01
       ? prettifyNumber(govFeeMKRExact, false, 2, false)
       : round(govFeeMKRExact.toNumber(), 6);
-  // const govFeeDai = (await cdp.getGovernanceFee(Maker.USD))
-  //   .toNumber()
-  //   .toFixed(2);
-  const collateralizationRatio = (await cdp.getCollateralizationRatio()) * 100;
+
+  const govFeeDaiExact = await cdp.getGovernanceFee(USD);
+  const govFeeDai =
+    govFeeDaiExact.toNumber() > 0.01
+      ? prettifyNumber(await cdp.getGovernanceFee(USD), false, 2, false)
+      : round(govFeeDaiExact.toNumber(), 4);
+
+  const collateralizationRatioExact =
+    (await cdp.getCollateralizationRatio()) * 100;
+
+  const collateralizationRatio =
+    collateralizationRatioExact === Infinity
+      ? '---'
+      : prettifyNumber(collateralizationRatioExact);
+
   return {
     collateralizationRatio,
     debtValueExact,
     debtValue,
-    // govFeeDai,
+    govFeeDai,
     govFeeMKR,
     govFeeMKRExact
   };

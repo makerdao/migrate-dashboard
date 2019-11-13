@@ -9,7 +9,8 @@ import { createCurrency } from '@makerdao/currency';
 
 let maker;
 
-const SAI = createCurrency('SAI');
+export const SAI = createCurrency('SAI');
+export const USD = Maker.USD;
 
 export function getMaker() {
   if (maker === undefined) throw new Error('Maker has not been instantiated');
@@ -22,12 +23,12 @@ export async function instantiateMaker({ rpcUrl }) {
   const config = {
     log: false,
     plugins: [
-    trezorPlugin,
-    ledgerPlugin,
-    walletLinkPlugin,
-    walletConnectPlugin,
-    [daiPlugin,{ cdpTypes: [{currency: SAI, ilk: 'SAI' }] }],
-    migrationPlugin,
+      trezorPlugin,
+      ledgerPlugin,
+      walletLinkPlugin,
+      walletConnectPlugin,
+      [daiPlugin, { cdpTypes: [{ currency: SAI, ilk: 'SAI' }] }],
+      migrationPlugin
     ],
     smartContract: {
       addContracts: {}

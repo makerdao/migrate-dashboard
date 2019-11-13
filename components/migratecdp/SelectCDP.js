@@ -51,8 +51,8 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
     >
       <Box display={['none', 'block']}>
         <Grid
-          gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(4, 1fr) ${AESTHETIC_ROW_PADDING}`}
-          gridColumnGap="m"
+          gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} 1fr 2fr 2fr 2fr 2fr ${AESTHETIC_ROW_PADDING}`}
+          gridColumnGap="l"
           alignItems="center"
           fontSize="m"
           color="darkPurple"
@@ -68,15 +68,11 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
           />
           <span>{cdp.id}</span>
           {/* Collateralization */}
-          <span>
-            {cdp.collateralizationRatio === Infinity
-              ? '---'
-              : prettifyNumber(cdp.collateralizationRatio) + '%'}
-          </span>
+          <span>{cdp.collateralizationRatio + '%'}</span>
           {/* Debt Value */}
           <span>{cdp.debtValue} DAI</span>
           {/* Fee in DAI */}
-          {/* <span>{cdp.govFeeDai} DAI</span> */}
+          <span>{cdp.govFeeDai} DAI</span>
           {/* Fee in MKR */}
           <span>{cdp.govFeeMKR} MKR</span>
         </Grid>
@@ -94,13 +90,10 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
         </Flex>
         <ListItemRow
           label="Current Ratio"
-          value={
-            cdp.collateralizationRatio === Infinity
-              ? '---'
-              : prettifyNumber(cdp.collateralizationRatio) + '%'
-          }
+          value={cdp.collateralizationRatio + '%'}
         />
-        <ListItemRow label="Dai Drawn" value={cdp.debtValue + ' DAI'} dark />
+        <ListItemRow label="Dai Debt" value={cdp.debtValue + ' DAI'} />
+        <ListItemRow label="Fee in DAI" value={cdp.govFeeMKR + ' DAI'} dark />
         <ListItemRow label="Fee in MKR" value={cdp.govFeeMKR + ' MKR'} />
       </Box>
     </Card>
@@ -139,8 +132,8 @@ export default ({
             <Grid
               p="l"
               pb="0"
-              gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} repeat(4, 1fr) ${AESTHETIC_ROW_PADDING}`}
-              gridColumnGap="m"
+              gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} 1fr 2fr 2fr 2fr 2fr ${AESTHETIC_ROW_PADDING}`}
+              gridColumnGap="l"
               alignItems="center"
               fontWeight="medium"
               color="steelLight"
@@ -151,8 +144,8 @@ export default ({
               <span />
               <Text t="subheading">CDP ID</Text>
               <Text t="subheading">Current Ratio</Text>
-              <Text t="subheading">Dai Drawn</Text>
-              {/* <Text t="subheading">Fee In DAI</Text> */}
+              <Text t="subheading">Dai Debt</Text>
+              <Text t="subheading">Fee In DAI</Text>
               <Text t="subheading">Fee in MKR</Text>
             </Grid>
           </Box>

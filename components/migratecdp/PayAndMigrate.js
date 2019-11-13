@@ -97,7 +97,7 @@ const PayAndMigrate = ({
       width={['100vw', 'auto']}
     >
       <Text.h2 textAlign="center">Confirm CDP Migration</Text.h2>
-      <CardTabs headers={['Pay with MKR']}>
+      <CardTabs headers={['Pay with MKR', 'Pay with CDP debt']}>
         <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
           <Table width="100%">
             <Table.tbody>
@@ -134,6 +134,93 @@ const PayAndMigrate = ({
               data-testid="allowance-toggle"
             />
           </Grid>
+          <Grid alignItems="center" gridTemplateColumns="auto 1fr">
+            <Checkbox
+              mr="s"
+              fontSize="l"
+              checked={hasReadTOS}
+              onChange={() => setHasReadTOS(!hasReadTOS)}
+            />
+            <Text
+              t="caption"
+              color="steel"
+              onClick={() => setHasReadTOS(!hasReadTOS)}
+            >
+              I have read and accept the{' '}
+              <Link target="_blank" href="https://migrate.makerdao.com/terms">
+                Terms of Service
+              </Link>
+              .
+            </Text>
+          </Grid>
+        </Grid>
+        <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
+          <Table width="100%">
+            <Table.tbody>
+              <Table.tr>
+                <Table.td>
+                  <Text>CDP ID</Text>
+                </Table.td>
+                <Table.td textAlign="right">
+                  <Text fontWeight="medium">
+                    <Link>{selectedCDP.id}</Link>
+                  </Text>
+                </Table.td>
+              </Table.tr>
+              <Table.tr>
+                <Table.td>
+                  <Text>Stability Fee</Text>
+                </Table.td>
+                <Table.td textAlign="right">
+                  <Text fontWeight="medium">
+                    {selectedCDP.govFeeMKR} MKR
+                    {/* TODO: ({selectedCDP.govFeeDai} DAI) */}
+                  </Text>
+                </Table.td>
+              </Table.tr>
+              <Table.tr>
+                <Table.td>
+                  <Text>Max Cost (5% Slippage)</Text>
+                </Table.td>
+                {/* TODO */}
+                <Table.td textAlign="right">
+                  <Text fontWeight="medium">TODO</Text>
+                </Table.td>
+              </Table.tr>
+              <Table.tr>
+                <Table.td>
+                  <Text>Current Col. Ratio</Text>
+                </Table.td>
+                <Table.td textAlign="right">
+                  <Text fontWeight="medium">
+                    {selectedCDP.collateralizationRatio} %
+                  </Text>
+                </Table.td>
+              </Table.tr>
+              <Table.tr>
+                <Table.td>
+                  <Text>New Col. Ratio</Text>
+                </Table.td>
+                {/* TODO */}
+                <Table.td textAlign="right">
+                  <Text fontWeight="medium">TODO</Text>
+                </Table.td>
+              </Table.tr>
+            </Table.tbody>
+          </Table>
+          {/* <Grid>
+            <LoadingToggle
+              completeText={'MKR unlocked'}
+              loadingText={'Unlocking MKR'}
+              defaultText={'Unlock MKR to continue'}
+              tokenDisplayName={'MKR'}
+              isLoading={mkrApprovePending}
+              isComplete={proxyDetails.hasMkrAllowance}
+              onToggle={giveProxyMkrAllowance}
+              disabled={proxyDetails.hasMkrAllowance || !proxyDetails.address}
+              data-testid="allowance-toggle"
+            />
+          </Grid> */}
           <Grid alignItems="center" gridTemplateColumns="auto 1fr">
             <Checkbox
               mr="s"
