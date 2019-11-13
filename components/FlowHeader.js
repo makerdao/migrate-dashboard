@@ -5,15 +5,18 @@ import Account from './Account';
 import Router from 'next/router';
 import arrowTopRight from '../assets/icons/arrowTopRight.svg';
 import threeDots from '../assets/icons/threeDots.svg';
+import { etherscanLink } from '../utils/ethereum';
+import useMaker from '../hooks/useMaker';
 
 const TxLoader = ({ hash }) => {
+  const { network } = useMaker();
   return (
     <Flex alignItems="center" p="0px">
       <img src={threeDots} />
       <Text mx="m" fontSize="16px">
         TX in progress
       </Text>
-      {typeof hash !== 'undefined' ? (
+      {hash && (
         <Box
           border="1px solid #D4D9E1"
           borderRadius="4px"
@@ -23,11 +26,11 @@ const TxLoader = ({ hash }) => {
           py="xs"
         >
           <Text fontSize="14px">View </Text>
-          <Link target="_blank" href={`https://etherscan.io/tx/${hash}`}>
+          <Link target="_blank" href={etherscanLink(hash, network)}>
             <img src={arrowTopRight} />
           </Link>
         </Box>
-      ) : null}
+      )}
     </Flex>
   );
 };
@@ -48,9 +51,7 @@ export default function FlowHeader({ account, loading, hash, showClose }) {
         style={{ borderRadius: 6 }}
       >
         {account && !loading ? <Account account={account} /> : null}
-        {loading && typeof hash === 'undefined' ? (
-          <TxLoader hash={hash} />
-        ) : null}
+        {loading && <TxLoader hash={hash} />}
       </Box>
       {showClose && (
         <Flex
