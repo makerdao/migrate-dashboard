@@ -10,6 +10,8 @@ import {
 } from '@makerdao/ui-components-core';
 import { MKR } from '@makerdao/dai-plugin-mcd';
 import useMaker from '../../hooks/useMaker';
+import useStore from '../../hooks/useStore';
+import { addToastWithTimeout } from '../Toast';
 import LoadingToggle from '../LoadingToggle';
 
 const APPROVAL_FUDGE = 2;
@@ -25,6 +27,7 @@ const PayAndMigrate = ({
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [mkrApprovePending, setMkrApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
+  const [, dispatch] = useStore();
   const { maker, account } = useMaker();
   const { govFeeMKRExact } = selectedCDP;
 
@@ -39,7 +42,9 @@ const PayAndMigrate = ({
         hasMkrAllowance: true
       }));
     } catch (err) {
-      console.log('unlock mkr tx failed', err);
+      const errMsg = `unlock mkr tx failed ${err}`;
+      console.error(errMsg);
+      addToastWithTimeout(errMsg, dispatch);
     }
     setMkrApprovePending(false);
   }, [maker, proxyDetails, govFeeMKRExact]);
@@ -58,7 +63,10 @@ const PayAndMigrate = ({
       setCdps(cdps => cdps.filter(c => c !== selectedCDP));
       onNext();
     } catch (err) {
-      console.log('migrate tx failed', err);
+      const errMsg = `migrate tx failed ${err}`;
+      console.error(errMsg);
+      addToastWithTimeout(errMsg, dispatch);
+      onPrev();
     }
   };
 

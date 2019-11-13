@@ -11,6 +11,7 @@ import {
 import useStore from '../../hooks/useStore';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
+import { addToastWithTimeout } from '../Toast';
 import { prettifyNumber } from '../../utils/ui';
 
 export default ({ onNext, onPrev, setMigrationTxHash }) => {
@@ -31,7 +32,9 @@ export default ({ onNext, onPrev, setMigrationTxHash }) => {
         hasSaiAllowance: true
       }));
     } catch (err) {
-      console.log('unlock sai tx failed', err);
+      const errMsg = `unlock sai tx failed ${err}`;
+      console.error(errMsg);
+      addToastWithTimeout(errMsg, dispatch);
     }
     setSaiApprovePending(false);
   }, [maker, proxyDetails, saiAmountToMigrate]);
@@ -45,7 +48,10 @@ export default ({ onNext, onPrev, setMigrationTxHash }) => {
       });
       migrationTxObject.then(onNext);
     } catch (err) {
-      console.log('migrate tx failed', err);
+      const errMsg = `migrate tx failed ${err}`;
+      console.error(errMsg);
+      addToastWithTimeout(errMsg, dispatch);
+      onPrev();
     }
   }, [maker, onNext, saiAmountToMigrate, setMigrationTxHash]);
 
