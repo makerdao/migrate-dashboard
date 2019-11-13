@@ -113,6 +113,9 @@ export default ({
 }) => {
   const [{ saiAvailable }] = useStore();
 
+  const isSelectable = cdp =>
+    cdp.debtValue > 20 && cdp.debtValue < saiAvailable;
+
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
       <Text.h2 textAlign="center">Select CDP to Migrate</Text.h2>
@@ -163,7 +166,7 @@ export default ({
             <ListItem
               cdp={cdp}
               checked={selectedCDP === cdp}
-              selectable={cdp.debtValue < saiAvailable}
+              selectable={isSelectable(cdp)}
               key={cdp.id}
               onSelect={onSelect}
             />
@@ -171,8 +174,9 @@ export default ({
         </Grid>
       </Overflow>
       <Grid color="steelLight" textAlign="center">
-        CDPs with more than {round(saiAvailable, 2)} SAI in debt cannot be
-        migrated at this time.
+        CDPs with more than {round(saiAvailable, 2)} SAI of debt cannot be
+        migrated at this time. CDPs with less than 20 SAI of debt cannot be
+        migrated at all with this app.
       </Grid>
       <Grid
         justifySelf="center"
