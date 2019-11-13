@@ -12,7 +12,7 @@ import useStore from '../../hooks/useStore';
 import useMaker from '../../hooks/useMaker';
 import LoadingToggle from '../LoadingToggle';
 
-export default ({ onNext, onPrev, setMigrationTxHash, amounts }) => {
+export default ({ onNext, onPrev, setMigrationTxHash }) => {
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [saiApprovePending, setSaiApprovePending] = useState(false);
