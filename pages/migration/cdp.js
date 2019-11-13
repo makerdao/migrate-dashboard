@@ -87,18 +87,14 @@ function MigrateCDP() {
 
   const onPrev = () => {
     if (currentStep <= 0) Router.replace('/overview');
-    setCurrentStep(
-      ownedByProxy(selectedCDP) && currentStep === 2
-        ? currentStep - 2
-        : currentStep - 1
+    setCurrentStep(step =>
+      ownedByProxy(selectedCDP) && step === 2 ? step - 2 : step - 1
     );
   };
 
   const onNext = () =>
-    setCurrentStep(
-      ownedByProxy(selectedCDP) && currentStep === 0
-        ? currentStep + 2
-        : currentStep + 1
+    setCurrentStep(step =>
+      ownedByProxy(selectedCDP) && step === 0 ? step + 2 : step + 1
     );
   const onReset = () => setCurrentStep(0);
 
