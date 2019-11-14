@@ -66,7 +66,7 @@ export default ({ onNext, onPrev }) => {
         m="0 auto"
         display={{ s: 'none', m: 'block' }}
       >
-        How much Dai would you like to convert to Single Collateral Sai?
+        How much Dai would you like to convert to Single-Collateral Sai?
       </Text.p>
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}

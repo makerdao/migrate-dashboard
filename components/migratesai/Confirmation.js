@@ -14,7 +14,12 @@ import LoadingToggle from '../LoadingToggle';
 import { addToastWithTimeout } from '../Toast';
 import { prettifyNumber } from '../../utils/ui';
 
-export default ({ onNext, onPrev, setMigrationTxHash, showErrorMessageAndAllowExiting }) => {
+export default ({
+  onNext,
+  onPrev,
+  setMigrationTxHash,
+  showErrorMessageAndAllowExiting
+}) => {
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [saiApprovePending, setSaiApprovePending] = useState(false);
@@ -98,7 +103,7 @@ export default ({ onNext, onPrev, setMigrationTxHash, showErrorMessageAndAllowEx
                       t="heading"
                       display={'block'}
                       fontWeight="bold"
-                    >{`${amount} Single Collateral Dai`}</Text>
+                    >{`${amount} Single-Collateral Sai`}</Text>
                   </Table.td>
                 </Table.tr>
                 <Table.tr>
@@ -116,7 +121,7 @@ export default ({ onNext, onPrev, setMigrationTxHash, showErrorMessageAndAllowEx
                       t="heading"
                       display={'block'}
                       fontWeight="bold"
-                    >{`${amount} Multi Collateral Dai`}</Text>
+                    >{`${amount} Multi-Collateral Dai`}</Text>
                   </Table.td>
                 </Table.tr>
               </Table.tbody>

@@ -52,7 +52,7 @@ function Complete({ onClose, migrationTxHash }) {
             <Table.tbody>
               <Table.tr>
                 <Table.td>
-                  <Text display={'block'}>Sent: Single Collateral Dai</Text>
+                  <Text display={'block'}>Sent: Single-Collateral Sai</Text>
                   <Text t="heading" display={'block'} fontWeight="bold">
                     {`${amount} SAI`}
                   </Text>
@@ -68,7 +68,7 @@ function Complete({ onClose, migrationTxHash }) {
               </Table.tr>
               <Table.tr>
                 <Table.td>
-                  <Text display={'block'}>Received: Multi Collateral Dai</Text>
+                  <Text display={'block'}>Received: Multi-Collateral Dai</Text>
                   <Text t="heading" display={'block'} fontWeight="bold">
                     {`${amount} DAI`}
                   </Text>
