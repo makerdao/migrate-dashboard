@@ -60,7 +60,7 @@ const PayAndMigrate = ({
       const mig = await maker
         .service('migration')
         .getMigration('single-to-multi-cdp');
-      const migrationTxObject = mig.execute(selectedCDP.id);
+      const migrationTxObject = mig.execute(selectedCDP.id, undefined, undefined, undefined, {});
       maker.service('transactionManager').listen(migrationTxObject, {
         pending: tx => setMigrationTxHash(tx.hash),
         error: () => showErrorMessageAndAllowExiting()
