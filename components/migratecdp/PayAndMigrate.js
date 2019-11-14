@@ -6,7 +6,8 @@ import {
   Button,
   Checkbox,
   Link,
-  CardTabs
+  CardTabs,
+  Card
 } from '@makerdao/ui-components-core';
 import { MKR } from '@makerdao/dai-plugin-mcd';
 import { prettifyNumber } from '../../utils/ui';
@@ -15,6 +16,7 @@ import useStore from '../../hooks/useStore';
 import { addToastWithTimeout } from '../Toast';
 import LoadingToggle from '../LoadingToggle';
 import round from 'lodash/round';
+import { ErrorBlock } from '../Typography';
 
 const APPROVAL_FUDGE = 2;
 
@@ -76,7 +78,6 @@ const PayAndMigrate = ({
   useEffect(() => {
     (async () => {
       if (maker && account) {
-        // assuming they have a proxy
         const mkrToken = maker.service('token').getToken(MKR);
         const [mkrBalanceFromSdk, proxyAddress] = await Promise.all([
           mkrToken.balance(),
@@ -95,6 +96,8 @@ const PayAndMigrate = ({
       }
     })();
   }, [account, maker, govFeeMKRExact]);
+
+  const hasEnoughMkr = mkrBalance && mkrBalance.gt(govFeeMKRExact);
 
   const maxCost =
     parseFloat(selectedCDP.govFeeDai) +
@@ -138,10 +141,10 @@ const PayAndMigrate = ({
               </Table.tr>
               <Table.tr>
                 <Table.td>
-                  <Text>MKR Balance</Text>
+                  <Text color={!hasEnoughMkr ? '#D85B19' : null}>MKR Balance</Text>
                 </Table.td>
                 <Table.td textAlign="right">
-                  <Text fontWeight="medium">{
+                  <Text color={!hasEnoughMkr ? '#D85B19' : null} fontWeight="medium">{
                     mkrBalance ? (mkrBalance.toNumber() > 0.01 ?
                       prettifyNumber(mkrBalance, false, 2, false)
                       : round(mkrBalance.toNumber(), 6)) : '...'} MKR
@@ -150,38 +153,42 @@ const PayAndMigrate = ({
               </Table.tr>
             </Table.tbody>
           </Table>
-          <Grid>
-            <LoadingToggle
-              completeText={'MKR unlocked'}
-              loadingText={'Unlocking MKR'}
-              defaultText={'Unlock MKR to continue'}
-              tokenDisplayName={'MKR'}
-              isLoading={mkrApprovePending}
-              isComplete={proxyDetails.hasMkrAllowance}
-              onToggle={giveProxyMkrAllowance}
-              disabled={proxyDetails.hasMkrAllowance || !proxyDetails.address}
-              data-testid="allowance-toggle"
-            />
-          </Grid>
-          <Grid alignItems="center" gridTemplateColumns="auto 1fr">
-            <Checkbox
-              mr="s"
-              fontSize="l"
-              checked={hasReadTOS}
-              onChange={() => setHasReadTOS(!hasReadTOS)}
-            />
-            <Text
-              t="caption"
-              color="steel"
-              onClick={() => setHasReadTOS(!hasReadTOS)}
-            >
-              I have read and accept the{' '}
-              <Link target="_blank" href="https://migrate.makerdao.com/terms">
-                Terms of Service
-              </Link>
-              .
-            </Text>
-          </Grid>
+          {!hasEnoughMkr ? <ErrorBlock>You have insufficient MKR balance. Please use `Pay with CDP debt`, or purchase enough MKR to pay the stability fee before continuing.</ErrorBlock> :
+          <div>
+            <Grid>
+              <LoadingToggle
+                completeText={'MKR unlocked'}
+                loadingText={'Unlocking MKR'}
+                defaultText={'Unlock MKR to continue'}
+                tokenDisplayName={'MKR'}
+                isLoading={mkrApprovePending}
+                isComplete={proxyDetails.hasMkrAllowance}
+                onToggle={giveProxyMkrAllowance}
+                disabled={proxyDetails.hasMkrAllowance || !proxyDetails.address}
+                data-testid="allowance-toggle"
+              />
+            </Grid>
+            <Grid alignItems="center" gridTemplateColumns="auto 1fr">
+              <Checkbox
+                mr="s"
+                fontSize="l"
+                checked={hasReadTOS}
+                onChange={() => setHasReadTOS(!hasReadTOS)}
+              />
+              <Text
+                t="caption"
+                color="steel"
+                onClick={() => setHasReadTOS(!hasReadTOS)}
+              >
+                I have read and accept the{' '}
+                <Link target="_blank" href="https://migrate.makerdao.com/terms">
+                  Terms of Service
+                </Link>
+                .
+              </Text>
+            </Grid>
+          </div>
+          }
         </Grid>
         <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
           <Table width="100%">
