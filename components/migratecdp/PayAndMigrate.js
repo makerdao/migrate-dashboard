@@ -14,6 +14,7 @@ import useMaker from '../../hooks/useMaker';
 import useStore from '../../hooks/useStore';
 import { addToastWithTimeout } from '../Toast';
 import LoadingToggle from '../LoadingToggle';
+import round from 'lodash/round';
 
 const APPROVAL_FUDGE = 2;
 
@@ -28,6 +29,7 @@ const PayAndMigrate = ({
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [mkrApprovePending, setMkrApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
+  const [mkrBalance, setMkrBalance] = useState(false);
   const [, dispatch] = useStore();
   const { maker, account } = useMaker();
   const { govFeeMKRExact } = selectedCDP;
@@ -75,7 +77,12 @@ const PayAndMigrate = ({
     (async () => {
       if (maker && account) {
         // assuming they have a proxy
-        const proxyAddress = await maker.service('proxy').currentProxy();
+        const mkrToken = maker.service('token').getToken(MKR);
+        const [mkrBalanceFromSdk, proxyAddress] = await Promise.all([
+          mkrToken.balance(),
+          maker.service('proxy').currentProxy()
+        ]);
+        setMkrBalance(mkrBalanceFromSdk);
         if (proxyAddress) {
           const connectedWalletAllowance = await maker
             .getToken(MKR)
@@ -127,6 +134,18 @@ const PayAndMigrate = ({
                 </Table.td>
                 <Table.td textAlign="right">
                   <Text fontWeight="medium">{selectedCDP.govFeeMKR} MKR</Text>
+                </Table.td>
+              </Table.tr>
+              <Table.tr>
+                <Table.td>
+                  <Text>MKR Balance</Text>
+                </Table.td>
+                <Table.td textAlign="right">
+                  <Text fontWeight="medium">{
+                    mkrBalance ? (mkrBalance.toNumber() > 0.01 ?
+                      prettifyNumber(mkrBalance, false, 2, false)
+                      : round(mkrBalance.toNumber(), 6)) : '...'} MKR
+                  </Text>
                 </Table.td>
               </Table.tr>
             </Table.tbody>
