@@ -108,6 +108,8 @@ const PayAndMigrate = ({
     .times(100)
     .toNumber();
 
+  const aboveOneSeventy = minNewCollatRatio > 170;
+
   return (
     <Grid
       maxWidth="912px"
@@ -141,10 +143,10 @@ const PayAndMigrate = ({
               </Table.tr>
               <Table.tr>
                 <Table.td>
-                  <Text color={!hasEnoughMkr ? '#D85B19' : null}>MKR Balance</Text>
+                  <Text color={mkrBalance && !hasEnoughMkr ? '#D85B19' : null}>MKR Balance</Text>
                 </Table.td>
                 <Table.td textAlign="right">
-                  <Text color={!hasEnoughMkr ? '#D85B19' : null} fontWeight="medium">{
+                  <Text color={mkrBalance && !hasEnoughMkr ? '#D85B19' : null} fontWeight="medium">{
                     mkrBalance ? (mkrBalance.toNumber() > 0.01 ?
                       prettifyNumber(mkrBalance, false, 2, false)
                       : round(mkrBalance.toNumber(), 6)) : '...'} MKR
@@ -153,8 +155,8 @@ const PayAndMigrate = ({
               </Table.tr>
             </Table.tbody>
           </Table>
-          {!hasEnoughMkr ? <ErrorBlock>You have insufficient MKR balance. Please use `Pay with CDP debt`, or purchase enough MKR to pay the stability fee before continuing.</ErrorBlock> :
-          <div>
+          {mkrBalance && !hasEnoughMkr ? <ErrorBlock>You have insufficient MKR balance. Please use `Pay with CDP debt`, or purchase enough MKR to pay the stability fee before continuing.</ErrorBlock> :
+          mkrBalance && <div>
             <Grid>
               <LoadingToggle
                 completeText={'MKR unlocked'}
@@ -235,35 +237,37 @@ const PayAndMigrate = ({
               </Table.tr>
               <Table.tr>
                 <Table.td>
-                  <Text>Min New Col. Ratio</Text>
+                  <Text color={!aboveOneSeventy ? '#D85B19' : null}>Min New Col. Ratio</Text>
                 </Table.td>
                 <Table.td textAlign="right">
-                  <Text fontWeight="medium">
+                  <Text color={!aboveOneSeventy ? '#D85B19' : null} fontWeight="medium">
                     {prettifyNumber(minNewCollatRatio, false, 2, false)} %
                   </Text>
                 </Table.td>
               </Table.tr>
             </Table.tbody>
           </Table>
-          <Grid alignItems="center" gridTemplateColumns="auto 1fr">
-            <Checkbox
-              mr="s"
-              fontSize="l"
-              checked={hasReadTOS}
-              onChange={() => setHasReadTOS(!hasReadTOS)}
-            />
-            <Text
-              t="caption"
-              color="steel"
-              onClick={() => setHasReadTOS(!hasReadTOS)}
-            >
-              I have read and accept the{' '}
-              <Link target="_blank" href="https://migrate.makerdao.com/terms">
-                Terms of Service
-              </Link>
-              .
-            </Text>
-          </Grid>
+          {!aboveOneSeventy ? <ErrorBlock>You cannot use this feature when your CDP would finish with a collateralization ratio of less than 170%. Please use ‘Pay with MKR’ or repay some of your CDP before continuing.</ErrorBlock> :
+            <Grid alignItems="center" gridTemplateColumns="auto 1fr">
+              <Checkbox
+                mr="s"
+                fontSize="l"
+                checked={hasReadTOS}
+                onChange={() => setHasReadTOS(!hasReadTOS)}
+              />
+              <Text
+                t="caption"
+                color="steel"
+                onClick={() => setHasReadTOS(!hasReadTOS)}
+              >
+                I have read and accept the{' '}
+                <Link target="_blank" href="https://migrate.makerdao.com/terms">
+                  Terms of Service
+                </Link>
+                .
+              </Text>
+            </Grid>
+          }
         </Grid>
       </CardTabs>
       <Grid
