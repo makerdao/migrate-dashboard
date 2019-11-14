@@ -10,6 +10,7 @@ import { createCurrency } from '@makerdao/currency';
 let maker;
 
 export const SAI = createCurrency('SAI');
+export const ETH = createCurrency('ETH');
 export const USD = Maker.USD;
 
 export function getMaker() {
@@ -27,7 +28,7 @@ export async function instantiateMaker({ rpcUrl }) {
       ledgerPlugin,
       walletLinkPlugin,
       walletConnectPlugin,
-      [daiPlugin, { cdpTypes: [{ currency: SAI, ilk: 'SAI' }] }],
+      [daiPlugin, { cdpTypes: [{ currency: SAI, ilk: 'SAI' }, {currency: ETH, ilk: 'ETH-A'}] }],
       migrationPlugin
     ],
     smartContract: {
