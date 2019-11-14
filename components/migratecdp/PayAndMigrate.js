@@ -6,8 +6,7 @@ import {
   Button,
   Checkbox,
   Link,
-  CardTabs,
-  Card
+  CardTabs
 } from '@makerdao/ui-components-core';
 import { MKR } from '@makerdao/dai-plugin-mcd';
 import { prettifyNumber } from '../../utils/ui';
@@ -60,7 +59,13 @@ const PayAndMigrate = ({
       const mig = await maker
         .service('migration')
         .getMigration('single-to-multi-cdp');
-      const migrationTxObject = mig.execute(selectedCDP.id, undefined, undefined, undefined, {});
+      const migrationTxObject = mig.execute(
+        selectedCDP.id,
+        undefined,
+        undefined,
+        undefined,
+        {}
+      );
       maker.service('transactionManager').listen(migrationTxObject, {
         pending: tx => setMigrationTxHash(tx.hash),
         error: () => showErrorMessageAndAllowExiting()
@@ -145,54 +150,74 @@ const PayAndMigrate = ({
               </Table.tr>
               <Table.tr>
                 <Table.td>
-                  <Text color={mkrBalance && !hasEnoughMkr ? '#D85B19' : null}>MKR Balance</Text>
+                  <Text color={mkrBalance && !hasEnoughMkr ? '#D85B19' : null}>
+                    MKR Balance
+                  </Text>
                 </Table.td>
                 <Table.td textAlign="right">
-                  <Text color={mkrBalance && !hasEnoughMkr ? '#D85B19' : null} fontWeight="medium">{
-                    mkrBalance ? (mkrBalance.toNumber() > 0.01 ?
-                      prettifyNumber(mkrBalance, false, 2, false)
-                      : round(mkrBalance.toNumber(), 6)) : '...'} MKR
+                  <Text
+                    color={mkrBalance && !hasEnoughMkr ? '#D85B19' : null}
+                    fontWeight="medium"
+                  >
+                    {mkrBalance
+                      ? mkrBalance.toNumber() > 0.01
+                        ? prettifyNumber(mkrBalance, false, 2, false)
+                        : round(mkrBalance.toNumber(), 6)
+                      : '...'}{' '}
+                    MKR
                   </Text>
                 </Table.td>
               </Table.tr>
             </Table.tbody>
           </Table>
-          {mkrBalance && !hasEnoughMkr ? <ErrorBlock>You have insufficient MKR balance. Please use `Pay with CDP debt`, or purchase enough MKR to pay the stability fee before continuing.</ErrorBlock> :
-          mkrBalance && <div>
-            <Grid>
-              <LoadingToggle
-                completeText={'MKR unlocked'}
-                loadingText={'Unlocking MKR'}
-                defaultText={'Unlock MKR to continue'}
-                tokenDisplayName={'MKR'}
-                isLoading={mkrApprovePending}
-                isComplete={proxyDetails.hasMkrAllowance}
-                onToggle={giveProxyMkrAllowance}
-                disabled={proxyDetails.hasMkrAllowance || !proxyDetails.address}
-                data-testid="allowance-toggle"
-              />
-            </Grid>
-            <Grid alignItems="center" gridTemplateColumns="auto 1fr">
-              <Checkbox
-                mr="s"
-                fontSize="l"
-                checked={hasReadTOS}
-                onChange={() => setHasReadTOS(!hasReadTOS)}
-              />
-              <Text
-                t="caption"
-                color="steel"
-                onClick={() => setHasReadTOS(!hasReadTOS)}
-              >
-                I have read and accept the{' '}
-                <Link target="_blank" href="https://migrate.makerdao.com/terms">
-                  Terms of Service
-                </Link>
-                .
-              </Text>
-            </Grid>
-          </div>
-          }
+          {mkrBalance && !hasEnoughMkr ? (
+            <ErrorBlock>
+              You have insufficient MKR balance. Please use `Pay with CDP debt`,
+              or purchase enough MKR to pay the stability fee before continuing.
+            </ErrorBlock>
+          ) : (
+            mkrBalance && (
+              <div>
+                <Grid>
+                  <LoadingToggle
+                    completeText={'MKR unlocked'}
+                    loadingText={'Unlocking MKR'}
+                    defaultText={'Unlock MKR to continue'}
+                    tokenDisplayName={'MKR'}
+                    isLoading={mkrApprovePending}
+                    isComplete={proxyDetails.hasMkrAllowance}
+                    onToggle={giveProxyMkrAllowance}
+                    disabled={
+                      proxyDetails.hasMkrAllowance || !proxyDetails.address
+                    }
+                    data-testid="allowance-toggle"
+                  />
+                </Grid>
+                <Grid alignItems="center" gridTemplateColumns="auto 1fr">
+                  <Checkbox
+                    mr="s"
+                    fontSize="l"
+                    checked={hasReadTOS}
+                    onChange={() => setHasReadTOS(!hasReadTOS)}
+                  />
+                  <Text
+                    t="caption"
+                    color="steel"
+                    onClick={() => setHasReadTOS(!hasReadTOS)}
+                  >
+                    I have read and accept the{' '}
+                    <Link
+                      target="_blank"
+                      href="https://migrate.makerdao.com/terms"
+                    >
+                      Terms of Service
+                    </Link>
+                    .
+                  </Text>
+                </Grid>
+              </div>
+            )
+          )}
         </Grid>
         <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
           <Table width="100%">
@@ -239,17 +264,28 @@ const PayAndMigrate = ({
               </Table.tr>
               <Table.tr>
                 <Table.td>
-                  <Text color={!aboveOneSeventy ? '#D85B19' : null}>Min New Col. Ratio</Text>
+                  <Text color={!aboveOneSeventy ? '#D85B19' : null}>
+                    Min New Col. Ratio
+                  </Text>
                 </Table.td>
                 <Table.td textAlign="right">
-                  <Text color={!aboveOneSeventy ? '#D85B19' : null} fontWeight="medium">
+                  <Text
+                    color={!aboveOneSeventy ? '#D85B19' : null}
+                    fontWeight="medium"
+                  >
                     {prettifyNumber(minNewCollatRatio, false, 2, false)} %
                   </Text>
                 </Table.td>
               </Table.tr>
             </Table.tbody>
           </Table>
-          {!aboveOneSeventy ? <ErrorBlock>You cannot use this feature when your CDP would finish with a collateralization ratio of less than 170%. Please use ‘Pay with MKR’ or repay some of your CDP before continuing.</ErrorBlock> :
+          {!aboveOneSeventy ? (
+            <ErrorBlock>
+              You cannot use this feature when your CDP would finish with a
+              collateralization ratio of less than 170%. Please use ‘Pay with
+              MKR’ or repay some of your CDP before continuing.
+            </ErrorBlock>
+          ) : (
             <Grid alignItems="center" gridTemplateColumns="auto 1fr">
               <Checkbox
                 mr="s"
@@ -269,7 +305,7 @@ const PayAndMigrate = ({
                 .
               </Text>
             </Grid>
-          }
+          )}
         </Grid>
       </CardTabs>
       <Grid
