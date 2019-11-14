@@ -25,8 +25,8 @@
     "@makerdao/ui-components-core": "^0.3.2",
     "@makerdao/ui-components-footer": "^0.1.16",
     "@makerdao/ui-components-header": "^0.1.11-alpha.8",
-    "@walletconnect/browser": "^1.0.0-beta.38",
-    "@walletconnect/qrcode-modal": "^1.0.0-beta.38",
+    "@walletconnect/browser": "^1.0.0-beta.39",
+    "@walletconnect/qrcode-modal": "^1.0.0-beta.39",
     "@zeit/next-css": "^1.0.1",
     "body-scroll-lock": "^2.6.4",
     "lodash": "^4.17.15",
@@ -50,7 +50,7 @@
     "eslint-plugin-react": "^7.16.0",
     "eslint-plugin-react-hooks": "^2.2.0",
     "husky": "^3.0.9",
-    "lint-staged": "^9.4.2"
+    "lint-staged": "^9.4.3"
   },
   "lint-staged": {
     "*.js": [

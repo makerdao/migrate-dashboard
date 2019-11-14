@@ -14,7 +14,7 @@ import LoadingToggle from '../LoadingToggle';
 import { addToastWithTimeout } from '../Toast';
 import { prettifyNumber } from '../../utils/ui';
 
-export default ({ onNext, onPrev, setMigrationTxHash }) => {
+export default ({ onNext, onPrev, setMigrationTxHash, showErrorMessageAndAllowExiting }) => {
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [saiApprovePending, setSaiApprovePending] = useState(false);
@@ -44,7 +44,8 @@ export default ({ onNext, onPrev, setMigrationTxHash }) => {
       const mig = await maker.service('migration').getMigration('sai-to-dai');
       const migrationTxObject = mig.execute(saiAmountToMigrate);
       maker.service('transactionManager').listen(migrationTxObject, {
-        pending: tx => setMigrationTxHash(tx.hash)
+        pending: tx => setMigrationTxHash(tx.hash),
+        error: () => showErrorMessageAndAllowExiting()
       });
       migrationTxObject.then(onNext);
     } catch (err) {
