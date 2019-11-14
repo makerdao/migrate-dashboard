@@ -987,10 +987,10 @@
     "@makerdao/services-core" "^0.9.9"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-migrations@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-0.2.0.tgz#342e4247f18927b9f9279b25655b36eabed6b9d2"
-  integrity sha512-BNLEqWaEG8qu+m78tghT12WRuHb9v4Yg8JWK5/qra/DJytGRx7y/JLUYgpX97zeHqApxdLL3XcJmDBsdVeueLA==
+"@makerdao/dai-plugin-migrations@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-0.2.1.tgz#8896b76c4427e782d52594670c17bae9dd0cf2a4"
+  integrity sha512-fsLmppScGCpZloDSBTC45RU2+8ky5hlz3c/i7G47Cvo2TwAtJtXartHWW0EgwcquLXhLNiYkejt8Wnz2w9yfXg==
   dependencies:
     "@makerdao/currency" "^0.9.5"
     "@makerdao/services-core" "^0.9.5"
