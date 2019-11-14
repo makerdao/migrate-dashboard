@@ -118,7 +118,7 @@ const PayAndMigrate = ({
       mx={[0, 'auto']}
       width={['100vw', 'auto']}
     >
-      <Text.h2 textAlign="center">Confirm CDP Migration</Text.h2>
+      <Text.h2 textAlign="center">Confirm CDP Upgrade</Text.h2>
       <CardTabs headers={['Pay with MKR', 'Pay with CDP debt']}>
         <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
           <Table width="100%">

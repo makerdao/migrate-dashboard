@@ -20,7 +20,7 @@ const steps = [
   props => <SelectCDP {...props} />,
   props => <DeployProxy {...props} />,
   props => <PayAndMigrate {...props} />,
-  props => <InProgress {...props} title="Your CDP is being migrated" />,
+  props => <InProgress {...props} title="Your CDP is being upgraded" />,
   props => <Complete {...props} />,
   props => <Failed {...props}
     title={`Upgrade failed`}
@@ -125,7 +125,7 @@ export default function() {
           showClose={currentStep <= 2}
         />
         <Stepper
-          steps={['Select CDP', 'Deploy Proxy', 'Pay & Migrate']}
+          steps={['Select CDP', 'Set Up Proxy', 'Pay & Upgrade']}
           selected={currentStep}
           mt={{ s: '10px' }}
           m="0 auto"
