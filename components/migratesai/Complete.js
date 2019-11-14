@@ -20,10 +20,10 @@ function Complete({ onClose, migrationTxHash }) {
 
   return (
     <Grid gridRowGap="m" mx={'s'}>
-      <Text.h2 textAlign="center">Upgrade complete</Text.h2>
+      <Text.h2 textAlign="center">Exchange complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        You&apos;ve successfully upgraded your Single-Collateral Dai for
-        Multi-Collateral Dai.
+        You&apos;ve successfully exchanged your Multi-Collateral Dai for
+        Single-Collateral Dai.
       </Text.p>
       <Link
         justifySelf="center"

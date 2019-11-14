@@ -64,7 +64,7 @@ function Index() {
             Migrate and Upgrade
           </Text.h1>
           <Breakout>
-            Use Migrate after system updates to change your Dai, MKR, and CDPs
+            Use Migrate after system updates to move your Dai, MKR, and CDPs
             into their new versions. Connect your wallet to view available
             migrations on your account.
           </Breakout>

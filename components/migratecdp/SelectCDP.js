@@ -115,7 +115,7 @@ export default ({
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
-      <Text.h2 textAlign="center">Select CDP to Migrate</Text.h2>
+      <Text.h2 textAlign="center">Select CDP to upgrade</Text.h2>
       <Text.p
         textAlign="center"
         t="body"
@@ -123,8 +123,8 @@ export default ({
         maxWidth="498px"
         m="0 auto"
       >
-        Select a CDP and pay back the stability fee in DAI or MKR to migrate it
-        to Multi-collateral Dai and the new CDP Portal.
+        Select a CDP and pay back the Stability Fee in MKR or debt from your CDP to upgrade it
+        to Multi-Collateral Dai and the new Oasis Borrow Portal.
       </Text.p>
       <Overflow x="scroll" y="visible">
         <Grid gridRowGap="s" mt="xs" pb="m">
@@ -182,7 +182,7 @@ export default ({
         gridColumnGap="m"
       >
         <Button variant="secondary-outline" onClick={onPrev}>
-          Back
+          Cancel
         </Button>
         <Button
           disabled={Object.keys(selectedCDP).length === 0}

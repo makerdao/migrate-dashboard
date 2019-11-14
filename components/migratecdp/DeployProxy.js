@@ -20,7 +20,7 @@ function DeployProxy({ onPrev, onNext, selectedCDP }) {
 
   const labels = {
     setup_text:
-      'Proxies are used in the CDP Portal to bundle multiple transactions into one, saving transaction time and gas costs. This only has to be done once.',
+      'Proxies are used to bundle multiple transactions into one, saving transaction time and gas costs. This only has to be done once.',
     confirmations_text: `
       Waiting for confirmations... ${
         startingBlockHeight === 0
@@ -54,7 +54,7 @@ function DeployProxy({ onPrev, onNext, selectedCDP }) {
         gridColumnGap="m"
       >
         <Button variant="secondary-outline" onClick={onPrev}>
-          Cancel
+          Back
         </Button>
         <Button onClick={onNext} disabled={!hasProxy || !cdpTransferred}>
           Continue

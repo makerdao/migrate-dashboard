@@ -12,13 +12,17 @@ import SCDRedeem from '../../components/migratesai/SCDRedeem';
 import Confirmation from '../../components/migratesai/Confirmation';
 import InProgress from '../../components/InProgress';
 import Complete from '../../components/migratesai/Complete';
+import Failed from '../../components/Failed'
 import FadeInFromSide from '../../components/FadeInFromSide';
 
 const steps = [
   props => <SCDRedeem {...props} />,
   props => <Confirmation {...props} />,
   props => <InProgress {...props} title="Your Sai is being upgraded" />,
-  props => <Complete {...props} />
+  props => <Complete {...props} />,
+  props => <Failed {...props}
+    title={`Upgrade failed`}
+    subtitle={`Your Single-Collateral Dai has not been upgraded for Multi-Collateral Dai.`} />
 ];
 
 export default function() {
@@ -36,6 +40,7 @@ export default function() {
   };
   const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
+  const showErrorMessageAndAllowExiting = () => setCurrentStep(4)
 
   return (
     <FlowBackground open={true}>
@@ -66,7 +71,8 @@ export default function() {
                   onNext: toNextStep,
                   onReset: reset,
                   setMigrationTxHash,
-                  migrationTxHash
+                  migrationTxHash,
+                  showErrorMessageAndAllowExiting
                 })}
               </FadeInFromSide>
             );

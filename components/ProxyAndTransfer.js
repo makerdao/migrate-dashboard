@@ -100,7 +100,7 @@ const ProxyAndTransfer = ({
       <Grid gridRowGap="xs" mt="l">
         <Text.h4>Transfer CDP ownership to proxy</Text.h4>
         <Text.p color="darkLavender" fontSize="l" lineHeight="normal">
-          Proxies are used in the CDP Portal to bundle multiple transactions
+          Proxies are used to bundle multiple transactions
           into one, saving transaction time and gas costs. This only has to be
           done once.
         </Text.p>
@@ -115,7 +115,7 @@ const ProxyAndTransfer = ({
             disabled={!proxyAddress || proxyLoading || isTransferringCDP}
             loading={isTransferringCDP}
           >
-            Transfer
+            Transfer CDP
           </Button>
         )}
       </Grid>

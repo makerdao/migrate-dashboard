@@ -147,21 +147,21 @@ function Overview() {
           {shouldShowCdps && (
             <Migration
               recommended
-              title="Migrate CDPs"
+              title="CDP Upgrade"
               metadataTitle={`CDP${
                 countCdps(cdps) === 1 ? '' : 's'
-              } to migrate`}
+              } to upgrade`}
               metadataValue={showCdpCount(cdps)}
-              body="Migrate your Single Collateral Dai CDPs to Multi Collateral Dai Vaults."
+              body="Migrate your CDPs to Multi-Collateral Dai and Oasis."
               onSelected={() => Router.push('/migration/cdp')}
             />
           )}
           {shouldShowDai && (
             <Migration
               recommended
-              title="Single Collateral Dai Redeemer"
-              body="Redeem your Single Collateral Dai (Sai) into Multi Collateral Dai."
-              metadataTitle="Sai to redeem"
+              title="Single Collateral Sai Upgrade"
+              body="Upgrade your Single-Collateral Sai for Multi-Collateral Dai"
+              metadataTitle="SCD to upgrade"
               metadataValue={showAmount(saiBalance)}
               onSelected={() => Router.push('/migration/dai')}
             />
@@ -169,9 +169,9 @@ function Overview() {
           {shouldShowReverse && (
             <Migration
               recommended
-              title="Downgrade Multi Collateral Dai"
-              body="Downgrade your Multi Collateral Dai into Single Collateral Dai (Sai)."
-              metadataTitle="Dai to redeem"
+              title="Swap Dai to Sai"
+              body="Swap your Mutil-Collateral Dai (MCD) for Single-Collateral Sai (SCD)"
+              metadataTitle="Dai available to swap"
               metadataValue={showAmount(daiBalance)}
               onSelected={() => {
                 if (DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION)

@@ -10,6 +10,7 @@ import DeployProxy from '../../components/migratecdp/DeployProxy';
 import PayAndMigrate from '../../components/migratecdp/PayAndMigrate';
 import InProgress from '../../components/InProgress';
 import Complete from '../../components/migratecdp/Complete';
+import Failed from '../../components/Failed'
 import useMaker from '../../hooks/useMaker';
 import round from 'lodash/round';
 import useStore from '../../hooks/useStore';
@@ -19,8 +20,11 @@ const steps = [
   props => <SelectCDP {...props} />,
   props => <DeployProxy {...props} />,
   props => <PayAndMigrate {...props} />,
-  props => <InProgress {...props} title="Your CDP is being migrated" />,
-  props => <Complete {...props} />
+  props => <InProgress {...props} title="Your CDP is being upgraded" />,
+  props => <Complete {...props} />,
+  props => <Failed {...props}
+    title={`Upgrade failed`}
+    subtitle={`CDP ${props.selectedCDP.id} has not been upgraded to Multi-collateral Dai.`} />
 ];
 
 async function getCdpData(cdp) {
@@ -110,6 +114,7 @@ export default function() {
       ownedByProxy(selectedCDP) && step === 0 ? step + 2 : step + 1
     );
   const onReset = () => setCurrentStep(0);
+  const showErrorMessageAndAllowExiting = () => setCurrentStep(5)
 
   return (
     <FlowBackground open={true}>
@@ -120,7 +125,7 @@ export default function() {
           showClose={currentStep <= 2}
         />
         <Stepper
-          steps={['Select CDP', 'Deploy Proxy', 'Pay & Migrate']}
+          steps={['Select CDP', 'Set Up Proxy', 'Pay & Upgrade']}
           selected={currentStep}
           mt={{ s: '10px' }}
           m="0 auto"
@@ -153,7 +158,8 @@ export default function() {
                   setMigrationTxHash,
                   migrationTxHash,
                   setNewCdpId,
-                  setCdps
+                  setCdps,
+                  showErrorMessageAndAllowExiting
                 })}
               </FadeInFromSide>
             );
