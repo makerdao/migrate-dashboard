@@ -6,6 +6,7 @@ import walletLinkPlugin from '@makerdao/dai-plugin-walletlink';
 import walletConnectPlugin from '@makerdao/dai-plugin-walletconnect';
 import { checkEthereumProvider } from './utils/ethereum';
 import { createCurrency } from '@makerdao/currency';
+import assert from 'assert';
 
 let maker;
 
@@ -14,11 +15,13 @@ export const ETH = createCurrency('ETH');
 export const USD = Maker.USD;
 
 export function getMaker() {
-  if (maker === undefined) throw new Error('Maker has not been instantiated');
+  assert(maker, 'Maker has not been instantiated');
   return maker;
 }
 
 export async function instantiateMaker({ rpcUrl }) {
+  // this is required here instead of being imported normally because it runs
+  // code that will break if run server-side
   const trezorPlugin = require('@makerdao/dai-plugin-trezor-web').default;
 
   const config = {
@@ -28,7 +31,15 @@ export async function instantiateMaker({ rpcUrl }) {
       ledgerPlugin,
       walletLinkPlugin,
       walletConnectPlugin,
-      [daiPlugin, { cdpTypes: [{ currency: SAI, ilk: 'SAI' }, {currency: ETH, ilk: 'ETH-A'}] }],
+      [
+        daiPlugin,
+        {
+          cdpTypes: [
+            { currency: SAI, ilk: 'SAI' },
+            { currency: ETH, ilk: 'ETH-A' }
+          ]
+        }
+      ],
       migrationPlugin
     ],
     smartContract: {
@@ -50,15 +61,14 @@ export async function connectBrowserProvider(maker) {
   const networkId = maker.service('web3').networkId();
   const browserProvider = await checkEthereumProvider();
 
-  if (browserProvider.networkId !== networkId)
-    throw new Error(
-      'browser ethereum provider and URL network param do not match.'
-    );
-
-  if (!browserProvider.address.match(/^0x[a-fA-F0-9]{40}$/))
-    throw new Error(
-      'browser ethereum provider providing incorrect or non-existent address'
-    );
+  assert(
+    browserProvider.networkId === networkId,
+    `Expected network ID ${networkId}, got ${browserProvider.networkId}.`
+  );
+  assert(
+    browserProvider.address.match(/^0x[a-fA-F0-9]{40}$/),
+    'Got an incorrect or nonexistent wallet address.'
+  );
 
   const getMatchedAccount = address =>
     maker

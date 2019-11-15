@@ -3,24 +3,27 @@ import { instantiateMaker } from '../maker';
 
 export const MakerObjectContext = createContext();
 
-function MakerProvider({ children, rpcUrl, network }) {
+const INFURA_KEY = '6ba7a95268bf4ccda9bf1373fe582b43';
+
+function MakerProvider({ children, network }) {
   const [account, setAccount] = useState(null);
   const [maker, setMaker] = useState(null);
-  const initAccount = account => setAccount({ ...account });
 
   useEffect(() => {
-    if (!rpcUrl) return;
+    if (!network) return;
+    const rpcUrl = `https://${network}.infura.io/v3/${INFURA_KEY}`;
     instantiateMaker({ network, rpcUrl }).then(maker => {
       setMaker(maker);
       if (maker.service('accounts').hasAccount())
-        initAccount(maker.currentAccount());
+        setAccount(maker.currentAccount());
 
       maker.on('accounts/CHANGE', eventObj => {
         const { account } = eventObj.payload;
-        initAccount(account);
+        setAccount(account);
       });
     });
-  }, [rpcUrl, network]);
+  }, [network]);
+
   return (
     <MakerObjectContext.Provider value={{ maker, account, network }}>
       {children}
