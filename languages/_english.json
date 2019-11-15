@@ -8,7 +8,7 @@
     "ledger_nano": "Ledger Nano",
     "trezor": "Trezor",
     "wallet_connect": "WalletConnect",
-    "wallet_link": "WalletLink",
+    "wallet_link": "Coinbase Wallet",
     "other": "Active Wallet"
   }
 }
