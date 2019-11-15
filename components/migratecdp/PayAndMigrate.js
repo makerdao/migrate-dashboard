@@ -19,6 +19,7 @@ import round from 'lodash/round';
 import { ErrorBlock } from '../Typography';
 
 const APPROVAL_FUDGE = 2;
+const HIGH_FEE_LOWER_BOUND = 50;
 
 const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
   return (
@@ -44,7 +45,7 @@ const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
   );
 };
 
-const MKRPurchaseWarning = () => {
+const PurchaseWarning = () => {
   const safeA = (href, text) => (
     <a href={href} target="_blank" rel="noopener noreferrer">
       {text || href.replace(/^https:\/\/(www\.)?/, '')}
@@ -306,7 +307,7 @@ const PayAndMigrate = ({
             </ErrorBlock>
           ) : (
             <Fragment>
-              {govFeeMKRExact.gt(100) && <MKRPurchaseWarning />}
+              {govFeeMKRExact.gt(HIGH_FEE_LOWER_BOUND) && <PurchaseWarning />}
               <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
             </Fragment>
           )}

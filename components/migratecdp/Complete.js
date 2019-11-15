@@ -25,9 +25,9 @@ function Complete({
 
   return (
     <Grid gridRowGap="m" mx={'s'}>
-      <Text.h2 textAlign="center">Migration complete</Text.h2>
+      <Text.h2 textAlign="center">Upgrade complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        CDP #{cdp.id} has been successfully migrated to Multi-collateral Dai.{' '}
+        CDP #{cdp.id} has been successfully upgraded to a Multi-Collateral Dai Vault.{' '}
       </Text.p>
       <Link
         justifySelf="center"
@@ -71,7 +71,7 @@ function Complete({
       <Grid gridRowGap="s" justifySelf="center">
         {cdps.length > 0 && (
           <Button mt="s" onClick={onReset}>
-            Migrate another CDP
+            Upgrade another CDP
           </Button>
         )}
         <Button variant="secondary-outline" onClick={onClose}>
