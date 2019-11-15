@@ -978,19 +978,19 @@
     hdkey "^1.0.0"
     web3-provider-engine "14.0.4"
 
-"@makerdao/dai-plugin-mcd@^0.2.17":
-  version "0.2.17"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-mcd/-/dai-plugin-mcd-0.2.17.tgz#6e1885c55e2aa0a3932f555371588f2cba365f89"
-  integrity sha512-CEDzQU9jIwlo9UvAY0K/p/VlJ54r+EoSROntQPVXjy80SWwXeVA9/s1fE8LCWLn3f81xbmd0hdgNWG+h0wnG3A==
+"@makerdao/dai-plugin-mcd@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-mcd/-/dai-plugin-mcd-1.0.0.tgz#770a565d3e243776a6b874c1bae6705390444d3f"
+  integrity sha512-drk2VKEmuPliP2tkRA4zSkPDbuQ9sVSJi4bdTs+LSnCb3Q/TUFBbhKlPdU1Cq82Q5qXe2g+1Zdy9mZ5l0aAd9Q==
   dependencies:
     "@makerdao/currency" "^0.9.5"
     "@makerdao/services-core" "^0.9.9"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-migrations@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-0.2.2.tgz#3a1c8c876ea623c2b5362aecec8adaa99b03776f"
-  integrity sha512-YXzikUzsWKO25ckIyLCTFzQ7NzRBfn2quLnzt8pvnR7NJjdFFnV0NBgWmJCkDsTwEXTZU0pbRZy7okLW2mhfeA==
+"@makerdao/dai-plugin-migrations@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.0.0.tgz#9754b9b9ccc37a16c76a4bfb373f6a7b7e668a8d"
+  integrity sha512-JYwepFr10OeAtExxsAwnhO+x6wnvyuPZxqky6FXokvFF5qV3ipouhv7uDBP1rvMazuWusQz6fxx4mjd66syXEA==
   dependencies:
     "@makerdao/currency" "^0.9.5"
     "@makerdao/services-core" "^0.9.5"
@@ -1024,10 +1024,10 @@
     babel-runtime "^6.26.0"
     walletlink "^1.0.0"
 
-"@makerdao/dai@0.21.0":
-  version "0.21.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.21.0.tgz#361707cdaa1da1a58adf41b3b0786c2a19447871"
-  integrity sha512-K6/pZ+u26ewmbjaP/u/nHC22rBGHQNmAct9FCp+TaCxwz5n/VkMzCLvfUBO+IzPvXpMuFIrPdSrgT8+apLHJ+w==
+"@makerdao/dai@0.21.1":
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.21.1.tgz#67255e518c240be18de997a9adad59cca21a4080"
+  integrity sha512-XAyc1sBXe1BLxW6+0b3saNqEKY2NyEcTV+hxZg1NKvQskQlcGC+2xJz0PeclZyl4+QY6f4aQWb6qt/cTUtQ+nQ==
   dependencies:
     "@babel/runtime" "^7.3.4"
     "@makerdao/currency" "^0.9.5"
