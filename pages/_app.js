@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import App from 'next/app';
+import Head from 'next/head';
 import { ThemeProvider, createGlobalStyle } from 'styled-components';
 import '@makerdao/ui-components-core/dist/styles/global.css';
 import MakerProvider from '../providers/MakerProvider';
@@ -33,6 +34,9 @@ export default class MyApp extends App {
     const { network } = this.state;
     return (
       <Fragment>
+        <Head>
+          <title>Migrate and Upgrade | Maker</title>
+        </Head>
         <GlobalStyle />
         <ThemeProvider theme={theme}>
           <MakerProvider network={network}>

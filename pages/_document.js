@@ -16,7 +16,6 @@ export default class MyDocument extends NextDocument {
     return (
       <html>
         <Head>
-          <title>Migrate and Upgrade | Maker</title>
           <link
             rel="apple-touch-icon"
             sizes="180x180"
