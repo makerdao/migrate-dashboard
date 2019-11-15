@@ -45,7 +45,10 @@ function Index() {
         payload: {
           saiAvailable: (await mig.migrationSaiAvailable()).toNumber(),
           daiAvailable: systemDebtCeilingRemaining,
-          maxLiquidity: Math.min(systemDebtCeilingRemaining, saiIlkDebtCeilingRemaining)
+          maxLiquidity: Math.min(
+            systemDebtCeilingRemaining,
+            saiIlkDebtCeilingRemaining
+          )
         }
       });
     })();
@@ -97,7 +100,7 @@ function Index() {
       >
         <WalletManager providerName={providerName} />
       </Grid>
-      {saiAvailable && (
+      {!!saiAvailable && (
         <Text m="0 auto" mb="m">
           Sai available: {prettifyNumber(saiAvailable)}
         </Text>
