@@ -87,7 +87,13 @@ function Overview() {
   const { maker, account, network } = useMaker();
   const [initialFetchComplete, setInitialFetchComplete] = useState(false);
   const [
-    { cdpMigrationCheck: cdps, saiBalance, daiBalance, saiAvailable, daiAvailable },
+    {
+      cdpMigrationCheck: cdps,
+      saiBalance,
+      daiBalance,
+      saiAvailable,
+      daiAvailable
+    },
     dispatch
   ] = useStore();
 
@@ -151,7 +157,9 @@ function Overview() {
                 countCdps(cdps) === 1 ? '' : 's'
               } to upgrade`}
               metadataValue={showCdpCount(cdps)}
-              body={`Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai liquidity: ${saiAvailable} SAI`}
+              body={`Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai liquidity: ${prettifyNumber(
+                saiAvailable
+              )} SAI`}
               onSelected={() => Router.push('/migration/cdp')}
             />
           )}
@@ -159,7 +167,9 @@ function Overview() {
             <MigrationCard
               recommended
               title="Single-Collateral Sai Upgrade"
-              body={`Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai liquidity: ${daiAvailable} DAI`}
+              body={`Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai liquidity: ${prettifyNumber(
+                daiAvailable
+              )} DAI`}
               metadataTitle="Sai to upgrade"
               metadataValue={showAmount(saiBalance)}
               onSelected={() => Router.push('/migration/dai')}
@@ -169,7 +179,9 @@ function Overview() {
             <MigrationCard
               recommended
               title="Swap Dai for Sai"
-              body={`Swap your Multi-Collateral Dai back to Single-Collateral Sai. Current Sai liquidity: ${saiAvailable} SAI`}
+              body={`Swap your Multi-Collateral Dai back to Single-Collateral Sai. Current Sai liquidity: ${prettifyNumber(
+                saiAvailable
+              )} SAI`}
               metadataTitle="Dai available to swap"
               metadataValue={showAmount(daiBalance)}
               onSelected={() => {
