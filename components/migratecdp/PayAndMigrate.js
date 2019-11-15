@@ -94,7 +94,8 @@ const PayAndMigrate = ({
         hasMkrAllowance: true
       }));
     } catch (err) {
-      const errMsg = `unlock mkr tx failed ${err}`;
+      const message = err.message ? err.message : err;
+      const errMsg = `unlock mkr tx failed ${message}`;
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
     }
@@ -119,10 +120,10 @@ const PayAndMigrate = ({
       setCdps(cdps => cdps.filter(c => c !== selectedCDP));
       onNext();
     } catch (err) {
-      const errMsg = `migrate tx failed ${err}`;
+      const message = err.message ? err.message : err;
+      const errMsg = `migrate tx failed ${message}`;
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
-      onPrev();
     }
   };
 

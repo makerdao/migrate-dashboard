@@ -24,7 +24,7 @@ const steps = [
     <Failed
       {...props}
       title="Upgrade failed"
-      subtitle="Your Single-Collateral Dai has not been upgraded for Multi-Collateral Dai."
+      subtitle="Your Single-Collateral Sai has not been upgraded to Multi-Collateral Dai."
     />
   )
 ];
