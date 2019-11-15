@@ -58,7 +58,7 @@ export default ({ onNext, onPrev }) => {
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
-      <Text.h2 textAlign="center">Upgrade Single Collateral Dai</Text.h2>
+      <Text.h2 textAlign="center">Upgrade Single-Collateral Sai</Text.h2>
       <Text.p
         textAlign="center"
         t="body"

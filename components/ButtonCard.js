@@ -1,4 +1,5 @@
-import { Box, Flex, Text } from '@makerdao/ui-components-core';
+import React from 'react';
+import { Box, Flex } from '@makerdao/ui-components-core';
 
 function ButtonCard({ children, buttonTag, button, ...props }) {
   return (

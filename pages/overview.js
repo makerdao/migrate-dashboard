@@ -24,7 +24,7 @@ import { OASIS_HOSTNAME } from '../utils/constants';
 
 const DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION = true;
 
-function Migration({
+function MigrationCard({
   title,
   body,
   recommended,
@@ -38,7 +38,7 @@ function Migration({
       minHeight="25.3rem"
       buttonTag={
         <Grid gridRowGap="2xs">
-          <Text t="heading" color="teal.500" alignSelf="center">
+          <Text t="heading" color="teal.500" alignSelf="center" ml="s">
             {metadataValue} {metadataTitle}
           </Text>
         </Grid>
@@ -145,7 +145,7 @@ function Overview() {
           gridGap="l"
         >
           {shouldShowCdps && (
-            <Migration
+            <MigrationCard
               recommended
               title="CDP Upgrade"
               metadataTitle={`CDP${
@@ -157,20 +157,20 @@ function Overview() {
             />
           )}
           {shouldShowDai && (
-            <Migration
+            <MigrationCard
               recommended
-              title="Single Collateral Sai Upgrade"
-              body="Upgrade your Single-Collateral Sai for Multi-Collateral Dai"
-              metadataTitle="SCD to upgrade"
+              title="Single-Collateral Sai Upgrade"
+              body="Upgrade your Single-Collateral Sai to Multi-Collateral Dai"
+              metadataTitle="Sai to upgrade"
               metadataValue={showAmount(saiBalance)}
               onSelected={() => Router.push('/migration/dai')}
             />
           )}
           {shouldShowReverse && (
-            <Migration
+            <MigrationCard
               recommended
-              title="Swap Dai to Sai"
-              body="Swap your Mutil-Collateral Dai (MCD) for Single-Collateral Sai (SCD)"
+              title="Swap Dai for Sai"
+              body="Swap your Multi-Collateral Dai back to Single-Collateral Sai"
               metadataTitle="Dai available to swap"
               metadataValue={showAmount(daiBalance)}
               onSelected={() => {
@@ -184,7 +184,7 @@ function Overview() {
             />
           )}
           {/* { mkr &&
-          <Migration
+          <MigrationCard
             recommended
             title="DSChief MKR Withdrawal"
             body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet."

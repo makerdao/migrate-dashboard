@@ -77,7 +77,10 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
           <span>{cdp.govFeeMKR} MKR</span>
         </Grid>
       </Box>
-      <Box display={['block', 'none']} onClick={() => onSelect(cdp)}>
+      <Box
+        display={['block', 'none']}
+        onClick={() => selectable && onSelect(cdp)}
+      >
         <Flex pt="s" pl="m" alignItems="center">
           <Radio
             disabled={!selectable}
@@ -123,8 +126,8 @@ export default ({
         maxWidth="498px"
         m="0 auto"
       >
-        Select a CDP and pay back the Stability Fee in MKR or debt from your CDP to upgrade it
-        to Multi-Collateral Dai and the new Oasis Borrow Portal.
+        Select a CDP and pay back the Stability Fee in MKR or debt from your CDP
+        to upgrade it to Multi-Collateral Dai and the new Oasis Borrow Portal.
       </Text.p>
       <Overflow x="scroll" y="visible">
         <Grid gridRowGap="s" mt="xs" pb="m">

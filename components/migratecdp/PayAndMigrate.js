@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import {
   Text,
   Grid,
@@ -19,6 +19,52 @@ import round from 'lodash/round';
 import { ErrorBlock } from '../Typography';
 
 const APPROVAL_FUDGE = 2;
+const HIGH_FEE_LOWER_BOUND = 50;
+
+const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
+  return (
+    <Grid alignItems="center" gridTemplateColumns="auto 1fr">
+      <Checkbox
+        mr="s"
+        fontSize="l"
+        checked={hasReadTOS}
+        onChange={() => setHasReadTOS(!hasReadTOS)}
+      />
+      <Text
+        t="caption"
+        color="steel"
+        onClick={() => setHasReadTOS(!hasReadTOS)}
+      >
+        I have read and accept the{' '}
+        <Link target="_blank" href="https://migrate.makerdao.com/terms">
+          Terms of Service
+        </Link>
+        .
+      </Text>
+    </Grid>
+  );
+};
+
+const PurchaseWarning = () => {
+  const safeA = (href, text) => (
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      {text || href.replace(/^https:\/\/(www\.)?/, '')}
+    </a>
+  );
+
+  return (
+    <Card bg="yellow.100" p="m" borderColor="yellow.400" border="1px solid">
+      This portal will purchase MKR through{' '}
+      {safeA('https://oasis.app', 'Oasis.app')}; additionally, users should feel
+      free to explore services such as {safeA('https://1inch.exchange')},{' '}
+      {safeA('https://www.totle.com')}, {safeA('https://dexindex.io')}, or{' '}
+      {safeA('https://dex.ag')}. You agree that you use Oasis, or any other
+      service, at your own risk. Oasis is a decentralized exchange that does not
+      hold custody of your funds and cannot reverse transactions once you
+      execute them.
+    </Card>
+  );
+};
 
 const PayAndMigrate = ({
   onPrev,
@@ -110,6 +156,8 @@ const PayAndMigrate = ({
     .times(100)
     .toNumber();
 
+  const aboveOneSeventy = minNewCollatRatio > 170;
+
   return (
     <Grid
       maxWidth="912px"
@@ -143,54 +191,53 @@ const PayAndMigrate = ({
               </Table.tr>
               <Table.tr>
                 <Table.td>
-                  <Text color={!hasEnoughMkr ? '#D85B19' : null}>MKR Balance</Text>
+                  <Text color={mkrBalance && !hasEnoughMkr ? '#D85B19' : null}>
+                    MKR Balance
+                  </Text>
                 </Table.td>
                 <Table.td textAlign="right">
-                  <Text color={!hasEnoughMkr ? '#D85B19' : null} fontWeight="medium">{
-                    mkrBalance ? (mkrBalance.toNumber() > 0.01 ?
-                      prettifyNumber(mkrBalance, false, 2, false)
-                      : round(mkrBalance.toNumber(), 6)) : '...'} MKR
+                  <Text
+                    color={mkrBalance && !hasEnoughMkr ? '#D85B19' : null}
+                    fontWeight="medium"
+                  >
+                    {mkrBalance
+                      ? mkrBalance.toNumber() > 0.01
+                        ? prettifyNumber(mkrBalance, false, 2, false)
+                        : round(mkrBalance.toNumber(), 6)
+                      : '...'}{' '}
+                    MKR
                   </Text>
                 </Table.td>
               </Table.tr>
             </Table.tbody>
           </Table>
-          {!hasEnoughMkr ? <ErrorBlock>You have insufficient MKR balance. Please use `Pay with CDP debt`, or purchase enough MKR to pay the stability fee before continuing.</ErrorBlock> :
-          <div>
-            <Grid>
-              <LoadingToggle
-                completeText={'MKR unlocked'}
-                loadingText={'Unlocking MKR'}
-                defaultText={'Unlock MKR to continue'}
-                tokenDisplayName={'MKR'}
-                isLoading={mkrApprovePending}
-                isComplete={proxyDetails.hasMkrAllowance}
-                onToggle={giveProxyMkrAllowance}
-                disabled={proxyDetails.hasMkrAllowance || !proxyDetails.address}
-                data-testid="allowance-toggle"
-              />
-            </Grid>
-            <Grid alignItems="center" gridTemplateColumns="auto 1fr">
-              <Checkbox
-                mr="s"
-                fontSize="l"
-                checked={hasReadTOS}
-                onChange={() => setHasReadTOS(!hasReadTOS)}
-              />
-              <Text
-                t="caption"
-                color="steel"
-                onClick={() => setHasReadTOS(!hasReadTOS)}
-              >
-                I have read and accept the{' '}
-                <Link target="_blank" href="https://migrate.makerdao.com/terms">
-                  Terms of Service
-                </Link>
-                .
-              </Text>
-            </Grid>
-          </div>
-          }
+          {mkrBalance && !hasEnoughMkr ? (
+            <ErrorBlock>
+              You have insufficient MKR balance. Please use `Pay with CDP debt`,
+              or purchase enough MKR to pay the stability fee before continuing.
+            </ErrorBlock>
+          ) : (
+            mkrBalance && (
+              <div>
+                <Grid mb="m">
+                  <LoadingToggle
+                    completeText={'MKR unlocked'}
+                    loadingText={'Unlocking MKR'}
+                    defaultText={'Unlock MKR to continue'}
+                    tokenDisplayName={'MKR'}
+                    isLoading={mkrApprovePending}
+                    isComplete={proxyDetails.hasMkrAllowance}
+                    onToggle={giveProxyMkrAllowance}
+                    disabled={
+                      proxyDetails.hasMkrAllowance || !proxyDetails.address
+                    }
+                    data-testid="allowance-toggle"
+                  />
+                </Grid>
+                <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
+              </div>
+            )
+          )}
         </Grid>
         <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
           <Table width="100%">
@@ -237,35 +284,33 @@ const PayAndMigrate = ({
               </Table.tr>
               <Table.tr>
                 <Table.td>
-                  <Text>Min New Col. Ratio</Text>
+                  <Text color={!aboveOneSeventy ? '#D85B19' : null}>
+                    Min New Col. Ratio
+                  </Text>
                 </Table.td>
                 <Table.td textAlign="right">
-                  <Text fontWeight="medium">
+                  <Text
+                    color={!aboveOneSeventy ? '#D85B19' : null}
+                    fontWeight="medium"
+                  >
                     {prettifyNumber(minNewCollatRatio, false, 2, false)} %
                   </Text>
                 </Table.td>
               </Table.tr>
             </Table.tbody>
           </Table>
-          <Grid alignItems="center" gridTemplateColumns="auto 1fr">
-            <Checkbox
-              mr="s"
-              fontSize="l"
-              checked={hasReadTOS}
-              onChange={() => setHasReadTOS(!hasReadTOS)}
-            />
-            <Text
-              t="caption"
-              color="steel"
-              onClick={() => setHasReadTOS(!hasReadTOS)}
-            >
-              I have read and accept the{' '}
-              <Link target="_blank" href="https://migrate.makerdao.com/terms">
-                Terms of Service
-              </Link>
-              .
-            </Text>
-          </Grid>
+          {!aboveOneSeventy ? (
+            <ErrorBlock>
+              You cannot use this feature because your CDP would end up with a
+              collateralization ratio of less than 170%. Please use ‘Pay with
+              MKR’ or repay some of your CDP debt before continuing.
+            </ErrorBlock>
+          ) : (
+            <Fragment>
+              {govFeeMKRExact.gt(HIGH_FEE_LOWER_BOUND) && <PurchaseWarning />}
+              <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
+            </Fragment>
+          )}
         </Grid>
       </CardTabs>
       <Grid
