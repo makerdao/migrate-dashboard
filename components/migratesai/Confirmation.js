@@ -49,7 +49,10 @@ export default ({
       const mig = await maker.service('migration').getMigration('sai-to-dai');
       const migrationTxObject = mig.execute(saiAmountToMigrate);
       maker.service('transactionManager').listen(migrationTxObject, {
-        pending: tx => setMigrationTxHash(tx.hash),
+        pending: tx => {
+          setMigrationTxHash(tx.hash);
+          onNext();
+        },
         error: () => showErrorMessageAndAllowExiting()
       });
       migrationTxObject.then(onNext);
@@ -183,7 +186,6 @@ export default ({
           disabled={!hasReadTOS || !proxyDetails.hasSaiAllowance}
           onClick={() => {
             upgradeSai();
-            onNext();
           }}
         >
           Continue

@@ -108,7 +108,10 @@ const PayAndMigrate = ({
         .getMigration('single-to-multi-cdp');
       const migrationTxObject = mig.execute(selectedCDP.id);
       maker.service('transactionManager').listen(migrationTxObject, {
-        pending: tx => setMigrationTxHash(tx.hash),
+        pending: tx => {
+          setMigrationTxHash(tx.hash);
+          onNext();
+        },
         error: () => showErrorMessageAndAllowExiting()
       });
       const newId = await migrationTxObject;
@@ -330,7 +333,6 @@ const PayAndMigrate = ({
           disabled={!hasReadTOS || !proxyDetails.hasMkrAllowance}
           onClick={() => {
             migrateCdp();
-            onNext();
           }}
         >
           Pay and Migrate
