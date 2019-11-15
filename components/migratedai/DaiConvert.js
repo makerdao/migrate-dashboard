@@ -15,8 +15,7 @@ import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
 
 export default ({ onNext, onPrev }) => {
-  const [{ saiBalance }, dispatch] = useStore();
-  const [maxLiquidity, setMaxLiquidity] = useState(null);
+  const [{ saiBalance, maxLiquidity }, dispatch] = useStore();
   const maxOverall = Math.min(
     saiBalance && saiBalance.toNumber(),
     maxLiquidity
@@ -36,25 +35,6 @@ export default ({ onNext, onPrev }) => {
       }
     }
   );
-  const { maker } = useMaker();
-  useEffect(() => {
-    (async () => {
-      if (!maker) return;
-      const daiToken = maker.service('token').getToken('MDAI');
-      const [systemWideDebtCeiling, daiSupply] = await Promise.all([
-        maker.service('mcd:systemData').getSystemWideDebtCeiling(),
-        daiToken.totalSupply().then(s => s.toNumber())
-      ]);
-      const saiIlk = maker.service('mcd:cdpType').getCdpType(null, 'SAI');
-      const saiDebtCeiling = saiIlk.debtCeiling.toNumber();
-      const saiIlkDebt = saiIlk.totalDebt.toNumber();
-      const systemDebtCeilingRemaining = systemWideDebtCeiling - daiSupply;
-      const saiIlkDebtCeilingRemaining = saiDebtCeiling - saiIlkDebt;
-      setMaxLiquidity(
-        Math.min(systemDebtCeilingRemaining, saiIlkDebtCeilingRemaining)
-      );
-    })();
-  }, [maker]);
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>

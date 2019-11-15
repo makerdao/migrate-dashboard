@@ -35,12 +35,17 @@ function Index() {
         maker.service('mcd:systemData').getSystemWideDebtCeiling(),
         daiToken.totalSupply().then(s => s.toNumber())
       ]);
+      const saiIlk = maker.service('mcd:cdpType').getCdpType(null, 'SAI');
+      const saiDebtCeiling = saiIlk.debtCeiling.toNumber();
+      const saiIlkDebt = saiIlk.totalDebt.toNumber();
       const systemDebtCeilingRemaining = systemWideDebtCeiling - daiSupply;
+      const saiIlkDebtCeilingRemaining = saiDebtCeiling - saiIlkDebt;
       dispatch({
         type: 'assign',
         payload: {
           saiAvailable: (await mig.migrationSaiAvailable()).toNumber(),
-          daiAvailable: systemDebtCeilingRemaining
+          daiAvailable: systemDebtCeilingRemaining,
+          maxLiquidity: Math.min(systemDebtCeilingRemaining, saiIlkDebtCeilingRemaining)
         }
       });
     })();
