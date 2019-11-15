@@ -30,10 +30,17 @@ function Index() {
       const mig = await maker
         .service('migration')
         .getMigration('single-to-multi-cdp');
+      const daiToken = maker.service('token').getToken('MDAI');
+      const [systemWideDebtCeiling, daiSupply] = await Promise.all([
+        maker.service('mcd:systemData').getSystemWideDebtCeiling(),
+        daiToken.totalSupply().then(s => s.toNumber())
+      ]);
+      const systemDebtCeilingRemaining = systemWideDebtCeiling - daiSupply;
       dispatch({
         type: 'assign',
         payload: {
-          saiAvailable: (await mig.migrationSaiAvailable()).toNumber()
+          saiAvailable: (await mig.migrationSaiAvailable()).toNumber(),
+          daiAvailable: systemDebtCeilingRemaining
         }
       });
     })();
