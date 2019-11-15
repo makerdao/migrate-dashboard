@@ -14,13 +14,12 @@ import {
 import useMaker from '../hooks/useMaker';
 import reduce from 'lodash/reduce';
 import { getColor } from '../utils/theme';
-import { prettifyNumber } from '../utils/ui';
+import { oasisLink, prettifyNumber } from '../utils/ui';
 import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import Footer from '../components/Footer';
 import useStore from '../hooks/useStore';
-import { OASIS_HOSTNAME } from '../utils/constants';
 
 const DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION = true;
 
@@ -85,7 +84,7 @@ function showAmount(tok) {
 }
 
 function Overview() {
-  const { maker, account } = useMaker();
+  const { maker, account, network } = useMaker();
   const [initialFetchComplete, setInitialFetchComplete] = useState(false);
   const [
     { cdpMigrationCheck: cdps, saiBalance, daiBalance, saiAvailable, daiAvailable },
@@ -175,7 +174,7 @@ function Overview() {
               metadataValue={showAmount(daiBalance)}
               onSelected={() => {
                 if (DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION)
-                  window.location = `${OASIS_HOSTNAME}/trade`;
+                  window.location = oasisLink('/trade', network);
                 else Router.push('/migration/sai');
               }}
               buttonLabel={

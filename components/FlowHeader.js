@@ -5,7 +5,7 @@ import Account from './Account';
 import Router from 'next/router';
 import arrowTopRight from '../assets/icons/arrowTopRight.svg';
 import threeDots from '../assets/icons/threeDots.svg';
-import { etherscanLink } from '../utils/ethereum';
+import { etherscanLink } from '../utils/ui';
 import useMaker from '../hooks/useMaker';
 
 const TxLoader = ({ hash }) => {

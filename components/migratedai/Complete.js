@@ -9,8 +9,7 @@ import {
 } from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
-import { prettifyNumber } from '../../utils/ui';
-import { etherscanLink } from '../../utils/ethereum';
+import { etherscanLink, prettifyNumber } from '../../utils/ui';
 import useMaker from '../../hooks/useMaker';
 
 function Complete({ onClose, migrationTxHash }) {

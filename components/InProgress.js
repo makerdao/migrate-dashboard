@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Text, Button, Link } from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
 import useWaitTime from '../hooks/useWaitTime';
-import { etherscanLink } from '../utils/ethereum';
+import { etherscanLink } from '../utils/ui';
 import arrowTopRight from '../assets/icons/arrowTopRight.svg';
 
 export default ({ migrationTxHash, title }) => {

@@ -7,10 +7,9 @@ import {
   Table,
   Link
 } from '@makerdao/ui-components-core';
-import { OASIS_HOSTNAME } from '../../utils/constants';
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
 import blueArrowTopRight from '../../assets/icons/blueArrowTopRight.svg';
-import { etherscanLink } from '../../utils/ethereum';
+import { etherscanLink, oasisLink } from '../../utils/ui';
 import useMaker from '../../hooks/useMaker';
 
 function Complete({
@@ -27,7 +26,8 @@ function Complete({
     <Grid gridRowGap="m" mx={'s'}>
       <Text.h2 textAlign="center">Upgrade complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        CDP #{cdp.id} has been successfully upgraded to a Multi-Collateral Dai Vault.{' '}
+        CDP #{cdp.id} has been successfully upgraded to a Multi-Collateral Dai
+        Vault.{' '}
       </Text.p>
       <Link
         justifySelf="center"
@@ -55,7 +55,7 @@ function Complete({
               <Table.td textAlign="right">
                 <a
                   fontWeight="medium"
-                  href={`${OASIS_HOSTNAME}/borrow/${newCdpId}`}
+                  href={oasisLink(`/borrow/${newCdpId}`, network)}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ textDecoration: 'none' }}

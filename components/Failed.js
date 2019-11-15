@@ -1,14 +1,7 @@
 import React from 'react';
-import {
-  Grid,
-  Text,
-  Button,
-  Card,
-  Table,
-  Link
-} from '@makerdao/ui-components-core';
+import { Grid, Text, Button, Link } from '@makerdao/ui-components-core';
 import arrowTopRight from '../assets/icons/arrowTopRight.svg';
-import { etherscanLink } from '../utils/ethereum';
+import { etherscanLink } from '../utils/ui';
 import useMaker from '../hooks/useMaker';
 
 function Failed(props) {

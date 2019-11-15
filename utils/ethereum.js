@@ -16,12 +16,3 @@ export const isValidAddressString = addressString =>
 
 export const isValidTxString = txString =>
   /^0x([A-Fa-f0-9]{64})$/.test(txString);
-
-export const etherscanLink = (string, network = 'mainnet') => {
-  const pathPrefix = network === 'mainnet' ? '' : `${network}.`;
-  if (isValidAddressString(string))
-    return `https://${pathPrefix}etherscan.io/address/${string}`;
-  else if (isValidTxString(string))
-    return `https://${pathPrefix}etherscan.io/tx/${string}`;
-  else throw new Error(`Can't create Etherscan link for "${string}"`);
-};

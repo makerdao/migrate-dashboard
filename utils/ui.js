@@ -1,3 +1,5 @@
+import { isValidTxString, isValidAddressString } from './ethereum';
+
 export function cutMiddle(str = '', left = 4, right = 4) {
   if (str.length <= left + right) return str;
   return `${str.slice(0, left)}...${str.slice(-right)}`;
@@ -51,3 +53,16 @@ export function prettifyNumber(
   }
   return keepSymbol ? formattedNumber + symbol : formattedNumber;
 }
+
+export const etherscanLink = (string, network = 'mainnet') => {
+  const pathPrefix = network === 'mainnet' ? '' : `${network}.`;
+  if (isValidAddressString(string))
+    return `https://${pathPrefix}etherscan.io/address/${string}`;
+  else if (isValidTxString(string))
+    return `https://${pathPrefix}etherscan.io/tx/${string}`;
+  else throw new Error(`Can't create Etherscan link for "${string}"`);
+};
+
+export const oasisLink = (string, network) => {
+  return `http://${network === 'kovan' ? 'staging.' : ''}oasis.app${string}`;
+};
