@@ -20,16 +20,22 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 export default class MyApp extends App {
+  state = {};
+
+  componentDidMount() {
+    this.setState({
+      network: window.location.search.includes('kovan') ? 'kovan' : 'mainnet'
+    });
+  }
+
   render() {
     const { Component, pageProps } = this.props;
+    const { network } = this.state;
     return (
       <Fragment>
         <GlobalStyle />
         <ThemeProvider theme={theme}>
-          <MakerProvider
-            rpcUrl="https://kovan.infura.io/v3/58073b4a32df4105906c702f167b91d2"
-            network="kovan"
-          >
+          <MakerProvider network={network}>
             <StoreProvider>
               <WalletProvider modals={wallets} templates={templates}>
                 <Component {...pageProps} />
