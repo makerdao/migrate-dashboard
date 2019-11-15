@@ -19,6 +19,30 @@ import { ErrorBlock } from '../Typography';
 
 const APPROVAL_FUDGE = 2;
 
+const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
+  return (
+    <Grid alignItems="center" gridTemplateColumns="auto 1fr">
+      <Checkbox
+        mr="s"
+        fontSize="l"
+        checked={hasReadTOS}
+        onChange={() => setHasReadTOS(!hasReadTOS)}
+      />
+      <Text
+        t="caption"
+        color="steel"
+        onClick={() => setHasReadTOS(!hasReadTOS)}
+      >
+        I have read and accept the{' '}
+        <Link target="_blank" href="https://migrate.makerdao.com/terms">
+          Terms of Service
+        </Link>
+        .
+      </Text>
+    </Grid>
+  );
+};
+
 const PayAndMigrate = ({
   onPrev,
   onNext,
@@ -178,7 +202,7 @@ const PayAndMigrate = ({
           ) : (
             mkrBalance && (
               <div>
-                <Grid>
+                <Grid mb="m">
                   <LoadingToggle
                     completeText={'MKR unlocked'}
                     loadingText={'Unlocking MKR'}
@@ -193,28 +217,7 @@ const PayAndMigrate = ({
                     data-testid="allowance-toggle"
                   />
                 </Grid>
-                <Grid alignItems="center" gridTemplateColumns="auto 1fr">
-                  <Checkbox
-                    mr="s"
-                    fontSize="l"
-                    checked={hasReadTOS}
-                    onChange={() => setHasReadTOS(!hasReadTOS)}
-                  />
-                  <Text
-                    t="caption"
-                    color="steel"
-                    onClick={() => setHasReadTOS(!hasReadTOS)}
-                  >
-                    I have read and accept the{' '}
-                    <Link
-                      target="_blank"
-                      href="https://migrate.makerdao.com/terms"
-                    >
-                      Terms of Service
-                    </Link>
-                    .
-                  </Text>
-                </Grid>
+                <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
               </div>
             )
           )}
@@ -281,30 +284,12 @@ const PayAndMigrate = ({
           </Table>
           {!aboveOneSeventy ? (
             <ErrorBlock>
-              You cannot use this feature when your CDP would finish with a
+              You cannot use this feature because your CDP would end up with a
               collateralization ratio of less than 170%. Please use ‘Pay with
-              MKR’ or repay some of your CDP before continuing.
+              MKR’ or repay some of your CDP debt before continuing.
             </ErrorBlock>
           ) : (
-            <Grid alignItems="center" gridTemplateColumns="auto 1fr">
-              <Checkbox
-                mr="s"
-                fontSize="l"
-                checked={hasReadTOS}
-                onChange={() => setHasReadTOS(!hasReadTOS)}
-              />
-              <Text
-                t="caption"
-                color="steel"
-                onClick={() => setHasReadTOS(!hasReadTOS)}
-              >
-                I have read and accept the{' '}
-                <Link target="_blank" href="https://migrate.makerdao.com/terms">
-                  Terms of Service
-                </Link>
-                .
-              </Text>
-            </Grid>
+            <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
           )}
         </Grid>
       </CardTabs>
