@@ -4,7 +4,7 @@ import useProxy from '../../hooks/useProxy';
 import useBlockHeight from '../../hooks/useBlockHeight';
 import ProxyAndTransfer from '../ProxyAndTransfer';
 
-function DeployProxy({ onPrev, onNext, selectedCDP }) {
+function DeployProxy({ onPrev, onNext, selectedCDP, showErrorMessageAndAllowExiting }) {
   const {
     proxyAddress,
     setupProxy,
@@ -46,6 +46,7 @@ function DeployProxy({ onPrev, onNext, selectedCDP }) {
         selectedCDP={selectedCDP}
         cdpTransferred={cdpTransferred}
         setCDPTransferred={setCDPTransferred}
+        showErrorMessageAndAllowExiting={showErrorMessageAndAllowExiting}
       />
       <Grid
         justifySelf="center"

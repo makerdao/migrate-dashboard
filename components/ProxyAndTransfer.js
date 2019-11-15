@@ -20,11 +20,13 @@ const ProxyAndTransfer = ({
   labels,
   selectedCDP,
   cdpTransferred,
-  setCDPTransferred
+  setCDPTransferred,
+  showErrorMessageAndAllowExiting
 }) => {
   const { setup_text, confirmations_text } = labels;
   const [isTransferringCDP, setIsTransferringCDP] = useState(false);
   const { maker } = useMaker();
+  if(proxyErrors) showErrorMessageAndAllowExiting();
   const transferCDP = useCallback(async () => {
     try {
       if (!proxyAddress)
@@ -36,7 +38,8 @@ const ProxyAndTransfer = ({
       setIsTransferringCDP(false);
     } catch (err) {
       setIsTransferringCDP(false);
-      console.log('cdp transfer tx failed', err);
+      console.error('cdp transfer tx failed', err);
+      showErrorMessageAndAllowExiting();
     }
   }, [selectedCDP]);
   return (
@@ -50,7 +53,8 @@ const ProxyAndTransfer = ({
           <SuccessButton />
         ) : (
           <Button
-            width="13.0rem"
+            justifySelf={['center', 'left']}
+            width={['26.0rem', '13.0rem']}
             mt="xs"
             onClick={deployProxy}
             disabled={proxyLoading || isTransferringCDP || !!proxyErrors}
@@ -60,25 +64,6 @@ const ProxyAndTransfer = ({
           </Button>
         )}
         <Text.p t="subheading" lineHeight="normal">
-          {proxyErrors && (
-            <>
-              This transaction is taking longer than usual...
-              <Tooltip
-                fontSize="m"
-                ml="2xs"
-                content={
-                  <TooltipContents>
-                    Transactions to the network may sometimes take longer than
-                    expected. This can be for a variety of reasons but may be
-                    due to a congested network or a transaction sent with a low
-                    gas price. Some wallets enable users to resend a transaction
-                    with a higher gas price, otherwise check for your
-                    transaction on etherscan and come back again later
-                  </TooltipContents>
-                }
-              />
-            </>
-          )}
           {proxyLoading && confirmations_text}
           {proxyDeployed && 'Confirmed with 10 confirmations'}
           {(proxyLoading || proxyDeployed) && (
@@ -108,6 +93,7 @@ const ProxyAndTransfer = ({
           <SuccessButton />
         ) : (
           <Button
+            px={'s'}
             justifySelf={['center', 'left']}
             width={['26.0rem', '13.0rem']}
             mt="xs"
