@@ -44,7 +44,7 @@ async function getCdpData(cdp) {
   const govFeeDaiExact = await cdp.getGovernanceFee(USD);
   const govFeeDai =
     govFeeDaiExact.toNumber() > 0.01
-      ? prettifyNumber(await cdp.getGovernanceFee(USD), false, 2, false)
+      ? prettifyNumber(govFeeDaiExact, false, 2, false)
       : round(govFeeDaiExact.toNumber(), 4);
 
   const collateralizationRatioExact =
