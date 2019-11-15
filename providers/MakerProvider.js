@@ -3,14 +3,7 @@ import { instantiateMaker } from '../maker';
 
 export const MakerObjectContext = createContext();
 
-const config = {
-  kovan: {
-    rpcUrl: 'https://kovan.infura.io/v3/58073b4a32df4105906c702f167b91d2'
-  },
-  mainnet: {
-    rpcUrl: 'https://mainnet.infura.io/v3/e12561901a29439caf50a1c41259f675'
-  }
-};
+const INFURA_KEY = '6ba7a95268bf4ccda9bf1373fe582b43';
 
 function MakerProvider({ children, network }) {
   const [account, setAccount] = useState(null);
@@ -18,7 +11,7 @@ function MakerProvider({ children, network }) {
 
   useEffect(() => {
     if (!network) return;
-    const { rpcUrl } = config[network];
+    const rpcUrl = `https://${network}.infura.io/v3/${INFURA_KEY}`;
     instantiateMaker({ network, rpcUrl }).then(maker => {
       setMaker(maker);
       if (maker.service('accounts').hasAccount())
