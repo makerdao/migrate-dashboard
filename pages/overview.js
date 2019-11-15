@@ -161,7 +161,7 @@ function Overview() {
               recommended
               title="Single-Collateral Sai Upgrade"
               body="Upgrade your Single-Collateral Sai to Multi-Collateral Dai"
-              metadataTitle="SCD to upgrade"
+              metadataTitle="Sai to upgrade"
               metadataValue={showAmount(saiBalance)}
               onSelected={() => Router.push('/migration/dai')}
             />

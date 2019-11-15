@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import {
   Text,
   Grid,
@@ -6,7 +6,8 @@ import {
   Button,
   Checkbox,
   Link,
-  CardTabs
+  CardTabs,
+  Card
 } from '@makerdao/ui-components-core';
 import { MKR } from '@makerdao/dai-plugin-mcd';
 import { prettifyNumber } from '../../utils/ui';
@@ -40,6 +41,27 @@ const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
         .
       </Text>
     </Grid>
+  );
+};
+
+const MKRPurchaseWarning = () => {
+  const safeA = (href, text) => (
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      {text || href.replace(/^https:\/\/(www\.)?/, '')}
+    </a>
+  );
+
+  return (
+    <Card bg="yellow.100" p="m" borderColor="yellow.400" border="1px solid">
+      This portal will purchase MKR through{' '}
+      {safeA('https://oasis.app', 'Oasis.app')}; additionally, users should feel
+      free to explore services such as {safeA('https://1inch.exchange')},{' '}
+      {safeA('https://www.totle.com')}, {safeA('https://dexindex.io')}, or{' '}
+      {safeA('https://dex.ag')}. You agree that you use Oasis, or any other
+      service, at your own risk. Oasis is a decentralized exchange that does not
+      hold custody of your funds and cannot reverse transactions once you
+      execute them.
+    </Card>
   );
 };
 
@@ -283,7 +305,10 @@ const PayAndMigrate = ({
               MKR’ or repay some of your CDP debt before continuing.
             </ErrorBlock>
           ) : (
-            <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
+            <Fragment>
+              {govFeeMKRExact.gt(100) && <MKRPurchaseWarning />}
+              <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
+            </Fragment>
           )}
         </Grid>
       </CardTabs>

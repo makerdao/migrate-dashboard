@@ -12,7 +12,7 @@ import DaiConvert from '../../components/migratedai/DaiConvert';
 import Confirmation from '../../components/migratedai/Confirmation';
 import InProgress from '../../components/InProgress';
 import Complete from '../../components/migratedai/Complete';
-import Failed from '../../components/Failed'
+import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
 
 const steps = [
@@ -20,10 +20,13 @@ const steps = [
   props => <Confirmation {...props} />,
   props => <InProgress {...props} title="Your Dai is being converted" />,
   props => <Complete {...props} />,
-  props => <Failed {...props}
-    title={`Exchange failed`}
-    subtitle={`Your Multi-Collateral Dai was not exchanged for Single-Collateral Dai.`}
-  />
+  props => (
+    <Failed
+      {...props}
+      title="Exchange failed"
+      subtitle="Your Multi-Collateral Dai was not exchanged for Single-Collateral Dai."
+    />
+  )
 ];
 
 export default function() {
@@ -41,7 +44,7 @@ export default function() {
   };
   const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
-  const showErrorMessageAndAllowExiting = () => setCurrentStep(4)
+  const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
 
   return (
     <FlowBackground open={true}>
