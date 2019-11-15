@@ -22,7 +22,7 @@
     "@makerdao/dai-plugin-trezor-web": "^0.9.6",
     "@makerdao/dai-plugin-walletconnect": "^0.0.8",
     "@makerdao/dai-plugin-walletlink": "^0.0.1",
-    "@makerdao/ui-components-core": "^0.3.2",
+    "@makerdao/ui-components-core": "^0.3.3",
     "@makerdao/ui-components-footer": "^0.1.16",
     "@makerdao/ui-components-header": "^0.1.11-alpha.8",
     "@walletconnect/browser": "^1.0.0-beta.39",
