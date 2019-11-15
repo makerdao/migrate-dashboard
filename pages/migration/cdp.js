@@ -26,7 +26,7 @@ const steps = [
     <Failed
       {...props}
       title="Upgrade failed"
-      subtitle={`CDP ${props.selectedCDP.id} has not been upgraded to Multi-collateral Dai.`}
+      subtitle={`CDP ${props.selectedCDP.id} has not been upgraded to Multi-Collateral Dai.`}
     />
   )
 ];

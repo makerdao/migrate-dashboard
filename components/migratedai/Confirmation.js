@@ -37,7 +37,8 @@ export default ({
         hasSaiAllowance: true
       }));
     } catch (err) {
-      const errMsg = `unlock sai tx failed ${err}`;
+      const message = err.message ? err.message : err;
+      const errMsg = `unlock sai tx failed ${message}`;
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
     }
@@ -57,10 +58,10 @@ export default ({
       });
       migrationTxObject.then(onNext);
     } catch (err) {
-      const errMsg = `migrate tx failed ${err}`;
+      const message = err.message ? err.message : err;
+      const errMsg = `migrate tx failed ${message}`;
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
-      onPrev();
     }
   }, [maker, onNext, saiAmountToMigrate, setMigrationTxHash]);
 
