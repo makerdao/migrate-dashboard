@@ -125,7 +125,7 @@ export default ({ onNext, onPrev }) => {
                 Max SAI to DAI availability
               </TextBlock>
               <TextBlock t="body">
-                {maxLiquidity ? `${prettifyNumber(maxLiquidity)} Dai` : '...'}
+                {maxLiquidity ? `${prettifyNumber(maxLiquidity)} DAI` : '...'}
               </TextBlock>
             </Grid>
           </Grid>

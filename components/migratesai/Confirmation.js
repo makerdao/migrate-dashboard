@@ -162,7 +162,7 @@ export default ({
               onClick={() => setHasReadTOS(!hasReadTOS)}
             >
               I have read and accept the{' '}
-              <Link target="_blank" href="https://migrate.makerdao.com/terms">
+              <Link target="_blank" href="/terms">
                 Terms of Service
               </Link>
               .
