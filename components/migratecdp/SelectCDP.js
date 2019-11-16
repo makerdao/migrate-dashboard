@@ -59,13 +59,17 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
           css={`
             white-space: nowrap;
           `}
+          onClick={() => selectable && onSelect(cdp)}
         >
-          <Radio
-            disabled={!selectable}
-            onChange={() => onSelect(cdp)}
-            fontSize={RADIO_WIDTH}
-            checked={checked}
-          />
+          {selectable ? (
+            <Radio
+              onChange={() => onSelect(cdp)}
+              fontSize={RADIO_WIDTH}
+              checked={checked}
+            />
+          ) : (
+            <span></span>
+          )}
           <span>{cdp.id}</span>
           {/* Collateralization */}
           <span>{cdp.collateralizationRatio + '%'}</span>
@@ -81,19 +85,21 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
         display={['block', 'none']}
         onClick={() => selectable && onSelect(cdp)}
       >
-        <Flex pt="s" pl="m" alignItems="center">
-          <Radio
-            disabled={!selectable}
-            onChange={() => onSelect(cdp)}
-            fontSize={RADIO_WIDTH}
-            checked={checked}
-            mr="9px"
-          />
+        <Flex py="s" pl="m" alignItems="center">
+          {selectable && (
+            <Radio
+              onChange={() => onSelect(cdp)}
+              fontSize={RADIO_WIDTH}
+              checked={checked}
+              mr="9px"
+            />
+          )}
           <Text fontSize="20px">CDP {cdp.id}</Text>
         </Flex>
         <ListItemRow
           label="Current Ratio"
           value={cdp.collateralizationRatio + '%'}
+          dark
         />
         <ListItemRow label="Dai Debt" value={cdp.debtValue + ' DAI'} />
         <ListItemRow label="Fee in DAI" value={cdp.govFeeDai + ' DAI'} dark />
