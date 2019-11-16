@@ -232,7 +232,6 @@ function Overview() {
           />
         )}
       </Box>
-      <Footer mt="2xl" />
     </Flex>
   );
 }

@@ -4,7 +4,6 @@ import { Box, Flex, Text } from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
 import { Breakout } from '../components/Typography';
 import Subheading from '../components/Subheading';
-import Footer from '../components/Footer';
 import LegalTextLayout from '../layouts/LegalTextLayout';
 
 function Terms() {
@@ -834,9 +833,9 @@ function Terms() {
             right or provision. If any provision of the Agreement is found by an
             arbitrator or court of competent jurisdiction to be invalid, the
             parties nevertheless agree that the arbitrator or court should
-            endeavor to give effect to the parties' intentions as reflected in
-            the provision, and the other provisions of the Agreement remain in
-            full force and effect.
+            endeavor to give effect to the parties&apos; intentions as reflected
+            in the provision, and the other provisions of the Agreement remain
+            in full force and effect.
           </p>
 
           <h3>13.3 Statute of Limitations</h3>
@@ -905,7 +904,6 @@ function Terms() {
           </p>
         </LegalTextLayout>
       </Box>
-      <Footer mt="2xl" />
     </Flex>
   );
 }
