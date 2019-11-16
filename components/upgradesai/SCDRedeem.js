@@ -14,10 +14,10 @@ import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
 
 export default ({ onNext, onPrev }) => {
-  const [{ saiBalance, maxLiquidity }, dispatch] = useStore();
+  const [{ saiBalance, daiAvailable }, dispatch] = useStore();
   const maxOverall = Math.min(
     saiBalance && saiBalance.toNumber(),
-    maxLiquidity
+    daiAvailable
   );
   const [amount, setAmount, onAmountChange, amountErrors] = useValidatedInput(
     '',
@@ -30,7 +30,7 @@ export default ({ onNext, onPrev }) => {
       maxFloat: amount => {
         return amount > saiBalance.toNumber()
           ? 'Insufficient Sai balance'
-          : 'Amount exceeds Dai availibility';
+          : 'Amount exceeds Dai availability';
       }
     }
   );
@@ -104,8 +104,8 @@ export default ({ onNext, onPrev }) => {
                 Max SAI to DAI availability
               </TextBlock>
               <TextBlock t="body">
-                {maxLiquidity || maxLiquidity === 0
-                  ? `${prettifyNumber(maxLiquidity)} DAI`
+                {daiAvailable || daiAvailable === 0
+                  ? `${prettifyNumber(daiAvailable)} DAI`
                   : '...'}
               </TextBlock>
             </Grid>

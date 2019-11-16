@@ -166,7 +166,7 @@ function Overview() {
             <MigrationCard
               recommended
               title="Single-Collateral Sai Upgrade"
-              body={`Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai liquidity: ${prettifyNumber(
+              body={`Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai availability: ${prettifyNumber(
                 daiAvailable
               )} DAI`}
               metadataTitle="Sai to upgrade"

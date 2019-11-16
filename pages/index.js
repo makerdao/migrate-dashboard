@@ -44,8 +44,7 @@ function Index() {
         type: 'assign',
         payload: {
           saiAvailable: (await mig.migrationSaiAvailable()).toNumber(),
-          daiAvailable: systemDebtCeilingRemaining,
-          maxLiquidity: Math.min(
+          daiAvailable: Math.min(
             systemDebtCeilingRemaining,
             saiIlkDebtCeilingRemaining
           )
