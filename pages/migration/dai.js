@@ -8,10 +8,10 @@ import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
 import FlowHeader from '../../components/FlowHeader';
 import useMaker from '../../hooks/useMaker';
-import SCDRedeem from '../../components/migratesai/SCDRedeem';
-import Confirmation from '../../components/migratesai/Confirmation';
+import SCDRedeem from '../../components/upgradesai/SCDRedeem';
+import Confirmation from '../../components/upgradesai/Confirmation';
 import InProgress from '../../components/InProgress';
-import Complete from '../../components/migratesai/Complete';
+import Complete from '../../components/upgradesai/Complete';
 import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
 
