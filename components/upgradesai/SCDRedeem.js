@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Box,
   Text,
@@ -9,7 +9,6 @@ import {
   Link
 } from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
-import useMaker from '../../hooks/useMaker';
 import useValidatedInput from '../../hooks/useValidatedInput';
 import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
@@ -30,15 +29,15 @@ export default ({ onNext, onPrev }) => {
     {
       maxFloat: amount => {
         return amount > saiBalance.toNumber()
-          ? 'Insufficient Dai balance'
-          : 'Amount exceeds Sai availibility';
+          ? 'Insufficient Sai balance'
+          : 'Amount exceeds Dai availibility';
       }
     }
   );
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
-      <Text.h2 textAlign="center">Convert Dai to Sai</Text.h2>
+      <Text.h2 textAlign="center">Upgrade Single-Collateral Sai</Text.h2>
       <Text.p
         textAlign="center"
         t="body"
@@ -46,7 +45,8 @@ export default ({ onNext, onPrev }) => {
         m="0 auto"
         display={{ s: 'none', m: 'block' }}
       >
-        How much Dai would you like to convert to Single-Collateral Sai?
+        How much Single-collateral Sai would you like to upgrade to
+        Multi-collateral Dai?
       </Text.p>
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
@@ -56,14 +56,14 @@ export default ({ onNext, onPrev }) => {
         <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
           <Grid gridRowGap="m">
             <TextBlock t="h5" lineHeight="normal">
-              Enter the amount you would like to exchange.
+              Enter the amount you would like to upgrade.
             </TextBlock>
             <Input
               type="number"
               value={amount}
               disabled={!saiBalance}
               min="0"
-              placeholder="0.00 DAI"
+              placeholder="0.00 SAI"
               onChange={onAmountChange}
               failureMessage={amountErrors}
               after={
@@ -78,7 +78,7 @@ export default ({ onNext, onPrev }) => {
             />
             <Grid gridRowGap="xs">
               <Box>
-                <Text t="subheading">Dai Balance</Text>
+                <Text t="subheading">Sai Balance</Text>
                 <Text
                   t="caption"
                   display="inline-block"
@@ -95,16 +95,18 @@ export default ({ onNext, onPrev }) => {
           <Grid gridRowGap="m">
             <Grid gridRowGap="xs">
               <TextBlock t="h5" lineHeight="normal">
-                DAI to SAI exchange rate
+                SAI to DAI exchange rate
               </TextBlock>
               <TextBlock t="body">1:1</TextBlock>
             </Grid>
             <Grid gridRowGap="xs">
               <TextBlock t="h5" lineHeight="normal">
-                Max DAI to SAI availability
+                Max SAI to DAI availability
               </TextBlock>
               <TextBlock t="body">
-                {maxLiquidity ? `${prettifyNumber(maxLiquidity)} Sai` : '...'}
+                {maxLiquidity || maxLiquidity === 0
+                  ? `${prettifyNumber(maxLiquidity)} DAI`
+                  : '...'}
               </TextBlock>
             </Grid>
           </Grid>

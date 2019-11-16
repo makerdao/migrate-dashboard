@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   Button,
@@ -24,9 +24,9 @@ export default ({
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [saiApprovePending, setSaiApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
-  const [{ saiAmountToMigrate }] = useStore();
+  const [{ saiAmountToMigrate }, dispatch] = useStore();
 
-  const giveProxySaiAllowance = useCallback(async () => {
+  const giveProxySaiAllowance = async () => {
     setSaiApprovePending(true);
     try {
       await maker
@@ -43,9 +43,9 @@ export default ({
       addToastWithTimeout(errMsg, dispatch);
     }
     setSaiApprovePending(false);
-  }, [maker, proxyDetails, saiAmountToMigrate]);
+  };
 
-  const upgradeSai = useCallback(async () => {
+  const convertDai = async () => {
     try {
       const mig = await maker.service('migration').getMigration('sai-to-dai');
       const migrationTxObject = mig.execute(saiAmountToMigrate);
@@ -63,7 +63,7 @@ export default ({
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
     }
-  }, [maker, onNext, saiAmountToMigrate, setMigrationTxHash]);
+  };
 
   useEffect(() => {
     (async () => {
@@ -185,9 +185,7 @@ export default ({
         </Button>
         <Button
           disabled={!hasReadTOS || !proxyDetails.hasSaiAllowance}
-          onClick={() => {
-            upgradeSai();
-          }}
+          onClick={convertDai}
         >
           Continue
         </Button>

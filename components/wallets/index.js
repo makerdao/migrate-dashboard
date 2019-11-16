@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box } from '@makerdao/ui-components-core';
 import LedgerType from './LedgerType';
 import HardwareAccountSelect from './HardwareAccountSelect';
 import templates from './templates';

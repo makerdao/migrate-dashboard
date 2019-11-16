@@ -30,18 +30,15 @@ function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
       confirmAddress(address);
       onClose();
     }, onClose);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const toPage = useCallback(
-    async page => {
-      if (accounts.length - page * ACCOUNTS_PER_PAGE <= 0) {
-        const offset = accounts.length / (page * ACCOUNTS_PER_PAGE);
-        await fetch({ offset });
-      }
-      setPage(page);
-    },
-    [accounts]
-  );
+  const toPage = async page => {
+    if (accounts.length - page * ACCOUNTS_PER_PAGE <= 0) {
+      const offset = accounts.length / (page * ACCOUNTS_PER_PAGE);
+      await fetch({ offset });
+    }
+    setPage(page);
+  };
 
   const selectAddress = useCallback(
     address => {
@@ -50,9 +47,9 @@ function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
     [setSelectedAddress]
   );
 
-  const onConfirm = useCallback(() => {
+  const onConfirm = () => {
     pickAccount(selectedAddress);
-  });
+  };
 
   const start = page * ACCOUNTS_PER_PAGE;
   const renderedAccounts = accounts.slice(start, start + ACCOUNTS_PER_PAGE);

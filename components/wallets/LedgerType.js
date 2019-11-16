@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import { Box, Button, Flex, Grid, Text } from '@makerdao/ui-components-core';
 import LedgerConnectCard from './LedgerConnectCard';

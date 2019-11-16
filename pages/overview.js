@@ -18,10 +18,9 @@ import { oasisLink, prettifyNumber } from '../utils/ui';
 import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
-import Footer from '../components/Footer';
 import useStore from '../hooks/useStore';
 
-const DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION = false;
+const DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION = true;
 
 function MigrationCard({
   title,
