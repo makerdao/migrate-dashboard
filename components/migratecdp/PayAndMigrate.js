@@ -207,7 +207,7 @@ const PayAndMigrate = ({
       width={['100vw', 'auto']}
     >
       <Text.h2 textAlign="center">Confirm CDP Upgrade</Text.h2>
-      <CardTabs onChange={i => setSelectedTab(i)} headers={TABS}>
+      <CardTabs onChange={setSelectedTab} headers={TABS}>
         <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
           <Table width="100%">
             <Table.tbody>
@@ -318,7 +318,7 @@ const PayAndMigrate = ({
                 </Table.td>
                 <Table.td textAlign="right">
                   <Text fontWeight="medium">
-                    {selectedCDP.collateralizationRatio} %
+                    {selectedCDP.collateralizationRatio}%
                   </Text>
                 </Table.td>
               </Table.tr>
@@ -334,7 +334,7 @@ const PayAndMigrate = ({
                       color={!aboveOneSeventy ? '#D85B19' : null}
                       fontWeight="medium"
                     >
-                      {prettifyNumber(newCollatRatio, false, 2, false)} %
+                      {prettifyNumber(newCollatRatio, false, 2, false)}%
                     </Text>
                   </Table.td>
                 </Table.tr>
