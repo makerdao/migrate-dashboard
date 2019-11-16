@@ -31,15 +31,15 @@ export function cleanSymbol(s) {
 }
 
 export function prettifyNumber(
-  _num = null,
+  raw = null,
   truncate = false,
   decimalPlaces = 2,
   keepSymbol = true
 ) {
-  if (_num === null) return null;
-  let symbol = ' ';
-  if (_num.symbol !== undefined) symbol += cleanSymbol(_num.symbol);
-  const num = parseFloat(_num.toString());
+  if (raw === null) return null;
+  let symbol = '';
+  if (raw.symbol !== undefined) symbol += ' ' + cleanSymbol(raw.symbol);
+  const num = parseFloat(raw.toString());
   if (num > Number.MAX_SAFE_INTEGER) return 'NUMBER TOO BIG';
   let formattedNumber;
   if (truncate) {
