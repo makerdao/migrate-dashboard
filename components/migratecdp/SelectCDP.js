@@ -135,11 +135,34 @@ export default ({
         Select a CDP and pay back the Stability Fee in MKR or debt from your CDP
         to upgrade it to Multi-Collateral Dai and the new Oasis Borrow Portal.
       </Text.p>
+      <Card
+        bg="yellow.100"
+        color="#826318"
+        borderColor="yellow.400"
+        border="1px solid"
+        textAlign="center"
+        lineHeight="normal"
+        p="m"
+      >
+        CDPs with less than 20 or more than {prettifyNumber(saiAvailable)} SAI
+        of debt cannot be migrated at this time.
+        <br />
+        For additional information, visit{' '}
+        <a
+          href="https://chat.makerdao.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          chat.makerdao.com
+        </a>
+        .
+      </Card>
       <Overflow x="scroll" y="visible">
-        <Grid gridRowGap="s" mt="xs" pb="m">
+        <Grid gridRowGap="s" pb="m">
           <Box display={['none', 'block']}>
             <Grid
-              p="l"
+              px="l"
+              pt="m"
               pb="0"
               gridTemplateColumns={`${RADIO_CONTAINER_WIDTH} 1fr 2fr 2fr 2fr 2fr ${AESTHETIC_ROW_PADDING}`}
               gridColumnGap="l"
@@ -181,10 +204,6 @@ export default ({
           ))}
         </Grid>
       </Overflow>
-      <Grid color="steelLight" textAlign="center">
-        CDPs with less than 20 or more than {prettifyNumber(saiAvailable)} SAI
-        of debt cannot be migrated at this time.
-      </Grid>
       <Grid
         justifySelf="center"
         gridTemplateColumns="auto auto"
