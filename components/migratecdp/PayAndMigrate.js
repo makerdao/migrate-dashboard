@@ -241,7 +241,9 @@ const PayAndMigrate = ({
                     fontWeight="medium"
                   >
                     {mkrBalance
-                      ? round(mkrBalance.toNumber(), 6)
+                      ? mkrBalance.toNumber() > 0.01
+                        ? prettifyNumber(mkrBalance, false, 2, false)
+                        : round(mkrBalance.toNumber(), 6)
                       : '...'}{' '}
                     MKR
                   </Text>

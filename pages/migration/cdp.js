@@ -36,7 +36,10 @@ async function getCdpData(cdp) {
   const debtValue = prettifyNumber(debtValueExact.toString());
   const collateralValueExact = await cdp.getCollateralValue(USD);
   const govFeeMKRExact = await cdp.getGovernanceFee();
-  const govFeeMKR = round(govFeeMKRExact.toNumber(), 6);
+  const govFeeMKR =
+    govFeeMKRExact.toNumber() > 0.01
+      ? prettifyNumber(govFeeMKRExact, false, 2, false)
+      : round(govFeeMKRExact.toNumber(), 6);
 
   const govFeeDaiExact = await cdp.getGovernanceFee(USD);
   const govFeeDai =
