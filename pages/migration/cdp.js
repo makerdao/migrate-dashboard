@@ -59,6 +59,7 @@ async function getCdpData(cdp) {
     collateralValueExact,
     collateralizationRatio,
     debtValueExact,
+    govFeeDaiExact,
     debtValue,
     govFeeDai,
     govFeeMKR,

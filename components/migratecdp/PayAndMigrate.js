@@ -20,6 +20,7 @@ import { ErrorBlock } from '../Typography';
 
 const APPROVAL_FUDGE = 2;
 const HIGH_FEE_LOWER_BOUND = 50;
+const CDP_MIN_RATIO = 170;
 
 const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
   return (
@@ -83,6 +84,15 @@ const PayAndMigrate = ({
   const { maker, account } = useMaker();
   const { govFeeMKRExact } = selectedCDP;
 
+  const maxCost = selectedCDP.govFeeDaiExact.plus(
+    selectedCDP.govFeeDaiExact.times(0.05)
+  );
+
+  const newCollatRatio = selectedCDP.collateralValueExact
+    .dividedBy(selectedCDP.debtValueExact.plus(maxCost.toNumber()))
+    .times(100)
+    .toNumber();
+
   const giveProxyMkrAllowance = useCallback(async () => {
     setMkrApprovePending(true);
     try {
@@ -102,12 +112,43 @@ const PayAndMigrate = ({
     setMkrApprovePending(false);
   }, [maker, proxyDetails, govFeeMKRExact]);
 
-  const migrateCdp = async () => {
+  const migrateCdpPayWithMkr = async () => {
     try {
-      const mig = await maker
+      const mig = maker
         .service('migration')
         .getMigration('single-to-multi-cdp');
       const migrationTxObject = mig.execute(selectedCDP.id);
+      maker.service('transactionManager').listen(migrationTxObject, {
+        pending: tx => {
+          setMigrationTxHash(tx.hash);
+          onNext();
+        },
+        error: () => showErrorMessageAndAllowExiting()
+      });
+      const newId = await migrationTxObject;
+      setNewCdpId(newId);
+      setCdps(cdps => cdps.filter(c => c !== selectedCDP));
+      onNext();
+    } catch (err) {
+      const message = err.message ? err.message : err;
+      const errMsg = `migrate tx failed ${message}`;
+      console.error(errMsg);
+      addToastWithTimeout(errMsg, dispatch);
+    }
+  };
+
+  const migrateCdpPayWithDebt = async () => {
+    try {
+      const mig = maker
+        .service('migration')
+        .getMigration('single-to-multi-cdp');
+      console.log(maxCost, 'maxCost');
+      const migrationTxObject = mig.execute(
+        selectedCDP.id,
+        'DEBT',
+        maxCost,
+        CDP_MIN_RATIO
+      );
       maker.service('transactionManager').listen(migrationTxObject, {
         pending: tx => {
           setMigrationTxHash(tx.hash);
@@ -150,17 +191,12 @@ const PayAndMigrate = ({
   }, [account, maker, govFeeMKRExact]);
 
   const hasEnoughMkr = mkrBalance && mkrBalance.gt(govFeeMKRExact);
+  const aboveOneSeventy = newCollatRatio > 170;
 
-  const maxCost =
-    parseFloat(selectedCDP.govFeeDai) +
-    parseFloat(selectedCDP.govFeeDai) * 0.05;
-
-  const minNewCollatRatio = selectedCDP.collateralValueExact
-    .dividedBy(selectedCDP.debtValueExact.plus(maxCost))
-    .times(100)
-    .toNumber();
-
-  const aboveOneSeventy = minNewCollatRatio > 170;
+  const TAB_PAY_WITH_MKR = 0;
+  const TAB_PAY_WITH_DEBT = 1;
+  const TABS = ['Pay with MKR', 'Pay with CDP debt'];
+  const [selectedTab, setSelectedTab] = useState(0);
 
   return (
     <Grid
@@ -171,7 +207,7 @@ const PayAndMigrate = ({
       width={['100vw', 'auto']}
     >
       <Text.h2 textAlign="center">Confirm CDP Upgrade</Text.h2>
-      <CardTabs headers={['Pay with MKR', 'Pay with CDP debt']}>
+      <CardTabs onChange={i => setSelectedTab(i)} headers={TABS}>
         <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
           <Table width="100%">
             <Table.tbody>
@@ -272,7 +308,7 @@ const PayAndMigrate = ({
                 </Table.td>
                 <Table.td textAlign="right">
                   <Text fontWeight="medium">
-                    {prettifyNumber(maxCost, false, 4)}
+                    {prettifyNumber(maxCost.toNumber(), false, 4, false)} DAI
                   </Text>
                 </Table.td>
               </Table.tr>
@@ -286,34 +322,36 @@ const PayAndMigrate = ({
                   </Text>
                 </Table.td>
               </Table.tr>
-              <Table.tr>
-                <Table.td>
-                  <Text color={!aboveOneSeventy ? '#D85B19' : null}>
-                    Min New Col. Ratio
-                  </Text>
-                </Table.td>
-                <Table.td textAlign="right">
-                  <Text
-                    color={!aboveOneSeventy ? '#D85B19' : null}
-                    fontWeight="medium"
-                  >
-                    {prettifyNumber(minNewCollatRatio, false, 2, false)} %
-                  </Text>
-                </Table.td>
-              </Table.tr>
+              {aboveOneSeventy ? (
+                <Table.tr>
+                  <Table.td>
+                    <Text color={!aboveOneSeventy ? '#D85B19' : null}>
+                      Min New Col. Ratio
+                    </Text>
+                  </Table.td>
+                  <Table.td textAlign="right">
+                    <Text
+                      color={!aboveOneSeventy ? '#D85B19' : null}
+                      fontWeight="medium"
+                    >
+                      {prettifyNumber(newCollatRatio, false, 2, false)} %
+                    </Text>
+                  </Table.td>
+                </Table.tr>
+              ) : null}
             </Table.tbody>
           </Table>
-          {!aboveOneSeventy ? (
-            <ErrorBlock>
-              You cannot use this feature because your CDP would end up with a
-              collateralization ratio of less than 170%. Please use ‘Pay with
-              MKR’ or repay some of your CDP debt before continuing.
-            </ErrorBlock>
-          ) : (
+          {aboveOneSeventy ? (
             <Fragment>
               {govFeeMKRExact.gt(HIGH_FEE_LOWER_BOUND) && <PurchaseWarning />}
               <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
             </Fragment>
+          ) : (
+            <ErrorBlock>
+              You cannot use this feature because your CDP would end up with a
+              collateralization ratio of less than {CDP_MIN_RATIO}%. Please use
+              ‘Pay with MKR’ or repay some of your CDP debt before continuing.
+            </ErrorBlock>
           )}
         </Grid>
       </CardTabs>
@@ -331,9 +369,18 @@ const PayAndMigrate = ({
         </Button>
         <Button
           justifySelf="center"
-          disabled={!hasReadTOS || !proxyDetails.hasMkrAllowance}
+          disabled={
+            !hasReadTOS ||
+            (selectedTab === TAB_PAY_WITH_MKR &&
+              !proxyDetails.hasMkrAllowance) ||
+            (selectedTab === TAB_PAY_WITH_DEBT && !aboveOneSeventy)
+          }
           onClick={() => {
-            migrateCdp();
+            if (selectedTab === TAB_PAY_WITH_MKR) {
+              migrateCdpPayWithMkr();
+            } else if (selectedTab === TAB_PAY_WITH_DEBT) {
+              migrateCdpPayWithDebt();
+            }
           }}
         >
           Pay and Migrate
