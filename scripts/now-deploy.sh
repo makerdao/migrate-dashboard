@@ -1,15 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-cat > ./config/version.json <<- EOM
-{
-  "COMMIT_SHA": "${CIRCLE_SHA1}",
-  "COMMIT_BRANCH": "${CIRCLE_BRANCH}"
-}
-EOM
-
-cat ./config/version.json
-
 NOW_EXEC=./node_modules/.bin/now
 FROM_NAME=`$NOW_EXEC --token $NOW_TOKEN --scope mkr-js-prod`
 BRANCH=`echo ${CIRCLE_BRANCH//./-} | tr '[:upper:]' '[:lower:]'`
