@@ -45,7 +45,7 @@ export default ({
     setSaiApprovePending(false);
   }, [dispatch, maker, proxyDetails.address, saiAmountToMigrate]);
 
-  const upgradeSai = useCallback(async () => {
+  const upgradeSai = async () => {
     try {
       const mig = await maker.service('migration').getMigration('sai-to-dai');
       const migrationTxObject = mig.execute(saiAmountToMigrate);
@@ -63,7 +63,7 @@ export default ({
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
     }
-  }, [dispatch, maker, onNext, onPrev, saiAmountToMigrate, setMigrationTxHash]);
+  };
 
   useEffect(() => {
     (async () => {
@@ -185,9 +185,7 @@ export default ({
         </Button>
         <Button
           disabled={!hasReadTOS || !proxyDetails.hasSaiAllowance}
-          onClick={() => {
-            upgradeSai();
-          }}
+          onClick={upgradeSai}
         >
           Continue
         </Button>

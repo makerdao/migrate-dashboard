@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   Grid,
@@ -93,7 +93,7 @@ const PayAndMigrate = ({
     .times(100)
     .toNumber();
 
-  const giveProxyMkrAllowance = useCallback(async () => {
+  const giveProxyMkrAllowance = async () => {
     setMkrApprovePending(true);
     try {
       await maker
@@ -110,7 +110,7 @@ const PayAndMigrate = ({
       addToastWithTimeout(errMsg, dispatch);
     }
     setMkrApprovePending(false);
-  }, [maker, proxyDetails, govFeeMKRExact]);
+  };
 
   const migrateCdpPayWithMkr = async () => {
     try {
@@ -240,10 +240,7 @@ const PayAndMigrate = ({
                     color={mkrBalance && !hasEnoughMkr ? '#D85B19' : null}
                     fontWeight="medium"
                   >
-                    {mkrBalance
-                      ? round(mkrBalance.toNumber(), 6)
-                      : '...'}{' '}
-                    MKR
+                    {mkrBalance ? round(mkrBalance.toNumber(), 6) : '...'} MKR
                   </Text>
                 </Table.td>
               </Table.tr>

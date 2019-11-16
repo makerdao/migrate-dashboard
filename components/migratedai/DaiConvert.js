@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Box,
   Text,
@@ -9,7 +9,6 @@ import {
   Link
 } from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
-import useMaker from '../../hooks/useMaker';
 import useValidatedInput from '../../hooks/useValidatedInput';
 import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
