@@ -342,10 +342,7 @@ const PayAndMigrate = ({
             </Table.tbody>
           </Table>
           {aboveOneSeventy ? (
-            <Fragment>
-              {govFeeMKRExact.gt(HIGH_FEE_LOWER_BOUND) && <PurchaseWarning />}
-              <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
-            </Fragment>
+            <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
           ) : (
             <ErrorBlock>
               You cannot use this feature because your CDP would end up with a
@@ -355,6 +352,9 @@ const PayAndMigrate = ({
           )}
         </Grid>
       </CardTabs>
+      {selectedTab === 1 && govFeeMKRExact.gt(HIGH_FEE_LOWER_BOUND) && (
+        <PurchaseWarning />
+      )}
       <Grid
         gridTemplateColumns="auto auto"
         justifyContent="center"
