@@ -8,7 +8,7 @@ import StoreProvider from '../providers/StoreProvider';
 import WalletProvider from '../providers/WalletProvider';
 import theme, { getColor } from '../utils/theme';
 import { wallets, templates } from '../components/wallets';
-import Version from '../components/Version';
+import DevFooter from '../components/DevFooter';
 import Toast from '../components/Toast';
 
 const GlobalStyle = createGlobalStyle`
@@ -44,11 +44,11 @@ export default class MyApp extends App {
               <WalletProvider modals={wallets} templates={templates}>
                 <Component {...pageProps} />
                 <Toast />
+                <DevFooter />
               </WalletProvider>
             </StoreProvider>
           </MakerProvider>
         </ThemeProvider>
-        <Version />
       </Fragment>
     );
   }
