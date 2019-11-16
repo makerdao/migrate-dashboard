@@ -21,7 +21,7 @@ import Subheading from '../components/Subheading';
 import Footer from '../components/Footer';
 import useStore from '../hooks/useStore';
 
-const DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION = true;
+const DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION = false;
 
 function MigrationCard({
   title,
