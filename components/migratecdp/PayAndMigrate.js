@@ -16,6 +16,7 @@ import useStore from '../../hooks/useStore';
 import { addToastWithTimeout } from '../Toast';
 import LoadingToggle from '../LoadingToggle';
 import round from 'lodash/round';
+import ceil from 'lodash/ceil';
 import { ErrorBlock } from '../Typography';
 
 const APPROVAL_FUDGE = 2;
@@ -142,7 +143,6 @@ const PayAndMigrate = ({
       const mig = maker
         .service('migration')
         .getMigration('single-to-multi-cdp');
-      console.log(maxCost, 'maxCost');
       const migrationTxObject = mig.execute(
         selectedCDP.id,
         'DEBT',
@@ -190,7 +190,14 @@ const PayAndMigrate = ({
     })();
   }, [account, maker, govFeeMKRExact]);
 
-  const hasEnoughMkr = mkrBalance && mkrBalance.gt(govFeeMKRExact);
+  let hasEnoughMkr=null;
+  let mkrNeeded=null;
+  if(mkrBalance){
+    hasEnoughMkr = mkrBalance.gt(govFeeMKRExact);
+    const mkrNeededExact = govFeeMKRExact.minus(mkrBalance);
+    mkrNeeded = mkrNeededExact.gt(0.01) ?
+      prettifyNumber(ceil(mkrNeededExact.toNumber(),2)) : ceil(mkrNeededExact.toNumber(), 6);
+  }
   const aboveOneSeventy = newCollatRatio > 170;
 
   const TAB_PAY_WITH_MKR = 0;
@@ -254,7 +261,7 @@ const PayAndMigrate = ({
           {mkrBalance && !hasEnoughMkr ? (
             <ErrorBlock>
               You have insufficient MKR balance. Please use `Pay with CDP debt`,
-              or purchase enough MKR to pay the stability fee before continuing.
+              or purchase {mkrNeeded ? `at least ${mkrNeeded}` : 'enough'} MKR to pay the stability fee before continuing.
             </ErrorBlock>
           ) : (
             mkrBalance && (
