@@ -25,13 +25,14 @@ export default ({
   const [saiApprovePending, setSaiApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
   const [{ saiAmountToMigrate }, dispatch] = useStore();
+  const migrationContractAddress = maker.service('smartContract').getContract('MIGRATION').address;
 
   const giveProxySaiAllowance = async () => {
     setSaiApprovePending(true);
     try {
       await maker
         .getToken('SAI')
-        .approve(proxyDetails.address, saiAmountToMigrate);
+        .approve(migrationContractAddress, saiAmountToMigrate);
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasSaiAllowance: true
@@ -68,17 +69,13 @@ export default ({
   useEffect(() => {
     (async () => {
       if (maker && account) {
-        // assuming they have a proxy
-        const proxyAddress = await maker.service('proxy').currentProxy();
-        if (proxyAddress) {
-          const connectedWalletAllowance = await maker
-            .getToken('SAI')
-            .allowance(account.address, proxyAddress);
-          const hasSaiAllowance = connectedWalletAllowance.gte(
-            saiAmountToMigrate
-          );
-          setProxyDetails({ hasSaiAllowance, address: proxyAddress });
-        }
+        const connectedWalletAllowance = await maker
+          .getToken('SAI')
+          .allowance(account.address, migrationContractAddress);
+        const hasSaiAllowance = connectedWalletAllowance.gte(
+          saiAmountToMigrate
+        );
+        setProxyDetails({ hasSaiAllowance });
       }
     })();
   }, [account, maker, saiAmountToMigrate]);
@@ -142,7 +139,7 @@ export default ({
               isLoading={saiApprovePending}
               isComplete={proxyDetails.hasSaiAllowance}
               onToggle={giveProxySaiAllowance}
-              disabled={proxyDetails.hasSaiAllowance || !proxyDetails.address}
+              disabled={proxyDetails.hasSaiAllowance}
               data-testid="allowance-toggle"
             />
           </Grid>
