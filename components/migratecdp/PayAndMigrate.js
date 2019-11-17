@@ -194,9 +194,11 @@ const PayAndMigrate = ({
   let mkrNeeded=null;
   if(mkrBalance){
     hasEnoughMkr = mkrBalance.gt(govFeeMKRExact);
-    const mkrNeededExact = govFeeMKRExact.minus(mkrBalance);
-    mkrNeeded = mkrNeededExact.gt(0.01) ?
-      prettifyNumber(ceil(mkrNeededExact.toNumber(),2)) : ceil(mkrNeededExact.toNumber(), 6);
+    if(!hasEnoughMkr){
+      const mkrNeededExact = govFeeMKRExact.minus(mkrBalance);
+      mkrNeeded = mkrNeededExact.gt(0.01) ?
+        prettifyNumber(ceil(mkrNeededExact.toNumber(),2)) : ceil(mkrNeededExact.toNumber(), 6);
+    }
   }
   const aboveOneSeventy = newCollatRatio > 170;
 
