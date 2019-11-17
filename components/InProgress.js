@@ -1,11 +1,11 @@
 import React from 'react';
-import { Grid, Text, Button, Link } from '@makerdao/ui-components-core';
+import { Grid, Text, Button, Link, Flex } from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
 import useWaitTime from '../hooks/useWaitTime';
 import { etherscanLink } from '../utils/ui';
 import arrowTopRight from '../assets/icons/arrowTopRight.svg';
 
-export default ({ migrationTxHash, title }) => {
+export default ({ migrationTxHash, title, image }) => {
   const { maker, network } = useMaker();
   const waitTime = useWaitTime(maker);
 
@@ -36,6 +36,11 @@ export default ({ migrationTxHash, title }) => {
             View transaction details <img src={arrowTopRight} />
           </Button>
         </Link>
+      )}
+      {image && (
+        <Flex justifyContent="center">
+          <img src={image} css={{ marginTop: '-35px', width: '150px', height: '150px' }} />
+        </Flex>
       )}
     </Grid>
   );

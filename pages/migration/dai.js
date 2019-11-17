@@ -14,11 +14,12 @@ import InProgress from '../../components/InProgress';
 import Complete from '../../components/upgradesai/Complete';
 import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
+import daiLogo from '../../assets/icons/dai-logo.svg';
 
 const steps = [
   props => <SCDRedeem {...props} />,
   props => <Confirmation {...props} />,
-  props => <InProgress {...props} title="Your Sai is being upgraded" />,
+  props => <InProgress {...props} title="Your Sai is being upgraded" image={daiLogo} />,
   props => <Complete {...props} />,
   props => (
     <Failed
