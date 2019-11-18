@@ -66,6 +66,7 @@ jobs:
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 
+            mkdir out/terms && mv out/terms.html out/terms/index.html
             aws s3 sync out s3://$AWS_BUCKET_NAME/ --delete
             aws cloudfront create-invalidation --distribution-id $AWS_CF_ID --paths "/*"
 workflows:
