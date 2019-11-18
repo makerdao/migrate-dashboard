@@ -165,7 +165,7 @@ export default ({
               onClick={() => setHasReadTOS(!hasReadTOS)}
             >
               I have read and accept the{' '}
-              <Link target="_blank" href="/terms">
+              <Link target="_blank" href="/terms.html">
                 Terms of Service
               </Link>
               .

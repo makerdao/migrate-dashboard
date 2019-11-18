@@ -25,7 +25,9 @@ export default ({
   const [saiApprovePending, setSaiApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
   const [{ saiAmountToMigrate }, dispatch] = useStore();
-  const migrationContractAddress = maker.service('smartContract').getContract('MIGRATION').address;
+  const migrationContractAddress = maker
+    .service('smartContract')
+    .getContract('MIGRATION').address;
 
   const giveProxySaiAllowance = async () => {
     setSaiApprovePending(true);
@@ -163,7 +165,7 @@ export default ({
               onClick={() => setHasReadTOS(!hasReadTOS)}
             >
               I have read and accept the{' '}
-              <Link target="_blank" href="/terms">
+              <Link target="_blank" href="/terms.html">
                 Terms of Service
               </Link>
               .

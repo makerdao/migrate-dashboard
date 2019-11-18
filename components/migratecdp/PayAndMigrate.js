@@ -38,7 +38,7 @@ const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
         onClick={() => setHasReadTOS(!hasReadTOS)}
       >
         I have read and accept the{' '}
-        <Link target="_blank" href="/terms">
+        <Link target="_blank" href="/terms.html">
           Terms of Service
         </Link>
         .
@@ -190,14 +190,15 @@ const PayAndMigrate = ({
     })();
   }, [account, maker, govFeeMKRExact]);
 
-  let hasEnoughMkr=null;
-  let mkrNeeded=null;
-  if(mkrBalance){
+  let hasEnoughMkr = null;
+  let mkrNeeded = null;
+  if (mkrBalance) {
     hasEnoughMkr = mkrBalance.gt(govFeeMKRExact);
-    if(!hasEnoughMkr){
+    if (!hasEnoughMkr) {
       const mkrNeededExact = govFeeMKRExact.minus(mkrBalance);
-      mkrNeeded = mkrNeededExact.gt(0.01) ?
-        prettifyNumber(ceil(mkrNeededExact.toNumber(),2)) : ceil(mkrNeededExact.toNumber(), 6);
+      mkrNeeded = mkrNeededExact.gt(0.01)
+        ? prettifyNumber(ceil(mkrNeededExact.toNumber(), 2))
+        : ceil(mkrNeededExact.toNumber(), 6);
     }
   }
   const aboveOneSeventy = newCollatRatio > 170;
@@ -263,7 +264,8 @@ const PayAndMigrate = ({
           {mkrBalance && !hasEnoughMkr ? (
             <ErrorBlock>
               You have insufficient MKR balance. Please use `Pay with CDP debt`,
-              or purchase {mkrNeeded ? `at least ${mkrNeeded}` : 'enough'} MKR to pay the stability fee before continuing.
+              or purchase {mkrNeeded ? `at least ${mkrNeeded}` : 'enough'} MKR
+              to pay the stability fee before continuing.
             </ErrorBlock>
           ) : (
             mkrBalance && (
