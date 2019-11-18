@@ -12,6 +12,7 @@ import useStore from '../../hooks/useStore';
 import useValidatedInput from '../../hooks/useValidatedInput';
 import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
+import { SAI } from '../../maker';
 
 export default ({ onNext, onPrev }) => {
   const [{ saiBalance, daiAvailable }, dispatch] = useStore();
@@ -134,7 +135,7 @@ export default ({ onNext, onPrev }) => {
             dispatch({
               type: 'assign',
               payload: {
-                saiAmountToMigrate: maxSelected ? saiBalance : amount
+                saiAmountToMigrate: maxSelected ? saiBalance : SAI(amount)
               }
             });
             onNext();

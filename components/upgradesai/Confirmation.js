@@ -82,7 +82,7 @@ export default ({
     })();
   }, [account, maker, saiAmountToMigrate]);
 
-  const amount = prettifyNumber(saiAmountToMigrate);
+  const amount = prettifyNumber(saiAmountToMigrate.toNumber());
 
   return (
     <Grid maxWidth="600px" gridRowGap="m" px={['s', 0]} minWidth="38rem">
