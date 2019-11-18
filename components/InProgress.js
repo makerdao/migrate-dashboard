@@ -39,7 +39,7 @@ export default ({ migrationTxHash, title, image }) => {
       )}
       {image && (
         <Flex justifyContent="center">
-          <img src={image} css={{ marginTop: '-35px', width: '150px', height: '150px' }} />
+          <img src={image} css={{ marginTop: '5px', width: '80px', height: '80px' }} />
         </Flex>
       )}
     </Grid>
