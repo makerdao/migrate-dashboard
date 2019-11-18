@@ -1,14 +1,15 @@
+import Web3 from 'web3';
+
 export async function checkEthereumProvider() {
-  return new Promise(async (res, rej) => {
-    if (typeof window.ethereum !== 'undefined') {
-      await window.ethereum.enable();
-      const { selectedAddress, networkVersion } = window.ethereum;
-      res({
-        networkId: parseInt(networkVersion, 10),
-        address: selectedAddress
-      });
-    } else rej('No web3 provider detected');
-  });
+  if (typeof window.ethereum === 'undefined')
+    throw new Error('No web3 provider detected');
+
+  await window.ethereum.enable();
+
+  const web3 = new Web3(window.ethereum);
+  const networkId = await web3.eth.net.getId();
+
+  return { networkId, address: window.ethereum.selectedAddress };
 }
 
 export const isValidAddressString = addressString =>
