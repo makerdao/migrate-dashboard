@@ -3,11 +3,16 @@
   "name": "Migrate Dashboard",
   "alias": "migrate-dashboard-staging",
   "builds": [
-    { "src": "package.json", "use": "@now/static-build", "config": { "distDir": "out" }},
+    {
+      "src": "package.json",
+      "use": "@now/static-build",
+      "config": { "distDir": "out" }
+    },
     { "src": "./static", "use": "@now/static" }
   ],
   "routes": [
-    {"src": "^/favicon.ico$", "dest": "/static/favicon.ico"}
+    { "handle": "filesystem" },
+    { "src": "^/favicon.ico$", "dest": "/static/favicon.ico" }
   ],
   "github": {
     "enabled": false
