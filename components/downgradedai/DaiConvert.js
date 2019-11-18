@@ -65,15 +65,15 @@ export default ({ onNext, onPrev }) => {
               placeholder="0.00 DAI"
               onChange={onAmountChange}
               failureMessage={amountErrors}
-              after={
-                <Link
-                  color="blue"
-                  fontWeight="medium"
-                  onClick={() => setAmount(maxOverall)}
-                >
-                  Set max
-                </Link>
-              }
+              // after={
+              //   <Link
+              //     color="blue"
+              //     fontWeight="medium"
+              //     onClick={() => setAmount(maxOverall)}
+              //   >
+              //     Set max
+              //   </Link>
+              // }
             />
             <Grid gridRowGap="xs">
               <Box>
