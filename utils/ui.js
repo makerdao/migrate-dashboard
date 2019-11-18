@@ -48,6 +48,7 @@ export function prettifyNumber(
     else formattedNumber = num.toFixed(decimalPlaces);
   } else {
     formattedNumber = num.toLocaleString(undefined, {
+      minimumFractionDigits: decimalPlaces,
       maximumFractionDigits: decimalPlaces
     });
   }
