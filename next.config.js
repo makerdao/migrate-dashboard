@@ -5,6 +5,7 @@ const lastCommit = execSync('git log --oneline | head -n1')
   .replace(/\n/g, '');
 
 const config = {
+  exportTrailingSlash: true,
   publicRuntimeConfig: {
     lastCommit
   }

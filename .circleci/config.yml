@@ -52,7 +52,7 @@ jobs:
       - run:
           name: Build production artifact
           command: |
-            yarn next-build
+            yarn build
       - run:
           name: Deploy to production
           command: |
