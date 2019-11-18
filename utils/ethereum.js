@@ -1,12 +1,17 @@
 import Web3 from 'web3';
 
 export async function checkEthereumProvider() {
-  if (typeof window.ethereum === 'undefined')
+  let provider;
+  if (typeof window.ethereum !== 'undefined') {
+    await window.ethereum.enable();
+    provider = window.ethereum;
+  } else if (window.web3) {
+    provider = window.web3.currentProvider;
+  } else {
     throw new Error('No web3 provider detected');
+  }
 
-  await window.ethereum.enable();
-
-  const web3 = new Web3(window.ethereum);
+  const web3 = new Web3(provider);
   const networkId = await web3.eth.net.getId();
   const address = (await web3.eth.getAccounts())[0];
 
