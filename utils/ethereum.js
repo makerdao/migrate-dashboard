@@ -8,8 +8,9 @@ export async function checkEthereumProvider() {
 
   const web3 = new Web3(window.ethereum);
   const networkId = await web3.eth.net.getId();
+  const address = (await web3.eth.getAccounts())[0];
 
-  return { networkId, address: window.ethereum.selectedAddress };
+  return { networkId, address };
 }
 
 export const isValidAddressString = addressString =>
