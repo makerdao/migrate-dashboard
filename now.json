@@ -2,7 +2,9 @@
   "version": 2,
   "name": "Migrate Dashboard",
   "alias": "migrate-dashboard-staging",
-  "builds": [{ "src": "package.json", "use": "@now/static-build" }],
+  "builds": [
+    { "src": "package.json", "use": "@now/static-build", "distDir": "out" }
+  ],
   "routes": [
     { "handle": "filesystem" },
     { "src": "^/favicon.ico$", "dest": "/static/favicon.ico" }
