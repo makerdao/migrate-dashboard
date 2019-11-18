@@ -3,7 +3,11 @@
   "name": "Migrate Dashboard",
   "alias": "migrate-dashboard-staging",
   "builds": [
-    { "src": "package.json", "use": "@now/static-build", "distDir": "out" }
+    {
+      "src": "package.json",
+      "use": "@now/static-build",
+      "config": { "distDir": "out" }
+    }
   ],
   "routes": [
     { "handle": "filesystem" },
