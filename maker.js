@@ -66,7 +66,7 @@ export async function connectBrowserProvider(maker) {
     `Expected network ID ${networkId}, got ${browserProvider.networkId}.`
   );
   assert(
-    browserProvider.address.match(/^0x[a-fA-F0-9]{40}$/),
+    browserProvider.address && browserProvider.address.match(/^0x[a-fA-F0-9]{40}$/),
     'Got an incorrect or nonexistent wallet address.'
   );
 
