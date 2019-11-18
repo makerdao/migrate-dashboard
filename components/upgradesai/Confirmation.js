@@ -25,7 +25,9 @@ export default ({
   const [saiApprovePending, setSaiApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
   const [{ saiAmountToMigrate }, dispatch] = useStore();
-  const migrationContractAddress = maker.service('smartContract').getContract('MIGRATION').address;
+  const migrationContractAddress = maker
+    .service('smartContract')
+    .getContract('MIGRATION').address;
 
   const giveProxySaiAllowance = useCallback(async () => {
     setSaiApprovePending(true);
@@ -73,7 +75,7 @@ export default ({
           .getToken('SAI')
           .allowance(account.address, migrationContractAddress);
         const hasSaiAllowance = connectedWalletAllowance.gte(
-          saiAmountToMigrate
+          saiAmountToMigrate.toBigNumber()
         );
         setProxyDetails({ hasSaiAllowance });
       }

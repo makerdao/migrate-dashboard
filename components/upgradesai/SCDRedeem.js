@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Text,
@@ -15,6 +15,7 @@ import { prettifyNumber } from '../../utils/ui';
 
 export default ({ onNext, onPrev }) => {
   const [{ saiBalance, daiAvailable }, dispatch] = useStore();
+  const [maxSelected, setMaxSelected] = useState();
   const maxOverall = Math.min(
     saiBalance && saiBalance.toNumber(),
     daiAvailable
@@ -34,6 +35,16 @@ export default ({ onNext, onPrev }) => {
       }
     }
   );
+
+  const setMax = () => {
+    setMaxSelected(true);
+    setAmount(maxOverall);
+  };
+
+  const onChange = event => {
+    onAmountChange(event);
+    setMaxSelected(false);
+  };
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
@@ -64,17 +75,13 @@ export default ({ onNext, onPrev }) => {
               disabled={!saiBalance}
               min="0"
               placeholder="0.00 SAI"
-              onChange={onAmountChange}
+              onChange={onChange}
               failureMessage={amountErrors}
-              // after={
-              //   <Link
-              //     color="blue"
-              //     fontWeight="medium"
-              //     onClick={() => setAmount(maxOverall)}
-              //   >
-              //     Set max
-              //   </Link>
-              // }
+              after={
+                <Link color="blue" fontWeight="medium" onClick={setMax}>
+                  Set max
+                </Link>
+              }
             />
             <Grid gridRowGap="xs">
               <Box>
@@ -127,7 +134,7 @@ export default ({ onNext, onPrev }) => {
             dispatch({
               type: 'assign',
               payload: {
-                saiAmountToMigrate: amount
+                saiAmountToMigrate: maxSelected ? saiBalance : amount
               }
             });
             onNext();

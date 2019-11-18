@@ -15,7 +15,7 @@ import useMaker from '../../hooks/useMaker';
 function Complete({ onClose, migrationTxHash }) {
   const { network } = useMaker();
   const [{ saiAmountToMigrate }] = useStore();
-  const amount = prettifyNumber(saiAmountToMigrate);
+  const amount = prettifyNumber(saiAmountToMigrate.toNumber());
 
   return (
     <Grid gridRowGap="m" mx={'s'}>
