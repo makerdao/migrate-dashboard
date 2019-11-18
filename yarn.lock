@@ -1096,10 +1096,10 @@
     "@makerdao/i18n-helper" "^0.1.6"
     react-qr-svg "^2.2.1"
 
-"@makerdao/ui-components-header@^0.1.11-alpha.8":
-  version "0.1.11-alpha.8"
-  resolved "https://registry.yarnpkg.com/@makerdao/ui-components-header/-/ui-components-header-0.1.11-alpha.8.tgz#f5e29cddbb1cb37868503d0a8255755d3e0f20b1"
-  integrity sha512-8R0lJHH1DA9VGb7DZQAi86zW02OIVIXWpRjxeRtOVank0qzzKMV64Zyq6l3HNsvTt/VM5jXMpmWzlQL8xVhQVA==
+"@makerdao/ui-components-header@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/ui-components-header/-/ui-components-header-0.2.1.tgz#5218e48b6a7d35444d928fcf1341c099fc63b057"
+  integrity sha512-q0mVIJU+add65tmcuyUCkfhO3Vx/bevNqwa1ukn84bpRXQjhjoqhRPEQ+7ngsMglKodgMiYAS1XOl3kdrx5IjQ==
   dependencies:
     "@makerdao/i18n-helper" "^0.1.7"
 
