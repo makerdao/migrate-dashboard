@@ -101,7 +101,7 @@ function Index() {
       </Grid>
       {!!saiAvailable && (
         <Text m="0 auto" mb="m">
-          Sai available for migration: {prettifyNumber(saiAvailable)}
+          Sai available for CDP migration: {prettifyNumber(saiAvailable)}
         </Text>
       )}
       <Box width="100%" height="75px" />

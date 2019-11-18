@@ -19,7 +19,9 @@ import daiLogo from '../../assets/icons/dai-logo.svg';
 const steps = [
   props => <SCDRedeem {...props} />,
   props => <Confirmation {...props} />,
-  props => <InProgress {...props} title="Your Sai is being upgraded" image={daiLogo} />,
+  props => (
+    <InProgress {...props} title="Your Sai is being upgraded" image={daiLogo} />
+  ),
   props => <Complete {...props} />,
   props => (
     <Failed
@@ -57,7 +59,7 @@ export default function() {
           m="0 auto"
           mt={'m'}
           p={['0 80px', '0']}
-          opacity={currentStep < 1 ? 1 : 0}
+          opacity={currentStep < 2 ? 1 : 0}
           transition="opacity 0.2s"
         />
 
