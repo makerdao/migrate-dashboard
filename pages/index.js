@@ -68,7 +68,7 @@ function Index() {
         gridRowGap="m"
       >
         <Box
-          maxWidth="57.6rem"
+          maxWidth="71.6rem"
           width="100%"
           mt="xl"
           textAlign={{ s: 'center', l: 'center' }}
@@ -84,7 +84,7 @@ function Index() {
           </Breakout>
         </Box>
       </Grid>
-      <Text.h4 alignSelf="center" mb="s" color="#546978">
+      <Text.h4 alignSelf="center" mb="s" mt="s" color="#546978">
         Connect a wallet to get started
       </Text.h4>
       <Grid
@@ -101,9 +101,10 @@ function Index() {
       </Grid>
       {!!saiAvailable && (
         <Text m="0 auto" mb="m">
-          Sai available: {prettifyNumber(saiAvailable)}
+          Sai available for migration: {prettifyNumber(saiAvailable)}
         </Text>
       )}
+      <Box width="100%" height="75px" />
       <Footer />
     </Flex>
   );

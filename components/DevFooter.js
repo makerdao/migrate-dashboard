@@ -14,7 +14,7 @@ const commitUrl = `https://github.com/makerdao/migrate-dashboard/commit/${sha}`;
 export default function DevFooter() {
   const { network } = useMaker();
   return (
-    <Grid maxWidth="1140px" m="0 auto">
+    <Grid maxWidth="1140px" mt="l" m="0 auto">
       <Box mb="s" textAlign={['center', 'right']}>
         {network === 'kovan' && (
           <Text mr="l" fontSize="xs" color="steelLight">

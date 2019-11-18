@@ -133,7 +133,7 @@ function Overview() {
       </div>
 
       <Box maxWidth="112.5rem" width="100%" mx="auto" px="m" flexGrow="1">
-        <Box mt={{ s: 'm', m: '2xl' }} maxWidth="64.2rem" width="100%">
+        <Box mt={{ s: 'm', m: '2xl' }} maxWidth="82.2rem" width="100%">
           <Text.h2 mb="s" textAlign={{ s: 'center', l: 'left' }}>
             Migrate and Upgrade
           </Text.h2>

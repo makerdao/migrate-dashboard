@@ -18,7 +18,8 @@ export default ({ migrationTxHash, title, image }) => {
     >
       <Text.h2 textAlign="center">{title}</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        The estimated time is {waitTime || 'being calculated'}.
+        The estimated time is {waitTime || 'being calculated'}. Please wait
+        until this transaction has confirmed before leaving.
       </Text.p>
       {migrationTxHash && (
         <Link
@@ -39,7 +40,10 @@ export default ({ migrationTxHash, title, image }) => {
       )}
       {image && (
         <Flex justifyContent="center">
-          <img src={image} css={{ marginTop: '5px', width: '80px', height: '80px' }} />
+          <img
+            src={image}
+            css={{ marginTop: '5px', width: '80px', height: '80px' }}
+          />
         </Flex>
       )}
     </Grid>

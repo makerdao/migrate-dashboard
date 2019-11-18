@@ -22,7 +22,7 @@ function Subheading({ account, ...props }) {
       mx="auto"
       px="m"
     >
-      <Text.h5 display={{ s: 'none', m: 'block' }}>Migrate and Upgrade</Text.h5>
+      <Text.h5 display={{ s: 'none', m: 'block' }}>Migrate</Text.h5>
       <Card py="xs" px="m" flexGrow={{ s: '1', m: '0' }}>
         {account ? <Account account={account} /> : <NoAccount />}
       </Card>

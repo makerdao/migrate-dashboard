@@ -129,7 +129,7 @@ export default ({
         textAlign="center"
         t="body"
         fontSize="1.8rem"
-        maxWidth="498px"
+        maxWidth="610px"
         m="0 auto"
       >
         Select a CDP and pay back the Stability Fee in MKR or debt from your CDP
