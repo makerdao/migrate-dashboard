@@ -7,6 +7,7 @@ import Trezor from '../assets/icons/trezor.svg';
 import Ledger from '../assets/icons/ledger.svg';
 import walletConnect from '../assets/icons/walletConnect.svg';
 import walletLink from '../assets/icons/wallet-link.svg';
+import { BrowserView } from 'react-device-detect';
 
 import Router from 'next/router';
 import lang from '../languages';
@@ -51,60 +52,72 @@ function WalletManager({ providerName }) {
         disabled={!maker}
         provider={providerName}
       />
-      <IconButton
-        onClick={connectTrezorWallet}
-        disabled={!maker}
-        icon={
-          <img
-            src={Trezor}
-            css={{ marginTop: -5, marginBottom: -5, paddingLeft: 5 }}
-          />
-        }
-      >
-        {lang.providers.trezor}
-      </IconButton>
-      <IconButton
-        onClick={connectLedgerWallet}
-        disabled={!maker}
-        icon={
-          <img
-            src={Ledger}
-            css={{ marginTop: -5, marginBottom: -5, paddingLeft: 5 }}
-          />
-        }
-      >
-        {lang.providers.ledger_nano}
-      </IconButton>
+      <BrowserView>
+        <IconButton
+          onClick={connectTrezorWallet}
+          disabled={!maker}
+          icon={
+            <img
+              src={Trezor}
+              css={{ marginTop: -5, marginBottom: -5, paddingLeft: 5 }}
+            />
+          }
+        >
+          {lang.providers.trezor}
+        </IconButton>
+      </BrowserView>
 
-      <IconButton
-        onClick={() => {
-          connectToProviderOfType('walletconnect');
-        }}
-        disabled={!maker}
-        icon={
-          <img
-            src={walletConnect}
-            css={{ marginTop: -5, marginBottom: -5 }}
-          />
-        }
-      >
-        {lang.providers.wallet_connect}
-      </IconButton>
-
-      <IconButton
-         onClick={() => {
-          connectToProviderOfType('walletlink');
-        }}
-        disabled={!maker}
-        icon={
-          <img
-            src={walletLink}
-            css={{ marginTop: -5, marginBottom: -5, paddingLeft: 2, width: 26 }}
-          />
-        }
-      >
-        {lang.providers.wallet_link}
-      </IconButton>
+      <BrowserView>
+        <IconButton
+          onClick={connectLedgerWallet}
+          disabled={!maker}
+          icon={
+            <img
+              src={Ledger}
+              css={{ marginTop: -5, marginBottom: -5, paddingLeft: 5 }}
+            />
+          }
+        >
+          {lang.providers.ledger_nano}
+        </IconButton>
+      </BrowserView>
+      <BrowserView>
+        <IconButton
+          onClick={() => {
+            connectToProviderOfType('walletconnect');
+          }}
+          disabled={!maker}
+          icon={
+            <img
+              src={walletConnect}
+              css={{ marginTop: -5, marginBottom: -5 }}
+            />
+          }
+        >
+          {lang.providers.wallet_connect}
+        </IconButton>
+      </BrowserView>
+      <BrowserView>
+        <IconButton
+          onClick={() => {
+            connectToProviderOfType('walletlink');
+          }}
+          disabled={!maker}
+          icon={
+            <img
+              src={walletLink}
+              css={{
+                marginTop: -5,
+                marginBottom: -5,
+                paddingLeft: 2,
+                width: 26
+              }}
+            />
+          }
+        >
+          {lang.providers.wallet_link}
+        </IconButton>
+      </BrowserView>
     </Grid>
   );
 }
