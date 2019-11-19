@@ -7,7 +7,6 @@ import MakerProvider from '../providers/MakerProvider';
 import StoreProvider from '../providers/StoreProvider';
 import WalletProvider from '../providers/WalletProvider';
 import theme, { getColor } from '../utils/theme';
-import { wallets, templates } from '../components/wallets';
 import DevFooter from '../components/DevFooter';
 import Toast from '../components/Toast';
 
@@ -41,7 +40,7 @@ export default class MyApp extends App {
         <ThemeProvider theme={theme}>
           <MakerProvider network={network}>
             <StoreProvider>
-              <WalletProvider modals={wallets} templates={templates}>
+              <WalletProvider>
                 <Component {...pageProps} />
                 <Toast />
                 <DevFooter />

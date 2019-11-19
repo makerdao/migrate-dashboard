@@ -4,6 +4,7 @@ import {
   enableBodyScroll
 } from 'body-scroll-lock';
 import React, { createContext, useEffect, useReducer, useRef } from 'react';
+import { wallets, templates } from '../components/wallets';
 
 function resolveModalTypeToComponent(modals, type) {
   if (!modals || !type || !modals[type]) return null;
@@ -30,11 +31,7 @@ const reducer = (state, { type, payload }) => {
 
 export const WalletStateContext = createContext(initialState);
 
-function resolveModalTemplateToComponent(templates, template) {
-  return templates[template] || templates.default;
-}
-
-function WalletProvider({ children, modals, templates }) {
+function WalletProvider({ children }) {
   const ref = useRef();
   const [{ modalType, modalTemplate, modalProps }, dispatch] = useReducer(
     reducer,
@@ -60,10 +57,7 @@ function WalletProvider({ children, modals, templates }) {
     return () => clearAllBodyScrollLocks();
   }, []);
 
-  const ModalTemplateComponent = resolveModalTemplateToComponent(
-    templates,
-    modalTemplate
-  );
+  const ModalTemplateComponent = templates[modalTemplate] || templates.default;
 
   return (
     <WalletStateContext.Provider value={{ show, reset }}>
@@ -73,7 +67,7 @@ function WalletProvider({ children, modals, templates }) {
           onClose={reset}
           modalProps={modalProps}
         >
-          {resolveModalTypeToComponent(modals, modalType)}
+          {resolveModalTypeToComponent(wallets, modalType)}
         </ModalTemplateComponent>
       </div>
       {children}
