@@ -3,13 +3,17 @@ import { Box, Position } from '@makerdao/ui-components-core';
 
 const transitionDuration = 300;
 
-function FlowBackground({ children, open }) {
+function FlowBackground({ children }) {
   const [delayedOpen, setDelayedOpen] = useState(false);
 
   useEffect(() => {
+    // this avoids a warning about state changes outside of act()
+    if (process.env.TESTING) return;
+
     // cheap hack to force a render to make sure transitions are played on mount
-    setTimeout(() => setDelayedOpen(open));
-  }, [open]);
+    const timeout = setTimeout(() => setDelayedOpen(true));
+    return () => clearTimeout(timeout);
+  }, []);
 
   const isActive = delayedOpen;
 
