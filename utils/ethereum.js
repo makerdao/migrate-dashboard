@@ -3,6 +3,7 @@ import Web3 from 'web3';
 export async function checkEthereumProvider() {
   let provider;
   if (typeof window.ethereum !== 'undefined') {
+    window.ethereum.autoRefreshOnNetworkChange = false;
     await window.ethereum.enable();
     provider = window.ethereum;
   } else if (window.web3) {
