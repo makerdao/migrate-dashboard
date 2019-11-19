@@ -81,6 +81,7 @@ const PayAndMigrate = ({
   const [mkrApprovePending, setMkrApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
   const [mkrBalance, setMkrBalance] = useState(false);
+  const [saiNeededInMarket, setSaiNeededInMarket] = useState(false);
   const [, dispatch] = useStore();
   const { maker, account } = useMaker();
   const { govFeeMKRExact } = selectedCDP;
@@ -171,12 +172,17 @@ const PayAndMigrate = ({
   useEffect(() => {
     (async () => {
       if (maker && account) {
+        const mig = maker
+        .service('migration')
+        .getMigration('single-to-multi-cdp');
         const mkrToken = maker.service('token').getToken(MKR);
-        const [mkrBalanceFromSdk, proxyAddress] = await Promise.all([
+        const [mkrBalanceFromSdk, proxyAddress, saiNeededInMarketFromSdk] = await Promise.all([
           mkrToken.balance(),
-          maker.service('proxy').currentProxy()
+          maker.service('proxy').currentProxy(),
+          mig.saiAmountNeededToBuyMkr(govFeeMKRExact)
         ]);
         setMkrBalance(mkrBalanceFromSdk);
+        setSaiNeededInMarket(saiNeededInMarketFromSdk);
         if (proxyAddress) {
           const connectedWalletAllowance = await maker
             .getToken(MKR)
@@ -202,6 +208,7 @@ const PayAndMigrate = ({
     }
   }
   const aboveOneSeventy = newCollatRatio > 170;
+  const enoughMkrInMarket = saiNeededInMarket && maxCost.toBigNumber().gt(saiNeededInMarket.toBigNumber());
 
   const TAB_PAY_WITH_MKR = 0;
   const TAB_PAY_WITH_DEBT = 1;
@@ -333,7 +340,7 @@ const PayAndMigrate = ({
                   </Text>
                 </Table.td>
               </Table.tr>
-              {aboveOneSeventy ? (
+              {aboveOneSeventy && enoughMkrInMarket ? (
                 <Table.tr>
                   <Table.td>
                     <Text color={!aboveOneSeventy ? '#D85B19' : null}>
@@ -352,13 +359,14 @@ const PayAndMigrate = ({
               ) : null}
             </Table.tbody>
           </Table>
-          {aboveOneSeventy ? (
+          {aboveOneSeventy && enoughMkrInMarket ? (
             <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
           ) : (
             <ErrorBlock>
-              You cannot use this feature because your CDP would end up with a
-              collateralization ratio of less than {CDP_MIN_RATIO}%. Please use
-              ‘Pay with MKR’ or repay some of your CDP debt before continuing.
+              {!aboveOneSeventy ? `You cannot use this feature because your CDP would end up with a
+              collateralization ratio of less than ${CDP_MIN_RATIO}%. Please use
+              ‘Pay with MKR’ or repay some of your CDP debt before continuing.`
+              : `There is not enough liquidity in the market at this time to purchase ${selectedCDP.govFeeMKR} MKR with a maximum of 5% slippage.`}
             </ErrorBlock>
           )}
         </Grid>
