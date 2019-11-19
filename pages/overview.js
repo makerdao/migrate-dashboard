@@ -138,8 +138,8 @@ function Overview() {
             Migrate and Upgrade
           </Text.h2>
           <Breakout textAlign={{ s: 'center', l: 'left' }}>
-            Use Migrate after system updates to move your Dai, MKR, and CDPs
-            into their new versions.
+            Use Migrate after system updates to move your Dai and CDPs into
+            their new versions.
           </Breakout>
         </Box>
 
