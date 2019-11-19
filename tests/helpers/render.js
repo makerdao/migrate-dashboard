@@ -1,18 +1,36 @@
-import { render } from '@testing-library/react';
+import { Fragment } from 'react';
+import { render as renderBase } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import MakerProvider from '../../providers/MakerProvider';
 import StoreProvider from '../../providers/StoreProvider';
 import WalletProvider from '../../providers/WalletProvider';
+import useStore from '../../hooks/useStore';
 import theme from '../../utils/theme';
 
-export default function renderWithProviders(children) {
-  return render(
+export default async function render(children, { initialState } = {}) {
+  let callback;
+  const promise = new Promise(resolve => {
+    callback = (state, dispatch) => resolve([state, dispatch]);
+  });
+
+  const renderResults = renderBase(
     <ThemeProvider theme={theme}>
       <MakerProvider>
-        <StoreProvider>
-          <WalletProvider>{children}</WalletProvider>
+        <StoreProvider initialState={initialState}>
+          <WalletProvider>
+            <StoreAccess callback={callback}>{children}</StoreAccess>
+          </WalletProvider>
         </StoreProvider>
       </MakerProvider>
     </ThemeProvider>
   );
+
+  const [state, dispatch] = await promise;
+  return { ...renderResults, state, dispatch };
+}
+
+export function StoreAccess({ callback, children }) {
+  const [state, dispatch] = useStore();
+  if (callback) callback(state, dispatch);
+  return <Fragment>{children}</Fragment>;
 }
