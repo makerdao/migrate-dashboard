@@ -29,7 +29,7 @@ export default async function render(children, { initialState } = {}) {
   return { ...renderResults, state, dispatch };
 }
 
-export function StoreAccess({ callback, children }) {
+function StoreAccess({ callback, children }) {
   const [state, dispatch] = useStore();
   if (callback) callback(state, dispatch);
   return <Fragment>{children}</Fragment>;
