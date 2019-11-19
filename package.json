@@ -9,7 +9,7 @@
     "dev": "next",
     "build": "next build && next export",
     "start": "next start",
-    "test": "echo \"To DAI, to sleep - to sleep, perchance to dream\""
+    "test": "jest"
   },
   "dependencies": {
     "@makerdao/currency": "^0.9.5",
@@ -42,6 +42,7 @@
     "trezor-connect": "^7.0.5"
   },
   "devDependencies": {
+    "@testing-library/react": "^9.3.2",
     "babel-eslint": "^10.0.3",
     "babel-plugin-inline-react-svg": "^1.1.0",
     "babel-plugin-styled-components": "^1.10.6",
@@ -49,6 +50,7 @@
     "eslint-plugin-react": "^7.16.0",
     "eslint-plugin-react-hooks": "^2.2.0",
     "husky": "^3.0.9",
+    "jest": "^24.9.0",
     "lint-staged": "^9.4.3"
   },
   "lint-staged": {
