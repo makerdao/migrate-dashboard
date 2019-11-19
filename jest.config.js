@@ -7,5 +7,6 @@ module.exports = {
   transform: {
     '^.+\\.jsx?$': 'babel-jest',
     '^.+\\.svg$': './tests/helpers/transformSvgToPath'
-  }
+  },
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.yalc/']
 };
