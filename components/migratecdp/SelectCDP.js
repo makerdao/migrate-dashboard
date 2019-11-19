@@ -74,9 +74,9 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
           {/* Collateralization */}
           <span>{cdp.collateralizationRatio + '%'}</span>
           {/* Debt Value */}
-          <span>{cdp.debtValue} DAI</span>
+          <span>{cdp.debtValue} SAI</span>
           {/* Fee in DAI */}
-          <span>{cdp.govFeeDai} DAI</span>
+          <span>{cdp.govFeeDai} SAI</span>
           {/* Fee in MKR */}
           <span>{cdp.govFeeMKR} MKR</span>
         </Grid>
@@ -102,7 +102,7 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
           dark
         />
         <ListItemRow label="Sai Debt" value={cdp.debtValue + ' SAI'} />
-        <ListItemRow label="Fee in DAI" value={cdp.govFeeDai + ' DAI'} dark />
+        <ListItemRow label="Fee in SAI" value={cdp.govFeeDai + ' SAI'} dark />
         <ListItemRow label="Fee in MKR" value={cdp.govFeeMKR + ' MKR'} />
       </Box>
     </Card>
@@ -176,8 +176,8 @@ export default ({
               <span />
               <Text t="subheading">CDP ID</Text>
               <Text t="subheading">Current Ratio</Text>
-              <Text t="subheading">Dai Debt</Text>
-              <Text t="subheading">Fee In DAI</Text>
+              <Text t="subheading">Sai Debt</Text>
+              <Text t="subheading">Fee In SAI</Text>
               <Text t="subheading">Fee in MKR</Text>
             </Grid>
           </Box>
