@@ -22,6 +22,7 @@
     "linebreak-style": ["error", "unix"],
     "semi": ["error", "always"],
     "quotes": ["error", "single", { "avoidEscape": true }],
+    "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "react/display-name": "off",
     "react-hooks/rules-of-hooks": "error",
