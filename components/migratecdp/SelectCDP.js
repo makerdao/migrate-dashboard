@@ -135,28 +135,7 @@ export default ({
         Select a CDP and pay back the Stability Fee in MKR or debt from your CDP
         to upgrade it to Multi-Collateral Dai and the new Oasis Borrow Portal.
       </Text.p>
-      <Card
-        bg="yellow.100"
-        color="#826318"
-        borderColor="yellow.400"
-        border="1px solid"
-        textAlign="center"
-        lineHeight="normal"
-        p="m"
-      >
-        CDPs with less than 20 or more than {prettifyNumber(saiAvailable)} SAI
-        of debt cannot be migrated at this time.
-        <br />
-        For additional information, visit{' '}
-        <a
-          href="https://chat.makerdao.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          chat.makerdao.com
-        </a>
-        .
-      </Card>
+      <DebtLimitMessage saiAvailable={saiAvailable} />
       <Overflow x="scroll" y="visible">
         <Grid gridRowGap="s" pb="m">
           <Box display={['none', 'block']}>
@@ -222,3 +201,37 @@ export default ({
     </Grid>
   );
 };
+
+const DebtLimitMessage = ({ saiAvailable }) => (
+  <Card
+    bg="yellow.100"
+    color="#826318"
+    borderColor="yellow.400"
+    border="1px solid"
+    textAlign="center"
+    lineHeight="normal"
+    p="m"
+  >
+    {saiAvailable < 20 ? (
+      <span>
+        There is not enough Sai available to migrate CDPs at this time. Please
+        try again later.
+      </span>
+    ) : (
+      <span>
+        CDPs with less than 20 or more than {prettifyNumber(saiAvailable)} SAI
+        of debt cannot be migrated at this time.
+      </span>
+    )}
+    <br />
+    For additional information, visit{' '}
+    <a
+      href="https://chat.makerdao.com"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      chat.makerdao.com
+    </a>
+    .
+  </Card>
+);
