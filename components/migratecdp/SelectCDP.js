@@ -101,7 +101,7 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
           value={cdp.collateralizationRatio + '%'}
           dark
         />
-        <ListItemRow label="Dai Debt" value={cdp.debtValue + ' DAI'} />
+        <ListItemRow label="Sai Debt" value={cdp.debtValue + ' SAI'} />
         <ListItemRow label="Fee in DAI" value={cdp.govFeeDai + ' DAI'} dark />
         <ListItemRow label="Fee in MKR" value={cdp.govFeeMKR + ' MKR'} />
       </Box>
