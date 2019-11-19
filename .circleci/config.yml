@@ -27,7 +27,7 @@ jobs:
             - dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Run tests
-          command: yarn test
+          command: yarn test --coverage
   deploy_staging:
     docker:
       - image: circleci/node:lts
