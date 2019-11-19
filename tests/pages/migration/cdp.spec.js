@@ -1,5 +1,5 @@
-import MigrateCdp from '../cdp';
-import render from '../../../utils/testing/render';
+import MigrateCdp from '../../../pages/migration/cdp';
+import render from '../../helpers/render';
 
 test('basic rendering', async () => {
   const { getByText } = render(<MigrateCdp />);

@@ -3,9 +3,9 @@ module.exports = {
   collectCoverageFrom: [
     '{components,hooks,layouts,pages,providers,utils}/**/*.js'
   ],
-  setupFilesAfterEnv: ['./utils/testing/setup'],
+  setupFilesAfterEnv: ['./tests/helpers/setup'],
   transform: {
     '^.+\\.jsx?$': 'babel-jest',
-    '^.+\\.svg$': './utils/testing/transformSvgToPath'
+    '^.+\\.svg$': './tests/helpers/transformSvgToPath'
   }
 };

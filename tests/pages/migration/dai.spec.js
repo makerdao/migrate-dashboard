@@ -1,5 +1,5 @@
-import UpgradeSai from '../dai';
-import render from '../../../utils/testing/render';
+import UpgradeSai from '../../../pages/migration/dai';
+import render from '../../helpers/render';
 
 test('basic rendering', async () => {
   const { getByText } = render(<UpgradeSai />);

@@ -1,10 +1,9 @@
-import App from 'next/app';
 import { render } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import MakerProvider from '../../providers/MakerProvider';
 import StoreProvider from '../../providers/StoreProvider';
 import WalletProvider from '../../providers/WalletProvider';
-import theme from '../theme';
+import theme from '../../utils/theme';
 
 export default function renderWithProviders(children) {
   return render(
