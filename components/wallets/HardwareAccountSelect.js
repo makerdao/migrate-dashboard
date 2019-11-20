@@ -59,7 +59,9 @@ function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
   ) : (
     <Grid gridRowGap="m" width={['100%', '53rem']}>
       <Flex justifyContent="flex-end">
-        <Cross css={{ cursor: 'pointer' }} onClick={onClose} />
+        <Box onClick={onClose} css={{ cursor: 'pointer' }}>
+          <img src={Cross} />
+        </Box>
       </Flex>
       <Grid gridRowGap="s">
         <Text.h3 textAlign="center">Select address</Text.h3>
