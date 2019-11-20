@@ -18,11 +18,7 @@ function FlowBackground({ children }) {
   const isActive = delayedOpen;
 
   return (
-    <Position
-      top="0"
-      left="0"
-      style={{ pointerEvents: open ? 'unset' : 'none' }}
-    >
+    <Position top="0" left="0" style={{ pointerEvents: 'unset' }}>
       <Box
         width="100vw"
         bg="lightGrey"
