@@ -47,7 +47,7 @@ const reducer = (state, action) => {
 const initialState = {
   fetching: false,
   accounts: [],
-  onAccountChosen: () => {}
+  onAccountChosen: () => { }
 };
 
 const DEFAULT_ACCOUNTS_LENGTH = 25;
@@ -104,7 +104,7 @@ export function useLedger({ onAccountChosen }) {
         }
       });
     },
-    [show]
+    [accountSelection, show]
   );
 
   return { connectLedgerWallet };
