@@ -122,7 +122,7 @@ export default function() {
   const showErrorMessageAndAllowExiting = () => setCurrentStep(5);
 
   return (
-    <FlowBackground open={true}>
+    <FlowBackground>
       <Grid gridRowGap={['m', 'xl']}>
         <FlowHeader
           account={account}

@@ -50,7 +50,7 @@ export default function() {
   const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
 
   return (
-    <FlowBackground open={true}>
+    <FlowBackground>
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
         <FlowHeader account={account} showClose={currentStep <= 1} />
         <Stepper

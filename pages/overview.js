@@ -158,7 +158,7 @@ function Overview() {
               metadataValue={showCdpCount(cdps)}
               body={`Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai liquidity: ${prettifyNumber(
                 saiAvailable
-              )} SAI`}
+              )}`}
               onSelected={() => Router.push('/migration/cdp')}
             />
           )}
@@ -180,7 +180,7 @@ function Overview() {
               title="Swap Dai for Sai"
               body={`Swap your Multi-Collateral Dai back to Single-Collateral Sai. Current Sai liquidity: ${prettifyNumber(
                 saiAvailable
-              )} SAI`}
+              )}`}
               metadataTitle="Dai available to swap"
               metadataValue={showAmount(daiBalance)}
               onSelected={() => {

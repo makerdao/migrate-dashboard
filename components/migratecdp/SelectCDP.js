@@ -212,15 +212,15 @@ const DebtLimitMessage = ({ saiAvailable }) => (
     lineHeight="normal"
     p="m"
   >
-    {saiAvailable < 20 ? (
+    {saiAvailable && saiAvailable.lt(20) ? (
       <span>
         There is not enough Sai available to migrate CDPs at this time. Please
         try again later.
       </span>
     ) : (
       <span>
-        CDPs with less than 20 or more than {prettifyNumber(saiAvailable)} SAI
-        of debt cannot be migrated at this time.
+        CDPs with less than 20 or more than {prettifyNumber(saiAvailable)} of
+        debt cannot be migrated at this time.
       </span>
     )}
     <br />

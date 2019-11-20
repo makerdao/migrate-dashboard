@@ -6,6 +6,7 @@ module.exports = {
   setupFilesAfterEnv: ['./tests/helpers/setup'],
   transform: {
     '^.+\\.jsx?$': 'babel-jest',
-    '^.+\\.svg$': './tests/helpers/transformSvgToPath'
-  }
+    '^.+\\.(svg|png)$': './tests/helpers/transformImportToPath'
+  },
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.yalc/']
 };
