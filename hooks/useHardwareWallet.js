@@ -21,7 +21,7 @@ const reducer = (state, action) => {
         fetching: false,
         onAccountChosen: payload.onAccountChosen
       };
-    case 'fetch-success':
+    case 'fetch-success': {
       const newAccountsLength = payload.accounts.length;
       const offset = payload.offset * newAccountsLength;
       const newAccounts = [
@@ -34,6 +34,7 @@ const reducer = (state, action) => {
         fetching: false,
         accounts: newAccounts
       };
+    }
     case 'error':
       return {
         ...state,
@@ -47,7 +48,7 @@ const reducer = (state, action) => {
 const initialState = {
   fetching: false,
   accounts: [],
-  onAccountChosen: () => { }
+  onAccountChosen: () => {}
 };
 
 const DEFAULT_ACCOUNTS_LENGTH = 25;
@@ -56,22 +57,19 @@ const DEFAULT_ACCOUNTS_LENGTH = 25;
 export function useTrezor({ onAccountChosen }) {
   const { show } = useWallet();
 
-  const connectTrezorWallet = useCallback(
-    path => {
-      console.log('using hardwareccountselect');
-      show({
-        modalType: 'hardwareaccountselect',
-        modalProps: {
-          type: AccountTypes.TREZOR,
-          path: TREZOR_PATH,
-          confirmAddress: address => {
-            onAccountChosen(address, AccountTypes.TREZOR);
-          }
+  const connectTrezorWallet = useCallback(() => {
+    console.log('using hardwareccountselect');
+    show({
+      modalType: 'hardwareaccountselect',
+      modalProps: {
+        type: AccountTypes.TREZOR,
+        path: TREZOR_PATH,
+        confirmAddress: address => {
+          onAccountChosen(address, AccountTypes.TREZOR);
         }
-      });
-    },
-    [show, onAccountChosen]
-  );
+      }
+    });
+  }, [show, onAccountChosen]);
 
   return { connectTrezorWallet };
 }
@@ -95,17 +93,14 @@ export function useLedger({ onAccountChosen }) {
     [show, onAccountChosen]
   );
 
-  const connectLedgerWallet = useCallback(
-    path => {
-      show({
-        modalType: 'ledgertype',
-        modalProps: {
-          onPathSelect: accountSelection
-        }
-      });
-    },
-    [accountSelection, show]
-  );
+  const connectLedgerWallet = useCallback(() => {
+    show({
+      modalType: 'ledgertype',
+      modalProps: {
+        onPathSelect: accountSelection
+      }
+    });
+  }, [accountSelection, show]);
 
   return { connectLedgerWallet };
 }
@@ -113,7 +108,6 @@ export function useLedger({ onAccountChosen }) {
 function useHardwareWallet({
   type,
   path,
-  initialOffset = 0,
   accountsLength = DEFAULT_ACCOUNTS_LENGTH
 }) {
   const { maker } = useMaker();
