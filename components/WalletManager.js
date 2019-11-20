@@ -13,12 +13,20 @@ import Router from 'next/router';
 import lang from '../languages';
 import { useLedger, useTrezor } from '../hooks/useHardwareWallet';
 import { connectBrowserProvider } from '../maker';
+import useStore from '../hooks/useStore';
 
 function WalletManager({ providerName }) {
+  const [{}, dispatch] = useStore();
   const { maker } = useMaker();
 
   const onAccountChosen = useCallback(
-    async ({ address }) => {
+    async ({ address }, type) => {
+      dispatch({
+        type: 'assign',
+        payload: {
+          accountType: type
+        }
+      });
       maker.useAccountWithAddress(address);
       Router.push('/overview');
     },

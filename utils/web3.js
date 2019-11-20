@@ -1,4 +1,5 @@
 import lang from '../languages';
+import { AccountTypes } from './constants';
 
 export const wallets = {
   IMTOKEN: 'imtoken',
@@ -69,7 +70,9 @@ export function walletName(providerName) {
   }
 }
 
-export function shortWalletName(providerName) {
+export function shortWalletName(providerName, type) {
+  if (type === AccountTypes.LEDGER) return 'Ledger';
+  if (type === AccountTypes.TREZOR) return 'Trezor';
   const name = walletName(providerName);
   if (name === lang.providers.other) return 'Wallet';
   return name.split(' ')[0];

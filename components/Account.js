@@ -7,12 +7,12 @@ import useStore from '../hooks/useStore';
 
 function Account({ account }) {
   const { address } = account;
-  const [{ providerName }] = useStore();
+  const [{ providerName, accountType }] = useStore();
   return (
     <Flex alignItems="center" justifyContent="center">
       <Jazzicon diameter={20} seed={jsNumberForAddress(address)} />
       <Text display="block" ml="xs" color="steel">
-        {shortWalletName(providerName)} {cutMiddle(address, 6)}
+        {shortWalletName(providerName, accountType)} {cutMiddle(address, 6)}
       </Text>
     </Flex>
   );
