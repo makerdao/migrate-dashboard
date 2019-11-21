@@ -58,7 +58,6 @@ export function useTrezor({ onAccountChosen }) {
   const { show } = useWallet();
 
   const connectTrezorWallet = useCallback(() => {
-    console.log('using hardwareccountselect');
     show({
       modalType: 'hardwareaccountselect',
       modalProps: {
@@ -121,7 +120,6 @@ function useHardwareWallet({
       accountsOffset: 0,
       accountsLength: accountsLength,
       choose: async (accounts, onAccountChosen) => {
-        console.log(accounts);
         dispatch({ type: 'connect-success', payload: { onAccountChosen } });
         dispatch({ type: 'fetch-success', payload: { accounts, offset: 0 } });
       }
