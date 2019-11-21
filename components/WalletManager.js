@@ -16,7 +16,7 @@ import { connectBrowserProvider } from '../maker';
 import useStore from '../hooks/useStore';
 
 function WalletManager({ providerName }) {
-  const [{}, dispatch] = useStore();
+  const [, dispatch] = useStore();
   const { maker } = useMaker();
 
   const onAccountChosen = useCallback(
@@ -30,7 +30,7 @@ function WalletManager({ providerName }) {
       maker.useAccountWithAddress(address);
       Router.push('/overview');
     },
-    [maker]
+    [dispatch, maker]
   );
 
   const connectToProviderOfType = async type => {

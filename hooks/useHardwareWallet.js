@@ -113,7 +113,7 @@ function useHardwareWallet({
   const { maker } = useMaker();
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  function connect() {
+  const connect = useCallback(() => {
     dispatch({ type: 'connect-start' });
     return maker.addAccount({
       type,
@@ -126,28 +126,34 @@ function useHardwareWallet({
         dispatch({ type: 'fetch-success', payload: { accounts, offset: 0 } });
       }
     });
-  }
+  }, [accountsLength, maker, path, type]);
 
-  function fetch({ offset }) {
-    return new Promise((resolve, reject) => {
-      dispatch({ type: 'fetch-start' });
-      maker
-        .addAccount({
-          type,
-          path,
-          accountsOffset: offset,
-          accountsLength,
-          choose: async accounts => {
-            dispatch({ type: 'fetch-success', payload: { accounts, offset } });
-            resolve(accounts);
-          }
-        })
-        .catch(err => {
-          dispatch({ type: 'error' });
-          reject(err);
-        });
-    });
-  }
+  const fetch = useCallback(
+    ({ offset }) => {
+      return new Promise((resolve, reject) => {
+        dispatch({ type: 'fetch-start' });
+        maker
+          .addAccount({
+            type,
+            path,
+            accountsOffset: offset,
+            accountsLength,
+            choose: accounts => {
+              dispatch({
+                type: 'fetch-success',
+                payload: { accounts, offset }
+              });
+              resolve(accounts);
+            }
+          })
+          .catch(err => {
+            dispatch({ type: 'error' });
+            reject(err);
+          });
+      });
+    },
+    [accountsLength, maker, path, type]
+  );
 
   function pickAccount(address) {
     return state.onAccountChosen(null, address);
