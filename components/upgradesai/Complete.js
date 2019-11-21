@@ -112,7 +112,7 @@ function Complete({ onClose, migrationTxHash }) {
               window.location = oasisLink('/save', network);
             }}
           >
-            Earn Savings on your Dai
+            Earn savings on your Dai
           </Button>
         </Grid>
       </Grid>
