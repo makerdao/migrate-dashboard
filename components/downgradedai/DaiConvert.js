@@ -14,9 +14,9 @@ import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
 
 export default ({ onNext, onPrev }) => {
-  const [{ saiBalance, maxLiquidity }, dispatch] = useStore();
+  const [{ daiBalance, maxLiquidity }, dispatch] = useStore();
   const maxOverall = Math.min(
-    saiBalance && saiBalance.toNumber(),
+    daiBalance && daiBalance.toNumber(),
     maxLiquidity
   );
   const [amount, setAmount, onAmountChange, amountErrors] = useValidatedInput(
@@ -28,7 +28,7 @@ export default ({ onNext, onPrev }) => {
     },
     {
       maxFloat: amount => {
-        return amount > saiBalance.toNumber()
+        return amount > daiBalance.toNumber()
           ? 'Insufficient Dai balance'
           : 'Amount exceeds Sai availibility';
       }
@@ -60,7 +60,7 @@ export default ({ onNext, onPrev }) => {
             <Input
               type="number"
               value={amount}
-              disabled={!saiBalance}
+              disabled={!daiBalance}
               min="0"
               placeholder="0.00 DAI"
               onChange={onAmountChange}
@@ -84,7 +84,7 @@ export default ({ onNext, onPrev }) => {
                   ml="s"
                   color="darkLavender"
                 >
-                  {saiBalance ? prettifyNumber(saiBalance) : '...'}
+                  {daiBalance ? prettifyNumber(daiBalance) : '...'}
                 </Text>
               </Box>
             </Grid>
@@ -124,7 +124,7 @@ export default ({ onNext, onPrev }) => {
             dispatch({
               type: 'assign',
               payload: {
-                saiAmountToMigrate: amount
+                daiAmountToMigrate: amount
               }
             });
             onNext();

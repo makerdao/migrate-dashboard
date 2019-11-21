@@ -22,36 +22,36 @@ export default ({
 }) => {
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
-  const [saiApprovePending, setSaiApprovePending] = useState(false);
+  const [daiApprovePending, setDaiApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
-  const [{ saiAmountToMigrate }, dispatch] = useStore();
+  const [{ daiAmountToMigrate }, dispatch] = useStore();
   const migrationContractAddress = maker
     .service('smartContract')
     .getContract('MIGRATION').address;
 
-  const giveProxySaiAllowance = async () => {
-    setSaiApprovePending(true);
+  const giveProxyDaiAllowance = async () => {
+    setDaiApprovePending(true);
     try {
       await maker
-        .getToken('SAI')
-        .approve(migrationContractAddress, saiAmountToMigrate);
+        .getToken('DAI')
+        .approve(migrationContractAddress, daiAmountToMigrate);
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
-        hasSaiAllowance: true
+        hasDaiAllowance: true
       }));
     } catch (err) {
       const message = err.message ? err.message : err;
-      const errMsg = `unlock sai tx failed ${message}`;
+      const errMsg = `unlock dai tx failed ${message}`;
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
     }
-    setSaiApprovePending(false);
+    setDaiApprovePending(false);
   };
 
   const convertDai = async () => {
     try {
-      const mig = await maker.service('migration').getMigration('sai-to-dai');
-      const migrationTxObject = mig.execute(saiAmountToMigrate);
+      const mig = await maker.service('migration').getMigration('dai-to-sai');
+      const migrationTxObject = mig.execute(daiAmountToMigrate);
       maker.service('transactionManager').listen(migrationTxObject, {
         pending: tx => {
           setMigrationTxHash(tx.hash);
@@ -72,17 +72,17 @@ export default ({
     (async () => {
       if (maker && account) {
         const connectedWalletAllowance = await maker
-          .getToken('SAI')
+          .getToken('DAI')
           .allowance(account.address, migrationContractAddress);
-        const hasSaiAllowance = connectedWalletAllowance.gte(
-          saiAmountToMigrate
+        const hasDaiAllowance = connectedWalletAllowance.gte(
+          daiAmountToMigrate
         );
-        setProxyDetails({ hasSaiAllowance });
+        setProxyDetails({ hasDaiAllowance });
       }
     })();
-  }, [account, maker, saiAmountToMigrate]);
+  }, [account, maker, daiAmountToMigrate]);
 
-  const amount = prettifyNumber(saiAmountToMigrate);
+  const amount = prettifyNumber(daiAmountToMigrate);
 
   return (
     <Grid maxWidth="600px" gridRowGap="m" px={['s', 0]} minWidth="38rem">
@@ -106,7 +106,7 @@ export default ({
                       t="heading"
                       display={'block'}
                       fontWeight="bold"
-                    >{`${amount} Single-Collateral Sai`}</Text>
+                    >{`${amount} Multi-Collateral Dai`}</Text>
                   </Table.td>
                 </Table.tr>
                 <Table.tr>
@@ -124,7 +124,7 @@ export default ({
                       t="heading"
                       display={'block'}
                       fontWeight="bold"
-                    >{`${amount} Multi-Collateral Dai`}</Text>
+                    >{`${amount} Single-Collateral Sai`}</Text>
                   </Table.td>
                 </Table.tr>
               </Table.tbody>
@@ -134,14 +134,14 @@ export default ({
         <Card>
           <Grid px={'m'} py={'m'}>
             <LoadingToggle
-              completeText={'SAI unlocked'}
-              loadingText={'Unlocking SAI'}
-              defaultText={'Unlock SAI to continue'}
-              tokenDisplayName={'SAI'}
-              isLoading={saiApprovePending}
-              isComplete={proxyDetails.hasSaiAllowance}
-              onToggle={giveProxySaiAllowance}
-              disabled={proxyDetails.hasSaiAllowance}
+              completeText={'DAI unlocked'}
+              loadingText={'Unlocking DAI'}
+              defaultText={'Unlock DAI to continue'}
+              tokenDisplayName={'DAI'}
+              isLoading={daiApprovePending}
+              isComplete={proxyDetails.hasDaiAllowance}
+              onToggle={giveProxyDaiAllowance}
+              disabled={proxyDetails.hasDaiAllowance}
               data-testid="allowance-toggle"
             />
           </Grid>
@@ -183,7 +183,7 @@ export default ({
           Back
         </Button>
         <Button
-          disabled={!hasReadTOS || !proxyDetails.hasSaiAllowance}
+          disabled={!hasReadTOS || !proxyDetails.hasDaiAllowance}
           onClick={convertDai}
         >
           Continue

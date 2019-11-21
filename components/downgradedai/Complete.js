@@ -14,15 +14,15 @@ import useMaker from '../../hooks/useMaker';
 
 function Complete({ onClose, migrationTxHash }) {
   const { network } = useMaker();
-  const [{ saiAmountToMigrate }] = useStore();
-  const amount = prettifyNumber(saiAmountToMigrate);
+  const [{ daiAmountToMigrate }] = useStore();
+  const amount = prettifyNumber(daiAmountToMigrate);
 
   return (
     <Grid gridRowGap="m" mx={'s'}>
       <Text.h2 textAlign="center">Upgrade complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        You&apos;ve successfully upgraded your Single-Collateral Dai for
-        Multi-Collateral Dai.
+        You&apos;ve successfully downgraded your Multi-Collateral Dai for
+        Single-Collateral Sai.
       </Text.p>
       <Link
         justifySelf="center"
@@ -51,9 +51,9 @@ function Complete({ onClose, migrationTxHash }) {
             <Table.tbody>
               <Table.tr>
                 <Table.td>
-                  <Text display={'block'}>Sent: Single-Collateral Dai</Text>
+                  <Text display={'block'}>Sent: Multi-Collateral Dai</Text>
                   <Text t="heading" display={'block'} fontWeight="bold">
-                    {`${amount} SAI`}
+                    {`${amount} DAI`}
                   </Text>
                 </Table.td>
               </Table.tr>
@@ -67,9 +67,9 @@ function Complete({ onClose, migrationTxHash }) {
               </Table.tr>
               <Table.tr>
                 <Table.td>
-                  <Text display={'block'}>Received: Multi-Collateral Dai</Text>
+                  <Text display={'block'}>Received: Single-Collateral Sai</Text>
                   <Text t="heading" display={'block'} fontWeight="bold">
-                    {`${amount} DAI`}
+                    {`${amount} SAI`}
                   </Text>
                 </Table.td>
               </Table.tr>
