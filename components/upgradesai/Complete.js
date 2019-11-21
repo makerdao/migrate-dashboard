@@ -7,14 +7,16 @@ import {
   Table,
   Link
 } from '@makerdao/ui-components-core';
+import round from 'lodash/round';
+
 import useStore from '../../hooks/useStore';
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
-import { etherscanLink, prettifyNumber } from '../../utils/ui';
+import { etherscanLink, prettifyNumber, oasisLink } from '../../utils/ui';
 import useMaker from '../../hooks/useMaker';
 
 function Complete({ onClose, migrationTxHash }) {
   const { network } = useMaker();
-  const [{ saiAmountToMigrate }] = useStore();
+  const [{ saiAmountToMigrate, dsrAnnual }] = useStore();
   const amount = prettifyNumber(saiAmountToMigrate.toNumber());
 
   return (
@@ -73,18 +75,47 @@ function Complete({ onClose, migrationTxHash }) {
                   </Text>
                 </Table.td>
               </Table.tr>
+              <Table.tr>
+                <Table.td>
+                  <Text display={'block'}>Current Dai Savings Rate</Text>
+                  <Text t="heading" display={'block'} fontWeight="bold">
+                    {round(
+                      dsrAnnual
+                        .minus(1)
+                        .times(100)
+                        .toNumber(),
+                      2
+                    )}{' '}
+                    %
+                  </Text>
+                </Table.td>
+              </Table.tr>
             </Table.tbody>
           </Table>
         </Grid>
       </Card>
-      <Button
-        mt="s"
-        onClick={onClose}
-        width={['26.0rem', '13.0rem']}
-        justifySelf={'center'}
+      <Grid
+        justifySelf="center"
+        justifyContent="center"
+        gridTemplateColumns={['none', 'auto auto']}
+        gridColumnGap="m"
       >
-        Exit
-      </Button>
+        <Grid gridRow={['2', '1']}>
+          <Button mt="s" variant="secondary-outline" onClick={onClose}>
+            Finish and exit
+          </Button>
+        </Grid>
+        <Grid gridRow={['1', '1']}>
+          <Button
+            mt="s"
+            onClick={() => {
+              window.location = oasisLink('/save', network);
+            }}
+          >
+            Earn Savings on your Dai
+          </Button>
+        </Grid>
+      </Grid>
     </Grid>
   );
 }
