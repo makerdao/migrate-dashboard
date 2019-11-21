@@ -1254,6 +1254,13 @@
     lodash "^4.17.15"
     toposort "^2.0.2"
 
+"@makerdao/test-helpers@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/test-helpers/-/test-helpers-0.2.1.tgz#acc2c11d3d1d7342bc0712976f5eb07b1ac19804"
+  integrity sha512-2PKqo7e95aLEY4BKpj+o6DbkgBJmj8LHWCm/0E+5ipD/WDydMSUOUHiFQykSExDav+JYGUG4mWDHp7bF6p4PHg==
+  dependencies:
+    node-fetch "^2.6.0"
+
 "@makerdao/ui-components-core@^0.3.3":
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/@makerdao/ui-components-core/-/ui-components-core-0.3.3.tgz#2bd14d63c1688eeb728a0c65426746402df64635"
@@ -7934,7 +7941,7 @@ node-fetch@2.1.2:
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.1.2.tgz#ab884e8e7e57e38a944753cec706f788d1768bb5"
   integrity sha1-q4hOjn5X44qUR1POxwb3iNF2i7U=
 
-node-fetch@2.6.0:
+node-fetch@2.6.0, node-fetch@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
   integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
