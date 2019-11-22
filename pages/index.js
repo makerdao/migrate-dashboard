@@ -31,9 +31,10 @@ function Index() {
         .service('migration')
         .getMigration('single-to-multi-cdp');
       const daiToken = maker.service('token').getToken('MDAI');
-      const [systemWideDebtCeiling, daiSupply] = await Promise.all([
+      const [systemWideDebtCeiling, daiSupply, dsrAnnual] = await Promise.all([
         maker.service('mcd:systemData').getSystemWideDebtCeiling(),
-        daiToken.totalSupply().then(s => s.toNumber())
+        daiToken.totalSupply().then(s => s.toNumber()),
+        maker.service('mcd:savings').getYearlyRate()
       ]);
       const saiIlk = maker.service('mcd:cdpType').getCdpType(null, 'SAI');
       const saiDebtCeiling = saiIlk.debtCeiling.toNumber();
@@ -43,6 +44,7 @@ function Index() {
       dispatch({
         type: 'assign',
         payload: {
+          dsrAnnual,
           saiAvailable: await mig.migrationSaiAvailable(),
           daiAvailable: Math.min(
             systemDebtCeilingRemaining,
