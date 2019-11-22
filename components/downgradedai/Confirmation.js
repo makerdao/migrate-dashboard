@@ -34,7 +34,7 @@ export default ({
     try {
       await maker
         .getToken('DAI')
-        .approve(migrationContractAddress, daiAmountToMigrate);
+        .approveUnlimited(migrationContractAddress);
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasDaiAllowance: true
@@ -74,7 +74,6 @@ export default ({
         const connectedWalletAllowance = await maker
           .getToken('DAI')
           .allowance(account.address, migrationContractAddress);
-        console.log(daiAmountToMigrate);
         const hasDaiAllowance = connectedWalletAllowance.gte(
           daiAmountToMigrate.toBigNumber()
         );
