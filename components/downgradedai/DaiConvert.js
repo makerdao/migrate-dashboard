@@ -19,7 +19,7 @@ export default ({ onNext, onPrev }) => {
   const [maxSelected, setMaxSelected] = useState();
   const maxOverall = Math.min(
     daiBalance && daiBalance.toNumber(),
-    saiAvailable.toNumber()
+    saiAvailable && saiAvailable.toNumber()
   );
   const [amount, setAmount, onAmountChange, amountErrors] = useValidatedInput(
     '',
