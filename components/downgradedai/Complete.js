@@ -15,11 +15,11 @@ import useMaker from '../../hooks/useMaker';
 function Complete({ onClose, migrationTxHash }) {
   const { network } = useMaker();
   const [{ daiAmountToMigrate }] = useStore();
-  const amount = prettifyNumber(daiAmountToMigrate);
+  const amount = prettifyNumber(daiAmountToMigrate.toNumber());
 
   return (
     <Grid gridRowGap="m" mx={'s'}>
-      <Text.h2 textAlign="center">Upgrade complete</Text.h2>
+      <Text.h2 textAlign="center">Downgrade complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
         You&apos;ve successfully downgraded your Multi-Collateral Dai for
         Single-Collateral Sai.

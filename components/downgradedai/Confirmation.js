@@ -82,7 +82,7 @@ export default ({
     })();
   }, [account, maker, daiAmountToMigrate]);
 
-  const amount = prettifyNumber(daiAmountToMigrate);
+  const amount = prettifyNumber(daiAmountToMigrate.toNumber());
 
   return (
     <Grid maxWidth="600px" gridRowGap="m" px={['s', 0]} minWidth="38rem">
