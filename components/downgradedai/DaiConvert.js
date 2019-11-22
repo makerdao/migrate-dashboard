@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Text,
@@ -15,10 +15,11 @@ import { prettifyNumber } from '../../utils/ui';
 import { DAI } from '../../maker';
 
 export default ({ onNext, onPrev }) => {
-  const [{ daiBalance, maxLiquidity }, dispatch] = useStore();
+  const [{ daiBalance, saiAvailable }, dispatch] = useStore();
+  const [maxSelected, setMaxSelected] = useState();
   const maxOverall = Math.min(
     daiBalance && daiBalance.toNumber(),
-    maxLiquidity
+    saiAvailable.toNumber()
   );
   const [amount, setAmount, onAmountChange, amountErrors] = useValidatedInput(
     '',
@@ -35,6 +36,16 @@ export default ({ onNext, onPrev }) => {
       }
     }
   );
+
+  const setMax = () => {
+    setMaxSelected(true);
+    setAmount(maxOverall);
+  };
+
+  const onChange = event => {
+    onAmountChange(event);
+    setMaxSelected(false);
+  };
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
@@ -66,15 +77,11 @@ export default ({ onNext, onPrev }) => {
               placeholder="0.00 DAI"
               onChange={onAmountChange}
               failureMessage={amountErrors}
-              // after={
-              //   <Link
-              //     color="blue"
-              //     fontWeight="medium"
-              //     onClick={() => setAmount(maxOverall)}
-              //   >
-              //     Set max
-              //   </Link>
-              // }
+              after={
+                <Link color="blue" fontWeight="medium" onClick={setMax}>
+                  Set max
+                </Link>
+              }
             />
             <Grid gridRowGap="xs">
               <Box>
@@ -104,7 +111,7 @@ export default ({ onNext, onPrev }) => {
                 Max DAI to SAI availability
               </TextBlock>
               <TextBlock t="body">
-                {maxLiquidity ? `${prettifyNumber(maxLiquidity)} Sai` : '...'}
+                {saiAvailable ? `${prettifyNumber(saiAvailable)}` : '...'}
               </TextBlock>
             </Grid>
           </Grid>
@@ -125,7 +132,7 @@ export default ({ onNext, onPrev }) => {
             dispatch({
               type: 'assign',
               payload: {
-                daiAmountToMigrate: DAI(amount)
+                daiAmountToMigrate: maxSelected ? daiBalance : DAI(amount)
               }
             });
             onNext();
