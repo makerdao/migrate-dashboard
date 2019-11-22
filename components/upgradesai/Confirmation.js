@@ -74,6 +74,7 @@ export default ({
         const connectedWalletAllowance = await maker
           .getToken('SAI')
           .allowance(account.address, migrationContractAddress);
+        console.log(saiAmountToMigrate);
         const hasSaiAllowance = connectedWalletAllowance.gte(
           saiAmountToMigrate.toBigNumber()
         );

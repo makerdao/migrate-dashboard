@@ -74,8 +74,9 @@ export default ({
         const connectedWalletAllowance = await maker
           .getToken('DAI')
           .allowance(account.address, migrationContractAddress);
+        console.log(daiAmountToMigrate);
         const hasDaiAllowance = connectedWalletAllowance.gte(
-          daiAmountToMigrate
+          daiAmountToMigrate.toBigNumber()
         );
         setProxyDetails({ hasDaiAllowance });
       }

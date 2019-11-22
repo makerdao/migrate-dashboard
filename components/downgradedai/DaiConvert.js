@@ -12,6 +12,7 @@ import useStore from '../../hooks/useStore';
 import useValidatedInput from '../../hooks/useValidatedInput';
 import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
+import { DAI } from '../../maker';
 
 export default ({ onNext, onPrev }) => {
   const [{ daiBalance, maxLiquidity }, dispatch] = useStore();
@@ -124,7 +125,7 @@ export default ({ onNext, onPrev }) => {
             dispatch({
               type: 'assign',
               payload: {
-                daiAmountToMigrate: amount
+                daiAmountToMigrate: DAI(amount)
               }
             });
             onNext();

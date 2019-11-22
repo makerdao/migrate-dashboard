@@ -11,6 +11,7 @@ import assert from 'assert';
 let maker;
 
 export const SAI = createCurrency('SAI');
+export const DAI = createCurrency('DAI');
 export const ETH = createCurrency('ETH');
 export const USD = Maker.USD;
 
