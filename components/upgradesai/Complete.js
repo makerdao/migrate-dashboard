@@ -85,7 +85,7 @@ function Complete({ onClose, migrationTxHash }) {
                         .times(100)
                         .toNumber(),
                       2
-                    )}{' '}
+                    )}
                     %
                   </Text>
                 </Table.td>
