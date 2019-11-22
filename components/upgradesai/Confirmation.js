@@ -32,9 +32,7 @@ export default ({
   const giveProxySaiAllowance = useCallback(async () => {
     setSaiApprovePending(true);
     try {
-      await maker
-        .getToken('SAI')
-        .approve(migrationContractAddress, saiAmountToMigrate);
+      await maker.getToken('SAI').approveUnlimited(migrationContractAddress);
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasSaiAllowance: true
