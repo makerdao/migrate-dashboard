@@ -8,7 +8,6 @@ import { wallets, templates } from '../components/wallets';
 
 function resolveModalTypeToComponent(modals, type) {
   if (!modals || !type || !modals[type]) return null;
-
   return modals[type];
 }
 
