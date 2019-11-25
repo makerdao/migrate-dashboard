@@ -12,7 +12,7 @@ export default function({
   children
 }) {
   const [error, setError] = useState();
-  const [value, setValue] = useState();
+  const [value, setValue] = useState('');
 
   const setMax = () => {
     setValue(max.toBigNumber().toString());
@@ -50,7 +50,6 @@ export default function({
         </TextBlock>
         <Input
           type="number"
-          min="0"
           value={value}
           placeholder={unit(0).toString()}
           onChange={onChange}
