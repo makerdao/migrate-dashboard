@@ -16,7 +16,7 @@ import { DAI } from '../../maker';
 
 export default ({ onNext, onPrev }) => {
   const [{ daiBalance, saiAvailable }, dispatch] = useStore();
-  const [maxSelected, setMaxSelected] = useState();
+  const [maxSelected, setMaxSelected] = useState(false);
   const maxOverall = Math.min(
     daiBalance && daiBalance.toNumber(),
     saiAvailable && saiAvailable.toNumber()
@@ -75,7 +75,7 @@ export default ({ onNext, onPrev }) => {
               disabled={!daiBalance}
               min="0"
               placeholder="0.00 DAI"
-              onChange={onAmountChange}
+              onChange={onChange}
               failureMessage={amountErrors}
               after={
                 <Link color="blue" fontWeight="medium" onClick={setMax}>
@@ -132,7 +132,7 @@ export default ({ onNext, onPrev }) => {
             dispatch({
               type: 'assign',
               payload: {
-                daiAmountToMigrate: maxSelected ? daiBalance : DAI(amount)
+                daiAmountToMigrate: maxSelected ? maxOverall : DAI(amount)
               }
             });
             onNext();

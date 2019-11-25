@@ -16,7 +16,7 @@ import { SAI } from '../../maker';
 
 export default ({ onNext, onPrev }) => {
   const [{ saiBalance, daiAvailable }, dispatch] = useStore();
-  const [maxSelected, setMaxSelected] = useState();
+  const [maxSelected, setMaxSelected] = useState(false);
   const maxOverall = Math.min(
     saiBalance && saiBalance.toNumber(),
     daiAvailable
@@ -135,7 +135,7 @@ export default ({ onNext, onPrev }) => {
             dispatch({
               type: 'assign',
               payload: {
-                saiAmountToMigrate: maxSelected ? saiBalance : SAI(amount)
+                saiAmountToMigrate: maxSelected ? maxOverall : SAI(amount)
               }
             });
             onNext();
