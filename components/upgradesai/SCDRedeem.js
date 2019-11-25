@@ -135,7 +135,7 @@ export default ({ onNext, onPrev }) => {
             dispatch({
               type: 'assign',
               payload: {
-                saiAmountToMigrate: maxSelected ? maxOverall : SAI(amount)
+                saiAmountToMigrate: maxSelected ? SAI(maxOverall) : SAI(amount)
               }
             });
             onNext();

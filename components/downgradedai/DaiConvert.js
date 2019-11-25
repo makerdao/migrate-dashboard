@@ -132,7 +132,7 @@ export default ({ onNext, onPrev }) => {
             dispatch({
               type: 'assign',
               payload: {
-                daiAmountToMigrate: maxSelected ? maxOverall : DAI(amount)
+                daiAmountToMigrate: maxSelected ? DAI(maxOverall) : DAI(amount)
               }
             });
             onNext();
