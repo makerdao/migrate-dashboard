@@ -1,50 +1,21 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Text,
-  Button,
-  Grid,
-  Card,
-  Input,
-  Link
-} from '@makerdao/ui-components-core';
+import { Text, Button, Grid, Card, Box } from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
-import useValidatedInput from '../../hooks/useValidatedInput';
 import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
 import { DAI } from '../../maker';
+import AmountInputCard from '../AmountInputCard';
 
 export default ({ onNext, onPrev }) => {
   const [{ daiBalance, saiAvailable }, dispatch] = useStore();
-  const [maxSelected, setMaxSelected] = useState(false);
-  const maxOverall = Math.min(
-    daiBalance && daiBalance.toNumber(),
-    saiAvailable && saiAvailable.toNumber()
-  );
-  const [amount, setAmount, onAmountChange, amountErrors] = useValidatedInput(
-    '',
-    {
-      maxFloat: maxOverall,
-      minFloat: 0,
-      isFloat: true
-    },
-    {
-      maxFloat: amount => {
-        return amount > daiBalance.toNumber()
-          ? 'Insufficient Dai balance'
-          : 'Amount exceeds Sai availibility';
-      }
-    }
-  );
+  const [daiAmountToMigrate, setDaiAmountToMigrate] = useState();
+  const [valid, setValid] = useState(true);
+  const max = daiBalance.lt(saiAvailable) ? daiBalance : saiAvailable;
 
-  const setMax = () => {
-    setMaxSelected(true);
-    setAmount(maxOverall);
-  };
-
-  const onChange = event => {
-    onAmountChange(event);
-    setMaxSelected(false);
+  const getErrorMessage = value => {
+    if (value.lt(0)) return 'Amount must be greater than 0';
+    else if (value.gt(daiBalance)) return 'Insufficient Dai balance';
+    else if (value.gt(saiAvailable)) return 'Amount exceeds Sai availability';
   };
 
   return (
@@ -64,40 +35,26 @@ export default ({ onNext, onPrev }) => {
         gridGap="m"
         my={{ s: 's', l: 'l' }}
       >
-        <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
-          <Grid gridRowGap="m">
-            <TextBlock t="h5" lineHeight="normal">
-              Enter the amount you would like to exchange.
-            </TextBlock>
-            <Input
-              type="number"
-              value={amount}
-              disabled={!daiBalance}
-              min="0"
-              placeholder="0.00 DAI"
-              onChange={onChange}
-              failureMessage={amountErrors}
-              after={
-                <Link color="blue" fontWeight="medium" onClick={setMax}>
-                  Set max
-                </Link>
-              }
-            />
-            <Grid gridRowGap="xs">
-              <Box>
-                <Text t="subheading">Dai Balance</Text>
-                <Text
-                  t="caption"
-                  display="inline-block"
-                  ml="s"
-                  color="darkLavender"
-                >
-                  {daiBalance ? prettifyNumber(daiBalance) : '...'}
-                </Text>
-              </Box>
-            </Grid>
-          </Grid>
-        </Card>
+        <AmountInputCard
+          max={max}
+          unit={DAI}
+          setValid={setValid}
+          update={setDaiAmountToMigrate}
+          getErrorMessage={getErrorMessage}
+          title="Enter the amount you would like to exchange."
+        >
+          <Box>
+            <Text t="subheading">Dai Balance</Text>
+            <Text
+              t="caption"
+              display="inline-block"
+              ml="s"
+              color="darkLavender"
+            >
+              {daiBalance ? prettifyNumber(daiBalance) : '...'}
+            </Text>
+          </Box>
+        </AmountInputCard>
         <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
           <Grid gridRowGap="m">
             <Grid gridRowGap="xs">
@@ -127,14 +84,9 @@ export default ({ onNext, onPrev }) => {
           Cancel
         </Button>
         <Button
-          disabled={!amount || amountErrors}
+          disabled={!daiAmountToMigrate || !valid}
           onClick={() => {
-            dispatch({
-              type: 'assign',
-              payload: {
-                daiAmountToMigrate: maxSelected ? DAI(maxOverall) : DAI(amount)
-              }
-            });
+            dispatch({ type: 'assign', payload: { daiAmountToMigrate } });
             onNext();
           }}
         >

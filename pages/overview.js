@@ -19,6 +19,7 @@ import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
+import { DAI } from '../maker';
 
 function MigrationCard({
   title,
@@ -103,7 +104,7 @@ function Overview() {
       if (!maker || !account) return;
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
-      const _daiBalance = await maker.getToken('MDAI').balance();
+      const _daiBalance = DAI(await maker.getToken('MDAI').balance());
       setInitialFetchComplete(true);
 
       dispatch({
