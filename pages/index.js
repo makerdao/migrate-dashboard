@@ -8,6 +8,7 @@ import useStore from '../hooks/useStore';
 import useMaker from '../hooks/useMaker';
 import { getWebClientProviderName } from '../utils/web3';
 import { prettifyNumber } from '../utils/ui';
+import { SAI, DAI } from '../maker';
 
 async function getStartingData(maker) {
   const mig = await maker
@@ -20,23 +21,19 @@ async function getStartingData(maker) {
     maker.service('mcd:savings').getYearlyRate()
   ]);
   const saiIlk = maker.service('mcd:cdpType').getCdpType(null, 'SAI');
-  const saiDebtCeiling = saiIlk.debtCeiling.toNumber();
-  const saiIlkDebt = saiIlk.totalDebt.toNumber();
-  const systemDebtCeilingRemaining = systemWideDebtCeiling - daiSupply;
-  const saiIlkDebtCeilingRemaining = saiDebtCeiling - saiIlkDebt;
+  const { debtCeiling, totalDebt } = saiIlk;
+  const systemHeadroom = DAI(systemWideDebtCeiling).minus(daiSupply);
+  const saiHeadroom = DAI(debtCeiling.minus(totalDebt));
   return {
     dsrAnnual,
-    saiAvailable: await mig.migrationSaiAvailable(),
-    daiAvailable: Math.min(
-      systemDebtCeilingRemaining,
-      saiIlkDebtCeilingRemaining
-    )
+    saiAvailable: SAI(await mig.migrationSaiAvailable()),
+    daiAvailable: systemHeadroom.lt(saiHeadroom) ? systemHeadroom : saiHeadroom
   };
 }
 
 function Index() {
-  const [store, dispatch] = useStore();
-  const { providerName, saiAvailable } = store;
+  const [{ providerName, saiAvailable }, dispatch] = useStore();
+  const { maker } = useMaker();
 
   useEffect(() => {
     dispatch({
@@ -46,8 +43,6 @@ function Index() {
       }
     });
   }, [dispatch]);
-
-  const { maker } = useMaker();
 
   useEffect(() => {
     (async () => {
