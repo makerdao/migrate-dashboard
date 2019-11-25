@@ -14,13 +14,11 @@ import {
 import useMaker from '../hooks/useMaker';
 import reduce from 'lodash/reduce';
 import { getColor } from '../utils/theme';
-import { oasisLink, prettifyNumber } from '../utils/ui';
+import { prettifyNumber } from '../utils/ui';
 import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
-
-const DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION = true;
 
 function MigrationCard({
   title,
@@ -83,7 +81,7 @@ function showAmount(tok) {
 }
 
 function Overview() {
-  const { maker, account, network } = useMaker();
+  const { maker, account } = useMaker();
   const [initialFetchComplete, setInitialFetchComplete] = useState(false);
   const [
     {
