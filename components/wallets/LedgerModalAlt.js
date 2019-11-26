@@ -22,7 +22,6 @@ export default function({ show, onClose, onAccountChosen }) {
 
   return (
     <ModalWrapper onClose={onClose}>
-      {/* you have to provide this */}
       {({ onClose }) =>
         [
           () => <LedgerType onClose={onClose} onPathSelect={showNextStep} />,
