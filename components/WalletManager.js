@@ -83,7 +83,6 @@ function WalletManager({ providerName }) {
       <BrowserView>
         <IconButton
           onClick={() => setShowLedger(true)}
-          // onClick={connectLedgerWallet}
           disabled={!maker}
           icon={
             <img
