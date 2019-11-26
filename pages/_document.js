@@ -49,6 +49,7 @@ export default class MyDocument extends NextDocument {
           {this.props.styleTags}
         </Head>
         <body>
+          <div id="modal" />
           <Main />
           <NextScript />
         </body>

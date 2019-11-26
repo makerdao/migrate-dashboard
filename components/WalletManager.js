@@ -14,6 +14,7 @@ import lang from '../languages';
 import { useLedger, useTrezor } from '../hooks/useHardwareWallet';
 import { connectBrowserProvider } from '../maker';
 import useStore from '../hooks/useStore';
+import LedgerModalAlt from './wallets/LedgerModalAlt';
 
 function WalletManager({ providerName }) {
   const [, dispatch] = useStore();
@@ -53,6 +54,8 @@ function WalletManager({ providerName }) {
     }
   }
 
+  const [showLedger, setShowLedger] = React.useState(false);
+
   return (
     <Grid px="m" py="xs" gridRowGap="s" justifyContent={['center', 'center']}>
       <BrowserProviderButton
@@ -77,7 +80,8 @@ function WalletManager({ providerName }) {
 
       <BrowserView>
         <IconButton
-          onClick={connectLedgerWallet}
+          onClick={() => setShowLedger(true)}
+          // onClick={connectLedgerWallet}
           disabled={!maker}
           icon={
             <img
@@ -88,6 +92,11 @@ function WalletManager({ providerName }) {
         >
           {lang.providers.ledger_nano}
         </IconButton>
+        <LedgerModalAlt
+          show={showLedger}
+          onClose={() => setShowLedger(false)}
+          onAccountChosen={onAccountChosen}
+        />
       </BrowserView>
       <BrowserView>
         <IconButton
