@@ -19,7 +19,7 @@ import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
-import { DAI } from '../maker';
+import { SAI, DAI } from '../maker';
 
 function MigrationCard({
   title,
@@ -111,7 +111,7 @@ function Overview() {
         type: 'assign',
         payload: {
           cdpMigrationCheck: checks['single-to-multi-cdp'],
-          saiBalance: checks['sai-to-dai'],
+          saiBalance: SAI(checks['sai-to-dai']),
           daiBalance: _daiBalance
         }
       });
@@ -167,7 +167,7 @@ function Overview() {
               title="Single-Collateral Sai Upgrade"
               body={`Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai availability: ${prettifyNumber(
                 daiAvailable
-              )} DAI`}
+              )}`}
               metadataTitle="Sai to upgrade"
               metadataValue={showAmount(saiBalance)}
               onSelected={() => Router.push('/migration/dai')}

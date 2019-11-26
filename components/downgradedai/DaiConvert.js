@@ -7,13 +7,14 @@ import { DAI } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
 
 export default ({ onNext, onPrev }) => {
-  const [{ daiBalance, saiAvailable }, dispatch] = useStore();
+  let [{ daiBalance, saiAvailable }, dispatch] = useStore();
+  saiAvailable = saiAvailable.toBigNumber();
   const [daiAmountToMigrate, setDaiAmountToMigrate] = useState();
   const [valid, setValid] = useState(true);
-  const max = daiBalance.lt(saiAvailable) ? daiBalance : saiAvailable;
+  const max = daiBalance.lt(saiAvailable) ? daiBalance : DAI(saiAvailable);
 
   const getErrorMessage = value => {
-    if (value.lt(0)) return 'Amount must be greater than 0';
+    if (value.lte(0)) return 'Amount must be greater than 0';
     else if (value.gt(daiBalance)) return 'Insufficient Dai balance';
     else if (value.gt(saiAvailable)) return 'Amount exceeds Sai availability';
   };

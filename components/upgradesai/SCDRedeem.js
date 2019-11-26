@@ -1,50 +1,22 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Text,
-  Button,
-  Grid,
-  Card,
-  Input,
-  Link
-} from '@makerdao/ui-components-core';
+import { Box, Text, Button, Grid, Card } from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
-import useValidatedInput from '../../hooks/useValidatedInput';
 import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
 import { SAI } from '../../maker';
+import AmountInputCard from '../AmountInputCard';
 
 export default ({ onNext, onPrev }) => {
-  const [{ saiBalance, daiAvailable }, dispatch] = useStore();
-  const [maxSelected, setMaxSelected] = useState(false);
-  const maxOverall = Math.min(
-    saiBalance && saiBalance.toNumber(),
-    daiAvailable
-  );
-  const [amount, setAmount, onAmountChange, amountErrors] = useValidatedInput(
-    '',
-    {
-      maxFloat: maxOverall,
-      minFloat: 0,
-      isFloat: true
-    },
-    {
-      maxFloat: amount => {
-        return amount > saiBalance.toNumber()
-          ? 'Insufficient Sai balance'
-          : 'Amount exceeds Dai availability';
-      }
-    }
-  );
+  let [{ saiBalance, daiAvailable }, dispatch] = useStore();
+  daiAvailable = daiAvailable.toBigNumber();
+  const [saiAmountToMigrate, setSaiAmountToMigrate] = useState();
+  const [valid, setValid] = useState(true);
+  const max = saiBalance.lt(daiAvailable) ? saiBalance : SAI(daiAvailable);
 
-  const setMax = () => {
-    setMaxSelected(true);
-    setAmount(maxOverall);
-  };
-
-  const onChange = event => {
-    onAmountChange(event);
-    setMaxSelected(false);
+  const getErrorMessage = value => {
+    if (value.lte(0)) return 'Amount must be greater than 0';
+    else if (value.gt(saiBalance)) return 'Insufficient Sai balance';
+    else if (value.gt(daiAvailable)) return 'Amount exceeds Dai availability';
   };
 
   return (
@@ -65,40 +37,26 @@ export default ({ onNext, onPrev }) => {
         gridGap="m"
         my={{ s: 's', l: 'l' }}
       >
-        <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
-          <Grid gridRowGap="m">
-            <TextBlock t="h5" lineHeight="normal">
-              Enter the amount you would like to upgrade.
-            </TextBlock>
-            <Input
-              type="number"
-              value={amount}
-              disabled={!saiBalance}
-              min="0"
-              placeholder="0.00 SAI"
-              onChange={onChange}
-              failureMessage={amountErrors}
-              after={
-                <Link color="blue" fontWeight="medium" onClick={setMax}>
-                  Set max
-                </Link>
-              }
-            />
-            <Grid gridRowGap="xs">
-              <Box>
-                <Text t="subheading">Sai Balance</Text>
-                <Text
-                  t="caption"
-                  display="inline-block"
-                  ml="s"
-                  color="darkLavender"
-                >
-                  {saiBalance ? prettifyNumber(saiBalance) : '...'}
-                </Text>
-              </Box>
-            </Grid>
-          </Grid>
-        </Card>
+        <AmountInputCard
+          max={max}
+          unit={SAI}
+          setValid={setValid}
+          update={setSaiAmountToMigrate}
+          getErrorMessage={getErrorMessage}
+          title="Enter the amount you would like to upgrade."
+        >
+          <Box>
+            <Text t="subheading">Sai Balance</Text>
+            <Text
+              t="caption"
+              display="inline-block"
+              ml="s"
+              color="darkLavender"
+            >
+              {saiBalance ? prettifyNumber(saiBalance) : '...'}
+            </Text>
+          </Box>
+        </AmountInputCard>
         <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
           <Grid gridRowGap="m">
             <Grid gridRowGap="xs">
@@ -112,9 +70,7 @@ export default ({ onNext, onPrev }) => {
                 Max SAI to DAI availability
               </TextBlock>
               <TextBlock t="body">
-                {daiAvailable || daiAvailable === 0
-                  ? `${prettifyNumber(daiAvailable)} DAI`
-                  : '...'}
+                {daiAvailable ? prettifyNumber(daiAvailable) : '...'}
               </TextBlock>
             </Grid>
           </Grid>
@@ -130,14 +86,9 @@ export default ({ onNext, onPrev }) => {
           Cancel
         </Button>
         <Button
-          disabled={!amount || amountErrors}
+          disabled={!saiAmountToMigrate || !valid}
           onClick={() => {
-            dispatch({
-              type: 'assign',
-              payload: {
-                saiAmountToMigrate: maxSelected ? SAI(maxOverall) : SAI(amount)
-              }
-            });
+            dispatch({ type: 'assign', payload: { saiAmountToMigrate } });
             onNext();
           }}
         >
