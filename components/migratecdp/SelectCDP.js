@@ -120,7 +120,8 @@ export default ({
   const [{ saiAvailable }] = useStore();
 
   const isSelectable = cdp =>
-    cdp.debtValueExact.gt(20) && cdp.debtValueExact.lt(saiAvailable);
+    cdp.debtValueExact.gt(20) &&
+    cdp.debtValueExact.lt(saiAvailable.toBigNumber());
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>

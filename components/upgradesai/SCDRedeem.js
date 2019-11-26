@@ -3,11 +3,11 @@ import { Box, Text, Button, Grid, Card } from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
 import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
-import { SAI } from '../../maker';
+import { SAI, DAI } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
 
 export default ({ onNext, onPrev }) => {
-  let [{ saiBalance, daiAvailable }, dispatch] = useStore();
+  let [{ saiBalance = SAI(0), daiAvailable = DAI(0) }, dispatch] = useStore();
   if (daiAvailable) daiAvailable = daiAvailable.toBigNumber();
   const [saiAmountToMigrate, setSaiAmountToMigrate] = useState();
   const [valid, setValid] = useState(true);
