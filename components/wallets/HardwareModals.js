@@ -1,5 +1,3 @@
-// The name of this file is a placeholder; feel free to change it
-
 import { useRef, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import LedgerType from './LedgerType';
@@ -9,7 +7,7 @@ import { AccountTypes } from '../../utils/constants';
 
 const TREZOR_PATH = "44'/60'/0'/0/0";
 
-export function LedgerAltModal({ show, onClose, onAccountChosen }) {
+export function LedgerModal({ show, onClose, onAccountChosen }) {
   const [path, setPath] = useState();
 
   // you can change the default state to test the rendering of different steps
@@ -43,7 +41,7 @@ export function LedgerAltModal({ show, onClose, onAccountChosen }) {
   );
 }
 
-export function TrezorAltModal({ show, onClose, onAccountChosen }) {
+export function TrezorModal({ show, onClose, onAccountChosen }) {
   if (!show) return null;
   return (
     <ModalWrapper onClose={onClose}>

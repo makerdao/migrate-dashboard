@@ -16,6 +16,7 @@ import Cross from '../../assets/icons/cross.svg';
 import { getColor } from '../../utils/theme';
 import { AccountTypes } from '../../utils/constants';
 import styled from 'styled-components';
+import { LEDGER_LIVE_PATH } from './LedgerType';
 
 const ACCOUNTS_PER_PAGE = 5;
 const ACCOUNTS_TO_FETCH = 25;
@@ -104,7 +105,7 @@ const TrezorLoading = () => (
 function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
   const [page, setPage] = useState(0);
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const accountsToFetch = type === AccountTypes.LEDGER ? ACCOUNTS_PER_PAGE : ACCOUNTS_TO_FETCH;
+  const accountsToFetch = (type === AccountTypes.LEDGER && path === LEDGER_LIVE_PATH) ? ACCOUNTS_PER_PAGE * 2 : ACCOUNTS_TO_FETCH; //fetching accounts only works the first two times for some reason, but loading ledger live addresses is very slow
   const { fetch, connect, accounts, pickAccount, fetching } = useHardwareWallet(
     { type, accountsLength: accountsToFetch, path }
   );

@@ -1,6 +1,5 @@
 import { useReducer, useCallback } from 'react';
 import useMaker from '../hooks/useMaker';
-import useWallet from '../hooks/useWallet';
 import { AccountTypes } from '../utils/constants';
 import { addEthBalance } from '../utils/ethereum';
 
@@ -62,57 +61,6 @@ const initialState = {
 };
 
 const DEFAULT_ACCOUNTS_LENGTH = 25;
-
-// Helper hook to show trezor connection modals. Only for use in this app.
-export function useTrezor({ onAccountChosen }) {
-  const { show } = useWallet();
-
-  const connectTrezorWallet = useCallback(() => {
-    show({
-      modalType: 'hardwareaccountselect',
-      modalProps: {
-        type: AccountTypes.TREZOR,
-        path: TREZOR_PATH,
-        confirmAddress: address => {
-          onAccountChosen(address, AccountTypes.TREZOR);
-        }
-      }
-    });
-  }, [show, onAccountChosen]);
-
-  return { connectTrezorWallet };
-}
-
-// Helper hook to show ledger connection modals. Only for use in this app.
-export function useLedger({ onAccountChosen }) {
-  const { show } = useWallet();
-  const accountSelection = useCallback(
-    path => {
-      show({
-        modalType: 'hardwareaccountselect',
-        modalProps: {
-          type: AccountTypes.LEDGER,
-          path,
-          confirmAddress: address => {
-            onAccountChosen(address, AccountTypes.LEDGER);
-          }
-        }
-      });
-    },
-    [show, onAccountChosen]
-  );
-
-  const connectLedgerWallet = useCallback(() => {
-    show({
-      modalType: 'ledgertype',
-      modalProps: {
-        onPathSelect: accountSelection
-      }
-    });
-  }, [accountSelection, show]);
-
-  return { connectLedgerWallet };
-}
 
 function useHardwareWallet({
   type,

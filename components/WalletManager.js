@@ -11,10 +11,9 @@ import { BrowserView } from 'react-device-detect';
 
 import Router from 'next/router';
 import lang from '../languages';
-// import { useLedger, useTrezor } from '../hooks/useHardwareWallet';
 import { connectBrowserProvider } from '../maker';
 import useStore from '../hooks/useStore';
-import { LedgerAltModal, TrezorAltModal } from './wallets/AltModal';
+import { LedgerModal, TrezorModal } from './wallets/HardwareModals';
 
 function WalletManager({ providerName }) {
   const [, dispatch] = useStore();
@@ -42,9 +41,6 @@ function WalletManager({ providerName }) {
     Router.push('/overview');
   };
 
-  // const { connectTrezorWallet } = useTrezor({ onAccountChosen });
-  // const { connectLedgerWallet } = useLedger({ onAccountChosen });
-
   async function connectBrowserWallet() {
     try {
       const connectedAddress = await connectBrowserProvider(maker);
@@ -67,7 +63,6 @@ function WalletManager({ providerName }) {
       <BrowserView>
         <IconButton
           onClick={() => setShowTrezor(true)}
-          // onClick={connectTrezorWallet}
           disabled={!maker}
           icon={
             <img
@@ -78,7 +73,7 @@ function WalletManager({ providerName }) {
         >
           {lang.providers.trezor}
         </IconButton>
-        <TrezorAltModal
+        <TrezorModal
           show={showTrezor}
           onClose={() => setShowTrezor(false)}
           onAccountChosen={onAccountChosen}
@@ -99,7 +94,7 @@ function WalletManager({ providerName }) {
         >
           {lang.providers.ledger_nano}
         </IconButton>
-        <LedgerAltModal
+        <LedgerModal
           show={showLedger}
           onClose={() => setShowLedger(false)}
           onAccountChosen={onAccountChosen}
