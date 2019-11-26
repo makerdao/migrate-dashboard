@@ -27,7 +27,10 @@ jobs:
             - dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Run tests
-          command: yarn test --coverage
+          command: |
+            yarn test --coverage
+            npm i --no-save codecov
+            ./node_modules/.bin/codecov
   deploy_staging:
     docker:
       - image: circleci/node:lts
