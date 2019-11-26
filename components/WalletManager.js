@@ -11,10 +11,10 @@ import { BrowserView } from 'react-device-detect';
 
 import Router from 'next/router';
 import lang from '../languages';
-import { useLedger, useTrezor } from '../hooks/useHardwareWallet';
+// import { useLedger, useTrezor } from '../hooks/useHardwareWallet';
 import { connectBrowserProvider } from '../maker';
 import useStore from '../hooks/useStore';
-import LedgerModalAlt from './wallets/LedgerModalAlt';
+import { LedgerAltModal, TrezorAltModal } from './wallets/AltModal';
 
 function WalletManager({ providerName }) {
   const [, dispatch] = useStore();
@@ -42,8 +42,8 @@ function WalletManager({ providerName }) {
     Router.push('/overview');
   };
 
-  const { connectTrezorWallet } = useTrezor({ onAccountChosen });
-  const { connectLedgerWallet } = useLedger({ onAccountChosen });
+  // const { connectTrezorWallet } = useTrezor({ onAccountChosen });
+  // const { connectLedgerWallet } = useLedger({ onAccountChosen });
 
   async function connectBrowserWallet() {
     try {
@@ -55,6 +55,7 @@ function WalletManager({ providerName }) {
   }
 
   const [showLedger, setShowLedger] = React.useState(false);
+  const [showTrezor, setShowTrezor] = React.useState(false);
 
   return (
     <Grid px="m" py="xs" gridRowGap="s" justifyContent={['center', 'center']}>
@@ -65,7 +66,8 @@ function WalletManager({ providerName }) {
       />
       <BrowserView>
         <IconButton
-          onClick={connectTrezorWallet}
+          onClick={() => setShowTrezor(true)}
+          // onClick={connectTrezorWallet}
           disabled={!maker}
           icon={
             <img
@@ -76,6 +78,11 @@ function WalletManager({ providerName }) {
         >
           {lang.providers.trezor}
         </IconButton>
+        <TrezorAltModal
+          show={showTrezor}
+          onClose={() => setShowTrezor(false)}
+          onAccountChosen={onAccountChosen}
+        />
       </BrowserView>
 
       <BrowserView>
@@ -92,7 +99,7 @@ function WalletManager({ providerName }) {
         >
           {lang.providers.ledger_nano}
         </IconButton>
-        <LedgerModalAlt
+        <LedgerAltModal
           show={showLedger}
           onClose={() => setShowLedger(false)}
           onAccountChosen={onAccountChosen}

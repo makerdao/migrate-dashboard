@@ -7,7 +7,9 @@ import HardwareAccountSelect from './HardwareAccountSelect';
 import { BasicModal } from './templates';
 import { AccountTypes } from '../../utils/constants';
 
-export default function({ show, onClose, onAccountChosen }) {
+const TREZOR_PATH = "44'/60'/0'/0/0";
+
+export function LedgerAltModal({ show, onClose, onAccountChosen }) {
   const [path, setPath] = useState();
 
   // you can change the default state to test the rendering of different steps
@@ -41,7 +43,24 @@ export default function({ show, onClose, onAccountChosen }) {
   );
 }
 
-// this can be moved into its own file for reuse with Trezor et al.
+export function TrezorAltModal({ show, onClose, onAccountChosen }) {
+  if (!show) return null;
+  return (
+    <ModalWrapper onClose={onClose}>
+      {({ onClose }) => (
+        <HardwareAccountSelect
+          onClose={onClose}
+          path={TREZOR_PATH}
+          type={AccountTypes.TREZOR}
+          confirmAddress={address =>
+            onAccountChosen(address, AccountTypes.TREZOR)
+          }
+        />
+      )}
+    </ModalWrapper>
+  );
+}
+
 function ModalWrapper({ children, onClose }) {
   const ref = useRef();
   const [mounted, setMounted] = useState(false);
