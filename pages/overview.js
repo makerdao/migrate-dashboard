@@ -184,13 +184,8 @@ function Overview() {
               metadataTitle="Dai available to swap"
               metadataValue={showAmount(daiBalance)}
               onSelected={() => {
-                if (DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION)
-                  window.location = oasisLink('/trade', network);
-                else Router.push('/migration/sai');
+                Router.push('/migration/sai');
               }}
-              buttonLabel={
-                DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION ? 'Visit Oasis' : undefined
-              }
             />
           )}
           {/* { mkr &&

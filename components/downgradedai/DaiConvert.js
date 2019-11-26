@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Text,
@@ -12,12 +12,14 @@ import useStore from '../../hooks/useStore';
 import useValidatedInput from '../../hooks/useValidatedInput';
 import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
+import { DAI } from '../../maker';
 
 export default ({ onNext, onPrev }) => {
-  const [{ saiBalance, maxLiquidity }, dispatch] = useStore();
+  const [{ daiBalance, saiAvailable }, dispatch] = useStore();
+  const [maxSelected, setMaxSelected] = useState();
   const maxOverall = Math.min(
-    saiBalance && saiBalance.toNumber(),
-    maxLiquidity
+    daiBalance && daiBalance.toNumber(),
+    saiAvailable && saiAvailable.toNumber()
   );
   const [amount, setAmount, onAmountChange, amountErrors] = useValidatedInput(
     '',
@@ -28,12 +30,22 @@ export default ({ onNext, onPrev }) => {
     },
     {
       maxFloat: amount => {
-        return amount > saiBalance.toNumber()
+        return amount > daiBalance.toNumber()
           ? 'Insufficient Dai balance'
           : 'Amount exceeds Sai availibility';
       }
     }
   );
+
+  const setMax = () => {
+    setMaxSelected(true);
+    setAmount(maxOverall);
+  };
+
+  const onChange = event => {
+    onAmountChange(event);
+    setMaxSelected(false);
+  };
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
@@ -60,20 +72,16 @@ export default ({ onNext, onPrev }) => {
             <Input
               type="number"
               value={amount}
-              disabled={!saiBalance}
+              disabled={!daiBalance}
               min="0"
               placeholder="0.00 DAI"
               onChange={onAmountChange}
               failureMessage={amountErrors}
-              // after={
-              //   <Link
-              //     color="blue"
-              //     fontWeight="medium"
-              //     onClick={() => setAmount(maxOverall)}
-              //   >
-              //     Set max
-              //   </Link>
-              // }
+              after={
+                <Link color="blue" fontWeight="medium" onClick={setMax}>
+                  Set max
+                </Link>
+              }
             />
             <Grid gridRowGap="xs">
               <Box>
@@ -84,7 +92,7 @@ export default ({ onNext, onPrev }) => {
                   ml="s"
                   color="darkLavender"
                 >
-                  {saiBalance ? prettifyNumber(saiBalance) : '...'}
+                  {daiBalance ? prettifyNumber(daiBalance) : '...'}
                 </Text>
               </Box>
             </Grid>
@@ -103,7 +111,7 @@ export default ({ onNext, onPrev }) => {
                 Max DAI to SAI availability
               </TextBlock>
               <TextBlock t="body">
-                {maxLiquidity ? `${prettifyNumber(maxLiquidity)} Sai` : '...'}
+                {saiAvailable ? `${prettifyNumber(saiAvailable)}` : '...'}
               </TextBlock>
             </Grid>
           </Grid>
@@ -124,7 +132,7 @@ export default ({ onNext, onPrev }) => {
             dispatch({
               type: 'assign',
               payload: {
-                saiAmountToMigrate: amount
+                daiAmountToMigrate: maxSelected ? daiBalance : DAI(amount)
               }
             });
             onNext();

@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@makerdao/currency": "^0.9.5",
-    "@makerdao/dai": "0.21.1",
+    "@makerdao/dai": "0.23.0-rc.1",
     "@makerdao/dai-plugin-ledger-web": "^0.9.7",
     "@makerdao/dai-plugin-mcd": "^1.0.0",
     "@makerdao/dai-plugin-migrations": "1.0.1",
@@ -43,6 +43,7 @@
     "trezor-connect": "^7.0.5"
   },
   "devDependencies": {
+    "@makerdao/test-helpers": "^0.2.1",
     "@testing-library/react": "^9.3.2",
     "babel-eslint": "^10.0.3",
     "babel-plugin-styled-components": "^1.10.6",

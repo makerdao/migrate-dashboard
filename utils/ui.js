@@ -65,5 +65,7 @@ export const etherscanLink = (string, network = 'mainnet') => {
 };
 
 export const oasisLink = (string, network) => {
-  return `http://${network === 'kovan' ? 'staging.' : ''}oasis.app${string}`;
+  return `http://oasis.app${string}${
+    network === 'kovan' ? '?network=kovan' : ''
+  }`;
 };
