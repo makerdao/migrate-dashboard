@@ -14,13 +14,12 @@ import {
 import useMaker from '../hooks/useMaker';
 import reduce from 'lodash/reduce';
 import { getColor } from '../utils/theme';
-import { oasisLink, prettifyNumber } from '../utils/ui';
+import { prettifyNumber } from '../utils/ui';
 import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
-
-const DEV_BOOL_USE_OASIS_FOR_SAI_MIGRATION = true;
+import { SAI, DAI } from '../maker';
 
 function MigrationCard({
   title,
@@ -83,7 +82,7 @@ function showAmount(tok) {
 }
 
 function Overview() {
-  const { maker, account, network } = useMaker();
+  const { maker, account } = useMaker();
   const [initialFetchComplete, setInitialFetchComplete] = useState(false);
   const [
     {
@@ -105,14 +104,14 @@ function Overview() {
       if (!maker || !account) return;
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
-      const _daiBalance = await maker.getToken('MDAI').balance();
+      const _daiBalance = DAI(await maker.getToken('MDAI').balance());
       setInitialFetchComplete(true);
 
       dispatch({
         type: 'assign',
         payload: {
           cdpMigrationCheck: checks['single-to-multi-cdp'],
-          saiBalance: checks['sai-to-dai'],
+          saiBalance: SAI(checks['sai-to-dai']),
           daiBalance: _daiBalance
         }
       });
@@ -168,7 +167,7 @@ function Overview() {
               title="Single-Collateral Sai Upgrade"
               body={`Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai availability: ${prettifyNumber(
                 daiAvailable
-              )} DAI`}
+              )}`}
               metadataTitle="Sai to upgrade"
               metadataValue={showAmount(saiBalance)}
               onSelected={() => Router.push('/migration/dai')}
