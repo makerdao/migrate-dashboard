@@ -3,13 +3,22 @@ import { Grid, Card, Input, Link } from '@makerdao/ui-components-core';
 import { TextBlock } from './Typography';
 
 export default function({
-  max,
-  unit,
   title,
-  update,
-  setValid,
-  getErrorMessage,
-  children
+  children,
+
+  // a Currency class like SAI or DAI
+  unit,
+
+  // the maximum allowable value, as an instance of `unit`
+  max,
+
+  // a function that gets one argument: the input, typed to the `unit` class. it
+  // should return an error message if the value is invalid, and nothing if it's
+  // valid
+  validate,
+
+  // this will be called with the final typed value if validation passes
+  update
 }) {
   const [error, setError] = useState();
   const [value, setValue] = useState('');
@@ -23,23 +32,19 @@ export default function({
     const { value } = event.target;
     setValue(value);
 
-    if (isNaN(parseFloat(value))) {
-      setError('Please enter a valid number');
-      setValid(false);
-      return;
-    }
+    if (isNaN(parseFloat(value)))
+      return setError('Please enter a valid number');
 
     let newError;
     try {
       const typedValue = unit(value);
-      newError = getErrorMessage(typedValue);
+      newError = validate(typedValue);
       if (!newError) update(typedValue);
     } catch (e) {
       newError = e.message;
     }
 
     setError(newError);
-    setValid(!newError);
   };
 
   return (

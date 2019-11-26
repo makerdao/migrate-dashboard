@@ -8,15 +8,19 @@ import AmountInputCard from '../AmountInputCard';
 
 export default ({ onNext, onPrev }) => {
   let [{ daiBalance, saiAvailable }, dispatch] = useStore();
-  saiAvailable = saiAvailable.toBigNumber();
+  if (saiAvailable) saiAvailable = saiAvailable.toBigNumber();
   const [daiAmountToMigrate, setDaiAmountToMigrate] = useState();
   const [valid, setValid] = useState(true);
   const max = daiBalance.lt(saiAvailable) ? daiBalance : DAI(saiAvailable);
 
-  const getErrorMessage = value => {
-    if (value.lte(0)) return 'Amount must be greater than 0';
-    else if (value.gt(daiBalance)) return 'Insufficient Dai balance';
-    else if (value.gt(saiAvailable)) return 'Amount exceeds Sai availability';
+  const validate = value => {
+    let msg;
+    if (value.lte(0)) msg = 'Amount must be greater than 0';
+    else if (value.gt(daiBalance)) msg = 'Insufficient Dai balance';
+    else if (value.gt(saiAvailable)) msg = 'Amount exceeds Sai availability';
+
+    setValid(!msg);
+    return msg;
   };
 
   return (
@@ -39,9 +43,8 @@ export default ({ onNext, onPrev }) => {
         <AmountInputCard
           max={max}
           unit={DAI}
-          setValid={setValid}
           update={setDaiAmountToMigrate}
-          getErrorMessage={getErrorMessage}
+          validate={validate}
           title="Enter the amount you would like to exchange."
         >
           <Box>
