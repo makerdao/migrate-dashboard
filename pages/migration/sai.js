@@ -24,7 +24,7 @@ const steps = [
     <Failed
       {...props}
       title="Exchange failed"
-      subtitle="Your Multi-Collateral Dai was not exchanged for Single-Collateral Dai."
+      subtitle="Your Multi-Collateral Dai was not exchanged for Single-Collateral Sai."
     />
   )
 ];
