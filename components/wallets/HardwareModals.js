@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import LedgerType from './LedgerType';
 import HardwareAccountSelect from './HardwareAccountSelect';
-import { BasicModal } from './templates';
+import BasicModal from './BasicModal';
 import { AccountTypes } from '../../utils/constants';
 
 const TREZOR_PATH = "44'/60'/0'/0/0";
