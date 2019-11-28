@@ -25,6 +25,7 @@ export default ({
   const [saiApprovePending, setSaiApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
   const [{ saiAmountToMigrate }, dispatch] = useStore();
+  const [upgradeInitiated, setUpgradeInitiated] = useState(false);
   const migrationContractAddress = maker
     .service('smartContract')
     .getContract('MIGRATION').address;
@@ -48,6 +49,7 @@ export default ({
 
   const upgradeSai = async () => {
     try {
+      setUpgradeInitiated(true);
       const mig = await maker.service('migration').getMigration('sai-to-dai');
       const migrationTxObject = mig.execute(saiAmountToMigrate);
       maker.service('transactionManager').listen(migrationTxObject, {
@@ -181,7 +183,7 @@ export default ({
           Back
         </Button>
         <Button
-          disabled={!hasReadTOS || !proxyDetails.hasSaiAllowance}
+          disabled={!hasReadTOS || !proxyDetails.hasSaiAllowance || upgradeInitiated}
           onClick={upgradeSai}
         >
           Continue
