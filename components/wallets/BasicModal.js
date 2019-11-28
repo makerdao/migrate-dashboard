@@ -32,7 +32,7 @@ const SimpleBg = styled(Bg)`
   align-items: center;
 `;
 
-export const BasicModal = ({ show, onClose, modalProps, children }) => {
+const BasicModal = ({ show, onClose, modalProps, children }) => {
   const [fadeStart, fadeEnd] = animations.fade;
   const [fadeUpStart, fadeUpEnd] = animations.fadeUp;
 
@@ -85,9 +85,4 @@ export const BasicModal = ({ show, onClose, modalProps, children }) => {
   );
 };
 
-const templates = {
-  basic: BasicModal,
-  default: BasicModal
-};
-
-export default templates;
+export default BasicModal;

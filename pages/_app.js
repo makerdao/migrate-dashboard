@@ -5,7 +5,6 @@ import { ThemeProvider, createGlobalStyle } from 'styled-components';
 import '@makerdao/ui-components-core/dist/styles/global.css';
 import MakerProvider from '../providers/MakerProvider';
 import StoreProvider from '../providers/StoreProvider';
-import WalletProvider from '../providers/WalletProvider';
 import theme, { getColor } from '../utils/theme';
 import DevFooter from '../components/DevFooter';
 import Toast from '../components/Toast';
@@ -40,11 +39,9 @@ export default class MyApp extends App {
         <ThemeProvider theme={theme}>
           <MakerProvider network={network}>
             <StoreProvider>
-              <WalletProvider>
-                <Component {...pageProps} />
-                <Toast />
-                <DevFooter />
-              </WalletProvider>
+              <Component {...pageProps} />
+              <Toast />
+              <DevFooter />
             </StoreProvider>
           </MakerProvider>
         </ThemeProvider>

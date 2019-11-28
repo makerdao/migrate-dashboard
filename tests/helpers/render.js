@@ -3,7 +3,6 @@ import { render as renderBase } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import MakerProvider from '../../providers/MakerProvider';
 import StoreProvider from '../../providers/StoreProvider';
-import WalletProvider from '../../providers/WalletProvider';
 import useStore from '../../hooks/useStore';
 import theme from '../../utils/theme';
 
@@ -17,9 +16,7 @@ export default async function render(children, { initialState } = {}) {
     <ThemeProvider theme={theme}>
       <MakerProvider>
         <StoreProvider initialState={initialState}>
-          <WalletProvider>
-            <StoreAccess callback={callback}>{children}</StoreAccess>
-          </WalletProvider>
+          <StoreAccess callback={callback}>{children}</StoreAccess>
         </StoreProvider>
       </MakerProvider>
     </ThemeProvider>

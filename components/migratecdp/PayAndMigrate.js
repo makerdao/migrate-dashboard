@@ -82,6 +82,7 @@ const PayAndMigrate = ({
   const [proxyDetails, setProxyDetails] = useState({});
   const [mkrBalance, setMkrBalance] = useState(false);
   const [saiNeededInMarket, setSaiNeededInMarket] = useState(false);
+  const [migrateInitiated, setMigrateInitiated] = useState(false);
   const [, dispatch] = useStore();
   const { maker, account } = useMaker();
   const { govFeeMKRExact } = selectedCDP;
@@ -116,6 +117,7 @@ const PayAndMigrate = ({
 
   const migrateCdpPayWithMkr = async () => {
     try {
+      setMigrateInitiated(true);
       const mig = maker
         .service('migration')
         .getMigration('single-to-multi-cdp');
@@ -141,6 +143,7 @@ const PayAndMigrate = ({
 
   const migrateCdpPayWithDebt = async () => {
     try {
+      setMigrateInitiated(true);
       const mig = maker
         .service('migration')
         .getMigration('single-to-multi-cdp');
@@ -389,6 +392,7 @@ const PayAndMigrate = ({
         <Button
           justifySelf="center"
           disabled={
+            migrateInitiated ||
             !hasReadTOS ||
             (selectedTab === TAB_PAY_WITH_MKR &&
               !proxyDetails.hasMkrAllowance) ||

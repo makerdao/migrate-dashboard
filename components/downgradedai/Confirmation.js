@@ -23,6 +23,7 @@ export default ({
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [daiApprovePending, setDaiApprovePending] = useState(false);
+  const [downgradeInitiated, setDowngradeInitiated] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
   const [{ daiAmountToMigrate }, dispatch] = useStore();
   const migrationContractAddress = maker
@@ -50,6 +51,7 @@ export default ({
 
   const convertDai = async () => {
     try {
+      setDowngradeInitiated(true);
       const mig = await maker.service('migration').getMigration('dai-to-sai');
       const migrationTxObject = mig.execute(daiAmountToMigrate);
       maker.service('transactionManager').listen(migrationTxObject, {
@@ -183,7 +185,7 @@ export default ({
           Back
         </Button>
         <Button
-          disabled={!hasReadTOS || !proxyDetails.hasDaiAllowance}
+          disabled={!hasReadTOS || !proxyDetails.hasDaiAllowance || downgradeInitiated}
           onClick={convertDai}
         >
           Continue
