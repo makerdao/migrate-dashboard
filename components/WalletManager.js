@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import useMaker from '../hooks/useMaker';
 import IconButton from '../components/IconButton';
 import { Grid } from '@makerdao/ui-components-core';
@@ -73,11 +73,11 @@ function WalletManager({ providerName }) {
         >
           {lang.providers.trezor}
         </IconButton>
-        <TrezorModal
+        {useMemo(() => <TrezorModal
           show={showTrezor}
           onClose={() => setShowTrezor(false)}
           onAccountChosen={onAccountChosen}
-        />
+        />, [onAccountChosen, showTrezor])}
       </BrowserView>
 
       <BrowserView>
@@ -93,11 +93,11 @@ function WalletManager({ providerName }) {
         >
           {lang.providers.ledger_nano}
         </IconButton>
-        <LedgerModal
+        {useMemo(() => <LedgerModal
           show={showLedger}
           onClose={() => setShowLedger(false)}
           onAccountChosen={onAccountChosen}
-        />
+        />, [onAccountChosen, showLedger])}
       </BrowserView>
       <BrowserView>
         <IconButton
