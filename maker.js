@@ -20,7 +20,14 @@ export function getMaker() {
   return maker;
 }
 
-export async function instantiateMaker({ rpcUrl }) {
+const INFURA_KEY = '6ba7a95268bf4ccda9bf1373fe582b43';
+
+export async function instantiateMaker(network) {
+  const rpcUrl =
+    network === 'test'
+      ? process.env.TEST_RPC_URL
+      : `https://${network}.infura.io/v3/${INFURA_KEY}`;
+
   // this is required here instead of being imported normally because it runs
   // code that will break if run server-side
   const trezorPlugin = require('@makerdao/dai-plugin-trezor-web').default;
@@ -67,7 +74,8 @@ export async function connectBrowserProvider(maker) {
     `Expected network ID ${networkId}, got ${browserProvider.networkId}.`
   );
   assert(
-    browserProvider.address && browserProvider.address.match(/^0x[a-fA-F0-9]{40}$/),
+    browserProvider.address &&
+      browserProvider.address.match(/^0x[a-fA-F0-9]{40}$/),
     'Got an incorrect or nonexistent wallet address.'
   );
 
