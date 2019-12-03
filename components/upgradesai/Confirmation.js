@@ -142,7 +142,7 @@ export default ({
               isComplete={proxyDetails.hasSaiAllowance}
               onToggle={giveProxySaiAllowance}
               disabled={proxyDetails.hasSaiAllowance}
-              data-testid="allowance-toggle"
+              testId="allowance-toggle"
             />
           </Grid>
         </Card>
@@ -162,6 +162,7 @@ export default ({
             <Text
               t="caption"
               color="steel"
+              data-testid="terms"
               onClick={() => setHasReadTOS(!hasReadTOS)}
             >
               I have read and accept the{' '}
@@ -183,7 +184,9 @@ export default ({
           Back
         </Button>
         <Button
-          disabled={!hasReadTOS || !proxyDetails.hasSaiAllowance || upgradeInitiated}
+          disabled={
+            !hasReadTOS || !proxyDetails.hasSaiAllowance || upgradeInitiated
+          }
           onClick={upgradeSai}
         >
           Continue

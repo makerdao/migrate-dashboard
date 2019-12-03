@@ -10,6 +10,7 @@ function LoadingToggle({
   isComplete,
   onToggle,
   disabled,
+  testId,
   ...props
 }) {
   const text = isLoading
@@ -34,6 +35,7 @@ function LoadingToggle({
         active={isComplete || isLoading}
         onClick={onToggle}
         justifySelf="end"
+        data-testid={testId}
         disabled={disabled}
       />
     </Grid>

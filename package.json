@@ -10,11 +10,12 @@
     "https": "yarn dev & dev-proxy -p 3000:3003",
     "build": "next build && next export",
     "start": "next start",
-    "test": "jest --runInBand"
+    "test": "yarn testchain --ci jest --runInBand",
+    "testchain": "./node_modules/@makerdao/testchain/scripts/launch -s default --fast"
   },
   "dependencies": {
     "@makerdao/currency": "^0.9.5",
-    "@makerdao/dai": "0.23.0-rc.1",
+    "@makerdao/dai": "^0.23.0-rc.2",
     "@makerdao/dai-plugin-ledger-web": "^0.9.7",
     "@makerdao/dai-plugin-mcd": "^1.0.0",
     "@makerdao/dai-plugin-migrations": "1.0.1",

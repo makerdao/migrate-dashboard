@@ -1,5 +1,5 @@
 import Maker from '@makerdao/dai';
-import daiPlugin from '@makerdao/dai-plugin-mcd';
+import mcdPlugin from '@makerdao/dai-plugin-mcd';
 import migrationPlugin from '@makerdao/dai-plugin-migrations';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import walletLinkPlugin from '@makerdao/dai-plugin-walletlink';
@@ -23,7 +23,7 @@ export function getMaker() {
 const INFURA_KEY = '6ba7a95268bf4ccda9bf1373fe582b43';
 
 export async function instantiateMaker(network) {
-  const rpcUrl =
+  const url =
     network === 'test'
       ? process.env.TEST_RPC_URL
       : `https://${network}.infura.io/v3/${INFURA_KEY}`;
@@ -33,14 +33,16 @@ export async function instantiateMaker(network) {
   const trezorPlugin = require('@makerdao/dai-plugin-trezor-web').default;
 
   const config = {
+    url,
     log: false,
+    multicall: true,
     plugins: [
       trezorPlugin,
       ledgerPlugin,
       walletLinkPlugin,
       walletConnectPlugin,
       [
-        daiPlugin,
+        mcdPlugin,
         {
           cdpTypes: [
             { currency: SAI, ilk: 'SAI' },
@@ -49,15 +51,7 @@ export async function instantiateMaker(network) {
         }
       ],
       migrationPlugin
-    ],
-    smartContract: {
-      addContracts: {}
-    },
-    provider: {
-      url: rpcUrl,
-      type: 'HTTP'
-    },
-    multicall: true
+    ]
   };
 
   maker = await Maker.create('http', config);
