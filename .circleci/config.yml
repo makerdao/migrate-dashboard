@@ -19,7 +19,7 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
   test:
     docker:
-      - image: circleci/node:lts
+      - image: levity/dapptools-node-latest
     steps:
       - checkout
       - restore_cache:
