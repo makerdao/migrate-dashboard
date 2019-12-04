@@ -12,7 +12,6 @@ export function Breakout({ children, ...props }) {
       fontSize="2rem"
       color="darkLavender"
       lineHeight="1.3"
-      letterSpacing="0.3px"
       mb="m"
       {...props}
     >
@@ -29,8 +28,8 @@ export const ErrorBlock = styled(Card)`
   max-width: 347px;
   font-size: 14px;
   color: #994126;
-  background: #FDEDE8;
-  border-color: #F77249;
+  background: #fdede8;
+  border-color: #f77249;
   padding: 18px;
   text-align: center;
 `;
