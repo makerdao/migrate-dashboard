@@ -9,9 +9,9 @@ export const BreakableText = styled(Text)`
 export function Breakout({ children, ...props }) {
   return (
     <Text.p
-      fontSize="2rem"
+      fontSize="1.9rem"
       color="darkLavender"
-      lineHeight="1.3"
+      lineHeight="1.4"
       mb="m"
       {...props}
     >
