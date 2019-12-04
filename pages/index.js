@@ -83,7 +83,13 @@ function Index() {
           </Breakout>
         </Box>
       </Grid>
-      <Text.h4 alignSelf="center" mb="s" mt="s" color="#546978">
+      <Text.h4
+        fontSize="1.9rem"
+        alignSelf="center"
+        mb="s"
+        mt="s"
+        color="#546978"
+      >
         Connect a wallet to get started
       </Text.h4>
       <Grid
