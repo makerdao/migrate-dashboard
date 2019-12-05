@@ -56,7 +56,7 @@ export default function() {
           m="0 auto"
           mt={'m'}
           p={['0 80px', '0']}
-          opacity={currentStep < 1 ? 1 : 0}
+          opacity={currentStep < 2 ? 1 : 0}
           transition="opacity 0.2s"
         />
 

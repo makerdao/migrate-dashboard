@@ -9,10 +9,9 @@ export const BreakableText = styled(Text)`
 export function Breakout({ children, ...props }) {
   return (
     <Text.p
-      fontSize="2rem"
+      fontSize="1.9rem"
       color="darkLavender"
-      lineHeight="1.3"
-      letterSpacing="0.3px"
+      lineHeight="1.4"
       mb="m"
       {...props}
     >
@@ -29,8 +28,8 @@ export const ErrorBlock = styled(Card)`
   max-width: 347px;
   font-size: 14px;
   color: #994126;
-  background: #FDEDE8;
-  border-color: #F77249;
+  background: #fdede8;
+  border-color: #f77249;
   padding: 18px;
   text-align: center;
 `;

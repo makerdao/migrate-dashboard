@@ -10,14 +10,15 @@
     "https": "yarn dev & dev-proxy -p 3000:3003",
     "build": "next build && next export",
     "start": "next start",
-    "test": "jest"
+    "test": "yarn testchain --ci jest --runInBand",
+    "testchain": "./node_modules/@makerdao/testchain/scripts/launch -s default --fast"
   },
   "dependencies": {
     "@makerdao/currency": "^0.9.5",
-    "@makerdao/dai": "0.23.0-rc.1",
+    "@makerdao/dai": "^0.23.0-rc.2",
     "@makerdao/dai-plugin-ledger-web": "^0.9.7",
-    "@makerdao/dai-plugin-mcd": "^1.0.0",
-    "@makerdao/dai-plugin-migrations": "1.0.2",
+    "@makerdao/dai-plugin-mcd": "^1.0.3",
+    "@makerdao/dai-plugin-migrations": "1.0.3",
     "@makerdao/dai-plugin-trezor-web": "^0.9.6",
     "@makerdao/dai-plugin-walletconnect": "^0.0.8",
     "@makerdao/dai-plugin-walletlink": "^0.0.1",
@@ -44,6 +45,7 @@
   },
   "devDependencies": {
     "@makerdao/test-helpers": "^0.2.1",
+    "@makerdao/testchain": "^1.0.1",
     "@testing-library/react": "^9.3.2",
     "babel-eslint": "^10.0.3",
     "babel-plugin-styled-components": "^1.10.6",
@@ -53,7 +55,8 @@
     "eslint-plugin-react-hooks": "^2.2.0",
     "husky": "^3.0.9",
     "jest": "^24.9.0",
-    "lint-staged": "^9.4.3"
+    "lint-staged": "^9.4.3",
+    "wait-for-expect": "^3.0.1"
   },
   "lint-staged": {
     "*.js": [
