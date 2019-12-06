@@ -144,7 +144,7 @@ export default ({
               isComplete={proxyDetails.hasDaiAllowance}
               onToggle={giveProxyDaiAllowance}
               disabled={proxyDetails.hasDaiAllowance}
-              data-testid="allowance-toggle"
+              testId="allowance-toggle"
             />
           </Grid>
         </Card>
@@ -164,6 +164,7 @@ export default ({
             <Text
               t="caption"
               color="steel"
+              data-testid="terms"
               onClick={() => setHasReadTOS(!hasReadTOS)}
             >
               I have read and accept the{' '}
