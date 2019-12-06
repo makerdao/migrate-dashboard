@@ -273,9 +273,10 @@ const PayAndMigrate = ({
           </Table>
           {mkrBalance && !hasEnoughMkr ? (
             <ErrorBlock>
-              You have insufficient MKR balance. Please use `Pay with CDP debt`,
-              or purchase {mkrNeeded ? `at least ${mkrNeeded}` : 'enough'} MKR
-              to pay the stability fee before continuing.
+              You have insufficient MKR balance. Please use &quot;Pay with CDP
+              debt&quot;, or purchase{' '}
+              {mkrNeeded ? `at least ${mkrNeeded}` : 'enough'} MKR to pay the
+              stability fee before continuing.
             </ErrorBlock>
           ) : (
             mkrBalance && (
