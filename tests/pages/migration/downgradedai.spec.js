@@ -1,6 +1,6 @@
 import DowngradeDai from '../../../pages/migration/sai';
 import render from '../../helpers/render';
-import { SAI, DAI } from '../../../maker';
+import { instantiateMaker, SAI, DAI } from '../../../maker';
 import {
   cleanup,
   fireEvent,
@@ -52,20 +52,20 @@ describe('with live testchain', () => {
   let maker, startingBalance;
 
   beforeEach(async () => {
-    maker = await Maker.create('test', { plugins: [McdPlugin], log: false });
+    maker = await instantiateMaker('test');
     const proxy = await maker.service('proxy').ensureProxy();
      //generate 50 DAI
-    await window.maker.service('mcd:cdpManager').openLockAndDraw('ETH-A', ETH(1), 50);
+    await maker.service('mcd:cdpManager').openLockAndDraw('ETH-A', ETH(1), 50);
     //put 1000 SAI in the migration contract
-    await window.maker.service('cdp').openProxyCdpLockEthAndDrawDai(10, 1000, proxy);
-    const migrationContractAddress = window.maker
+    await maker.service('cdp').openProxyCdpLockEthAndDrawDai(10, 1000, proxy);
+    const migrationContractAddress = maker
     .service('smartContract')
     .getContract('MIGRATION').address;
-    await window.maker.getToken('SAI').approveUnlimited(migrationContractAddress);
-    const mig = window.maker.service('migration').getMigration('sai-to-dai');
+    await maker.getToken('SAI').approveUnlimited(migrationContractAddress);
+    const mig = maker.service('migration').getMigration('sai-to-dai');
     await mig.execute(SAI(1000));
 
-    startingBalance = await window.maker.getToken('DAI').balance();
+    startingBalance = await maker.getToken('DAI').balance();
   });
 
   test('the whole flow', async () => {
