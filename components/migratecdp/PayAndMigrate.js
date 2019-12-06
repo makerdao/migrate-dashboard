@@ -176,10 +176,14 @@ const PayAndMigrate = ({
     (async () => {
       if (maker && account) {
         const mig = maker
-        .service('migration')
-        .getMigration('single-to-multi-cdp');
+          .service('migration')
+          .getMigration('single-to-multi-cdp');
         const mkrToken = maker.service('token').getToken(MKR);
-        const [mkrBalanceFromSdk, proxyAddress, saiNeededInMarketFromSdk] = await Promise.all([
+        const [
+          mkrBalanceFromSdk,
+          proxyAddress,
+          saiNeededInMarketFromSdk
+        ] = await Promise.all([
           mkrToken.balance(),
           maker.service('proxy').currentProxy(),
           mig.saiAmountNeededToBuyMkr(govFeeMKRExact)
@@ -211,7 +215,9 @@ const PayAndMigrate = ({
     }
   }
   const aboveOneSeventy = newCollatRatio > 170;
-  const enoughMkrInMarket = saiNeededInMarket && maxCost.toBigNumber().gt(saiNeededInMarket.toBigNumber());
+  const enoughMkrInMarket =
+    saiNeededInMarket &&
+    maxCost.toBigNumber().gt(saiNeededInMarket.toBigNumber());
 
   const TAB_PAY_WITH_MKR = 0;
   const TAB_PAY_WITH_DEBT = 1;
@@ -367,10 +373,11 @@ const PayAndMigrate = ({
             <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
           ) : (
             <ErrorBlock>
-              {!aboveOneSeventy ? `You cannot use this feature because your CDP would end up with a
+              {!aboveOneSeventy
+                ? `You cannot use this feature because your CDP would end up with a
               collateralization ratio of less than ${CDP_MIN_RATIO}%. Please use
               ‘Pay with MKR’ or repay some of your CDP debt before continuing.`
-              : `There is not enough liquidity in the market at this time to purchase ${selectedCDP.govFeeMKR} MKR with a maximum of 5% slippage.`}
+                : `There is not enough liquidity in the market at this time to purchase ${selectedCDP.govFeeMKR} MKR with a maximum of 5% slippage.`}
             </ErrorBlock>
           )}
         </Grid>
