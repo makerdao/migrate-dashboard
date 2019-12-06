@@ -1,4 +1,5 @@
 import { createRouter } from 'next/router';
+import { takeSnapshot, restoreSnapshot } from '@makerdao/test-helpers';
 
 process.env.TESTING = true;
 process.env.TEST_RPC_URL = 'http://localhost:2000';
@@ -11,9 +12,11 @@ const router = createRouter('/', {}, null, {});
 router.replace = jest.fn();
 router.push = jest.fn();
 
+let snapshotData;
+
 // https://github.com/testing-library/react-testing-library/issues/281
 const originalError = console.error;
-beforeAll(() => {
+beforeAll(async () => {
   jest.setTimeout(10000);
   console.error = (...args) => {
     if (/Warning.*not wrapped in act/.test(args[0])) {
@@ -21,8 +24,10 @@ beforeAll(() => {
     }
     originalError.call(console, ...args);
   };
+  snapshotData = await takeSnapshot();
 });
 
-afterAll(() => {
+afterAll(async () => {
   console.error = originalError;
+  await restoreSnapshot(snapshotData);
 });
