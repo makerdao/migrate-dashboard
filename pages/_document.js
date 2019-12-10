@@ -39,12 +39,7 @@ export default class MyDocument extends NextDocument {
             href="/static/safari-pinned-tab.svg"
             color="#5bbad5"
           />
-          <link rel="shortcut icon" href="/static/favicon.ico" />
           <meta name="msapplication-TileColor" content="#da532c" />
-          <meta
-            name="msapplication-config"
-            content="/static/browserconfig.xml"
-          />
           <meta name="theme-color" content="#ffffff" />
           {this.props.styleTags}
         </Head>
