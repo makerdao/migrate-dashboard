@@ -28,6 +28,7 @@ function MigrationCard({
   metadataTitle,
   metadataValue,
   onSelected,
+  external,
   buttonLabel = 'Continue'
 }) {
   return (
@@ -41,7 +42,16 @@ function MigrationCard({
         </Grid>
       }
       button={
-        <Button
+        external ?
+        <Link href={external} target="_blank">
+          <Button
+            px="xl"
+            variant={recommended ? 'primary' : 'secondary-outline'}
+          >
+            {buttonLabel}
+          </Button>
+        </Link>
+        : <Button
           px="xl"
           variant={recommended ? 'primary' : 'secondary-outline'}
           onClick={onSelected}
@@ -112,7 +122,8 @@ function Overview() {
         payload: {
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
-          daiBalance: _daiBalance
+          daiBalance: _daiBalance,
+          chiefBalance: checks['chief-migrate'],
         }
       });
     })();
@@ -121,7 +132,8 @@ function Overview() {
   const shouldShowCdps = countCdps(cdps) > 0;
   const shouldShowDai = saiBalance && saiBalance.gt(0);
   const shouldShowReverse = daiBalance && daiBalance.gt(0);
-  const noMigrations = !shouldShowDai && !shouldShowCdps && !shouldShowReverse;
+  const shouldShowChief = chiefBalance && chiefBalance.gt(0);
+  const noMigrations = !shouldShowDai && !shouldShowCdps && !shouldShowReverse && !shouldShowChief;
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -185,6 +197,14 @@ function Overview() {
               onSelected={() => {
                 Router.push('/migration/sai');
               }}
+            />
+          )}
+          {shouldShowChief && (
+            <MigrationCard
+              recommended
+              title="Upgrade Vote Proxy Contract"
+              body={`Withdraw your MKR from the old vote proxy contract and remove any vote proxy allowances.`}
+              external={'https://www.makerdao.com'}
             />
           )}
           {/* { mkr &&
