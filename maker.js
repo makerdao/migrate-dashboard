@@ -1,5 +1,5 @@
 import Maker from '@makerdao/dai';
-import mcdPlugin from '@makerdao/dai-plugin-mcd';
+import mcdPlugin, { MDAI } from '@makerdao/dai-plugin-mcd';
 import migrationPlugin from '@makerdao/dai-plugin-migrations';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import walletLinkPlugin from '@makerdao/dai-plugin-walletlink';
@@ -8,12 +8,12 @@ import { checkEthereumProvider } from './utils/ethereum';
 import { createCurrency } from '@makerdao/currency';
 import assert from 'assert';
 
-let maker;
-
 export const SAI = createCurrency('SAI');
-export const DAI = createCurrency('DAI');
-export const ETH = createCurrency('ETH');
+export const ETH = Maker.ETH;
 export const USD = Maker.USD;
+export const DAI = MDAI;
+
+let maker;
 
 export function getMaker() {
   assert(maker, 'Maker has not been instantiated');
