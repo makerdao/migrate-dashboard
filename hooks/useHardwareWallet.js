@@ -76,42 +76,42 @@ function useHardwareWallet({
       choose: async (addresses, chooseCallback) => {
         const accounts = await computeAddressBalances(addresses);
         dispatch({ type: 'connect-success', payload: { chooseCallback } });
-        dispatch({ type: 'fetch-success', payload: { chooseCallback, accounts, offset: 0 } });
+        dispatch({
+          type: 'fetch-success',
+          payload: { chooseCallback, accounts, offset: 0 }
+        });
       }
     });
   }, [accountsLength, maker, path, type]);
 
-  const fetchMore = useCallback(
-    () => {
-      return new Promise((resolve, reject) => {
-        dispatch({ type: 'fetch-start' });
-        maker
-          .addAccount({
-            type,
-            path,
-            accountsOffset: state.accounts.length,
-            accountsLength,
-            choose: async (addresses, chooseCallback) => {
-              const accounts = await computeAddressBalances(addresses);
-              dispatch({
-                type: 'fetch-success',
-                payload: {
-                  accounts,
-                  offset: state.accounts.length,
-                  chooseCallback
-                }
-              });
-              resolve(accounts);
-            }
-          })
-          .catch(err => {
-            dispatch({ type: 'error' });
-            reject(err);
-          });
-      });
-    },
-    [accountsLength, maker, path, type, state.accounts.length]
-  );
+  const fetchMore = useCallback(() => {
+    return new Promise((resolve, reject) => {
+      dispatch({ type: 'fetch-start' });
+      maker
+        .addAccount({
+          type,
+          path,
+          accountsOffset: state.accounts.length,
+          accountsLength,
+          choose: async (addresses, chooseCallback) => {
+            const accounts = await computeAddressBalances(addresses);
+            dispatch({
+              type: 'fetch-success',
+              payload: {
+                accounts,
+                offset: state.accounts.length,
+                chooseCallback
+              }
+            });
+            resolve(accounts);
+          }
+        })
+        .catch(err => {
+          dispatch({ type: 'error' });
+          reject(err);
+        });
+    });
+  }, [accountsLength, maker, path, type, state.accounts.length]);
 
   function pickAccount(address, page, numAccountsPerFetch, numAccountsPerPage) {
     const fetchNumber = Math.floor(

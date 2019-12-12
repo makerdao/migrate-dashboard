@@ -105,10 +105,17 @@ const TrezorLoading = () => (
 function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
   const [page, setPage] = useState(0);
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const numAccountsPerFetch = (type === AccountTypes.LEDGER && path === LEDGER_LIVE_PATH) ? ACCOUNTS_PER_PAGE : ACCOUNTS_TO_FETCH;
-  const { fetchMore, connect, accounts, pickAccount, fetching } = useHardwareWallet(
-    { type, accountsLength: numAccountsPerFetch, path }
-  );
+  const numAccountsPerFetch =
+    type === AccountTypes.LEDGER && path === LEDGER_LIVE_PATH
+      ? ACCOUNTS_PER_PAGE
+      : ACCOUNTS_TO_FETCH;
+  const {
+    fetchMore,
+    connect,
+    accounts,
+    pickAccount,
+    fetching
+  } = useHardwareWallet({ type, accountsLength: numAccountsPerFetch, path });
 
   useEffect(() => {
     connect().then(() => {
@@ -141,7 +148,7 @@ function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
       </Grid>
       {type === AccountTypes.LEDGER ? <LedgerLoading /> : <TrezorLoading />}
       <Flex justifyContent="center">
-        <Loader size="5rem" color={getColor('makerTeal')} mb="l"/>
+        <Loader size="5rem" color={getColor('makerTeal')} mb="l" />
       </Flex>
     </Grid>
   ) : (
@@ -194,7 +201,7 @@ function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
             </tr>
           </thead>
           <tbody>
-            {renderedAccounts.map(({address, ethBalance}, index) => (
+            {renderedAccounts.map(({ address, ethBalance }, index) => (
               <tr key={address}>
                 <td>
                   <Flex justifyContent="center">
