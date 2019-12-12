@@ -106,7 +106,7 @@ function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
   const [page, setPage] = useState(0);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const accountsToFetch = (type === AccountTypes.LEDGER && path === LEDGER_LIVE_PATH) ? ACCOUNTS_PER_PAGE * 2 : ACCOUNTS_TO_FETCH; //fetching accounts only works the first two times for some reason, but loading ledger live addresses is very slow
-  const { fetch, connect, accounts, pickAccount, fetching } = useHardwareWallet(
+  const { fetchMore, connect, accounts, pickAccount, fetching } = useHardwareWallet(
     { type, accountsLength: accountsToFetch, path }
   );
 
@@ -118,10 +118,7 @@ function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toPage = async page => {
-    if (accounts.length - page * ACCOUNTS_PER_PAGE <= 0) {
-      const offset = accounts.length / (page * ACCOUNTS_PER_PAGE);
-      await fetch({ offset });
-    }
+    if (accounts.length <= page * ACCOUNTS_PER_PAGE) await fetchMore();
     setPage(page);
   };
 

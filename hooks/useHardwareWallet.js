@@ -31,17 +31,10 @@ const reducer = (state, action) => {
         onAccountChosen: payload.onAccountChosen
       };
     case 'fetch-success': {
-      const newAccountsLength = payload.accounts.length;
-      const offset = payload.offset * newAccountsLength;
-      const newAccounts = [
-        ...state.accounts.slice(0, offset),
-        ...payload.accounts,
-        ...state.accounts.slice(offset + newAccountsLength)
-      ];
       return {
         ...state,
         fetching: false,
-        accounts: newAccounts
+        accounts: [...state.accounts, ...payload.accounts]
       };
     }
     case 'error':
@@ -76,7 +69,7 @@ function useHardwareWallet({
       type,
       path,
       accountsOffset: 0,
-      accountsLength: accountsLength,
+      accountsLength,
       choose: async (addresses, onAccountChosen) => {
         const accounts = await computeAddressBalances(addresses);
         dispatch({ type: 'connect-success', payload: { onAccountChosen } });
@@ -85,21 +78,21 @@ function useHardwareWallet({
     });
   }, [accountsLength, maker, path, type]);
 
-  const fetch = useCallback(
-    ({ offset }) => {
+  const fetchMore = useCallback(
+    () => {
       return new Promise((resolve, reject) => {
         dispatch({ type: 'fetch-start' });
         maker
           .addAccount({
             type,
             path,
-            accountsOffset: offset,
+            accountsOffset: state.accounts.length,
             accountsLength,
             choose: async addresses => {
               const accounts = await computeAddressBalances(addresses);
               dispatch({
                 type: 'fetch-success',
-                payload: { accounts, offset }
+                payload: { accounts, offset: state.accounts.length }
               });
               resolve(accounts);
             }
@@ -110,7 +103,7 @@ function useHardwareWallet({
           });
       });
     },
-    [accountsLength, maker, path, type]
+    [accountsLength, maker, path, type, state.accounts.length]
   );
 
   function pickAccount(address) {
@@ -118,7 +111,7 @@ function useHardwareWallet({
   }
 
   return {
-    fetch,
+    fetchMore,
     connect,
     fetching: state.fetching,
     accounts: state.accounts,
