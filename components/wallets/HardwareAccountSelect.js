@@ -122,7 +122,8 @@ function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
   };
 
   const onConfirm = () => {
-    pickAccount(selectedAddress, page, numAccountsPerFetch, ACCOUNTS_PER_PAGE, confirmAddress);
+    pickAccount(selectedAddress, page, numAccountsPerFetch, ACCOUNTS_PER_PAGE);
+    setTimeout(() => confirmAddress(selectedAddress));
   };
 
   const start = page * ACCOUNTS_PER_PAGE;

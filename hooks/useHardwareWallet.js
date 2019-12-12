@@ -113,14 +113,15 @@ function useHardwareWallet({
     [accountsLength, maker, path, type, state.accounts.length]
   );
 
-  function pickAccount(address, page, numAccountsPerFetch, numAccountsPerPage, confirmAddress) {
-    const fetchNumber = Math.floor( page * numAccountsPerPage / numAccountsPerFetch);
-    for (let i = 0; i < state.totalNumFetches; i++){
+  function pickAccount(address, page, numAccountsPerFetch, numAccountsPerPage) {
+    const fetchNumber = Math.floor(
+      (page * numAccountsPerPage) / numAccountsPerFetch
+    );
+    for (let i = 0; i < state.totalNumFetches; i++) {
       //error out unused callbacks
       if (i !== fetchNumber) state.chooseCallbacks[i]('error');
     }
     state.chooseCallbacks[fetchNumber](null, address);
-    setTimeout(()=> confirmAddress({address}), 1);
   }
 
   return {
