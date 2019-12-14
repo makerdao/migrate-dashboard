@@ -1,6 +1,6 @@
 import UpgradeSai from '../../../pages/migration/dai';
 import render from '../../helpers/render';
-import { SAI, DAI } from '../../../maker';
+import { instantiateMaker, SAI, DAI } from '../../../maker';
 import {
   cleanup,
   fireEvent,
@@ -53,7 +53,7 @@ describe('with live testchain', () => {
   let maker, startingBalance;
 
   beforeEach(async () => {
-    maker = await Maker.create('test', { plugins: [McdPlugin], log: false });
+    maker = await instantiateMaker('test')
     const proxy = await maker.service('proxy').ensureProxy();
     await maker.service('cdp').openProxyCdpLockEthAndDrawDai(1, 50, proxy);
     startingBalance = await maker.getToken('MDAI').balance();
