@@ -3,7 +3,10 @@ import { act } from '@testing-library/react';
 import render from '../../helpers/render';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { ETH } from '@makerdao/dai-plugin-mcd'
+<<<<<<< HEAD
 import { mineBlocks } from '@makerdao/test-helpers'
+=======
+>>>>>>> 46503ec... begin cdp migration testing
 import {
   cleanup,
   fireEvent,
