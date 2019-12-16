@@ -25,23 +25,18 @@ const reducer = (state, action) => {
         fetching: true
       };
     case 'connect-success':
-      return {
-        ...state,
-        fetching: false,
-        onAccountChosen: payload.onAccountChosen
-      };
+      return { ...state, fetching: false };
     case 'fetch-success': {
-      const newAccountsLength = payload.accounts.length;
-      const offset = payload.offset * newAccountsLength;
-      const newAccounts = [
-        ...state.accounts.slice(0, offset),
-        ...payload.accounts,
-        ...state.accounts.slice(offset + newAccountsLength)
-      ];
+      const totalNumFetches = state.totalNumFetches + 1;
       return {
         ...state,
+        totalNumFetches,
         fetching: false,
-        accounts: newAccounts
+        accounts: [...state.accounts, ...payload.accounts],
+        chooseCallbacks: {
+          ...state.chooseCallbacks,
+          [totalNumFetches - 1]: payload.chooseCallback
+        }
       };
     }
     case 'error':
@@ -57,7 +52,8 @@ const reducer = (state, action) => {
 const initialState = {
   fetching: false,
   accounts: [],
-  onAccountChosen: () => {}
+  chooseCallbacks: {},
+  totalNumFetches: 0
 };
 
 const DEFAULT_ACCOUNTS_LENGTH = 25;
@@ -76,49 +72,60 @@ function useHardwareWallet({
       type,
       path,
       accountsOffset: 0,
-      accountsLength: accountsLength,
-      choose: async (addresses, onAccountChosen) => {
+      accountsLength,
+      choose: async (addresses, chooseCallback) => {
         const accounts = await computeAddressBalances(addresses);
-        dispatch({ type: 'connect-success', payload: { onAccountChosen } });
-        dispatch({ type: 'fetch-success', payload: { accounts, offset: 0 } });
+        dispatch({ type: 'connect-success', payload: { chooseCallback } });
+        dispatch({
+          type: 'fetch-success',
+          payload: { chooseCallback, accounts, offset: 0 }
+        });
       }
     });
   }, [accountsLength, maker, path, type]);
 
-  const fetch = useCallback(
-    ({ offset }) => {
-      return new Promise((resolve, reject) => {
-        dispatch({ type: 'fetch-start' });
-        maker
-          .addAccount({
-            type,
-            path,
-            accountsOffset: offset,
-            accountsLength,
-            choose: async addresses => {
-              const accounts = await computeAddressBalances(addresses);
-              dispatch({
-                type: 'fetch-success',
-                payload: { accounts, offset }
-              });
-              resolve(accounts);
-            }
-          })
-          .catch(err => {
-            dispatch({ type: 'error' });
-            reject(err);
-          });
-      });
-    },
-    [accountsLength, maker, path, type]
-  );
+  const fetchMore = useCallback(() => {
+    return new Promise((resolve, reject) => {
+      dispatch({ type: 'fetch-start' });
+      maker
+        .addAccount({
+          type,
+          path,
+          accountsOffset: state.accounts.length,
+          accountsLength,
+          choose: async (addresses, chooseCallback) => {
+            const accounts = await computeAddressBalances(addresses);
+            dispatch({
+              type: 'fetch-success',
+              payload: {
+                accounts,
+                offset: state.accounts.length,
+                chooseCallback
+              }
+            });
+            resolve(accounts);
+          }
+        })
+        .catch(err => {
+          dispatch({ type: 'error' });
+          reject(err);
+        });
+    });
+  }, [accountsLength, maker, path, type, state.accounts.length]);
 
-  function pickAccount(address) {
-    return state.onAccountChosen(null, address);
+  function pickAccount(address, page, numAccountsPerFetch, numAccountsPerPage) {
+    const fetchNumber = Math.floor(
+      (page * numAccountsPerPage) / numAccountsPerFetch
+    );
+    for (let i = 0; i < state.totalNumFetches; i++) {
+      //error out unused callbacks
+      if (i !== fetchNumber) state.chooseCallbacks[i]('error');
+    }
+    state.chooseCallbacks[fetchNumber](null, address);
   }
 
   return {
-    fetch,
+    fetchMore,
     connect,
     fetching: state.fetching,
     accounts: state.accounts,
