@@ -3,6 +3,7 @@ import { act } from '@testing-library/react';
 import render from '../../helpers/render';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { ETH } from '@makerdao/dai-plugin-mcd'
+import { mineBlocks } from '@makerdao/test-helpers'
 import {
   cleanup,
   fireEvent,
@@ -44,8 +45,9 @@ test('not enough SAI', async () => {
 })
 
 describe('with live testchain', () => {
-  let maker;
+  let maker, saiAvailable, daiAvailable;
   let cdps = [];
+
 
   beforeEach(async () => {
     maker = await instantiateMaker('test')
@@ -53,18 +55,20 @@ describe('with live testchain', () => {
     // create a cdp
     await maker.service('cdp').openProxyCdpLockEthAndDrawDai(10, 1000, proxy)
     // create sai liquidity for migration contract
-    // await maker.service('cdp').openProxyCdpLockEthAndDrawDai(20, 2000, proxy)
     const migrationContractAddress = maker
       .service('smartContract')
       .getContract('MIGRATION').address
     await maker.getToken('SAI').approveUnlimited(migrationContractAddress)
     const mig = maker.service('migration').getMigration('sai-to-dai');
-    await mig.execute(SAI(2000))
-
+    // await mig.execute(SAI(1000))
+    const cdp = await maker.service('cdp').openCdp()
+    const lock = await cdp.lockEth(10, ETH)
+    await Promise.all([lock, mineBlocks(maker)])
+    await cdp.drawDai('0.1', DAI)
     saiAvailable = await maker.getToken('SAI').balance();
-    daiAvailable = await maker.getToken('DAI').balance();
+    daiAvailable = await maker.getToken('MDAI').balance();
+    // console.log(cdp)
     console.log(saiAvailable.toNumber(), daiAvailable.toNumber())
-
 
 
   })
