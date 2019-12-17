@@ -90,7 +90,8 @@ function Overview() {
       saiBalance,
       daiBalance,
       saiAvailable,
-      daiAvailable
+      daiAvailable,
+      oldMkrBalance
     },
     dispatch
   ] = useStore();
@@ -112,7 +113,8 @@ function Overview() {
         payload: {
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
-          daiBalance: _daiBalance
+          daiBalance: _daiBalance,
+          oldMkrBalance: checks['mkr-redeemer']
         }
       });
     })();
@@ -120,6 +122,8 @@ function Overview() {
 
   const shouldShowCdps = countCdps(cdps) > 0;
   const shouldShowDai = saiBalance && saiBalance.gt(0);
+  const shouldShowMkr = true;
+  // const shouldShowMkr = oldMkrBalance && oldMkrBalance.gt(0);
   const shouldShowReverse = daiBalance && daiBalance.gt(0);
   const noMigrations = !shouldShowDai && !shouldShowCdps && !shouldShowReverse;
 
@@ -197,6 +201,16 @@ function Overview() {
             onSelected={showModal}
           />}
         */}
+          {shouldShowMkr && (
+            <MigrationCard
+              recommended
+              title="Redeem New MKR"
+              body="Swap your old MKR for new MKR by upgrading to the new ds-token."
+              onSelected={() => {
+                window.open("https://makerdao.com/redeem/", "_blank");
+              }}
+            />
+          )}
         </Grid>
         {initialFetchComplete ? (
           noMigrations && (
