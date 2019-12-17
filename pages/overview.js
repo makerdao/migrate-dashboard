@@ -100,7 +100,9 @@ function Overview() {
       saiBalance,
       daiBalance,
       saiAvailable,
-      daiAvailable
+      daiAvailable,
+      oldMkrBalance,
+      chiefMigrationCheck
     },
     dispatch
   ] = useStore();
@@ -123,18 +125,27 @@ function Overview() {
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
           daiBalance: _daiBalance,
-          chiefBalance: checks['chief-migrate'],
+          oldMkrBalance: checks['mkr-redeemer'],
+          chiefMigrationCheck: checks['chief-migrate']
         }
       });
     })();
   }, [maker, account, dispatch]);
 
+  const { mkrLockedDirectly, mkrLockedViaProxy } = chiefMigrationCheck || {};
+
   const shouldShowCdps = countCdps(cdps) > 0;
   const shouldShowDai = saiBalance && saiBalance.gt(0);
+  const shouldShowMkr = oldMkrBalance && oldMkrBalance.gt(0);
   const shouldShowReverse = daiBalance && daiBalance.gt(0);
-  const shouldShowChief = chiefBalance && chiefBalance.gt(0);
-  const noMigrations = !shouldShowDai && !shouldShowCdps && !shouldShowReverse && !shouldShowChief;
-
+  const shouldShowChief =
+    chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
+  const noMigrations =
+    !shouldShowCdps
+    && !shouldShowDai
+    && !shouldShowMkr
+    && !shouldShowReverse
+    && !shouldShowChief
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <Header />
@@ -202,21 +213,28 @@ function Overview() {
           {shouldShowChief && (
             <MigrationCard
               recommended
-              title="Upgrade Vote Proxy Contract"
-              body={`Withdraw your MKR from the old vote proxy contract and remove any vote proxy allowances.`}
-              external={'https://www.makerdao.com'}
+              title="DSChief MKR Withdrawal"
+              body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet."
+              metadataTitle="MKR to claim"
+              metadataValue={showAmount(
+                mkrLockedDirectly.plus(mkrLockedViaProxy)
+              )}
+              onSelected={() => {
+                window.open('https://chief-migration.makerdao.com/', '_blank');
+              }}
             />
           )}
-          {/* { mkr &&
-          <MigrationCard
-            recommended
-            title="DSChief MKR Withdrawal"
-            body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet."
-            metadataTitle="SCD Balance"
-            metadataValue="1,400.00 DAI"
-            onSelected={showModal}
-          />}
-        */}
+
+          {shouldShowMkr && (
+            <MigrationCard
+              recommended
+              title="Redeem New MKR"
+              body="Swap your old MKR for new MKR by upgrading to the new ds-token."
+              onSelected={() => {
+                window.open('https://makerdao.com/redeem/', '_blank');
+              }}
+            />
+          )}
         </Grid>
         {initialFetchComplete ? (
           noMigrations && (

@@ -105,35 +105,32 @@ const TrezorLoading = () => (
 function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
   const [page, setPage] = useState(0);
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const accountsToFetch = (type === AccountTypes.LEDGER && path === LEDGER_LIVE_PATH) ? ACCOUNTS_PER_PAGE * 2 : ACCOUNTS_TO_FETCH; //fetching accounts only works the first two times for some reason, but loading ledger live addresses is very slow
-  const { fetch, connect, accounts, pickAccount, fetching } = useHardwareWallet(
-    { type, accountsLength: accountsToFetch, path }
-  );
+  const numAccountsPerFetch =
+    type === AccountTypes.LEDGER && path === LEDGER_LIVE_PATH
+      ? ACCOUNTS_PER_PAGE
+      : ACCOUNTS_TO_FETCH;
+  const {
+    fetchMore,
+    connect,
+    accounts,
+    pickAccount,
+    fetching
+  } = useHardwareWallet({ type, accountsLength: numAccountsPerFetch, path });
 
   useEffect(() => {
-    connect().then(address => {
-      confirmAddress(address);
+    connect().then(() => {
       onClose();
     }, onClose);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [connect, onClose]);
 
   const toPage = async page => {
-    if (accounts.length - page * ACCOUNTS_PER_PAGE <= 0) {
-      const offset = accounts.length / (page * ACCOUNTS_PER_PAGE);
-      await fetch({ offset });
-    }
+    if (accounts.length <= page * ACCOUNTS_PER_PAGE) await fetchMore();
     setPage(page);
   };
 
-  const selectAddress = useCallback(
-    address => {
-      setSelectedAddress(address);
-    },
-    [setSelectedAddress]
-  );
-
   const onConfirm = () => {
-    pickAccount(selectedAddress);
+    pickAccount(selectedAddress, page, numAccountsPerFetch, ACCOUNTS_PER_PAGE);
+    setTimeout(() => confirmAddress(selectedAddress));
   };
 
   const start = page * ACCOUNTS_PER_PAGE;
@@ -151,7 +148,7 @@ function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
       </Grid>
       {type === AccountTypes.LEDGER ? <LedgerLoading /> : <TrezorLoading />}
       <Flex justifyContent="center">
-        <Loader size="5rem" color={getColor('makerTeal')} mb="l"/>
+        <Loader size="5rem" color={getColor('makerTeal')} mb="l" />
       </Flex>
     </Grid>
   ) : (
@@ -204,7 +201,7 @@ function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
             </tr>
           </thead>
           <tbody>
-            {renderedAccounts.map(({address, ethBalance}, index) => (
+            {renderedAccounts.map(({ address, ethBalance }, index) => (
               <tr key={address}>
                 <td>
                   <Flex justifyContent="center">
@@ -213,7 +210,7 @@ function HardwareAccountSelect({ type, path, onClose, confirmAddress }) {
                       name="address"
                       value={index}
                       checked={address === selectedAddress}
-                      onChange={() => selectAddress(address)}
+                      onChange={() => setSelectedAddress(address)}
                     />
                   </Flex>
                 </td>

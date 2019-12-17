@@ -1163,10 +1163,10 @@
     "@makerdao/services-core" "^0.9.9"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-migrations@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.0.3.tgz#7f06d20c74a22a3eb6bf5929fe710ba0c132f1dc"
-  integrity sha512-tmIV0gihNjmwYHLnMIn/+bK9ZxQTfb4VMjfbW7L1kW0Hw2eucNk5G0s/0fwHF72/sXXERVgl32h95HSn5wFgcA==
+"@makerdao/dai-plugin-migrations@1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.0.9.tgz#058a110f98ec5739abc270057683d332fb2fd08d"
+  integrity sha512-dLfiUOC1IiBrevik7sFioyqG56HpshcJvNnQjlipAVuyZrB8TEZw5nl5f/+qb8N1FBO1lQOJLghzdVrfBpQB8w==
   dependencies:
     "@makerdao/currency" "^0.9.5"
     "@makerdao/services-core" "^0.9.5"
@@ -1261,10 +1261,10 @@
   dependencies:
     node-fetch "^2.6.0"
 
-"@makerdao/testchain@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@makerdao/testchain/-/testchain-1.0.1.tgz#49fdf1a9c870c45bfbf12cabdf2ecb6ab06674c6"
-  integrity sha512-fUOl7gBXgvCqmyMpaDdv0IfB2JUXfKcDt2ZjNOMrvTsBfxrVaasr8B21bXyZkT9rk6jmtwTNUyCzZCH32aurOA==
+"@makerdao/testchain@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@makerdao/testchain/-/testchain-1.0.3.tgz#c7df934a4863b9bf58ec1fdce9a4352e9d418378"
+  integrity sha512-hvkQbVhfueSY06WqjptYFZy4wwYIxO1SpzZJ3I9kQxlaO8SqBeiqthHlSqvPHsUJBpRU7yDs5yRRzWY61NcRcA==
   dependencies:
     ganache-cli makerdao/ganache-cli#fix/gas-est-crash
 
@@ -5541,7 +5541,7 @@ functional-red-black-tree@^1.0.1:
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
 
-"ganache-cli@github:makerdao/ganache-cli#fix/gas-est-crash":
+ganache-cli@makerdao/ganache-cli#fix/gas-est-crash:
   version "6.4.3-beta.0"
   resolved "https://codeload.github.com/makerdao/ganache-cli/tar.gz/3e512b61da2479042627e6155231dcb038110650"
   dependencies:
