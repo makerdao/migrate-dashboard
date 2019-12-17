@@ -28,7 +28,6 @@ function MigrationCard({
   metadataTitle,
   metadataValue,
   onSelected,
-  external,
   buttonLabel = 'Continue'
 }) {
   return (
