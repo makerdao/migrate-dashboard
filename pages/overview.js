@@ -28,7 +28,6 @@ function MigrationCard({
   metadataTitle,
   metadataValue,
   onSelected,
-  external,
   buttonLabel = 'Continue'
 }) {
   return (
@@ -42,16 +41,7 @@ function MigrationCard({
         </Grid>
       }
       button={
-        external ?
-        <Link href={external} target="_blank">
-          <Button
-            px="xl"
-            variant={recommended ? 'primary' : 'secondary-outline'}
-          >
-            {buttonLabel}
-          </Button>
-        </Link>
-        : <Button
+        <Button
           px="xl"
           variant={recommended ? 'primary' : 'secondary-outline'}
           onClick={onSelected}
