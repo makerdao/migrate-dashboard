@@ -122,8 +122,7 @@ function Overview() {
 
   const shouldShowCdps = countCdps(cdps) > 0;
   const shouldShowDai = saiBalance && saiBalance.gt(0);
-  const shouldShowMkr = true;
-  // const shouldShowMkr = oldMkrBalance && oldMkrBalance.gt(0);
+  const shouldShowMkr = oldMkrBalance && oldMkrBalance.gt(0);
   const shouldShowReverse = daiBalance && daiBalance.gt(0);
   const noMigrations = !shouldShowDai && !shouldShowCdps && !shouldShowReverse;
 
