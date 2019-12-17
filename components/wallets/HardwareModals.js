@@ -31,7 +31,7 @@ export function LedgerModal({ show, onClose, onAccountChosen }) {
               path={path}
               type={AccountTypes.LEDGER}
               confirmAddress={address =>
-                onAccountChosen(address, AccountTypes.LEDGER)
+                onAccountChosen({ address }, AccountTypes.LEDGER)
               }
             />
           )
@@ -51,7 +51,7 @@ export function TrezorModal({ show, onClose, onAccountChosen }) {
           path={TREZOR_PATH}
           type={AccountTypes.TREZOR}
           confirmAddress={address =>
-            onAccountChosen(address, AccountTypes.TREZOR)
+            onAccountChosen({ address }, AccountTypes.TREZOR)
           }
         />
       )}
