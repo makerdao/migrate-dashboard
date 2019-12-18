@@ -14,13 +14,13 @@ export default async function render(
     getMaker,
 
     // use this callback to get updates every time the store state changes
-    storeCallback
+    onStateChange
   } = {}
 ) {
-  let wrappedStoreCallback;
+  let storeCallback;
   const storePromise = new Promise(resolve => {
-    wrappedStoreCallback = (state, dispatch) => {
-      if (storeCallback) storeCallback(state, dispatch);
+    storeCallback = (state, dispatch) => {
+      if (onStateChange) onStateChange(state, dispatch);
       resolve([state, dispatch]);
     };
   });
@@ -30,9 +30,7 @@ export default async function render(
       <MakerProvider network="test">
         <MakerAccess callback={getMaker}>
           <StoreProvider initialState={initialState}>
-            <StoreAccess callback={wrappedStoreCallback}>
-              {children}
-            </StoreAccess>
+            <StoreAccess callback={storeCallback}>{children}</StoreAccess>
           </StoreProvider>
         </MakerAccess>
       </MakerProvider>
