@@ -120,7 +120,7 @@ export default ({
   const [{ saiAvailable }] = useStore();
 
   const isSelectable = cdp =>
-    cdp.debtValueExact.gt(20) &&
+    cdp.debtValueExact.gte(20) &&
     cdp.debtValueExact.lt(saiAvailable.toBigNumber());
 
   return (
