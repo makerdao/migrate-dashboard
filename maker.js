@@ -50,7 +50,7 @@ export async function instantiateMaker(network) {
           ]
         }
       ],
-      [migrationPlugin, { network: network === 'test' ? 'testnet' : network }]
+      migrationPlugin
     ]
   };
 
