@@ -12,6 +12,9 @@ test('render and run all checks', async () => {
   getByText(/Migrate and Upgrade/);
   await wait(() => assert(window.maker.currentAddress()));
 
-  await waitForElement(() => getByText(/There are no migrations/));
+  // the old MKR migration should appear, because the testchain snapshot sets up
+  // the default account with old MKR:
+  // https://github.com/makerdao/testchain/blob/dai.js/scripts/deploy-scd#L154
+  await waitForElement(() => getByText('Redeem New MKR'));
   expect(window.maker.service('cdp').getCdpIds).toBeCalled();
 });
