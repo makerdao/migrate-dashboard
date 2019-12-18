@@ -30,7 +30,6 @@ async function migrateSaiToDai(amount, maker) {
   const daiMigration = maker
     .service('migration')
     .getMigration('sai-to-dai');
-    console.log('daiMigration', daiMigration.execute)
   await daiMigration.execute(SAI(amount));
 }
 
@@ -71,7 +70,6 @@ describe('with live testchain', () => {
     jest.setTimeout(20000)
     maker = await instantiateMaker('test')
     const proxy = await maker.service('proxy').currentProxy();
-    console.log('proxy', proxy)
     // take a snapshot
     snapshotData = await takeSnapshot(maker);
     // create a proxy cdps
@@ -85,14 +83,9 @@ describe('with live testchain', () => {
     await maker.getToken('SAI').approveUnlimited(migrationContractAddress)
     const mig = maker.service('migration').getMigration('sai-to-dai');
     await mig.execute(SAI(50));
-
-    // await migrateSaiToDai(50, maker)
-
+    await migrateSaiToDai(50, maker)
     saiAvailable = await maker.getToken('SAI').balance();
     daiAvailable = await maker.getToken('MDAI').balance();
-    console.log(saiAvailable.toNumber(), daiAvailable.toNumber())
-
-
   })
 
   afterEach(async () => {
@@ -101,10 +94,19 @@ describe('with live testchain', () => {
 
 
   test('the whole flow', async () => {
-    // const { getByText, getByRole, getByTestId } = await render(<MigrateCdp />, {
-    //   initialState: {
-    //
-    //   }
-    // })
+    const { getByText, getByRole, getByTestId } = await render(<MigrateCdp />, {
+      initialState: {
+        cdps: [proxyCdp0, proxyCdp1, proxyCdp2]
+      }
+    })
+
+    await wait(() => expect(window.maker).toBeTruthy());
+
+    const address = window.maker.currentAddress();
+    expect(address).toEqual(maker.currentAddress());
+
+    // check that the address is showing in the account box
+    await wait(() => getByText(new RegExp(address.substring(0, 6))));
+
   })
 })
