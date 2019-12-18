@@ -3,10 +3,7 @@ import { act } from '@testing-library/react';
 import render from '../../helpers/render';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { ETH } from '@makerdao/dai-plugin-mcd'
-<<<<<<< HEAD
-import { mineBlocks } from '@makerdao/test-helpers'
-=======
->>>>>>> 46503ec... begin cdp migration testing
+import { mineBlocks, takeSnapshot, restoreSnapshot } from '@makerdao/test-helpers'
 import {
   cleanup,
   fireEvent,
@@ -19,6 +16,23 @@ import McdPlugin from '@makerdao/dai-plugin-mcd'
 import BigNumber from 'bignumber.js'
 import round from 'lodash/round'
 const { change, click } = fireEvent;
+
+async function openLockAndDrawScdCdp(drawAmount, maker) {
+  const proxy = await maker.service('proxy').currentProxy();
+  const cdp = await maker.openCdp();
+  await cdp.lockEth('20');
+  await cdp.drawDai(drawAmount);
+  await cdp.give(proxy);
+  return cdp;
+}
+
+async function migrateSaiToDai(amount, maker) {
+  const daiMigration = maker
+    .service('migration')
+    .getMigration('sai-to-dai');
+    console.log('daiMigration', daiMigration.execute)
+  await daiMigration.execute(SAI(amount));
+}
 
 afterEach(cleanup)
 
@@ -48,33 +62,43 @@ test('not enough SAI', async () => {
 })
 
 describe('with live testchain', () => {
-  let maker, saiAvailable, daiAvailable;
+  let maker, saiAvailable, daiAvailable, snapshotData;
+  let proxyCdp0, proxyCdp1, proxyCdp2, cdp
   let cdps = [];
 
 
   beforeEach(async () => {
+    jest.setTimeout(20000)
     maker = await instantiateMaker('test')
-    const proxy = await maker.service('proxy').ensureProxy()
-    // create a cdp
-    await maker.service('cdp').openProxyCdpLockEthAndDrawDai(10, 1000, proxy)
+    const proxy = await maker.service('proxy').currentProxy();
+    console.log('proxy', proxy)
+    // take a snapshot
+    snapshotData = await takeSnapshot(maker);
+    // create a proxy cdps
+    proxyCdp0 = await maker.service('cdp').openProxyCdpLockEthAndDrawDai(10, 100, proxy)
+    proxyCdp1 = await openLockAndDrawScdCdp(100, maker)
+    proxyCdp2 = await openLockAndDrawScdCdp(10, maker)
     // create sai liquidity for migration contract
     const migrationContractAddress = maker
       .service('smartContract')
       .getContract('MIGRATION').address
     await maker.getToken('SAI').approveUnlimited(migrationContractAddress)
     const mig = maker.service('migration').getMigration('sai-to-dai');
-    // await mig.execute(SAI(1000))
-    const cdp = await maker.service('cdp').openCdp()
-    const lock = await cdp.lockEth(10, ETH)
-    await Promise.all([lock, mineBlocks(maker)])
-    await cdp.drawDai('0.1', DAI)
+    await mig.execute(SAI(50));
+
+    // await migrateSaiToDai(50, maker)
+
     saiAvailable = await maker.getToken('SAI').balance();
     daiAvailable = await maker.getToken('MDAI').balance();
-    // console.log(cdp)
     console.log(saiAvailable.toNumber(), daiAvailable.toNumber())
 
 
   })
+
+  afterEach(async () => {
+    await restoreSnapshot(snapshotData, maker);
+  });
+
 
   test('the whole flow', async () => {
     // const { getByText, getByRole, getByTestId } = await render(<MigrateCdp />, {
