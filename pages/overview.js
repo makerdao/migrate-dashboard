@@ -131,11 +131,12 @@ function Overview() {
   const shouldShowChief =
     chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
   const noMigrations =
-    !shouldShowCdps
-    && !shouldShowDai
-    && !shouldShowMkr
-    && !shouldShowReverse
-    && !shouldShowChief
+    !shouldShowCdps &&
+    !shouldShowDai &&
+    !shouldShowMkr &&
+    !shouldShowReverse &&
+    !shouldShowChief;
+
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <Header />
