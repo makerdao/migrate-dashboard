@@ -102,7 +102,9 @@ export default function() {
   useEffect(() => {
     (async () => {
       if (!maker || !account || !cdpMigrationCheck) return;
-      setCdps(await getAllCdpData(cdpMigrationCheck, maker));
+      const data = await getAllCdpData(cdpMigrationCheck, maker);
+      console.log('setting cdps:', data);
+      setCdps(data);
       setLoadingCdps(false);
     })();
   }, [maker, account, cdpMigrationCheck]);

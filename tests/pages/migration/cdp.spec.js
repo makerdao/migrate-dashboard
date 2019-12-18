@@ -22,15 +22,19 @@ import round from 'lodash/round';
 const { change, click } = fireEvent;
 
 async function openLockAndDrawScdCdp(drawAmount, maker) {
-  const proxy = await maker.service('proxy').currentProxy();
   const cdp = await maker.openCdp();
-  await cdp.lockEth('20');
+  await cdp.lockEth((drawAmount * 1.5) / 150);
   await cdp.drawDai(drawAmount);
+  const proxy = await maker.service('proxy').currentProxy();
   await cdp.give(proxy);
   return cdp;
 }
 
 async function migrateSaiToDai(amount, maker) {
+  const migrationContractAddress = maker
+    .service('smartContract')
+    .getContract('MIGRATION').address;
+  await maker.getToken('SAI').approveUnlimited(migrationContractAddress);
   const daiMigration = maker.service('migration').getMigration('sai-to-dai');
   await daiMigration.execute(SAI(amount));
 }
@@ -65,32 +69,27 @@ test('not enough SAI', async () => {
 });
 
 describe('with live testchain', () => {
-  let maker, saiAvailable, daiAvailable, snapshotData;
-  let proxyCdp0, proxyCdp1, proxyCdp2, cdp;
-  let cdps = [];
+  let maker, snapshotData, proxyCdp, cdpMigrationCheck;
 
   beforeEach(async () => {
     jest.setTimeout(20000);
     maker = await instantiateMaker('test');
-    const proxy = await maker.service('proxy').currentProxy();
-    // take a snapshot
     snapshotData = await takeSnapshot(maker);
-    // create a proxy cdps
-    proxyCdp0 = await maker
-      .service('cdp')
-      .openProxyCdpLockEthAndDrawDai(10, 100, proxy);
-    proxyCdp1 = await openLockAndDrawScdCdp(100, maker);
-    proxyCdp2 = await openLockAndDrawScdCdp(10, maker);
-    // create sai liquidity for migration contract
-    const migrationContractAddress = maker
-      .service('smartContract')
-      .getContract('MIGRATION').address;
-    await maker.getToken('SAI').approveUnlimited(migrationContractAddress);
-    const mig = maker.service('migration').getMigration('sai-to-dai');
-    await mig.execute(SAI(50));
+
+    const proxy = await maker.service('proxy').currentProxy();
+
+    console.log('creating liquidity...');
+    await openLockAndDrawScdCdp(50, maker);
     await migrateSaiToDai(50, maker);
-    saiAvailable = await maker.getToken('SAI').balance();
-    daiAvailable = await maker.getToken('MDAI').balance();
+
+    console.log('creating a CDP to migrate...');
+    proxyCdp = await openLockAndDrawScdCdp(10, maker);
+
+    cdpMigrationCheck = {
+      [proxy]: [proxyCdp.id]
+      // TODO: non-proxy cdp
+    };
+    console.log(cdpMigrationCheck);
   });
 
   afterEach(async () => {
@@ -98,25 +97,30 @@ describe('with live testchain', () => {
   });
 
   test('the whole flow', async () => {
-    const page = await render(<MigrateCdp />, {
+    const { getAllByTestId, getByText, debug } = await render(<MigrateCdp />, {
       initialState: {
-        cdps: [proxyCdp0, proxyCdp1, proxyCdp2],
         saiAvailable: SAI(110),
-        loadingCdps: false,
-        cdpMigrationCheck: true,
+        cdpMigrationCheck,
         maker,
         account: window.maker.currentAddress()
       }
     });
 
-    // console.log(page)
     await wait(() => expect(window.maker).toBeTruthy());
 
     const address = window.maker.currentAddress();
     expect(address).toEqual(maker.currentAddress());
 
-    // check that the address is showing in the account box
-    await wait(() => page.getByText(new RegExp(address.substring(0, 6))));
-    // console.log('radio', page.getByTestId('whatthefuck'))
+    await waitForElement(() => getAllByTestId('cdpListItem'));
+    debug();
+
+    // select the cdp
+    // click continue
+    // proxy & transfer screen will be skipped
+    // pay with MKR
+    // in progress
+    // complete
+
+    // check using the maker instance that the user now has an MCD CDP
   });
 });

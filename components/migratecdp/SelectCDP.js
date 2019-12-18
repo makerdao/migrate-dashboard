@@ -41,13 +41,14 @@ function ListItemRow({ label, value, dark }) {
   );
 }
 
-function ListItem({ cdp, onSelect, checked, selectable }) {
+function ListItem({ cdp, onSelect, checked, selectable, ...otherProps }) {
   return (
     <Card
       px={['0', 'l']}
       py={['0', 'm']}
       borderColor={checked ? '#1AAB9B' : '#D4D9E1'}
       border={checked ? '2px solid' : '1px solid'}
+      {...otherProps}
     >
       <Box display={['none', 'block']}>
         <Grid
@@ -62,7 +63,7 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
           onClick={() => selectable && onSelect(cdp)}
         >
           {selectable ? (
-            <div role='radio'>
+            <div role="radio">
               <Radio
                 onChange={() => onSelect(cdp)}
                 fontSize={RADIO_WIDTH}
@@ -122,9 +123,9 @@ export default ({
   const [{ saiAvailable }] = useStore();
 
   const isSelectable = cdp =>
-    cdp.debtValueExact.gt(20) &&
+    cdp.debtValueExact.gte(20) &&
     cdp.debtValueExact.lt(saiAvailable.toBigNumber());
-  console.log(cdps)
+
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
       <Text.h2 textAlign="center">Select CDP to upgrade</Text.h2>
@@ -182,7 +183,7 @@ export default ({
               selectable={isSelectable(cdp)}
               key={cdp.id}
               onSelect={onSelect}
-              data-testid='whatthefuck'
+              data-testid="cdpListItem"
             />
           ))}
         </Grid>
