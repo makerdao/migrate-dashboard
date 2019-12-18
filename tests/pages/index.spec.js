@@ -6,7 +6,7 @@ import { wait } from '@testing-library/react';
 test('render and get starting data', async () => {
   let state;
   const { getByText } = await render(<Index />, {
-    storeCallback: s => {
+    onStateChange: s => {
       state = s;
     }
   });
