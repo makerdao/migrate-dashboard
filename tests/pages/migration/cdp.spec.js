@@ -94,19 +94,27 @@ describe('with live testchain', () => {
 
 
   test('the whole flow', async () => {
-    const { getByText, getByRole, getByTestId } = await render(<MigrateCdp />, {
+    const page = await render(<MigrateCdp />, {
       initialState: {
-        cdps: [proxyCdp0, proxyCdp1, proxyCdp2]
+        cdps: [proxyCdp0, proxyCdp1, proxyCdp2],
+        saiAvailable: SAI(110),
+        loadingCdps: false,
+        cdpMigrationCheck: true,
+        maker,
+        account: window.maker.currentAddress()
       }
     })
 
+    // console.log(page)
     await wait(() => expect(window.maker).toBeTruthy());
 
     const address = window.maker.currentAddress();
     expect(address).toEqual(maker.currentAddress());
 
     // check that the address is showing in the account box
-    await wait(() => getByText(new RegExp(address.substring(0, 6))));
+    await wait(() => page.getByText(new RegExp(address.substring(0, 6))));
+    // console.log('radio', page.getByTestId('whatthefuck'))
+
 
   })
 })

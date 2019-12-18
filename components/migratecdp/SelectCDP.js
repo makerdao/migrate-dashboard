@@ -62,11 +62,13 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
           onClick={() => selectable && onSelect(cdp)}
         >
           {selectable ? (
-            <Radio
-              onChange={() => onSelect(cdp)}
-              fontSize={RADIO_WIDTH}
-              checked={checked}
-            />
+            <div role='radio'>
+              <Radio
+                onChange={() => onSelect(cdp)}
+                fontSize={RADIO_WIDTH}
+                checked={checked}
+              />
+            </div>
           ) : (
             <span></span>
           )}
@@ -122,7 +124,7 @@ export default ({
   const isSelectable = cdp =>
     cdp.debtValueExact.gt(20) &&
     cdp.debtValueExact.lt(saiAvailable.toBigNumber());
-
+  console.log(cdps)
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
       <Text.h2 textAlign="center">Select CDP to upgrade</Text.h2>
@@ -180,6 +182,7 @@ export default ({
               selectable={isSelectable(cdp)}
               key={cdp.id}
               onSelect={onSelect}
+              data-testid='whatthefuck'
             />
           ))}
         </Grid>
