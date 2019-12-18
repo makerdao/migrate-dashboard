@@ -9,11 +9,20 @@ import theme from '../../utils/theme';
 
 export default async function render(
   children,
-  { initialState, getMaker } = {}
+  {
+    initialState,
+    getMaker,
+
+    // use this callback to get updates every time the store state changes
+    storeCallback
+  } = {}
 ) {
-  let storeCallback;
+  let wrappedStoreCallback;
   const storePromise = new Promise(resolve => {
-    storeCallback = (state, dispatch) => resolve([state, dispatch]);
+    wrappedStoreCallback = (state, dispatch) => {
+      if (storeCallback) storeCallback(state, dispatch);
+      resolve([state, dispatch]);
+    };
   });
 
   const renderResults = renderBase(
@@ -21,13 +30,16 @@ export default async function render(
       <MakerProvider network="test">
         <MakerAccess callback={getMaker}>
           <StoreProvider initialState={initialState}>
-            <StoreAccess callback={storeCallback}>{children}</StoreAccess>
+            <StoreAccess callback={wrappedStoreCallback}>
+              {children}
+            </StoreAccess>
           </StoreProvider>
         </MakerAccess>
       </MakerProvider>
     </ThemeProvider>
   );
 
+  // these values are only valid for the first render
   const [state, dispatch] = await storePromise;
   return { ...renderResults, state, dispatch };
 }
