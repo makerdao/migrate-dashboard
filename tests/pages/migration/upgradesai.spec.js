@@ -1,12 +1,7 @@
 import UpgradeSai from '../../../pages/migration/dai';
 import render from '../../helpers/render';
 import { SAI, DAI } from '../../../maker';
-import {
-  cleanup,
-  fireEvent,
-  wait,
-  waitForElement
-} from '@testing-library/react';
+import { cleanup, fireEvent, wait } from '@testing-library/react';
 import Maker from '@makerdao/dai';
 import McdPlugin from '@makerdao/dai-plugin-mcd';
 import BigNumber from 'bignumber.js';
@@ -60,15 +55,18 @@ describe('with live testchain', () => {
   });
 
   test('the whole flow', async () => {
-    const { getByText, getByRole, getByTestId } = await render(<UpgradeSai />, {
-      initialState: {
-        // it doesn't get these values automatically because we're rendering the
-        // upgrade flow in isolation
-        saiBalance: SAI(50),
-        daiAvailable: DAI(1000),
-        dsrAnnual: BigNumber(1.05)
+    const { findByText, getByText, getByRole, getByTestId } = await render(
+      <UpgradeSai />,
+      {
+        initialState: {
+          // it doesn't get these values automatically because we're rendering the
+          // upgrade flow in isolation
+          saiBalance: SAI(50),
+          daiAvailable: DAI(1000),
+          dsrAnnual: BigNumber(1.05)
+        }
       }
-    });
+    );
 
     await wait(() => expect(window.maker).toBeTruthy());
 
@@ -87,15 +85,13 @@ describe('with live testchain', () => {
     expect(getByText('Continue').disabled).toBeTruthy();
 
     click(getByTestId('allowance-toggle'));
-    await waitForElement(() => getByText('SAI unlocked'));
+    await findByText('SAI unlocked');
 
     click(getByRole('checkbox'));
-    await waitForElement(() => !getByText('Continue').disabled);
-
     click(getByText('Continue'));
 
-    await waitForElement(() => getByText('Your Sai is being upgraded'));
-    await waitForElement(() => getByText('Earn savings on your Dai'));
+    await findByText('Your Sai is being upgraded');
+    await findByText('Earn savings on your Dai');
     getByText('5%');
 
     expect(await maker.getToken('MDAI').balance()).toEqual(

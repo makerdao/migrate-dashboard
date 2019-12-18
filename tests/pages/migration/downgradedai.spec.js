@@ -1,14 +1,8 @@
 import DowngradeDai from '../../../pages/migration/sai';
 import render from '../../helpers/render';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
-import {
-  cleanup,
-  fireEvent,
-  wait,
-  waitForElement
-} from '@testing-library/react';
-import Maker from '@makerdao/dai';
-import McdPlugin, { ETH } from '@makerdao/dai-plugin-mcd';
+import { cleanup, fireEvent, wait } from '@testing-library/react';
+import { ETH } from '@makerdao/dai-plugin-mcd';
 import round from 'lodash/round';
 const { change, click } = fireEvent;
 
@@ -54,13 +48,13 @@ describe('with live testchain', () => {
   beforeEach(async () => {
     maker = await instantiateMaker('test');
     const proxy = await maker.service('proxy').ensureProxy();
-     //generate 50 DAI
+    //generate 50 DAI
     await maker.service('mcd:cdpManager').openLockAndDraw('ETH-A', ETH(1), 50);
     //put 1000 SAI in the migration contract
     await maker.service('cdp').openProxyCdpLockEthAndDrawDai(10, 1000, proxy);
     const migrationContractAddress = maker
-    .service('smartContract')
-    .getContract('MIGRATION').address;
+      .service('smartContract')
+      .getContract('MIGRATION').address;
     await maker.getToken('SAI').approveUnlimited(migrationContractAddress);
     const mig = maker.service('migration').getMigration('sai-to-dai');
     await mig.execute(SAI(1000));
@@ -69,14 +63,17 @@ describe('with live testchain', () => {
   });
 
   test('the whole flow', async () => {
-    const { getByText, getByRole, getByTestId } = await render(<DowngradeDai />, {
-      initialState: {
-        // it doesn't get these values automatically because we're rendering the
-        // upgrade flow in isolation
-        daiBalance: DAI(50),
-        saiAvailable: SAI(1000),
+    const { findByText, getByText, getByRole, getByTestId } = await render(
+      <DowngradeDai />,
+      {
+        initialState: {
+          // it doesn't get these values automatically because we're rendering the
+          // upgrade flow in isolation
+          daiBalance: DAI(50),
+          saiAvailable: SAI(1000)
+        }
       }
-    });
+    );
 
     await wait(() => expect(window.maker).toBeTruthy());
 
@@ -95,15 +92,13 @@ describe('with live testchain', () => {
     expect(getByText('Continue').disabled).toBeTruthy();
 
     click(getByTestId('allowance-toggle'));
-    await waitForElement(() => getByText('DAI unlocked'));
+    await findByText('DAI unlocked');
 
     click(getByRole('checkbox'));
-    await waitForElement(() => !getByText('Continue').disabled);
-
     click(getByText('Continue'));
 
-    await waitForElement(() => getByText('Your Dai is being converted'));
-    await waitForElement(() => getByText('Exit'));
+    await findByText('Your Dai is being converted');
+    await findByText('Exit');
     getByText(`${round(amount, 2)} SAI`);
 
     expect(await maker.getToken('DAI').balance()).toEqual(
