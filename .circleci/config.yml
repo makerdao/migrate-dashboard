@@ -28,6 +28,7 @@ jobs:
       - run:
           name: Run tests
           command: |
+            source /home/circleci/setup-env.sh
             yarn test --coverage
             npm i --no-save codecov
             ./node_modules/.bin/codecov
