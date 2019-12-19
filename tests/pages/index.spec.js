@@ -18,8 +18,10 @@ test('select trezor', async () => {
       maker = m;
     }
   });
+  const div = document.createElement('DIV');
+  div.id = 'modal';
+  document.body.appendChild(div);
   await wait(() => expect(maker).toBeTruthy());
   click(getByText(/Trezor/));
-  //TODO: ^this is throwing Error: Target container is not a DOM element
   getByText(/Connect your trezor wallet/);
 });
