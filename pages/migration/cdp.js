@@ -103,7 +103,6 @@ export default function() {
     (async () => {
       if (!maker || !account || !cdpMigrationCheck) return;
       const data = await getAllCdpData(cdpMigrationCheck, maker);
-      console.log('setting cdps:', data);
       setCdps(data);
       setLoadingCdps(false);
     })();

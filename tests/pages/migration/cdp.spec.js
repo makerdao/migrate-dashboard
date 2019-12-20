@@ -1,5 +1,4 @@
 import MigrateCdp from '../../../pages/migration/cdp';
-import { act } from '@testing-library/react';
 import render from '../../helpers/render';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { ETH } from '@makerdao/dai-plugin-mcd';
@@ -9,6 +8,7 @@ import {
   restoreSnapshot
 } from '@makerdao/test-helpers';
 import {
+  act,
   cleanup,
   fireEvent,
   wait,
@@ -21,12 +21,12 @@ import BigNumber from 'bignumber.js';
 import round from 'lodash/round';
 const { change, click } = fireEvent;
 
-async function openLockAndDrawScdCdp(drawAmount, maker) {
+async function openLockAndDrawScdCdp(drawAmount, maker, proxyTransfer=true) {
   const cdp = await maker.openCdp();
   await cdp.lockEth((drawAmount * 1.5) / 150);
   await cdp.drawDai(drawAmount);
   const proxy = await maker.service('proxy').currentProxy();
-  await cdp.give(proxy);
+  if (proxyTransfer) await cdp.give(proxy);
   return cdp;
 }
 
@@ -69,35 +69,63 @@ test('not enough SAI', async () => {
 });
 
 describe('with live testchain', () => {
-  let maker, snapshotData, proxyCdp, cdpMigrationCheck;
+  let maker, snapshotData, proxy, proxyCdp, nonProxyCdp, lowCdp, cdpMigrationCheck;
 
   beforeEach(async () => {
     jest.setTimeout(20000);
     maker = await instantiateMaker('test');
     snapshotData = await takeSnapshot(maker);
 
-    const proxy = await maker.service('proxy').currentProxy();
-
+    proxy = await maker.service('proxy').currentProxy();
+    const address = maker.currentAddress()
     console.log('creating liquidity...');
     await openLockAndDrawScdCdp(50, maker);
     await migrateSaiToDai(50, maker);
 
     console.log('creating a CDP to migrate...');
-    proxyCdp = await openLockAndDrawScdCdp(10, maker);
+    proxyCdp = await openLockAndDrawScdCdp(25, maker);
+    // nonProxyCdp = await openLockAndDrawScdCdp(25, maker, false)
+    lowCdp = await openLockAndDrawScdCdp(10, maker);
 
     cdpMigrationCheck = {
-      [proxy]: [proxyCdp.id]
-      // TODO: non-proxy cdp
+      [proxy]: [proxyCdp.id],
+      // [address]: [nonProxyCdp.id]
     };
-    console.log(cdpMigrationCheck);
+    // console.log(cdpMigrationCheck);
   });
+  test('cdp under 20', async () => {
+    cdpMigrationCheck = {
+      [proxy]: [lowCdp.id],
+      // [address]: [nonProxyCdp.id]
+    };
+    const {
+      getAllByTestId,
+      queryByRole
+    } = await render(<MigrateCdp />, {
+      initialState: {
+        saiAvailable: SAI(110),
+        cdpMigrationCheck,
+        maker,
+        account: window.maker.currentAddress()
+      }
+    });
+    await waitForElement(() => getAllByTestId('cdpListItem'));
+    expect(queryByRole('radio')).toBeNull()
+  })
 
   afterEach(async () => {
     await restoreSnapshot(snapshotData, maker);
   });
 
   test('the whole flow', async () => {
-    const { getAllByTestId, getByText, debug } = await render(<MigrateCdp />, {
+    const {
+      getAllByTestId,
+      getByText,
+      getByRole,
+      queryByRole,
+      getAllByRole,
+      debug
+    } = await render(<MigrateCdp />, {
       initialState: {
         saiAvailable: SAI(110),
         cdpMigrationCheck,
@@ -112,8 +140,12 @@ describe('with live testchain', () => {
     expect(address).toEqual(maker.currentAddress());
 
     await waitForElement(() => getAllByTestId('cdpListItem'));
-    debug();
+    const cdpRadio = await waitForElement(() => getAllByRole('radio'))
+    click(cdpRadio[0])
+    getByText('Continue')
+    click(getByText('Continue'));
 
+    debug();
     // select the cdp
     // click continue
     // proxy & transfer screen will be skipped

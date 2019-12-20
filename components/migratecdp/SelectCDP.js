@@ -63,13 +63,12 @@ function ListItem({ cdp, onSelect, checked, selectable, ...otherProps }) {
           onClick={() => selectable && onSelect(cdp)}
         >
           {selectable ? (
-            <div role="radio">
-              <Radio
-                onChange={() => onSelect(cdp)}
-                fontSize={RADIO_WIDTH}
-                checked={checked}
-              />
-            </div>
+            <Radio
+              onChange={() => onSelect(cdp)}
+              fontSize={RADIO_WIDTH}
+              checked={checked}
+              data-testid={'cdpRadio'}
+            />
           ) : (
             <span></span>
           )}
