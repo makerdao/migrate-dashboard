@@ -35,5 +35,21 @@ test('select trezor address', async () => {
   click(getByText(/Trezor/));
   getByText(/Connect your trezor wallet/);
   await wait(() => expect(mockOpen.mock.calls.length).toBe(1));
-  //mock the trezor call to return a list of fake addresses?
+});
+
+test('select ledger address', async () => {
+  let maker;
+  const { getByText, getAllByRole } = await render(<Index />,{
+    getMaker: m => {
+      maker = m;
+    }
+  });
+  const div = document.createElement('DIV');
+  div.id = 'modal';
+  document.body.appendChild(div);
+  await wait(() => expect(maker).toBeTruthy());
+  click(getByText(/Ledger Nano/));
+  getByText(/Connect Ledger Live or Legacy/);
+  click(getAllByRole('button')[0]);
+  getByText(/Connect your ledger wallet/);
 });
