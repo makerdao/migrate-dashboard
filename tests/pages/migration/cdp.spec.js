@@ -132,6 +132,7 @@ describe('with live testchain', () => {
       getByTestId,
       getAllByTestId,
       getByText,
+      getAllByRole,
       debug
     } = await render(<MigrateCdp />, {
       initialState: {
@@ -156,15 +157,15 @@ describe('with live testchain', () => {
 
     // click continue
     getByText('Continue')
-    // click(getByText('Continue'));
-    //
-    // // pay with MKR
-    // getByText('Confirm CDP Upgrade')
-    // const payWithMkr = await waitForElement(() => getByText('Pay with MKR'))
-    // click(payWithMkr)
-    // expect(getByText('Pay and Migrate').disabled).toBeTruthy();
-    // click(getByTestId('allowance-toggle'))
-    // click(getByTestId('tosCheck'))
+    click(getByText('Continue'));
+
+    // pay with MKR
+    getByText('Confirm CDP Upgrade')
+    const payWithMkr = await waitForElement(() => getByText('Pay with MKR'))
+    click(payWithMkr)
+    expect(getByText('Pay and Migrate').disabled).toBeTruthy();
+    // click(await waitForElement(() => getByTestId('allowance-toggle')))
+    // click(await waitForElement(() => getByTestId('tosCheck')))
     // expect(getByText('Pay and Migrate').disabled).toBeFalsey()
     // click(getByText('Pay and Migrate'))
     //
@@ -179,7 +180,7 @@ describe('with live testchain', () => {
     // // check using the maker instance that the user now has an MCD CDP
     // const data = await cdpManager.getCdpIds(proxyAddress)
     // expect(data.length).toBeGreaterThan(1)
-    debug();
+    // debug();
   });
 
   // test('the whole flow Dai Payment w/ Proxy CDP', async () => {
