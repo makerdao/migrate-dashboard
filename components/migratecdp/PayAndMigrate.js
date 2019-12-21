@@ -31,6 +31,7 @@ const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
         fontSize="l"
         checked={hasReadTOS}
         onChange={() => setHasReadTOS(!hasReadTOS)}
+        data-testid={'tosCheck'}
       />
       <Text
         t="caption"
