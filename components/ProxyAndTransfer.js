@@ -90,7 +90,7 @@ const ProxyAndTransfer = ({
           done once.
         </Text.p>
         {cdpTransferred ? (
-          <SuccessButton />
+          <SuccessButton data-testid='cdpTransfer' />
         ) : (
           <Button
             px={'s'}
