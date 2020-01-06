@@ -96,33 +96,33 @@ describe('with live testchain', () => {
 
     console.log('creating CDPs to migrate...');
     proxyCdp = await openLockAndDrawScdCdp(25, maker);
-    // proxyCdp1 = await openLockAndDrawScdCdp(25, maker);
-    // nonProxyCdp = await openLockAndDrawScdCdp(25, maker, false);
-    // lowCdp = await openLockAndDrawScdCdp(10, maker);
+    proxyCdp1 = await openLockAndDrawScdCdp(25, maker);
+    nonProxyCdp = await openLockAndDrawScdCdp(25, maker, false);
+    lowCdp = await openLockAndDrawScdCdp(10, maker);
   });
 
   afterAll(async () => {
     await restoreSnapshot(snapshotData, maker);
   });
 
-  // test('cdp under 20', async () => {
-  //   let cdpMigrationCheck = {
-  //     [proxyAddress]: [lowCdp.id],
-  //   };
-  //   const {
-  //     getAllByTestId,
-  //     queryByRole
-  //   } = await render(<MigrateCdp />, {
-  //     initialState: {
-  //       saiAvailable: SAI(110),
-  //       cdpMigrationCheck,
-  //       maker,
-  //       account: window.maker.currentAddress()
-  //     }
-  //   });
-  //   await waitForElement(() => getAllByTestId('cdpListItem'));
-  //   expect(queryByRole('radio')).toBeNull()
-  // })
+  test('cdp under 20', async () => {
+    let cdpMigrationCheck = {
+      [proxyAddress]: [lowCdp.id],
+    };
+    const {
+      getAllByTestId,
+      queryByRole
+    } = await render(<MigrateCdp />, {
+      initialState: {
+        saiAvailable: SAI(110),
+        cdpMigrationCheck,
+        maker,
+        account: window.maker.currentAddress()
+      }
+    });
+    await waitForElement(() => getAllByTestId('cdpListItem'));
+    expect(queryByRole('radio')).toBeNull()
+  })
 
   test('the whole flow MKR Payment w/ Proxy CDP', async () => {
     let cdpMigrationCheck = {
