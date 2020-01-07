@@ -58,6 +58,7 @@
     "lint-staged": "^9.4.3",
     "wait-for-expect": "^3.0.1"
   },
+  "engines": { "node": ">=10.x.x" },
   "lint-staged": {
     "*.js": [
       "prettier --write --single-quote",
