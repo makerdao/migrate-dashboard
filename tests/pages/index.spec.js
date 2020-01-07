@@ -62,7 +62,7 @@ test('render and get starting data', async () => {
 
 test('select trezor address', async () => {
   let maker;
-  const { getByText } = await render(<Index />,{
+  const { getByText, findByText } = await render(<Index />,{
     getMaker: m => {
       maker = m;
     }
@@ -75,12 +75,12 @@ test('select trezor address', async () => {
   click(getByText(/Trezor/));
   getByText(/Connect your trezor wallet/);
   expect(mockHardwareFactory).toBeCalled();
-  await wait(() => getByText(/Select address/));
+  await findByText(/Select address/);
 });
 
 test('select ledger address', async () => {
   let maker;
-  const { getByText, getAllByText } = await render(<Index />,{
+  const { getByText, getAllByText, findByText } = await render(<Index />,{
     getMaker: m => {
       maker = m;
     }
@@ -92,8 +92,8 @@ test('select ledger address', async () => {
   maker.service('accounts')._accountFactories['ledger'] = mockHardwareFactory;
   click(getByText(/Ledger Nano/));
   getByText(/Connect Ledger Live or Legacy/);
-  click(getAllByText('Connect')[0]); //click the 1st connect button (Ledger Live)
+  click(getAllByText('Connect')[0]); //Ledger Live
   getByText(/Connect your ledger wallet/);
   expect(mockHardwareFactory).toBeCalled();
-  await wait(() => getByText(/Select address/));
+  await findByText(/Select address/);
 });
