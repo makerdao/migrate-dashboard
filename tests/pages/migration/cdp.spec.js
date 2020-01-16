@@ -14,6 +14,7 @@ import {
   wait,
   waitForElement
 } from '@testing-library/react';
+import { CDP_MIGRATION_MINIMUM_DEBT } from '../../../utils/constants';
 
 import Maker from '@makerdao/dai';
 import McdPlugin from '@makerdao/dai-plugin-mcd';
@@ -98,21 +99,18 @@ describe('with live testchain', () => {
     proxyCdp = await openLockAndDrawScdCdp(25, maker);
     proxyCdp1 = await openLockAndDrawScdCdp(25, maker);
     nonProxyCdp = await openLockAndDrawScdCdp(25, maker, false);
-    lowCdp = await openLockAndDrawScdCdp(10, maker);
+    lowCdp = await openLockAndDrawScdCdp(CDP_MIGRATION_MINIMUM_DEBT - 1, maker);
   });
 
   afterAll(async () => {
     await restoreSnapshot(snapshotData, maker);
   });
 
-  test('cdp under 20', async () => {
+  test('cdp with too little debt', async () => {
     let cdpMigrationCheck = {
-      [proxyAddress]: [lowCdp.id],
+      [proxyAddress]: [lowCdp.id]
     };
-    const {
-      getAllByTestId,
-      queryByRole
-    } = await render(<MigrateCdp />, {
+    const { getAllByTestId, queryByRole } = await render(<MigrateCdp />, {
       initialState: {
         saiAvailable: SAI(110),
         cdpMigrationCheck,
@@ -121,8 +119,8 @@ describe('with live testchain', () => {
       }
     });
     await waitForElement(() => getAllByTestId('cdpListItem'));
-    expect(queryByRole('radio')).toBeNull()
-  })
+    expect(queryByRole('radio')).toBeNull();
+  });
 
   test('the whole flow MKR Payment w/ Proxy CDP', async () => {
     let cdpMigrationCheck = {
