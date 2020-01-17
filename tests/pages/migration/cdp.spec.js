@@ -1,12 +1,7 @@
 import MigrateCdp from '../../../pages/migration/cdp';
 import render from '../../helpers/render';
-import { instantiateMaker, SAI, DAI } from '../../../maker';
-import { ETH } from '@makerdao/dai-plugin-mcd';
-import {
-  mineBlocks,
-  takeSnapshot,
-  restoreSnapshot
-} from '@makerdao/test-helpers';
+import { instantiateMaker, SAI } from '../../../maker';
+import { takeSnapshot, restoreSnapshot } from '@makerdao/test-helpers';
 import {
   act,
   cleanup,
@@ -16,18 +11,20 @@ import {
 } from '@testing-library/react';
 import { CDP_MIGRATION_MINIMUM_DEBT } from '../../../utils/constants';
 
-import Maker from '@makerdao/dai';
-import McdPlugin from '@makerdao/dai-plugin-mcd';
-import BigNumber from 'bignumber.js';
-import round from 'lodash/round';
-const { change, click } = fireEvent;
+const { click } = fireEvent;
 
-async function openLockAndDrawScdCdp(drawAmount, maker, proxyTransfer=true) {
+async function openLockAndDrawScdCdp(drawAmount, maker, proxyTransfer = true) {
   const cdp = await maker.openCdp();
-  await cdp.lockEth((drawAmount * 1.5) / 150);
+
+  // note that we're hardcoding collateralization ratio and eth price here --
+  // if they don't match the settings in MCD, then cdp migration may revert due
+  // to attempting to create an unsafe cdp
+  await cdp.lockEth((drawAmount * 1.6) / 150);
   await cdp.drawDai(drawAmount);
-  const proxy = await maker.service('proxy').currentProxy();
-  if (proxyTransfer) await cdp.give(proxy);
+  if (proxyTransfer) {
+    const proxy = await maker.service('proxy').currentProxy();
+    await cdp.give(proxy);
+  }
   return cdp;
 }
 
@@ -41,11 +38,6 @@ async function migrateSaiToDai(amount, maker) {
 }
 
 afterEach(cleanup);
-
-test('basic rendering', async () => {
-  const { getByText } = await render(<MigrateCdp />);
-  getByText(/Select a CDP/);
-});
 
 test('show different messages depending on saiAvailable value', async () => {
   const { getByText, dispatch } = await render(<MigrateCdp />, {
@@ -61,7 +53,7 @@ test('show different messages depending on saiAvailable value', async () => {
 test('not enough SAI', async () => {
   const { getByText } = await render(<MigrateCdp />, {
     initialState: {
-      saiAvailable: SAI(10)
+      saiAvailable: SAI(CDP_MIGRATION_MINIMUM_DEBT - 1)
     }
   });
   getByText(
@@ -71,33 +63,27 @@ test('not enough SAI', async () => {
 
 describe('with live testchain', () => {
   let maker,
-      snapshotData,
-      address,
-      proxyAddress,
-      proxyCdp,
-      proxyCdp1,
-      nonProxyCdp,
-      lowCdp,
-      mcdCdp,
-      cdpManager;
+    snapshotData,
+    address,
+    proxyAddress,
+    proxyCdp,
+    nonProxyCdp,
+    lowCdp,
+    cdpManager;
 
   beforeAll(async () => {
     jest.setTimeout(20000);
     maker = await instantiateMaker('test');
     snapshotData = await takeSnapshot(maker);
-    await maker.service('proxy').ensureProxy()
-    cdpManager = maker.service('mcd:cdpManager')
-    address = maker.currentAddress()
+    await maker.service('proxy').ensureProxy();
+    cdpManager = maker.service('mcd:cdpManager');
+    address = maker.currentAddress();
     proxyAddress = await maker.service('proxy').currentProxy();
 
-    console.log('creating liquidity...');
     await openLockAndDrawScdCdp(100, maker);
     await migrateSaiToDai(100, maker);
-    // mcdCdp = await cdpManager.openLockAndDraw('ETH-A', ETH(10), DAI(100))
 
-    console.log('creating CDPs to migrate...');
     proxyCdp = await openLockAndDrawScdCdp(25, maker);
-    proxyCdp1 = await openLockAndDrawScdCdp(25, maker);
     nonProxyCdp = await openLockAndDrawScdCdp(25, maker, false);
     lowCdp = await openLockAndDrawScdCdp(CDP_MIGRATION_MINIMUM_DEBT - 1, maker);
   });
@@ -107,164 +93,123 @@ describe('with live testchain', () => {
   });
 
   test('cdp with too little debt', async () => {
-    let cdpMigrationCheck = {
-      [proxyAddress]: [lowCdp.id]
-    };
     const { getAllByTestId, queryByRole } = await render(<MigrateCdp />, {
       initialState: {
         saiAvailable: SAI(110),
-        cdpMigrationCheck,
-        maker,
-        account: window.maker.currentAddress()
+        cdpMigrationCheck: {
+          [proxyAddress]: [lowCdp.id]
+        }
       }
     });
     await waitForElement(() => getAllByTestId('cdpListItem'));
     expect(queryByRole('radio')).toBeNull();
   });
 
-  test('the whole flow MKR Payment w/ Proxy CDP', async () => {
-    let cdpMigrationCheck = {
-      [proxyAddress]: [proxyCdp.id],
-    };
+  test('the whole flow, using Pay with MKR', async () => {
     const {
+      findAllByRole,
+      findAllByTestId,
+      findByText,
       getByTestId,
-      getAllByTestId,
-      getByText,
-      getAllByRole,
-      debug,
-      rerender
+      getByText
     } = await render(<MigrateCdp />, {
       initialState: {
-        saiAvailable: SAI(110),
-        cdpMigrationCheck,
-        maker,
-        account: window.maker.currentAddress()
+        saiAvailable: SAI(100),
+        cdpMigrationCheck: {
+          [address]: [nonProxyCdp.id]
+        }
       }
     });
-    await wait(() => expect(window.maker).toBeTruthy());
-    const address = window.maker.currentAddress();
-    expect(address).toEqual(maker.currentAddress());
+    await wait(() => window.maker);
+    expect(address).toEqual(window.maker.currentAddress());
+
+    const initialData = await cdpManager.getCdpIds(proxyAddress);
 
     // select the cdp
-    await waitForElement(() => getAllByTestId('cdpListItem'));
-    const cdpRadio = await waitForElement(() => getAllByRole('radio'))
-    click(cdpRadio[0])
-
-    // click continue
-    getByText('Continue')
-    // TO FIX: Clicking causes a revert on blockchain
-    // click(getByText('Continue'));
-
-    // // pay with MKR
-    // getByText('Confirm CDP Upgrade')
-    // const payWithMkr = await waitForElement(() => getByText('Pay with MKR'))
-    // click(payWithMkr)
-    // expect(getByText('Pay and Migrate').disabled).toBeTruthy();
-    // click(await waitForElement(() => getByTestId('allowance-toggle')))
-    // click(await waitForElement(() => getByTestIdl('tosCheck')))
-    // expect(getByText('Pay and Migrate').disabled).toBeFalsy()
-    // click(getByText('Pay and Migrate'))
-    //
-    // // in progress
-    // await waitForElement(() => getByText('Your CDP is being upgraded'))
-    // await waitForElement(() => getByText('View transaction details'))
-    //
-    // // complete
-    // await waitForElement(() => getByText('Upgrade complete'))
-    // await waitForElement(() => getByText('CDP #1 has been successfully upgraded to a Multi-Collateral Dai Vault'))
-    //
-    // // check using the maker instance that the user now has an MCD CDP
-    // const data = await cdpManager.getCdpIds(proxyAddress)
-    // expect(data.length).toBeGreaterThan(1)
-    // debug();
-  });
-
-  test('the whole flow Dai Payment w/ Proxy CDP', async () => {
-    let cdpMigrationCheck = {
-      [proxyAddress]: [proxyCdp1.id],
-    };
-    const {
-      getByTestId,
-      getAllByTestId,
-      getByText,
-      getAllByRole,
-      debug
-    } = await render(<MigrateCdp />, {
-      initialState: {
-        saiAvailable: SAI(110),
-        cdpMigrationCheck,
-        maker,
-        account: window.maker.currentAddress()
-      }
-    });
-
-    // select the cdp
-    const cdpRadio = await waitForElement(() => getAllByRole('radio'))
-    click(cdpRadio[0])
-
-    // click continue
-    getByText('Continue')
-    // TO FIX: Clicking causes a revert on blockchain
-    // click(getByText('Continue'));
-
-    // // pay with DAI
-    // getByText('Confirm CDP Upgrade')
-    // const daiDebt = await waitForElement(() => getByText('Pay with CDP debt'))
-    // click(daiDebt)
-    // expect(getByText('Pay and Migrate').disabled).toBeTruthy();
-    // click(getByTestId('tosCheck'))
-    // expect(getByText('Pay and Migrate').disabled).toBeFalsy()
-    // click(getByText('Pay and Migrate'))
-    //
-    // // in progress
-    // await waitForElement(() => getByText('Your CDP is being upgraded'))
-    // await waitForElement(() => getByText('View transaction details'))
-    //
-    // // complete
-    // await waitForElement(() => getByText('Upgrade complete'))
-    // await waitForElement(() => getByText('CDP #1 has been successfully upgraded to a Multi-Collateral Dai Vault'))
-    //
-    // // check using the maker instance that the user now has an MCD CDP
-    // const manager = maker.service('mcd:cdpManager')
-    // const data = await cdpManager.getCdpIds(proxyAddress)
-    // expect(data.length).toBeGreaterThan(1)
-  });
-
-  test('proxy transfer w/ non proxy-CDP', async () => {
-    let cdpMigrationCheck = {
-      [address]: [nonProxyCdp.id]
-    };
-    const {
-      getByTestId,
-      queryByTestId,
-      getAllByTestId,
-      getByText,
-      getAllByRole,
-      debug
-    } = await render(<MigrateCdp />, {
-      initialState: {
-        saiAvailable: SAI(110),
-        cdpMigrationCheck,
-        maker,
-        account: window.maker.currentAddress()
-      }
-    });
-
-    // select the cdp
-    await waitForElement(() => getAllByTestId('cdpListItem'));
-    const cdpRadio = await waitForElement(() => getAllByRole('radio'))
-    click(cdpRadio[0])
-
-    // click continue
-    getByText('Continue')
+    await findAllByTestId('cdpListItem');
+    const cdpRadio = await findAllByRole('radio');
+    click(cdpRadio[0]);
     click(getByText('Continue'));
 
-    // transfer cdp to proxy
-    expect(getByText('Continue').disabled).toBeTruthy()
-    await click(getByText('Transfer CDP'))
+    getByText('Set up proxy contract');
+    const continueButton = getByText('Continue');
+    expect(continueButton.disabled).toBeTruthy();
+    const transferButton = getByText('Transfer CDP');
+    await waitForElement(() => !transferButton.disabled);
+    click(transferButton);
+    await waitForElement(() => !continueButton.disabled);
+    click(continueButton);
 
-    // TO FIX: Transfer CDP transaction doesn't finish and this times out
-    // await waitForElement(() => getByTestId('cdpTransfer'))
-    // expect(getByText('Continue').disabled).toBeFalsy()
-  })
+    // pay with MKR
+    getByText('Confirm CDP Upgrade');
+    await findByText('400.00 MKR');
+    click(getByTestId('tosCheck'));
+
+    // set allowance
+    const toggle = getByTestId('allowance-toggle');
+    await waitForElement(() => !toggle.disabled);
+    click(toggle);
+
+    const pay = getByText('Pay and Migrate');
+    await waitForElement(() => !pay.disabled);
+    click(pay);
+
+    // in progress
+    await findByText('Your CDP is being upgraded');
+    await findByText('Upgrade complete');
+
+    cdpManager.reset();
+    const finalData = await cdpManager.getCdpIds(proxyAddress);
+    expect(finalData.length).toEqual(initialData.length + 1);
+
+    getByText(
+      `CDP #${nonProxyCdp.id} has been successfully upgraded to a Multi-Collateral Dai Vault.`
+    );
+  });
+
+  test.skip('the whole flow, using Pay with Debt', async () => {
+    let cdpMigrationCheck = {
+      [proxyAddress]: [proxyCdp.id]
+    };
+    const { findByText, getByTestId, getByText, getAllByRole } = await render(
+      <MigrateCdp />,
+      {
+        initialState: {
+          saiAvailable: SAI(100),
+          cdpMigrationCheck
+        }
+      }
+    );
+    await wait(() => window.maker);
+    const initialData = await cdpManager.getCdpIds(proxyAddress);
+
+    // select the cdp
+    const cdpRadio = await waitForElement(() => getAllByRole('radio'));
+    click(cdpRadio[0]);
+    click(getByText('Continue'));
+
+    // choose to pay with debt
+    getByText('Confirm CDP Upgrade');
+    click(getByText('Pay with CDP debt'));
+
+    // FIXME: because saiAmountNeededToBuyMkr is not working, this is not
+    // visible, and a "lack of liquidity" warning is shown instead
+    click(getByTestId('tosCheck'));
+
+    const pay = getByText('Pay and Migrate');
+    await waitForElement(() => !pay.disabled);
+    click(pay);
+
+    // in progress
+    await findByText('Your CDP is being upgraded');
+    await findByText('Upgrade complete');
+
+    cdpManager.reset();
+    const finalData = await cdpManager.getCdpIds(proxyAddress);
+    expect(finalData.length).toEqual(initialData.length + 1);
+
+    getByText(
+      `CDP #${proxyCdp.id} has been successfully upgraded to a Multi-Collateral Dai Vault.`
+    );
+  });
 });
