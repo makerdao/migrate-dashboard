@@ -89,7 +89,7 @@ const ProxyAndTransfer = ({
           transaction time and gas costs. This only has to be done once.
         </Text.p>
         {cdpTransferred ? (
-          <SuccessButton data-testid="cdpTransfer" />
+          <SuccessButton />
         ) : (
           <Button
             px={'s'}
