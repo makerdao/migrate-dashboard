@@ -10,3 +10,5 @@ export const AccountTypes = {
 };
 
 export const OASIS_HOSTNAME = 'https://staging.oasis.app';
+
+export const CDP_MIGRATION_MINIMUM_DEBT = 20;

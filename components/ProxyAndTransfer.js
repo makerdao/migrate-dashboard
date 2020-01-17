@@ -26,7 +26,7 @@ const ProxyAndTransfer = ({
   const { setup_text, confirmations_text } = labels;
   const [isTransferringCDP, setIsTransferringCDP] = useState(false);
   const { maker } = useMaker();
-  if(proxyErrors) showErrorMessageAndAllowExiting();
+  if (proxyErrors) showErrorMessageAndAllowExiting();
   const transferCDP = useCallback(async () => {
     try {
       if (!proxyAddress)
@@ -85,12 +85,11 @@ const ProxyAndTransfer = ({
       <Grid gridRowGap="xs" mt="l">
         <Text.h4>Transfer CDP ownership to proxy</Text.h4>
         <Text.p color="darkLavender" fontSize="l" lineHeight="normal">
-          Proxies are used to bundle multiple transactions
-          into one, saving transaction time and gas costs. This only has to be
-          done once.
+          Proxies are used to bundle multiple transactions into one, saving
+          transaction time and gas costs. This only has to be done once.
         </Text.p>
         {cdpTransferred ? (
-          <SuccessButton />
+          <SuccessButton data-testid="cdpTransfer" />
         ) : (
           <Button
             px={'s'}

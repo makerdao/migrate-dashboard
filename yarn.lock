@@ -1154,19 +1154,19 @@
     hdkey "^1.0.0"
     web3-provider-engine "14.0.4"
 
-"@makerdao/dai-plugin-mcd@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-mcd/-/dai-plugin-mcd-1.0.3.tgz#af4b65cc7ee2569bc372b3c43de522e5b1468a1c"
-  integrity sha512-VgOlCI7D0uPxuNC67XHDBqbbhh8AjqWbPJOLHzh6sFzivgBZQ24CeWaureCEXzwQoM+GqmgSFOjLuM4y8+XFQQ==
+"@makerdao/dai-plugin-mcd@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-mcd/-/dai-plugin-mcd-1.0.6.tgz#2e2c130b0946bb6544499d5fdf754fff151e26b0"
+  integrity sha512-Fyk9/n9mDZmHHOpLroE2C5n4B+XB4opXwZ/xEH3BMsCnZv3ksUA2T3N803VdWRqcpNfnWiBAkdhhxR4wLpdaqw==
   dependencies:
     "@makerdao/currency" "^0.9.5"
     "@makerdao/services-core" "^0.9.9"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-migrations@1.0.10":
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.0.10.tgz#6e8fff4664b94de01af33b0f50f879fe2a86f4f2"
-  integrity sha512-Iu8FzjInLWklPa6Y8d55Da6RCAUbiUxL3YRdd748ANRamh3uLYiUvQ/OR0wnSKwVRZtSuW0YpA+nnYRb8VpijQ==
+"@makerdao/dai-plugin-migrations@1.0.12":
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.0.12.tgz#7736cf560cc512e8117a99906ba1df11870bb143"
+  integrity sha512-zRGwBtoH1Nif57LlX+U6frNXAhCYcONyYa0oJKRPLHJyyQ7pAIv9JQ4CtZ+w4zNGJCr5yMifU81vkBLTCeYyaA==
   dependencies:
     "@makerdao/currency" "^0.9.5"
     "@makerdao/services-core" "^0.9.5"
@@ -1261,10 +1261,10 @@
   dependencies:
     node-fetch "^2.6.0"
 
-"@makerdao/testchain@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@makerdao/testchain/-/testchain-1.0.3.tgz#c7df934a4863b9bf58ec1fdce9a4352e9d418378"
-  integrity sha512-hvkQbVhfueSY06WqjptYFZy4wwYIxO1SpzZJ3I9kQxlaO8SqBeiqthHlSqvPHsUJBpRU7yDs5yRRzWY61NcRcA==
+"@makerdao/testchain@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@makerdao/testchain/-/testchain-1.0.5.tgz#013162ce9717cbebb0fa67eba28e1d0fd4a8771b"
+  integrity sha512-UsB4KuDZdyK99dZhIim1JASxT5tXqEIq16gx7ZqOuwydqOjMh+iykz5F1bekYjembZ+DWYm0eMH6WpQ56uA1rg==
   dependencies:
     ganache-cli makerdao/ganache-cli#fix/gas-est-crash
 

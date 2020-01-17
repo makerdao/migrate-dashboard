@@ -23,6 +23,10 @@ const APPROVAL_FUDGE = 2;
 const HIGH_FEE_LOWER_BOUND = 50;
 const CDP_MIN_RATIO = 170;
 
+const TAB_PAY_WITH_MKR = 0;
+const TAB_PAY_WITH_DEBT = 1;
+const TAB_LABELS = ['Pay with MKR', 'Pay with CDP debt'];
+
 const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
   return (
     <Grid alignItems="center" gridTemplateColumns="auto 1fr">
@@ -31,6 +35,7 @@ const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
         fontSize="l"
         checked={hasReadTOS}
         onChange={() => setHasReadTOS(!hasReadTOS)}
+        data-testid="tosCheck"
       />
       <Text
         t="caption"
@@ -174,32 +179,37 @@ const PayAndMigrate = ({
 
   useEffect(() => {
     (async () => {
-      if (maker && account) {
-        const mig = maker
-          .service('migration')
-          .getMigration('single-to-multi-cdp');
-        const mkrToken = maker.service('token').getToken(MKR);
-        const [
-          mkrBalanceFromSdk,
-          proxyAddress,
-          saiNeededInMarketFromSdk
-        ] = await Promise.all([
-          mkrToken.balance(),
-          maker.service('proxy').currentProxy(),
-          mig.saiAmountNeededToBuyMkr(govFeeMKRExact)
-        ]);
-        setMkrBalance(mkrBalanceFromSdk);
-        setSaiNeededInMarket(saiNeededInMarketFromSdk);
-        if (proxyAddress) {
-          const connectedWalletAllowance = await maker
-            .getToken(MKR)
-            .allowance(account.address, proxyAddress);
-          const hasMkrAllowance = connectedWalletAllowance.gte(
-            govFeeMKRExact.times(APPROVAL_FUDGE)
-          );
-          setProxyDetails({ hasMkrAllowance, address: proxyAddress });
-        }
-      }
+      if (!maker || !account) return;
+
+      const mig = maker
+        .service('migration')
+        .getMigration('single-to-multi-cdp');
+      const mkrToken = maker.service('token').getToken(MKR);
+      await Promise.all([
+        mkrToken.balance().then(setMkrBalance),
+
+        maker
+          .service('proxy')
+          .currentProxy()
+          .then(async address => {
+            if (!address) return;
+
+            const connectedWalletAllowance = await maker
+              .getToken(MKR)
+              .allowance(account.address, address);
+            const hasMkrAllowance = connectedWalletAllowance.gte(
+              govFeeMKRExact.times(APPROVAL_FUDGE)
+            );
+            setProxyDetails({ hasMkrAllowance, address });
+          }),
+
+        mig
+          .saiAmountNeededToBuyMkr(govFeeMKRExact)
+          .then(setSaiNeededInMarket)
+          .catch(err => {
+            console.error(`Couldn't calculate Sai needed for fee: ${err}`);
+          })
+      ]);
     })();
   }, [account, maker, govFeeMKRExact]);
 
@@ -219,10 +229,7 @@ const PayAndMigrate = ({
     saiNeededInMarket &&
     maxCost.toBigNumber().gt(saiNeededInMarket.toBigNumber());
 
-  const TAB_PAY_WITH_MKR = 0;
-  const TAB_PAY_WITH_DEBT = 1;
-  const TABS = ['Pay with MKR', 'Pay with CDP debt'];
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(TAB_PAY_WITH_MKR);
 
   return (
     <Grid
@@ -233,7 +240,7 @@ const PayAndMigrate = ({
       width={['100vw', 'auto']}
     >
       <Text.h2 textAlign="center">Confirm CDP Upgrade</Text.h2>
-      <CardTabs onChange={setSelectedTab} headers={TABS}>
+      <CardTabs onChange={setSelectedTab} headers={TAB_LABELS}>
         <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
           <Table width="100%">
             <Table.tbody>
@@ -292,14 +299,13 @@ const PayAndMigrate = ({
                     completeText={'MKR unlocked'}
                     loadingText={'Unlocking MKR'}
                     defaultText={'Unlock MKR to continue'}
-                    tokenDisplayName={'MKR'}
                     isLoading={mkrApprovePending}
                     isComplete={proxyDetails.hasMkrAllowance}
                     onToggle={giveProxyMkrAllowance}
                     disabled={
                       proxyDetails.hasMkrAllowance || !proxyDetails.address
                     }
-                    data-testid="allowance-toggle"
+                    testId="allowance-toggle"
                   />
                 </Grid>
                 <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />

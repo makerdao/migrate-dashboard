@@ -14,6 +14,7 @@ import {
 import { getColor } from '../../utils/theme';
 import useStore from '../../hooks/useStore';
 import { prettifyNumber } from '../../utils/ui';
+import { CDP_MIGRATION_MINIMUM_DEBT } from '../../utils/constants';
 
 const RADIO_WIDTH = '2rem';
 const RADIO_CONTAINER_WIDTH = '4rem';
@@ -41,13 +42,14 @@ function ListItemRow({ label, value, dark }) {
   );
 }
 
-function ListItem({ cdp, onSelect, checked, selectable }) {
+function ListItem({ cdp, onSelect, checked, selectable, ...otherProps }) {
   return (
     <Card
       px={['0', 'l']}
       py={['0', 'm']}
       borderColor={checked ? '#1AAB9B' : '#D4D9E1'}
       border={checked ? '2px solid' : '1px solid'}
+      {...otherProps}
     >
       <Box display={['none', 'block']}>
         <Grid
@@ -66,6 +68,7 @@ function ListItem({ cdp, onSelect, checked, selectable }) {
               onChange={() => onSelect(cdp)}
               fontSize={RADIO_WIDTH}
               checked={checked}
+              data-testid={'cdpRadio'}
             />
           ) : (
             <span></span>
@@ -120,7 +123,7 @@ export default ({
   const [{ saiAvailable }] = useStore();
 
   const isSelectable = cdp =>
-    cdp.debtValueExact.gte(20) &&
+    cdp.debtValueExact.gte(CDP_MIGRATION_MINIMUM_DEBT) &&
     cdp.debtValueExact.lt(saiAvailable.toBigNumber());
 
   return (
@@ -180,6 +183,7 @@ export default ({
               selectable={isSelectable(cdp)}
               key={cdp.id}
               onSelect={onSelect}
+              data-testid="cdpListItem"
             />
           ))}
         </Grid>
@@ -213,15 +217,15 @@ const DebtLimitMessage = ({ saiAvailable }) => (
     lineHeight="normal"
     p="m"
   >
-    {saiAvailable && saiAvailable.lt(20) ? (
+    {saiAvailable && saiAvailable.lt(CDP_MIGRATION_MINIMUM_DEBT) ? (
       <span>
         There is not enough Sai available to migrate CDPs at this time. Please
         try again later.
       </span>
     ) : (
       <span>
-        CDPs with less than 20 or more than {prettifyNumber(saiAvailable)} of
-        debt cannot be migrated at this time.
+        CDPs with less than {CDP_MIGRATION_MINIMUM_DEBT} or more than{' '}
+        {prettifyNumber(saiAvailable)} of debt cannot be migrated at this time.
       </span>
     )}
     <br />
