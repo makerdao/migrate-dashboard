@@ -51,7 +51,13 @@ export async function instantiateMaker(network) {
         }
       ],
       migrationPlugin
-    ]
+    ],
+    addressOverrides: {
+      MAKER_OTC: {
+        mainnet: '0x794e6e91555438afc3ccf1c5076a74f42133d08d',
+        kovan: '0xe325acb9765b02b8b418199bf9650972299235f4'
+      }
+    }
   };
 
   maker = await Maker.create('http', config);
