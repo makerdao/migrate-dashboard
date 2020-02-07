@@ -52,6 +52,6 @@ function StoreAccess({ callback, children }) {
 // `window.maker`
 function MakerAccess({ callback, children }) {
   const { maker } = useMaker();
-  if (callback) callback(maker);
+  if (callback && maker) callback(maker);
   return <Fragment>{children}</Fragment>;
 }
