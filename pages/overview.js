@@ -92,7 +92,8 @@ function Overview() {
       saiAvailable,
       daiAvailable,
       oldMkrBalance,
-      chiefMigrationCheck
+      chiefMigrationCheck,
+      vaultsToRedeem
     },
     dispatch
   ] = useStore();
@@ -116,7 +117,8 @@ function Overview() {
           saiBalance: SAI(checks['sai-to-dai']),
           daiBalance: _daiBalance,
           oldMkrBalance: checks['mkr-redeemer'],
-          chiefMigrationCheck: checks['chief-migrate']
+          chiefMigrationCheck: checks['chief-migrate'],
+          vaultsToRedeem: true //TODO fix this when the service method is ready.
         }
       });
     })();
@@ -136,6 +138,8 @@ function Overview() {
     !shouldShowMkr &&
     !shouldShowReverse &&
     !shouldShowChief;
+
+  const shouldShowRedeemVaults = vaultsToRedeem;
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -167,7 +171,7 @@ function Overview() {
               title="CDP Upgrade"
               metadataTitle={`CDP${
                 countCdps(cdps) === 1 ? '' : 's'
-              } to upgrade`}
+                } to upgrade`}
               metadataValue={showCdpCount(cdps)}
               body={`Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai liquidity: ${prettifyNumber(
                 saiAvailable
@@ -215,7 +219,16 @@ function Overview() {
               }}
             />
           )}
-
+          {shouldShowRedeemVaults && (
+            <MigrationCard
+              recommended
+              title="Withdraw collateral from Dai Vault"
+              body="Redeem your Multi-Collateral Dai vault for a proportional amount of underlying collateral from the Multi-Collateral Dai system."
+              metadataTitle="vaults to redeem"
+              metadataValue={showCdpCount(cdps)}
+              onSelected={() => Router.push('/migration/vaults')}
+            />
+          )}
           {shouldShowMkr && (
             <MigrationCard
               recommended
@@ -243,16 +256,16 @@ function Overview() {
             </Card>
           )
         ) : (
-          <Loader
-            mt="4rem"
-            mb="4rem"
-            size="1.8rem"
-            color={getColor('makerTeal')}
-            justifySelf="end"
-            m="auto"
-            bg={getColor('lightGrey')}
-          />
-        )}
+            <Loader
+              mt="4rem"
+              mb="4rem"
+              size="1.8rem"
+              color={getColor('makerTeal')}
+              justifySelf="end"
+              m="auto"
+              bg={getColor('lightGrey')}
+            />
+          )}
       </Box>
     </Flex>
   );

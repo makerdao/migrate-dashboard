@@ -11,16 +11,21 @@ function LoadingToggle({
   onToggle,
   disabled,
   testId,
+  reverse,
   ...props
 }) {
   const text = isLoading
     ? loadingText
     : isComplete
-    ? completeText
-    : defaultText;
+      ? completeText
+      : defaultText;
+
+  // TODO make this better & account for Loader
+  const textOrder = reverse ? 2 : 1;
+  const toggleOrder = reverse ? 1 : 2;
   return (
     <Grid alignItems="center" gridTemplateColumns="auto 1fr auto" {...props}>
-      <Text t="body">{text}</Text>
+      <Text t="body" css={{ order: textOrder }}>{text}</Text>
       {isLoading && (
         <Loader
           display="inline-block"
@@ -31,7 +36,7 @@ function LoadingToggle({
         />
       )}
       <Toggle
-        css={{ opacity: disabled ? 0.4 : 1 }}
+        css={{ order: toggleOrder, opacity: disabled ? 0.4 : 1 }}
         active={isComplete || isLoading}
         onClick={onToggle}
         justifySelf="end"
