@@ -109,7 +109,6 @@ function Overview() {
       const checks = await mig.runAllChecks();
       const _daiBalance = DAI(await maker.getToken('MDAI').balance());
       setInitialFetchComplete(true);
-
       dispatch({
         type: 'assign',
         payload: {
@@ -132,6 +131,7 @@ function Overview() {
   const shouldShowReverse = daiBalance && daiBalance.gt(0);
   const shouldShowChief =
     chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
+  const shouldShowCollateral = daiBalance && daiBalance.gt(0);
   const noMigrations =
     !shouldShowCdps &&
     !shouldShowDai &&
@@ -171,7 +171,7 @@ function Overview() {
               title="CDP Upgrade"
               metadataTitle={`CDP${
                 countCdps(cdps) === 1 ? '' : 's'
-                } to upgrade`}
+              } to upgrade`}
               metadataValue={showCdpCount(cdps)}
               body={`Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai liquidity: ${prettifyNumber(
                 saiAvailable
@@ -239,6 +239,17 @@ function Overview() {
               }}
             />
           )}
+
+          {shouldShowCollateral && (
+            <MigrationCard
+              recommended
+              title="Redeem Dai for collateral"
+              body="Redeem your Dai for a proportional amount of underlying collateral from the Multi-Collateral Dai system"
+              onSelected={() => {
+                Router.push('/migration/redeemDai');
+              }}
+            />
+          )}
         </Grid>
         {initialFetchComplete ? (
           noMigrations && (
@@ -256,16 +267,16 @@ function Overview() {
             </Card>
           )
         ) : (
-            <Loader
-              mt="4rem"
-              mb="4rem"
-              size="1.8rem"
-              color={getColor('makerTeal')}
-              justifySelf="end"
-              m="auto"
-              bg={getColor('lightGrey')}
-            />
-          )}
+          <Loader
+            mt="4rem"
+            mb="4rem"
+            size="1.8rem"
+            color={getColor('makerTeal')}
+            justifySelf="end"
+            m="auto"
+            bg={getColor('lightGrey')}
+          />
+        )}
       </Box>
     </Flex>
   );
