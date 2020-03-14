@@ -4,34 +4,40 @@ import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
 import FlowHeader from '../../components/FlowHeader';
 import useMaker from '../../hooks/useMaker';
-import InProgress from '../../components/InProgress';
 import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
-import daiLogo from '../../assets/icons/dai-logo.svg';
 import DaiRedeem from '../../components/redeemdai/DaiRedeem';
 import ConfirmRedeem from '../../components/redeemdai/ConfirmRedeem';
+import Complete from '../../components/redeemdai/Complete';
 
 const steps = [
   props => <DaiRedeem {...props} />,
-  props => <ConfirmRedeem {...props} />
-  // props => (
-  //   <InProgress {...props} title="Your Sai is being upgraded" image={daiLogo} />
-  // ),
-  // props => <Complete {...props} />,
-  // props => (
-  //   <Failed
-  //     {...props}
-  //     title="Upgrade failed"
-  //     subtitle="Your Single-Collateral Sai has not been upgraded to Multi-Collateral Dai."
-  //   />
-  // )
+  props => <ConfirmRedeem {...props} />,
+  props => <Complete {...props} />,
+  props => (
+    <Failed
+      {...props}
+      title="Redeem failed"
+      subtitle={'There was an error with redeeming collateral.'}
+    />
+  )
 ];
+async function getCollateralData() {
+  const dummyData = [
+    { token: 'ETH', value: 195.1432, rate: 0.0338, amount: 54.19 },
+    { token: 'OMG', value: 5.1432, rate: 4.2198, amount: 1532.41 },
+    { token: 'BAT', value: 15.1932, rate: 0.9438, amount: 21211.21 }
+  ];
+
+  return new Promise(resolve => setTimeout(resolve(dummyData), 3000));
+}
 
 export default function() {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
-  const [migrationTxHash, setMigrationTxHash] = useState(null);
+  const [redeemTxHash, setRedeemTxHash] = useState(null);
   const [redeemAmount, setRedeemAmount] = useState();
+  const [collateralData, setCollateralData] = useState([]);
 
   useEffect(() => {
     if (!account) Router.replace('/');
@@ -44,6 +50,13 @@ export default function() {
   const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
   const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
+
+  useEffect(() => {
+    (async () => {
+      const data = await getCollateralData();
+      setCollateralData(data);
+    })();
+  }, [account]);
 
   return (
     <FlowBackground>
@@ -73,11 +86,12 @@ export default function() {
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
                   onReset: reset,
-                  setMigrationTxHash,
-                  migrationTxHash,
+                  setRedeemTxHash,
+                  redeemTxHash,
                   showErrorMessageAndAllowExiting,
                   setRedeemAmount,
-                  redeemAmount
+                  redeemAmount,
+                  collateralData
                 })}
               </FadeInFromSide>
             );

@@ -5,7 +5,13 @@ import AmountInputCard from '../AmountInputCard';
 import CollateralTable from './CollateralTable';
 import useStore from '../../hooks/useStore';
 
-function DaiRedeem({ onClose, setRedeemAmount, redeemAmount, onNext }) {
+function DaiRedeem({
+  onClose,
+  setRedeemAmount,
+  redeemAmount,
+  onNext,
+  collateralData
+}) {
   const [{ daiBalance }] = useStore();
   const [valid, setValid] = useState(true);
 
@@ -29,7 +35,7 @@ function DaiRedeem({ onClose, setRedeemAmount, redeemAmount, onNext }) {
         <div />
         <Grid width="567px" gridRowGap="l">
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
-            <CollateralTable />
+            <CollateralTable data={collateralData} />
           </Card>
 
           <AmountInputCard

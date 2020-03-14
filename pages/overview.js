@@ -59,9 +59,7 @@ function MigrationCard({
         <Box gridArea="title" alignSelf="center">
           <Text.h4>{title}</Text.h4>
         </Box>
-        <Box gridArea="body">
-          <Text.p t="body">{body}</Text.p>
-        </Box>
+        <Box gridArea="body">{body}</Box>
       </Grid>
     </ButtonCard>
   );
@@ -173,9 +171,13 @@ function Overview() {
                 countCdps(cdps) === 1 ? '' : 's'
               } to upgrade`}
               metadataValue={showCdpCount(cdps)}
-              body={`Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai liquidity: ${prettifyNumber(
-                saiAvailable
-              )}`}
+              body={
+                <Text.p t="body">
+                  {`Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai liquidity: ${prettifyNumber(
+                    saiAvailable
+                  )}`}
+                </Text.p>
+              }
               onSelected={() => Router.push('/migration/cdp')}
             />
           )}
@@ -183,9 +185,13 @@ function Overview() {
             <MigrationCard
               recommended
               title="Single-Collateral Sai Upgrade"
-              body={`Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai availability: ${prettifyNumber(
-                daiAvailable
-              )}`}
+              body={
+                <Text.p t="body">
+                  {`Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai availability: ${prettifyNumber(
+                    daiAvailable
+                  )}`}
+                </Text.p>
+              }
               metadataTitle="Sai to upgrade"
               metadataValue={showAmount(saiBalance)}
               onSelected={() => Router.push('/migration/dai')}
@@ -195,9 +201,13 @@ function Overview() {
             <MigrationCard
               recommended
               title="Swap Dai for Sai"
-              body={`Swap your Multi-Collateral Dai back to Single-Collateral Sai. Current Sai liquidity: ${prettifyNumber(
-                saiAvailable
-              )}`}
+              body={
+                <Text.p t="body">
+                  {`Swap your Multi-Collateral Dai back to Single-Collateral Sai. Current Sai liquidity: ${prettifyNumber(
+                    saiAvailable
+                  )}`}
+                </Text.p>
+              }
               metadataTitle="Dai available to swap"
               metadataValue={showAmount(daiBalance)}
               onSelected={() => {
@@ -209,7 +219,13 @@ function Overview() {
             <MigrationCard
               recommended
               title="DSChief MKR Withdrawal"
-              body="Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet."
+              body={
+                <Text.p t="body">
+                  {
+                    'Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet.'
+                  }
+                </Text.p>
+              }
               metadataTitle="MKR to claim"
               metadataValue={showAmount(
                 mkrLockedDirectly.plus(mkrLockedViaProxy)
@@ -223,7 +239,13 @@ function Overview() {
             <MigrationCard
               recommended
               title="Withdraw collateral from Dai Vault"
-              body="Redeem your Multi-Collateral Dai vault for a proportional amount of underlying collateral from the Multi-Collateral Dai system."
+              body={
+                <Text.p t="body">
+                  {
+                    'Redeem your Multi-Collateral Dai vault for a proportional amount of underlying collateral from the Multi-Collateral Dai system.'
+                  }
+                </Text.p>
+              }
               metadataTitle="vaults to redeem"
               metadataValue={showCdpCount(cdps)}
               onSelected={() => Router.push('/migration/vaults')}
@@ -233,7 +255,13 @@ function Overview() {
             <MigrationCard
               recommended
               title="Redeem New MKR"
-              body="Swap your old MKR for new MKR by upgrading to the new ds-token."
+              body={
+                <Text.p t="body">
+                  {
+                    'Swap your old MKR for new MKR by upgrading to the new ds-token.'
+                  }
+                </Text.p>
+              }
               onSelected={() => {
                 window.open('https://makerdao.com/redeem/', '_blank');
               }}
@@ -244,7 +272,24 @@ function Overview() {
             <MigrationCard
               recommended
               title="Redeem Dai for collateral"
-              body="Redeem your Dai for a proportional amount of underlying collateral from the Multi-Collateral Dai system"
+              body={
+                <Grid gridRowGap="l">
+                  <Text.p t="body">
+                    {
+                      'Redeem your Dai for a proportional amount of underlying collateral from the Multi-Collateral Dai system'
+                    }
+                  </Text.p>
+                  <Text.p
+                    fontSize="15px"
+                    fontWeight={500}
+                    color={getColor('steel')}
+                  >
+                    {'Auctions in progress. Cooldown period ends in 5:34:03'}
+                  </Text.p>
+                </Grid>
+              }
+              metadataTitle="Dai to redeem"
+              metadataValue={showAmount(daiBalance)}
               onSelected={() => {
                 Router.push('/migration/redeemDai');
               }}
