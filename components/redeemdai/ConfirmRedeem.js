@@ -25,7 +25,9 @@ function ConfirmRedeem({
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [redeemInitiated, setRedeemInitiated] = useState(false);
+
   const {
+    proxyAddress,
     proxyLoading,
     setupProxy,
     initialProxyCheck,
@@ -33,6 +35,7 @@ function ConfirmRedeem({
     hasProxy
   } = useProxy();
 
+  console.log(proxyAddress);
   const [hasAllowance, setHasAllowance] = useState(false);
   const [allowanceLoading, setAllowanceLoading] = useState(false);
 
@@ -58,7 +61,7 @@ function ConfirmRedeem({
   const giveProxyDaiAllowance = async () => {
     setAllowanceLoading(true);
     try {
-      await maker.getToken(MDAI).approveUnlimited();
+      await maker.getToken(MDAI).approveUnlimited(proxyAddress);
       setHasAllowance(true);
     } catch (err) {
       const message = err.message ? err.message : err;
@@ -80,7 +83,6 @@ function ConfirmRedeem({
           const connectedWalletAllowance = await maker
             .getToken(MDAI)
             .allowance(account.address, address);
-          console.log(connectedWalletAllowance);
           const hasDaiAllowance = connectedWalletAllowance.gt(0);
           setHasAllowance(hasDaiAllowance);
         });

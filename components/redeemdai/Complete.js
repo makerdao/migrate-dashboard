@@ -12,7 +12,7 @@ import daiRedeem from '../../assets/icons/daiRedeem.svg';
 import { etherscanLink } from '../../utils/ui';
 import useMaker from '../../hooks/useMaker';
 
-function Complete({ redeemTxHash }) {
+function Complete({ redeemTxHash, onClose }) {
   const { network } = useMaker();
 
   return (
@@ -44,6 +44,14 @@ function Complete({ redeemTxHash }) {
       <Box justifySelf="center">
         <img src={daiRedeem} />
       </Box>
+      <Button
+        variant="secondary-outline"
+        onClick={onClose}
+        justifySelf="center"
+        width="200px"
+      >
+        Exit
+      </Button>
     </Grid>
   );
 }
