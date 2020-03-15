@@ -16,21 +16,22 @@ import { addToastWithTimeout } from '../Toast';
 const TableRow = ({
   vaultId,
   collateral,
+  daiDebt,
   type,
   redeemInitiated,
   redeemDone,
   hasReadTOS,
   redeemVaults,
-  exchangeRate
+  exchangeRate,
+  vaultValue
 }) => (
   <tr css="white-space: nowrap;">
     <td>{vaultId}</td>
     <td>{type}</td>
     <td>{collateral}</td>
-
-    {/* <td>{daiDebt}</td> */}
+    <td>{daiDebt}</td>
     <td>{exchangeRate}</td>
-    {/* <td>{vaultValue}</td> */}
+    <td>{vaultValue}</td>
     <td>
       <Button
         px="16px"
@@ -128,7 +129,9 @@ const RedeemVaults = ({
     'Vault ID',
     'Vault Type',
     'Collateral',
+    'Dai Debt',
     'Exchange Rate',
+    'Vault Value',
     'Action',
   ];
 
@@ -181,9 +184,9 @@ const RedeemVaults = ({
                   vaultId={vault.id}
                   collateral={vault.collateral}
                   type={vault.type}
-                  /* daiDebt={vault.daiDebt} */
+                  daiDebt={vault.daiDebt}
                   exchangeRate={vault.exchangeRate}
-                  /* vaultValue={vault.vaultValue} */
+                  vaultValue={vault.vaultValue}
                   redeemInitiated={redeemInitiated}
                   redeemDone={redeemDone}
                   hasReadTOS={hasReadTOS}

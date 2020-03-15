@@ -126,12 +126,15 @@ function Overview() {
       const parsedVaultsData = vaultsData.map(vault => {
         const claim = validClaims.find(c => c.id.toNumber() === vault.id);
         const currency = vault.type.ilk.split('-')[0];
+        const vaultValue = vault.collateralAmount.toBigNumber().minus(vault.debtValue.toBigNumber().times(claim.tag));
         return {
           id: vault.id,
           type: currency,
           collateral: vault.collateralAmount.toString(),
+          daiDebt: `${prettifyNumber(vault.debtValue, false, 2, false)} DAI`,
           vault,
-          exchangeRate: `1 DAI : ${prettifyNumber(claim.tag, false, 4)} ${currency}`
+          exchangeRate: `1 DAI : ${prettifyNumber(claim.tag, false, 4)} ${currency}`,
+          vaultValue: `${prettifyNumber(vaultValue)} ${currency}`
         };
       });
 

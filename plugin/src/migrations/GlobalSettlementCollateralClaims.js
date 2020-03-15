@@ -35,11 +35,8 @@ export default class GlobalSettlementCollateralClaims {
       ids.map(async (id, i) => {
         const urn = await cdpManager.urns(id);
         const vatUrn = await vat.urns(ilks[i], urn);
-        // const skim = await end.skim(ilk, urn);
         const tag = await end.tag(ilks[i]);
         const ilk = await vat.ilks(ilks[i]);
-
-        //function skim(bytes32 ilk, address urn) external note {
 
         const owed = new BigNumber(vatUrn.art)
           .times(ilk.rate)
