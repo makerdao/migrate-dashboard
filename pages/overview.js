@@ -142,9 +142,7 @@ function Overview() {
     !shouldShowChief;
 
   // TODO: this broke when we changed the return format from the service method
-  const shouldShowRedeemVaults = vaultsToRedeem && vaultsToRedeem.ids.length > 0;
-
-  console.log('shouldShowRedeemVaults', shouldShowRedeemVaults);
+  const shouldShowRedeemVaults = vaultsToRedeem;
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -252,7 +250,7 @@ function Overview() {
                 </Text.p>
               }
               metadataTitle="vaults to redeem"
-              metadataValue={vaultsToRedeem.ids.length}
+              metadataValue={shouldShowRedeemVaults[0].length}
               onSelected={() => Router.push('/migration/vaults')}
             />
           )}
