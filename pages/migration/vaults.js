@@ -65,8 +65,9 @@ export default function () {
             if (!maker || !account) return;
             // if (!maker || !account || !vaultsToRedeem) return;
             //TODO change this when we learn the real parameter
-            const data = await getVaultData(account.address);
-            setVaultData(data);
+            // const data = await getVaultData(account.address);
+            // setVaultData(data);
+            setVaultData(vaultsToRedeem.ids);
             setLoadingVaults(false);
         })();
     }, [maker, account, vaultsToRedeem]);

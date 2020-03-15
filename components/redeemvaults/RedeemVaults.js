@@ -158,7 +158,7 @@ const RedeemVaults = ({
                   (
                     <TableRow
                       key={vault.id}
-                      vaultId={vault.id}
+                      vaultId={vault.toNumber()}
                       collateral={vault.collateral}
                       daiDebt={vault.daiDebt}
                       exchangeRate={vault.exchangeRate}

@@ -98,7 +98,7 @@ function Overview() {
 
 
   console.log('vaultsToRedeem', vaultsToRedeem);
-  console.log('chiefMigrationCheck', chiefMigrationCheck);
+  // console.log('chiefMigrationCheck', chiefMigrationCheck);
 
   useEffect(() => {
     if (maker && !account) Router.replace('/');
@@ -141,9 +141,10 @@ function Overview() {
     !shouldShowReverse &&
     !shouldShowChief;
 
-  const shouldShowRedeemVaults = true;
-  // TODO Enable when we have vaults to redeem on kovan:
-  // const shouldShowRedeemVaults = vaultsToRedeem;
+  // TODO: this broke when we changed the return format from the service method
+  const shouldShowRedeemVaults = vaultsToRedeem && vaultsToRedeem.ids.length > 0;
+
+  console.log('shouldShowRedeemVaults', shouldShowRedeemVaults);
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -247,11 +248,11 @@ function Overview() {
               title="Redeem Excess Collateral from Vaults"
               body={
                 <Text.p t="body">
-                
+
                 </Text.p>
               }
               metadataTitle="vaults to redeem"
-              metadataValue={showCdpCount(cdps)}
+              metadataValue={vaultsToRedeem.ids.length}
               onSelected={() => Router.push('/migration/vaults')}
             />
           )}
