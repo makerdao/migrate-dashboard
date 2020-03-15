@@ -267,7 +267,14 @@ function Overview() {
           {shouldShowRedeemVaults && (
             <MigrationCard
               recommended
-              title="Redeem Excess Collateral from Vaults"
+              title="Withdraw Excess Collateral from Vaults"
+              body={
+                <Text.p t="body">
+                  {
+                    'Withdraw excess collateral from your Multi-Collateral Dai Vaults.'
+                  }
+                </Text.p>
+              }
               metadataTitle="vaults to redeem"
               metadataValue={vaultsToRedeem.claims.length}
               onSelected={() => Router.push('/migration/vaults')}

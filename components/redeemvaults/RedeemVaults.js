@@ -37,11 +37,11 @@ const TableRow = ({
         justifySelf="center"
         // px="xl"
         fontSize={'13px'}
-        loading={redeemInitiated.includes(vaultId)}
+        loading={redeemInitiated.includes(vaultId) && !redeemDone.includes(vaultId)}
         disabled={redeemDone.includes(vaultId) || !hasReadTOS}
         onClick={() => redeemVaults(vaultId, type)}
       >
-        Redeem
+        Withdraw
       </Button>
     </td>
   </tr>
@@ -90,7 +90,6 @@ const RedeemVaults = ({
     try {
       let txObject = null;
       setRedeemInitiated([...redeemInitiated, vaultId]);
-      c;
       const mig = maker
         .service('migration')
         .getMigration('global-settlement-collateral-claims');
@@ -106,7 +105,7 @@ const RedeemVaults = ({
           console.log('tx', tx);
           setRedeemTxHash(tx.hash);
         },
-        confirmed: tx => {
+        mined: () => {
           setRedeemDone([...redeemDone, vaultId]);
         },
         error: () => showErrorMessageAndAllowExiting()
@@ -141,13 +140,13 @@ const RedeemVaults = ({
     >
       <Grid gridRowGap="s">
         <Text.h2 textAlign="center">
-          Redeem Excess Collateral from Vaults
+          Withdraw Excess Collateral from Vaults
         </Text.h2>
-        {/* <Grid gridRowGap="xs">
+        <Grid gridRowGap="xs">
           <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-            Unlock and redeem Excess Collateral from your Vaults.
+            Withdraw excess collateral from your Multi-Collateral Dai Vaults.
           </Text.p>
-        </Grid> */}
+        </Grid>
       </Grid>
       <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
         <Card px="l" py="l">
