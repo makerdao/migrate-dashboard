@@ -141,9 +141,8 @@ function Overview() {
     !shouldShowReverse &&
     !shouldShowChief;
 
-  const shouldShowRedeemVaults = true;
+  const shouldShowRedeemVaults = vaultsToRedeem;
   // TODO Enable when we have vaults to redeem on kovan:
-  // const shouldShowRedeemVaults = vaultsToRedeem;
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -251,7 +250,7 @@ function Overview() {
                 </Text.p>
               }
               metadataTitle="vaults to redeem"
-              metadataValue={showCdpCount(cdps)}
+              metadataValue={shouldShowRedeemVaults[0].length}
               onSelected={() => Router.push('/migration/vaults')}
             />
           )}
