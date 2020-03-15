@@ -124,11 +124,14 @@ function Overview() {
       ]);
 
       const parsedVaultsData = vaultsData.map(vault => {
+        const claim = validClaims.find(c => c.id.toNumber() === vault.id);
+        const currency = vault.type.ilk.split('-')[0];
         return {
           id: vault.id,
-          type: vault.type.ilk.split('-')[0],
+          type: currency,
           collateral: vault.collateralAmount.toString(),
-          vault: vault
+          vault,
+          exchangeRate: `1 DAI : ${prettifyNumber(claim.tag, false, 4)} ${currency}`
         };
       });
 

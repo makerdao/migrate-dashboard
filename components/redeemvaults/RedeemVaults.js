@@ -21,6 +21,7 @@ const TableRow = ({
   redeemDone,
   hasReadTOS,
   redeemVaults,
+  exchangeRate
 }) => (
   <tr css="white-space: nowrap;">
     <td>{vaultId}</td>
@@ -28,7 +29,7 @@ const TableRow = ({
     <td>{collateral}</td>
 
     {/* <td>{daiDebt}</td> */}
-    {/* <td>{exchangeRate}</td> */}
+    <td>{exchangeRate}</td>
     {/* <td>{vaultValue}</td> */}
     <td>
       <Button
@@ -127,7 +128,8 @@ const RedeemVaults = ({
     'Vault ID',
     'Vault Type',
     'Collateral',
-    'Action'
+    'Exchange Rate',
+    'Action',
   ];
 
   return (
@@ -180,7 +182,7 @@ const RedeemVaults = ({
                   collateral={vault.collateral}
                   type={vault.type}
                   /* daiDebt={vault.daiDebt} */
-                  /* exchangeRate={vault.exchangeRate} */
+                  exchangeRate={vault.exchangeRate}
                   /* vaultValue={vault.vaultValue} */
                   redeemInitiated={redeemInitiated}
                   redeemDone={redeemDone}

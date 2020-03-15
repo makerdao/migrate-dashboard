@@ -48,7 +48,8 @@ export default class GlobalSettlementCollateralClaims {
           .div(RAY);
 
         const redeemable = tag.gt(0) && new BigNumber(vatUrn.ink).minus(owed).gt(0);
-        return { id, owed, redeemable, ilk, urn };
+        const tagDivRay = new BigNumber(tag).div(RAY);
+        return { id, owed, redeemable, ilk, urn, tag: tagDivRay };
       })
     );
 
