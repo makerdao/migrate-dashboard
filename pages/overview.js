@@ -15,6 +15,7 @@ import useMaker from '../hooks/useMaker';
 import reduce from 'lodash/reduce';
 import { getColor } from '../utils/theme';
 import { prettifyNumber } from '../utils/ui';
+import { bytesToString } from '../utils/ethereum';
 import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
@@ -79,6 +80,20 @@ function showAmount(tok) {
   return prettifyNumber(tok, false, 2, false);
 }
 
+function parseClaims(claims) {
+  if (!claims.length || !claims.ids.length) return [];
+  return claims.ids.reduce((acc, _, idx) => {
+    return [
+      ...acc,
+      {
+        id: claims.ids[idx].toString(),
+        urn: claims.urns[idx],
+        ilk: bytesToString(claims.ilks[idx])
+      }
+    ];
+  }, []);
+}
+
 function Overview() {
   const { maker, account } = useMaker();
   const [initialFetchComplete, setInitialFetchComplete] = useState(false);
@@ -96,10 +111,6 @@ function Overview() {
     dispatch
   ] = useStore();
 
-
-  console.log('vaultsToRedeem', vaultsToRedeem);
-  console.log('chiefMigrationCheck', chiefMigrationCheck);
-
   useEffect(() => {
     if (maker && !account) Router.replace('/');
   }, [maker, account]);
@@ -109,6 +120,22 @@ function Overview() {
       if (!maker || !account) return;
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
+
+      const ids = parseClaims(
+        checks['global-settlement-collateral-claims']
+      ).map(({ id }) => parseInt(id));
+
+      const vaultsData = await Promise.all([
+        ...ids.map(id => maker.service('mcd:cdpManager').getCdp(id))
+      ]);
+      const parsedVaultsData = vaultsData.map(vault => {
+        return {
+          id: vault.id,
+          type: vault.type.ilk.split('-')[0],
+          collateral: vault.collateralAmount.toString()
+        };
+      });
+
       const _daiBalance = DAI(await maker.getToken('MDAI').balance());
       setInitialFetchComplete(true);
       dispatch({
@@ -119,7 +146,7 @@ function Overview() {
           daiBalance: _daiBalance,
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
-          vaultsToRedeem: checks['global-settlement-collateral-claims']
+          vaultsToRedeem: parsedVaultsData
         }
       });
     })();
@@ -174,7 +201,7 @@ function Overview() {
               title="CDP Upgrade"
               metadataTitle={`CDP${
                 countCdps(cdps) === 1 ? '' : 's'
-                } to upgrade`}
+              } to upgrade`}
               metadataValue={showCdpCount(cdps)}
               body={
                 <Text.p t="body">
@@ -244,11 +271,7 @@ function Overview() {
             <MigrationCard
               recommended
               title="Redeem Excess Collateral from Vaults"
-              body={
-                <Text.p t="body">
-                
-                </Text.p>
-              }
+              body={<Text.p t="body"></Text.p>}
               metadataTitle="vaults to redeem"
               metadataValue={shouldShowRedeemVaults[0].length}
               onSelected={() => Router.push('/migration/vaults')}
@@ -315,16 +338,16 @@ function Overview() {
             </Card>
           )
         ) : (
-            <Loader
-              mt="4rem"
-              mb="4rem"
-              size="1.8rem"
-              color={getColor('makerTeal')}
-              justifySelf="end"
-              m="auto"
-              bg={getColor('lightGrey')}
-            />
-          )}
+          <Loader
+            mt="4rem"
+            mb="4rem"
+            size="1.8rem"
+            color={getColor('makerTeal')}
+            justifySelf="end"
+            m="auto"
+            bg={getColor('lightGrey')}
+          />
+        )}
       </Box>
     </Flex>
   );

@@ -1,5 +1,5 @@
 import Maker from '@makerdao/dai';
-import mcdPlugin, { MDAI } from '@makerdao/dai-plugin-mcd';
+import mcdPlugin, { MDAI, BAT } from '@makerdao/dai-plugin-mcd';
 // import migrationPlugin from '@makerdao/dai-plugin-migrations';
 import migrationPlugin from './plugin/src/index';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
@@ -33,11 +33,11 @@ export async function instantiateMaker(network) {
   // code that will break if run server-side
   const trezorPlugin = require('@makerdao/dai-plugin-trezor-web').default;
 
-
   const mcdPluginConfig = {
     cdpTypes: [
       { currency: SAI, ilk: 'SAI' },
-      { currency: ETH, ilk: 'ETH-A' }
+      { currency: ETH, ilk: 'ETH-A' },
+      { currency: BAT, ilk: 'BAT-A' }
     ]
   };
 
@@ -58,10 +58,7 @@ export async function instantiateMaker(network) {
       ledgerPlugin,
       walletLinkPlugin,
       walletConnectPlugin,
-      [
-        mcdPlugin,
-        mcdPluginConfig
-      ],
+      [mcdPlugin, mcdPluginConfig],
       [migrationPlugin, migrationPluginConfig]
     ],
     smartContract: {
@@ -89,7 +86,7 @@ export async function connectBrowserProvider(maker) {
   );
   assert(
     browserProvider.address &&
-    browserProvider.address.match(/^0x[a-fA-F0-9]{40}$/),
+      browserProvider.address.match(/^0x[a-fA-F0-9]{40}$/),
     'Got an incorrect or nonexistent wallet address.'
   );
 

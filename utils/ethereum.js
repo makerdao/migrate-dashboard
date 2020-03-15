@@ -41,3 +41,9 @@ export const addEthBalance = async account => {
     )
   };
 };
+
+export function bytesToString(hex) {
+  return Buffer.from(hex.replace(/^0x/, ''), 'hex')
+    .toString()
+    .replace(/\x00/g, ''); // eslint-disable-line no-control-regex
+}

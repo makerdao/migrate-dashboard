@@ -16,6 +16,7 @@ import { addToastWithTimeout } from '../Toast';
 const TableRow = ({
   vaultId,
   collateral,
+  type,
   daiDebt,
   exchangeRate,
   vaultValue,
@@ -24,24 +25,27 @@ const TableRow = ({
   redeemVaults,
   vaultGem
 }) => (
-    <tr css="white-space: nowrap;">
-      <td>{vaultId}</td>
-      <td>{collateral}</td>
-      <td>{daiDebt}</td>
-      <td>{exchangeRate}</td>
-      <td>{vaultValue}</td>
-      <td>
-        <Button
-          px="16px"
-          py="4px"
-          justifySelf="center"
-          disabled={
-            redeemInitiated || !hasReadTOS
-          }
-          onClick={() => redeemVaults(vaultId, vaultGem)}><Text t="small">Redeem</Text></Button></td>
-    </tr>
-  );
+  <tr css="white-space: nowrap;">
+    <td>{vaultId}</td>
+    <td>{type}</td>
+    <td>{collateral}</td>
 
+    {/* <td>{daiDebt}</td> */}
+    {/* <td>{exchangeRate}</td> */}
+    {/* <td>{vaultValue}</td> */}
+    <td>
+      <Button
+        px="16px"
+        py="4px"
+        justifySelf="center"
+        disabled={redeemInitiated || !hasReadTOS}
+        onClick={() => redeemVaults(vaultId, vaultGem)}
+      >
+        <Text t="small">Redeem</Text>
+      </Button>
+    </td>
+  </tr>
+);
 
 const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
   return (
@@ -71,7 +75,7 @@ const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
 const RedeemVaults = ({
   // onPrev,
   // onNext,
-  vaultData,
+  vaultsToRedeem,
   setRedeemTxHash,
   showErrorMessageAndAllowExiting
 }) => {
@@ -96,7 +100,8 @@ const RedeemVaults = ({
         },
         error: () => showErrorMessageAndAllowExiting()
       });
-      const mockHash = '0x5179b053b1f0f810ba7a14f82562b389f06db4be6114ac6c40b2744dcf272d95';
+      const mockHash =
+        '0x5179b053b1f0f810ba7a14f82562b389f06db4be6114ac6c40b2744dcf272d95';
       setRedeemTxHash(mockHash);
       // onNext();
     } catch (err) {
@@ -107,7 +112,14 @@ const RedeemVaults = ({
     }
   };
 
-  const tableHeaders = ['Vault ID', 'Collateral', 'Dai Debt', 'Exchange Rate', 'Vault Value', 'Action'];
+  const tableHeaders = [
+    'Vault ID',
+    'Vault Type',
+    'Collateral',
+    // 'Exchange Rate',
+    // 'Vault Value',
+    'Action'
+  ];
 
   return (
     <Grid
@@ -118,11 +130,13 @@ const RedeemVaults = ({
       width={['100vw', 'auto']}
     >
       <Grid gridRowGap="s">
-        <Text.h2 textAlign="center">Redeem Excess Collateral from Vaults</Text.h2>
+        <Text.h2 textAlign="center">
+          Redeem Excess Collateral from Vaults
+        </Text.h2>
         <Grid gridRowGap="xs">
           <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
             Unlock and redeem Excess Collateral from your Vaults.
-      </Text.p>
+          </Text.p>
           {/* <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
             Each vault requires two transactions.
       </Text.p> */}
@@ -133,14 +147,14 @@ const RedeemVaults = ({
           <Table
             width="100%"
             css={`
-                  th,
-                  td {
-                    padding-right: 10px;
-                  }
-                  tr:last-child {
-                    margin-bottom: 10px;
-                  }
-                `}
+              th,
+              td {
+                padding-right: 10px;
+              }
+              tr:last-child {
+                margin-bottom: 10px;
+              }
+            `}
           >
             <thead>
               <tr css="white-space: nowrap;">
@@ -153,23 +167,21 @@ const RedeemVaults = ({
               </tr>
             </thead>
             <tbody>
-              {vaultData.map(
-                vault =>
-                  (
-                    <TableRow
-                      key={vault.id}
-                      vaultId={vault.id}
-                      collateral={vault.collateral}
-                      daiDebt={vault.daiDebt}
-                      exchangeRate={vault.exchangeRate}
-                      vaultValue={vault.vaultValue}
-                      redeemInitiated={redeemInitiated}
-                      hasReadTOS={hasReadTOS}
-                      redeemVaults={redeemVaults}
-                    // vaultGem={vault.gem}
-                    />
-                  )
-              )}
+              {vaultsToRedeem.map(vault => (
+                <TableRow
+                  key={vault.id}
+                  vaultId={vault.id}
+                  collateral={vault.collateral}
+                  type={vault.type}
+                  /* daiDebt={vault.daiDebt} */
+                  /* exchangeRate={vault.exchangeRate} */
+                  /* vaultValue={vault.vaultValue} */
+                  /* redeemInitiated={redeemInitiated} */
+                  hasReadTOS={hasReadTOS}
+                  redeemVaults={redeemVaults}
+                  // vaultGem={vault.gem}
+                />
+              ))}
             </tbody>
           </Table>
           <Flex mt="m">
@@ -185,7 +197,7 @@ const RedeemVaults = ({
         <Button
           justifySelf="center"
           variant="secondary-outline"
-        // onClick={onPrev}
+          // onClick={onPrev}
         >
           Back to Migrate
         </Button>
