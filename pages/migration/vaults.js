@@ -10,18 +10,19 @@ import Complete from '../../components/redeemvaults/Complete';
 import Failed from '../../components/Failed';
 import useMaker from '../../hooks/useMaker';
 import useStore from '../../hooks/useStore';
+import daiLogo from '../../assets/icons/dai-logo.svg';
 
 const steps = [
     props => <RedeemVaults {...props} />,
-    props => <InProgress {...props} title="Your Dai Vaults are being redeemed" />,
-    props => <Complete {...props} />,
-    props => (
-        <Failed
-            {...props}
-            title="Redeem failed"
-            subtitle={'There was an error with redeeming your vaults.'}
-        />
-    )
+    // props => <InProgress {...props} title="Your Dai Vaults are being redeemed" image={daiLogo} />,
+    // props => <Complete {...props} />,
+    // props => (
+    //     <Failed
+    //         {...props}
+    //         title="Redeem failed"
+    //         subtitle={'There was an error with redeeming your vaults.'}
+    //     />
+    // )
 ];
 
 async function getVaultData(id) {
@@ -32,6 +33,12 @@ async function getVaultData(id) {
         daiDebt: '0.00 DAI',
         exchangeRate: '1 DAI : 0.3030 ETH',
         vaultValue: '533.32 ETH'
+    }, {
+        id: '4335',
+        collateral: '1,799.93 ETH',
+        daiDebt: '21.00 DAI',
+        exchangeRate: '1 DAI : 0.3030 ETH',
+        vaultValue: '1,699.32 ETH'
     }];
     return new Promise(resolve => setTimeout(resolve(mockData), 5000));
 }
@@ -44,6 +51,8 @@ export default function () {
     const [currentStep, setCurrentStep] = useState(0);
     const [vaultData, setVaultData] = useState([]);
 
+    console.log('vault data', vaultData);
+
     useEffect(() => {
         if (!account) Router.replace('/');
     }, [account]);
@@ -52,7 +61,9 @@ export default function () {
 
     useEffect(() => {
         (async () => {
-            if (!maker || !account || !vaultsToRedeem) return;
+            //TODO when we get real vault data remove line below
+            if (!maker || !account) return;
+            // if (!maker || !account || !vaultsToRedeem) return;
             //TODO change this when we learn the real parameter
             const data = await getVaultData(account.address);
             setVaultData(data);

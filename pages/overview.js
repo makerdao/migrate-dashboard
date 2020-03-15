@@ -96,6 +96,10 @@ function Overview() {
     dispatch
   ] = useStore();
 
+
+  console.log('vaultsToRedeem', vaultsToRedeem);
+  console.log('chiefMigrationCheck', chiefMigrationCheck);
+
   useEffect(() => {
     if (maker && !account) Router.replace('/');
   }, [maker, account]);
@@ -115,7 +119,7 @@ function Overview() {
           daiBalance: _daiBalance,
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
-          vaultsToRedeem: true //TODO fix this when the service method is ready.
+          vaultsToRedeem: checks['global-settlement-collateral-claims']
         }
       });
     })();
@@ -137,7 +141,9 @@ function Overview() {
     !shouldShowReverse &&
     !shouldShowChief;
 
-  const shouldShowRedeemVaults = vaultsToRedeem;
+  const shouldShowRedeemVaults = true;
+  // TODO Enable when we have vaults to redeem on kovan:
+  // const shouldShowRedeemVaults = vaultsToRedeem;
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -169,7 +175,7 @@ function Overview() {
               title="CDP Upgrade"
               metadataTitle={`CDP${
                 countCdps(cdps) === 1 ? '' : 's'
-              } to upgrade`}
+                } to upgrade`}
               metadataValue={showCdpCount(cdps)}
               body={
                 <Text.p t="body">
@@ -312,16 +318,16 @@ function Overview() {
             </Card>
           )
         ) : (
-          <Loader
-            mt="4rem"
-            mb="4rem"
-            size="1.8rem"
-            color={getColor('makerTeal')}
-            justifySelf="end"
-            m="auto"
-            bg={getColor('lightGrey')}
-          />
-        )}
+            <Loader
+              mt="4rem"
+              mb="4rem"
+              size="1.8rem"
+              color={getColor('makerTeal')}
+              justifySelf="end"
+              m="auto"
+              bg={getColor('lightGrey')}
+            />
+          )}
       </Box>
     </Flex>
   );
