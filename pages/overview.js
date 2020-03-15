@@ -81,17 +81,8 @@ function showAmount(tok) {
 }
 
 function parseClaims(claims) {
-  if (!claims.length || !claims.ids.length) return [];
-  return claims.ids.reduce((acc, _, idx) => {
-    return [
-      ...acc,
-      {
-        id: claims.ids[idx].toString(),
-        urn: claims.urns[idx],
-        ilk: bytesToString(claims.ilks[idx])
-      }
-    ];
-  }, []);
+  console.log(claims, 'clams');
+  return claims.filter(c => c.redeemable);
 }
 
 function Overview() {
@@ -123,23 +114,26 @@ function Overview() {
       if (!maker || !account) return;
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
-
-      const ids = parseClaims(
-        checks['global-settlement-collateral-claims']
-      ).map(({ id }) => parseInt(id));
+      const claims = checks['global-settlement-collateral-claims'];
+      const validClaims = claims.filter(c => c.redeemable);
 
       const vaultsData = await Promise.all([
-        ...ids.map(id => maker.service('mcd:cdpManager').getCdp(id))
+        ...validClaims.map(({ id }) =>
+          maker.service('mcd:cdpManager').getCdp(parseInt(id))
+        )
       ]);
+
       const parsedVaultsData = vaultsData.map(vault => {
         return {
           id: vault.id,
           type: vault.type.ilk.split('-')[0],
-          collateral: vault.collateralAmount.toString()
+          collateral: vault.collateralAmount.toString(),
+          vault: vault
         };
       });
 
       const _daiBalance = DAI(await maker.getToken('MDAI').balance());
+      
       setInitialFetchComplete(true);
       dispatch({
         type: 'assign',
@@ -149,7 +143,7 @@ function Overview() {
           daiBalance: _daiBalance,
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
-          vaultsToRedeem: parsedVaultsData
+          vaultsToRedeem: { claims: validClaims, parsedVaultsData }
         }
       });
     })();
@@ -164,15 +158,15 @@ function Overview() {
   const shouldShowChief =
     chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
   const shouldShowCollateral = daiBalance && daiBalance.gt(0);
+  const shouldShowRedeemVaults = vaultsToRedeem && vaultsToRedeem.claims;
+
   const noMigrations =
     !shouldShowCdps &&
     !shouldShowDai &&
     !shouldShowMkr &&
     !shouldShowReverse &&
-    !shouldShowChief;
-
-  // TODO: this broke when we changed the return format from the service method
-  const shouldShowRedeemVaults = vaultsToRedeem;
+    !shouldShowChief &&
+    !shouldShowRedeemVaults;
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -275,7 +269,7 @@ function Overview() {
               recommended
               title="Redeem Excess Collateral from Vaults"
               metadataTitle="vaults to redeem"
-              metadataValue={shouldShowRedeemVaults[0].length}
+              metadataValue={vaultsToRedeem.claims.length}
               onSelected={() => Router.push('/migration/vaults')}
             />
           )}

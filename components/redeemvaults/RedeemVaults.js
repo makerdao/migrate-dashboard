@@ -17,13 +17,10 @@ const TableRow = ({
   vaultId,
   collateral,
   type,
-  daiDebt,
-  exchangeRate,
-  vaultValue,
   redeemInitiated,
+  redeemDone,
   hasReadTOS,
   redeemVaults,
-  vaultGem
 }) => (
   <tr css="white-space: nowrap;">
     <td>{vaultId}</td>
@@ -38,10 +35,13 @@ const TableRow = ({
         px="16px"
         py="4px"
         justifySelf="center"
-        disabled={redeemInitiated || !hasReadTOS}
-        onClick={() => redeemVaults(vaultId, vaultGem)}
+        // px="xl"
+        fontSize={'13px'}
+        loading={redeemInitiated.includes(vaultId)}
+        disabled={redeemDone.includes(vaultId) || !hasReadTOS}
+        onClick={() => redeemVaults(vaultId, type)}
       >
-        <Text t="small">Redeem</Text>
+        Redeem
       </Button>
     </td>
   </tr>
@@ -81,25 +81,37 @@ const RedeemVaults = ({
 }) => {
   const { maker } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
-  const [redeemInitiated, setRedeemInitiated] = useState(false);
+  const [redeemInitiated, setRedeemInitiated] = useState([]);
+  const [redeemDone, setRedeemDone] = useState([]);
+
   const [, dispatch] = useStore();
 
-  const redeemVaults = async (vaultId, vaultGem) => {
+  const redeemVaults = async (vaultId, type) => {
     try {
-      setRedeemInitiated(true);
+      let txObject = null;
+      setRedeemInitiated([...redeemInitiated, vaultId]);
+      c;
       const mig = maker
         .service('migration')
         .getMigration('global-settlement-collateral-claims');
-      //check vaultGem here to select free function.
-      const txObject = mig.freeEth(vaultId);
+
+        if (type === 'BAT') {
+        txObject = mig.freeBat(vaultId);
+      } else if (type === 'ETH') {
+        txObject = mig.freeEth(vaultId);
+      }
+
       maker.service('transactionManager').listen(txObject, {
         pending: tx => {
           console.log('tx', tx);
           setRedeemTxHash(tx.hash);
-          // onNext();
+        },
+        confirmed: tx => {
+          setRedeemDone([...redeemDone, vaultId]);
         },
         error: () => showErrorMessageAndAllowExiting()
       });
+
       const mockHash =
         '0x5179b053b1f0f810ba7a14f82562b389f06db4be6114ac6c40b2744dcf272d95';
       setRedeemTxHash(mockHash);
@@ -116,8 +128,6 @@ const RedeemVaults = ({
     'Vault ID',
     'Vault Type',
     'Collateral',
-    // 'Exchange Rate',
-    // 'Vault Value',
     'Action'
   ];
 
@@ -133,14 +143,11 @@ const RedeemVaults = ({
         <Text.h2 textAlign="center">
           Redeem Excess Collateral from Vaults
         </Text.h2>
-        <Grid gridRowGap="xs">
+        {/* <Grid gridRowGap="xs">
           <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
             Unlock and redeem Excess Collateral from your Vaults.
           </Text.p>
-          {/* <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-            Each vault requires two transactions.
-      </Text.p> */}
-        </Grid>
+        </Grid> */}
       </Grid>
       <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
         <Card px="l" py="l">
@@ -167,7 +174,7 @@ const RedeemVaults = ({
               </tr>
             </thead>
             <tbody>
-              {vaultsToRedeem.map(vault => (
+              {vaultsToRedeem.parsedVaultsData.map(vault => (
                 <TableRow
                   key={vault.id}
                   vaultId={vault.id}
@@ -176,7 +183,8 @@ const RedeemVaults = ({
                   /* daiDebt={vault.daiDebt} */
                   /* exchangeRate={vault.exchangeRate} */
                   /* vaultValue={vault.vaultValue} */
-                  /* redeemInitiated={redeemInitiated} */
+                  redeemInitiated={redeemInitiated}
+                  redeemDone={redeemDone}
                   hasReadTOS={hasReadTOS}
                   redeemVaults={redeemVaults}
                   // vaultGem={vault.gem}

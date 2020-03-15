@@ -26,14 +26,16 @@ export default class GlobalSettlementCollateralClaims {
       .getContract('CDP_MANAGER');
     const vat = this._container.get('smartContract').getContract('MCD_VAT');
 
-    const [ids, x, ilks] = await this._container
+    const cdps = await this._container
       .get('smartContract')
       .getContract('GET_CDPS')
       .getCdpsDesc(cdpManager.address, address);
-    console.log('cdps', ids, ilks, x);
+    // console.log('cdps', ids, ilks, x);
 
     // return cdps;
 
+    const {ids, ilks} = cdps;
+    console.log(cdps, ids, ilks);
     const freeCollateral = await Promise.all(
       ids.map(async (id, i) => {
         const urn = await cdpManager.urns(id);
@@ -50,15 +52,15 @@ export default class GlobalSettlementCollateralClaims {
           .times(tag)
           .div(RAY);
 
-        const fc = tag.gt(0) && new BigNumber(vatUrn.ink).minus(owed).gt(0);
-        return { [id]: fc };
+        const redeemable = tag.gt(0) && new BigNumber(vatUrn.ink).minus(owed).gt(0);
+        return { id, owed, redeemable, ilk, urn };
       })
     );
 
 
     console.log('freeCollateral', freeCollateral);
 
-    return freeCollateral.some(exists => exists);
+    return freeCollateral;
   }
 
   freeEth(cdpId) {
@@ -68,6 +70,19 @@ export default class GlobalSettlementCollateralClaims {
     return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').freeETH(
       cdpManagerAddress,
       ethJoinAddress,
+      endAddress,
+      cdpId,
+      { dsProxy: true }
+    );
+  }
+
+  freeBat(cdpId) {
+    const cdpManagerAddress = this._container.get('smartContract').getContractAddress('CDP_MANAGER');
+    const endAddress = this._container.get('smartContract').getContractAddress('MCD_END');
+    const gemJoinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_BAT_A');
+    return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').freeGEM(
+      cdpManagerAddress,
+      gemJoinAddress,
       endAddress,
       cdpId,
       { dsProxy: true }
