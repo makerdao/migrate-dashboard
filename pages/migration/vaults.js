@@ -36,6 +36,18 @@ export default function() {
   }, [account]);
 
   const [{ vaultsToRedeem }] = useStore();
+  // useEffect(() => {
+  //   (async () => {
+  //     //TODO when we get real vault data remove line below
+  //     if (!maker || !account) return;
+  //     // if (!maker || !account || !vaultsToRedeem) return;
+  //     //TODO change this when we learn the real parameter
+  //     // const data = await getVaultData(account.address);
+  //     // setVaultData(data);
+  //     setVaultData(vaultsToRedeem.ids);
+  //     setLoadingVaults(false);
+  //   })();
+  // }, [maker, account, vaultsToRedeem]);
 
   const onPrev = () => {
     if (currentStep <= 0) Router.replace('/overview');

@@ -26,49 +26,51 @@ export default class GlobalSettlementCollateralClaims {
       .getContract('CDP_MANAGER');
     const vat = this._container.get('smartContract').getContract('MCD_VAT');
 
-    const cdps = await this._container
+    const [ids, x, ilks] = await this._container
       .get('smartContract')
       .getContract('GET_CDPS')
       .getCdpsDesc(cdpManager.address, address);
-    // console.log('ids ilks', ids, ilks);
+    console.log('cdps', ids, ilks, x);
 
-    return cdps;
+    // return cdps;
 
-    // const freeCollateral = await Promise.all(
-    //   ids.map(async (id, i) => {
-    //     const urn = await cdpManager.urns(id);
-    //     const vatUrn = await vat.urns(ilks[i], urn);
-    //     const skim = await end.skim(ilk, urn);
-    //     const tag = await end.tag(ilks[i]);
-    //     const ilk = await vat.ilks(ilks[i]);
+    const freeCollateral = await Promise.all(
+      ids.map(async (id, i) => {
+        const urn = await cdpManager.urns(id);
+        const vatUrn = await vat.urns(ilks[i], urn);
+        // const skim = await end.skim(ilk, urn);
+        const tag = await end.tag(ilks[i]);
+        const ilk = await vat.ilks(ilks[i]);
 
-    //     //function skim(bytes32 ilk, address urn) external note {
+        //function skim(bytes32 ilk, address urn) external note {
 
-    //     const owed = new BigNumber(vatUrn.art)
-    //       .times(ilk.rate)
-    //       .div(RAY)
-    //       .times(tag)
-    //       .div(RAY);
+        const owed = new BigNumber(vatUrn.art)
+          .times(ilk.rate)
+          .div(RAY)
+          .times(tag)
+          .div(RAY);
 
-    //     return tag.gt(0) && new BigNumber(vatUrn.ink).minus(owed).gt(0);
-    //   })
-    // );
+        const fc = tag.gt(0) && new BigNumber(vatUrn.ink).minus(owed).gt(0);
+        return { [id]: fc };
+      })
+    );
 
-    // console.log('freeCollateral', freeCollateral);
 
-    // return freeCollateral.some(exists => exists);
+    console.log('freeCollateral', freeCollateral);
+
+    return freeCollateral.some(exists => exists);
   }
 
   freeEth(cdpId) {
     const cdpManagerAddress = this._container.get('smartContract').getContractAddress('CDP_MANAGER');
     const endAddress = this._container.get('smartContract').getContractAddress('MCD_END');
     const ethJoinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_ETH_A');
-    console.log('PROXY_ACTIONS_END', this._container.get('smartContract').getContract('PROXY_ACTIONS_END'));
     return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').freeETH(
       cdpManagerAddress,
       ethJoinAddress,
       endAddress,
-      cdpId
+      cdpId,
+      { dsProxy: true }
     );
   }
 
