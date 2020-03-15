@@ -118,14 +118,14 @@ const RedeemVaults = ({
       width={['100vw', 'auto']}
     >
       <Grid gridRowGap="s">
-        <Text.h2 textAlign="center">Redeem Dai Vaults for Excess Collateral</Text.h2>
+        <Text.h2 textAlign="center">Redeem Excess Collateral from Vaults</Text.h2>
         <Grid gridRowGap="xs">
           <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-            Unlock and redeem your Vaults for collateral by paying back your Dai debt.
+            Unlock and redeem Excess Collateral from your Vaults.
       </Text.p>
-          <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
+          {/* <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
             Each vault requires two transactions.
-      </Text.p>
+      </Text.p> */}
         </Grid>
       </Grid>
       <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">

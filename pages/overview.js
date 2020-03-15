@@ -244,12 +244,10 @@ function Overview() {
           {shouldShowRedeemVaults && (
             <MigrationCard
               recommended
-              title="Withdraw collateral from Dai Vault"
+              title="Redeem Excess Collateral from Vaults"
               body={
                 <Text.p t="body">
-                  {
-                    'Redeem your Multi-Collateral Dai vault for a proportional amount of underlying collateral from the Multi-Collateral Dai system.'
-                  }
+                
                 </Text.p>
               }
               metadataTitle="vaults to redeem"
