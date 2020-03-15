@@ -12,14 +12,11 @@ export default class GlobalSettlementCollateralClaims {
     console.log('global settlement CHECK works3');
     const end = this._container.get('smartContract').getContract('MCD_END');
     const isInGlobalSettlement = (await end.live());
-    console.log('end', end);
     if (!isInGlobalSettlement) return false;
 
     const address =
       (await this._container.get('proxy').currentProxy()) ||
       this._container.get('accounts').currentAddress();
-
-    console.log('address', address);
 
     const cdpManager = this._container
       .get('smartContract')
@@ -30,9 +27,7 @@ export default class GlobalSettlementCollateralClaims {
       .get('smartContract')
       .getContract('GET_CDPS')
       .getCdpsDesc(cdpManager.address, address);
-    // console.log('cdps', ids, ilks, x);
 
-    // return cdps;
 
     const {ids, ilks} = cdps;
     console.log(cdps, ids, ilks);
@@ -57,9 +52,6 @@ export default class GlobalSettlementCollateralClaims {
       })
     );
 
-
-    console.log('freeCollateral', freeCollateral);
-
     return freeCollateral;
   }
 
@@ -80,7 +72,7 @@ export default class GlobalSettlementCollateralClaims {
     const cdpManagerAddress = this._container.get('smartContract').getContractAddress('CDP_MANAGER');
     const endAddress = this._container.get('smartContract').getContractAddress('MCD_END');
     const gemJoinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_BAT_A');
-    return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').freeGEM(
+    return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').freeGem(
       cdpManagerAddress,
       gemJoinAddress,
       endAddress,
