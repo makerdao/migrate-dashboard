@@ -9,18 +9,70 @@ import {
   Button,
   Card,
   Link,
-  Loader
+  Loader,
+  Tooltip
 } from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
 import reduce from 'lodash/reduce';
 import { getColor } from '../utils/theme';
 import { prettifyNumber } from '../utils/ui';
-import { bytesToString } from '../utils/ethereum';
 import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
 import { SAI, DAI } from '../maker';
+import TooltipContents from '../components/TooltipContents';
+
+function clock(delta) {
+  // const days = Math.floor(delta / 86400);
+  // delta -= days * 86400;
+
+  const hours = Math.floor(delta / 3600);
+  delta -= hours * 3600;
+
+  const minutes = Math.floor(delta / 60) % 60;
+  delta -= minutes * 60;
+
+  const seconds = delta % 60;
+
+  return `${hours} : ${minutes} : ${seconds}`;
+}
+
+const Timer = ({ seconds }) => {
+  // initialize timeLeft with the seconds prop
+  const [timeLeft, setTimeLeft] = useState(seconds);
+
+  useEffect(() => {
+    if (!timeLeft) return;
+
+    const intervalId = setInterval(() => {
+      setTimeLeft(timeLeft - 1);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [timeLeft]);
+
+  return (
+    <Flex>
+      <Text.p fontSize="15px" fontWeight={500} color={getColor('steel')}>
+        {`Auctions in progress. Cooldown period ends in ${clock(timeLeft)}`}
+      </Text.p>
+      <Tooltip
+        fontSize="m"
+        ml="xs"
+        color={getColor('steel')}
+        content={
+          <TooltipContents>
+            Dai holders need to wait for the cooldown period to complete because
+            vaults have priority as their debt needs to be cleared first. This
+            will allow the correct amount of underlying collateral to be
+            calculated as part of your Dai redemption.
+          </TooltipContents>
+        }
+      />
+    </Flex>
+  );
+};
 
 function MigrationCard({
   title,
@@ -83,8 +135,12 @@ function showAmount(tok) {
 function Overview() {
   const { maker, account } = useMaker();
   const [initialFetchComplete, setInitialFetchComplete] = useState(false);
+
   const [
     {
+      emergencyShutdownActive,
+      emergencyShutdownTime,
+      auctionCloseTime,
       cdpMigrationCheck: cdps,
       saiBalance,
       daiBalance,
@@ -115,17 +171,32 @@ function Overview() {
         )
       ]);
 
+      const end = maker.service('smartContract').getContract('MCD_END');
+      const [live, when] = await Promise.all([end.live(), end.when()]);
+      const emergencyShutdownActive = live.eq(0);
+
+      const emergencyShutdownTime = new Date(when.toNumber() * 1000);
+      const auctionCloseTime = new Date(
+        emergencyShutdownTime.getTime() + 73 * 60 * 60 * 1000
+      );
+
       const parsedVaultsData = vaultsData.map(vault => {
         const claim = validClaims.find(c => c.id.toNumber() === vault.id);
         const currency = vault.type.ilk.split('-')[0];
-        const vaultValue = vault.collateralAmount.toBigNumber().minus(vault.debtValue.toBigNumber().times(claim.tag));
+        const vaultValue = vault.collateralAmount
+          .toBigNumber()
+          .minus(vault.debtValue.toBigNumber().times(claim.tag));
         return {
           id: vault.id,
           type: currency,
           collateral: vault.collateralAmount.toString(),
           daiDebt: `${prettifyNumber(vault.debtValue, false, 2, false)} DAI`,
           vault,
-          exchangeRate: `1 DAI : ${prettifyNumber(claim.tag, false, 4)} ${currency}`,
+          exchangeRate: `1 DAI : ${prettifyNumber(
+            claim.tag,
+            false,
+            4
+          )} ${currency}`,
           vaultValue: `${prettifyNumber(vaultValue)} ${currency}`
         };
       });
@@ -136,6 +207,9 @@ function Overview() {
       dispatch({
         type: 'assign',
         payload: {
+          emergencyShutdownActive,
+          emergencyShutdownTime,
+          auctionCloseTime,
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
           daiBalance: _daiBalance,
@@ -155,8 +229,10 @@ function Overview() {
   const shouldShowReverse = daiBalance && daiBalance.gt(0);
   const shouldShowChief =
     chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
-  const shouldShowCollateral = false; //TODO: update to only show in ES has been called -- daiBalance && daiBalance.gt(0);
-  const shouldShowRedeemVaults = vaultsToRedeem && vaultsToRedeem.claims.length > 0;
+  const shouldShowCollateral =
+    daiBalance && daiBalance.gt(0) && emergencyShutdownActive;
+  const shouldShowRedeemVaults =
+    vaultsToRedeem && vaultsToRedeem.claims.length > 0;
   const noMigrations =
     !shouldShowCdps &&
     !shouldShowDai &&
@@ -195,7 +271,7 @@ function Overview() {
               title="CDP Upgrade"
               metadataTitle={`CDP${
                 countCdps(cdps) === 1 ? '' : 's'
-                } to upgrade`}
+              } to upgrade`}
               metadataValue={showCdpCount(cdps)}
               body={
                 <Text.p t="body">
@@ -305,13 +381,15 @@ function Overview() {
                       'Redeem your Dai for a proportional amount of underlying collateral from the Multi-Collateral Dai system'
                     }
                   </Text.p>
-                  <Text.p
-                    fontSize="15px"
-                    fontWeight={500}
-                    color={getColor('steel')}
-                  >
-                    {'Auctions in progress. Cooldown period ends in 5:34:03'}
-                  </Text.p>
+                  <Timer
+                    seconds={
+                      auctionCloseTime
+                        ? Math.floor(
+                            (auctionCloseTime.getTime() - Date.now()) / 1000
+                          )
+                        : 0
+                    }
+                  />
                 </Grid>
               }
               metadataTitle="Dai to redeem"
@@ -338,16 +416,16 @@ function Overview() {
             </Card>
           )
         ) : (
-            <Loader
-              mt="4rem"
-              mb="4rem"
-              size="1.8rem"
-              color={getColor('makerTeal')}
-              justifySelf="end"
-              m="auto"
-              bg={getColor('lightGrey')}
-            />
-          )}
+          <Loader
+            mt="4rem"
+            mb="4rem"
+            size="1.8rem"
+            color={getColor('makerTeal')}
+            justifySelf="end"
+            m="auto"
+            bg={getColor('lightGrey')}
+          />
+        )}
       </Box>
     </Flex>
   );

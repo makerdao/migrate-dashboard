@@ -53,7 +53,9 @@ function DaiRedeem({
                 ml="s"
                 color="darkLavender"
               >
-                {daiBalance && daiBalance.gt(0) ? daiBalance.toString() : '--'}
+                {daiBalance && daiBalance.gt(0)
+                  ? `${daiBalance.toString(4).split(' ')[0]} DAI`
+                  : '--'}
               </Text>
             </Box>
           </AmountInputCard>

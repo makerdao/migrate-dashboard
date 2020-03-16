@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Grid,
   Card,
+  Grid,
+  Flex,
   Text,
   Button,
   Checkbox,
@@ -26,6 +27,7 @@ function ConfirmRedeem({
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [redeemInitiated, setRedeemInitiated] = useState(false);
   const {
+    proxyAddress,
     proxyLoading,
     setupProxy,
     initialProxyCheck,
@@ -58,7 +60,10 @@ function ConfirmRedeem({
   const giveProxyDaiAllowance = async () => {
     setAllowanceLoading(true);
     try {
-      await maker.getToken(MDAI).approveUnlimited();
+      if (!proxyAddress) {
+        throw new Error('No Proxy');
+      }
+      await maker.getToken(MDAI).approveUnlimited(proxyAddress);
       setHasAllowance(true);
     } catch (err) {
       const message = err.message ? err.message : err;
@@ -80,7 +85,6 @@ function ConfirmRedeem({
           const connectedWalletAllowance = await maker
             .getToken(MDAI)
             .allowance(account.address, address);
-          console.log(connectedWalletAllowance);
           const hasDaiAllowance = connectedWalletAllowance.gt(0);
           setHasAllowance(hasDaiAllowance);
         });
@@ -92,63 +96,71 @@ function ConfirmRedeem({
       <Text.h2 textAlign="center">Confirm Transaction</Text.h2>
       <Grid gridTemplateColumns="1fr 1fr 1fr">
         <div />
-        <Card p="m" borderColor="#D4D9E1" border="1px solid">
-          <Grid gridRowGap="s" width="567px">
-            <CollateralTable data={collateralData} />
-            <Grid gridRowGap="s" px="s" width="300px">
-              {showProxy && (
+        <Grid gridRowGap="s">
+          <Card p="m" borderColor="#D4D9E1" border="1px solid">
+            <Grid gridRowGap="s" width="567px">
+              <CollateralTable data={collateralData} />
+              <Grid gridRowGap="s" px="s" width="300px">
+                {showProxy && (
+                  <LoadingToggle
+                    defaultText={'Create Proxy'}
+                    loadingText={'Creating proxy'}
+                    completeText={'Proxy Created'}
+                    isLoading={proxyLoading}
+                    isComplete={!!hasProxy}
+                    onToggle={setupProxy}
+                    disabled={!!hasProxy}
+                    reverse={false}
+                  />
+                )}
                 <LoadingToggle
-                  defaultText={'Create Proxy'}
-                  loadingText={'Creating proxy'}
-                  completeText={'Proxy Created'}
-                  isLoading={proxyLoading}
-                  isComplete={!!hasProxy}
-                  onToggle={setupProxy}
-                  disabled={!!hasProxy}
+                  defaultText={'Unlock DAI'}
+                  loadingText={'Unlocking DAI'}
+                  completeText={'DAI Unlocked'}
+                  isLoading={allowanceLoading}
+                  isComplete={hasAllowance}
+                  onToggle={giveProxyDaiAllowance}
+                  disabled={!hasProxy || hasAllowance}
                   reverse={false}
                 />
-              )}
-              <LoadingToggle
-                defaultText={'Unlock DAI'}
-                loadingText={'Unlocking DAI'}
-                completeText={'DAI Unlocked'}
-                isLoading={allowanceLoading}
-                isComplete={hasAllowance}
-                onToggle={giveProxyDaiAllowance}
-                disabled={!hasProxy || hasAllowance}
-                reverse={false}
-              />
-            </Grid>
-            <Grid
-              alignItems="center"
-              gridTemplateColumns="auto 1fr"
-              px={'m'}
-              py={'m'}
-            >
-              <Checkbox
-                mr="s"
-                fontSize="l"
-                checked={hasReadTOS}
-                onChange={() => setHasReadTOS(!hasReadTOS)}
-              />
-              <Text
-                t="caption"
-                color="steel"
-                data-testid="terms"
-                onClick={() => setHasReadTOS(!hasReadTOS)}
+              </Grid>
+              <Grid
+                alignItems="center"
+                gridTemplateColumns="auto 1fr"
+                px={'m'}
+                py={'m'}
               >
-                I have read and accept the{' '}
-                <Link target="_blank" href="/terms">
-                  Terms of Service
-                </Link>
-                .
-              </Text>
+                <Checkbox
+                  mr="s"
+                  fontSize="l"
+                  checked={hasReadTOS}
+                  onChange={() => setHasReadTOS(!hasReadTOS)}
+                />
+                <Text
+                  t="caption"
+                  color="steel"
+                  data-testid="terms"
+                  onClick={() => setHasReadTOS(!hasReadTOS)}
+                >
+                  I have read and accept the{' '}
+                  <Link target="_blank" href="/terms">
+                    Terms of Service
+                  </Link>
+                  .
+                </Text>
+              </Grid>
             </Grid>
-          </Grid>
-        </Card>
-        <div />
-      </Grid>
+          </Card>
 
+          <Card py="m" px="l">
+            <Flex justifyContent="space-between">
+              <Text.p>Redeeming</Text.p>
+              <Text.p>{redeemAmount.toString(4).split(' ')[0]} DAI</Text.p>
+            </Flex>
+          </Card>
+        </Grid>
+      </Grid>
+      <div />
       <Grid
         justifySelf="center"
         justifyContent="center"
