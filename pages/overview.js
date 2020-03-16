@@ -131,7 +131,7 @@ function Overview() {
       });
 
       const _daiBalance = DAI(await maker.getToken('MDAI').balance());
-      
+
       setInitialFetchComplete(true);
       dispatch({
         type: 'assign',
@@ -195,7 +195,7 @@ function Overview() {
               title="CDP Upgrade"
               metadataTitle={`CDP${
                 countCdps(cdps) === 1 ? '' : 's'
-              } to upgrade`}
+                } to upgrade`}
               metadataValue={showCdpCount(cdps)}
               body={
                 <Text.p t="body">
@@ -338,16 +338,16 @@ function Overview() {
             </Card>
           )
         ) : (
-          <Loader
-            mt="4rem"
-            mb="4rem"
-            size="1.8rem"
-            color={getColor('makerTeal')}
-            justifySelf="end"
-            m="auto"
-            bg={getColor('lightGrey')}
-          />
-        )}
+            <Loader
+              mt="4rem"
+              mb="4rem"
+              size="1.8rem"
+              color={getColor('makerTeal')}
+              justifySelf="end"
+              m="auto"
+              bg={getColor('lightGrey')}
+            />
+          )}
       </Box>
     </Flex>
   );

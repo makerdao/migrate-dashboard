@@ -25,29 +25,29 @@ const TableRow = ({
   exchangeRate,
   vaultValue
 }) => (
-  <tr css="white-space: nowrap;">
-    <td>{vaultId}</td>
-    <td>{type}</td>
-    <td>{collateral}</td>
-    <td>{daiDebt}</td>
-    <td>{exchangeRate}</td>
-    <td>{vaultValue}</td>
-    <td>
-      <Button
-        px="16px"
-        py="4px"
-        justifySelf="center"
-        // px="xl"
-        fontSize={'13px'}
-        loading={redeemInitiated.includes(vaultId) && !redeemDone.includes(vaultId)}
-        disabled={redeemDone.includes(vaultId) || !hasReadTOS}
-        onClick={() => redeemVaults(vaultId, type)}
-      >
-        Withdraw
+    <tr css="white-space: nowrap;">
+      <td>{vaultId}</td>
+      <td>{type}</td>
+      {/* <td>{collateral}</td> */}
+      {/* <td>{daiDebt}</td> */}
+      {/* <td>{exchangeRate}</td> */}
+      <td>{vaultValue}</td>
+      <td>
+        <Button
+          px="16px"
+          py="4px"
+          justifySelf="center"
+          // px="xl"
+          fontSize={'13px'}
+          loading={redeemInitiated.includes(vaultId) && !redeemDone.includes(vaultId)}
+          disabled={redeemDone.includes(vaultId) || !hasReadTOS}
+          onClick={() => redeemVaults(vaultId, type)}
+        >
+          Withdraw
       </Button>
-    </td>
-  </tr>
-);
+      </td>
+    </tr>
+  );
 
 const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
   return (
@@ -96,7 +96,7 @@ const RedeemVaults = ({
         .service('migration')
         .getMigration('global-settlement-collateral-claims');
 
-        if (type === 'BAT') {
+      if (type === 'BAT') {
         txObject = mig.freeBat(vaultId);
       } else if (type === 'ETH') {
         txObject = mig.freeEth(vaultId);
@@ -130,7 +130,7 @@ const RedeemVaults = ({
     'Collateral',
     'Dai Debt',
     'Exchange Rate',
-    'Vault Value',
+    'Available',
     'Action',
   ];
 
@@ -170,14 +170,14 @@ const RedeemVaults = ({
               <tr css="white-space: nowrap;">
                 <th>{tableHeaders[0]}</th>
                 <th>{tableHeaders[1]}</th>
-                <th>{tableHeaders[2]}</th>
-                <th>{tableHeaders[3]}</th>
-                <th>{tableHeaders[4]}</th>
+                {/* <th>{tableHeaders[2]}</th> */}
+                {/* <th>{tableHeaders[3]}</th> */}
+                {/* <th>{tableHeaders[4]}</th> */}
                 <th>{tableHeaders[5]}</th>
               </tr>
             </thead>
             <tbody>
-              {vaultsToRedeem.parsedVaultsData.map(vault => (
+              {vaultsToRedeem && vaultsToRedeem.parsedVaultsData.map(vault => console.log('vault', vault) || (
                 <TableRow
                   key={vault.id}
                   vaultId={vault.id}
@@ -190,7 +190,7 @@ const RedeemVaults = ({
                   redeemDone={redeemDone}
                   hasReadTOS={hasReadTOS}
                   redeemVaults={redeemVaults}
-                  // vaultGem={vault.gem}
+                // vaultGem={vault.gem}
                 />
               ))}
             </tbody>
@@ -208,7 +208,7 @@ const RedeemVaults = ({
         <Button
           justifySelf="center"
           variant="secondary-outline"
-          // onClick={onPrev}
+        // onClick={onPrev}
         >
           Back to Migrate
         </Button>
