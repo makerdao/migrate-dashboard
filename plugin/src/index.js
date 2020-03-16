@@ -48,7 +48,6 @@ export const MDAI_1 = createCurrency('MDAI_1');
 
 export default {
   addConfig: (_, { addressOverrides } = {}) => {
-    console.log('MIGRATION SERVICE WORK3');
     const addContracts = addressOverrides
       ? overrideContractAddresses(addressOverrides, allContracts)
       : allContracts;

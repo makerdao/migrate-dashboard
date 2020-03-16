@@ -80,11 +80,6 @@ function showAmount(tok) {
   return prettifyNumber(tok, false, 2, false);
 }
 
-function parseClaims(claims) {
-  console.log(claims, 'clams');
-  return claims.filter(c => c.redeemable);
-}
-
 function Overview() {
   const { maker, account } = useMaker();
   const [initialFetchComplete, setInitialFetchComplete] = useState(false);
@@ -101,9 +96,6 @@ function Overview() {
     },
     dispatch
   ] = useStore();
-
-  console.log('vaultsToRedeem', vaultsToRedeem);
-  // console.log('chiefMigrationCheck', chiefMigrationCheck);
 
   useEffect(() => {
     if (maker && !account) Router.replace('/');
@@ -163,9 +155,8 @@ function Overview() {
   const shouldShowReverse = daiBalance && daiBalance.gt(0);
   const shouldShowChief =
     chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
-  const shouldShowCollateral = daiBalance && daiBalance.gt(0);
-  const shouldShowRedeemVaults = vaultsToRedeem && vaultsToRedeem.claims;
-
+  const shouldShowCollateral = false; //TODO: update to only show in ES has been called -- daiBalance && daiBalance.gt(0);
+  const shouldShowRedeemVaults = vaultsToRedeem && vaultsToRedeem.claims.length > 0;
   const noMigrations =
     !shouldShowCdps &&
     !shouldShowDai &&

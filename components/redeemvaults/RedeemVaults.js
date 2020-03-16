@@ -104,7 +104,6 @@ const RedeemVaults = ({
 
       maker.service('transactionManager').listen(txObject, {
         pending: tx => {
-          console.log('tx', tx);
           setRedeemTxHash(tx.hash);
         },
         mined: () => {

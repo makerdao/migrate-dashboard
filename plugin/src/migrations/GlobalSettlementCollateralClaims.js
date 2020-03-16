@@ -3,13 +3,11 @@ import { RAY } from '../constants';
 
 export default class GlobalSettlementCollateralClaims {
   constructor(container) {
-    console.log('global settlement works');
     this._container = container;
     return this;
   }
 
   async check() {
-    console.log('global settlement CHECK works3');
     const end = this._container.get('smartContract').getContract('MCD_END');
     const isInGlobalSettlement = (await end.live());
     if (!isInGlobalSettlement) return false;
@@ -30,7 +28,6 @@ export default class GlobalSettlementCollateralClaims {
 
 
     const {ids, ilks} = cdps;
-    console.log(cdps, ids, ilks);
     const freeCollateral = await Promise.all(
       ids.map(async (id, i) => {
         const urn = await cdpManager.urns(id);
