@@ -35,7 +35,9 @@ function clock(delta) {
 
   const seconds = delta % 60;
 
-  return `${hours} : ${minutes} : ${seconds}`;
+  const pad = val => val < 10 ? '0' + val.toString() : val.toString();
+
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
 const Timer = ({ seconds }) => {
@@ -163,7 +165,7 @@ function Overview() {
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
       const claims = checks['global-settlement-collateral-claims'];
-      const validClaims = claims.filter(c => c.redeemable);
+      const validClaims = claims; //.filter(c => c.redeemable);
 
       const vaultsData = await Promise.all([
         ...validClaims.map(({ id }) =>
