@@ -22,6 +22,7 @@ import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
 import { SAI, DAI } from '../maker';
 import TooltipContents from '../components/TooltipContents';
+import { stringToBytes, fromRay } from '../utils/ethereum';
 
 function clock(delta) {
   // const days = Math.floor(delta / 86400);
@@ -35,7 +36,7 @@ function clock(delta) {
 
   const seconds = delta % 60;
 
-  const pad = val => val < 10 ? '0' + val.toString() : val.toString();
+  const pad = val => (val < 10 ? '0' + val.toString() : val.toString());
 
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
@@ -83,7 +84,8 @@ function MigrationCard({
   metadataTitle,
   metadataValue,
   onSelected,
-  buttonLabel = 'Continue'
+  buttonLabel = 'Continue',
+  disabled = false
 }) {
   return (
     <ButtonCard
@@ -98,6 +100,7 @@ function MigrationCard({
       button={
         <Button
           px="xl"
+          disabled={disabled}
           variant={recommended ? 'primary' : 'secondary-outline'}
           onClick={onSelected}
         >
@@ -141,8 +144,9 @@ function Overview() {
   const [
     {
       emergencyShutdownActive,
-      emergencyShutdownTime,
-      auctionCloseTime,
+      secondsUntilAuctionClose,
+      thawTriggered,
+      fixedPrices,
       cdpMigrationCheck: cdps,
       saiBalance,
       daiBalance,
@@ -174,13 +178,33 @@ function Overview() {
       ]);
 
       const end = maker.service('smartContract').getContract('MCD_END');
-      const [live, when] = await Promise.all([end.live(), end.when()]);
+      const [
+        live,
+        wait,
+        when,
+        debt,
+        ethFixedPrice,
+        batFixedPrice
+      ] = await Promise.all([
+        end.live(),
+        end.wait(),
+        end.when(),
+        end.debt(),
+        ...['ETH-A', 'BAT-A'].map(ilk =>
+          end.fix(stringToBytes(ilk)).then(fromRay)
+        )
+      ]);
       const emergencyShutdownActive = live.eq(0);
-
       const emergencyShutdownTime = new Date(when.toNumber() * 1000);
       const auctionCloseTime = new Date(
-        emergencyShutdownTime.getTime() + 73 * 60 * 60 * 1000
+        emergencyShutdownTime.getTime() + wait.toNumber() * 1000
       );
+
+      const diff = Math.floor((auctionCloseTime.getTime() - Date.now()) / 1000);
+
+      const secondsUntilAuctionClose = diff > 0 ? diff : 0;
+      const thawTriggered = debt.gt(0);
+      const fixedPrices = [ethFixedPrice, batFixedPrice];
 
       const parsedVaultsData = vaultsData.map(vault => {
         const claim = validClaims.find(c => c.id.toNumber() === vault.id);
@@ -211,7 +235,9 @@ function Overview() {
         payload: {
           emergencyShutdownActive,
           emergencyShutdownTime,
-          auctionCloseTime,
+          secondsUntilAuctionClose,
+          thawTriggered,
+          fixedPrices,
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
           daiBalance: _daiBalance,
@@ -232,7 +258,12 @@ function Overview() {
   const shouldShowChief =
     chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
   const shouldShowCollateral =
-    daiBalance && daiBalance.gt(0) && emergencyShutdownActive;
+    daiBalance &&
+    daiBalance.gt(0) &&
+    emergencyShutdownActive &&
+    secondsUntilAuctionClose !== undefined &&
+    thawTriggered !== undefined &&
+    fixedPrices !== undefined;
   const shouldShowRedeemVaults =
     vaultsToRedeem && vaultsToRedeem.claims.length > 0;
   const noMigrations =
@@ -383,15 +414,29 @@ function Overview() {
                       'Redeem your Dai for a proportional amount of underlying collateral from the Multi-Collateral Dai system'
                     }
                   </Text.p>
-                  <Timer
-                    seconds={
-                      auctionCloseTime
-                        ? Math.floor(
-                            (auctionCloseTime.getTime() - Date.now()) / 1000
-                          )
-                        : 0
-                    }
-                  />
+                  {secondsUntilAuctionClose > 0 ? (
+                    <Timer seconds={secondsUntilAuctionClose} />
+                  ) : !thawTriggered ? (
+                    <Text.p
+                      fontSize="15px"
+                      fontWeight={500}
+                      color={getColor('steel')}
+                    >
+                      The end.thaw() function must be triggered before DAI can
+                      be redeemed.
+                    </Text.p>
+                  ) : !fixedPrices.every(p => p.gt(0)) ? (
+                    <Text.p
+                      fontSize="15px"
+                      fontWeight={500}
+                      color={getColor('steel')}
+                    >
+                      The end.flow() function must be executed on each
+                      collateral type.
+                    </Text.p>
+                  ) : (
+                    'You can now redeem your DAI for collateral'
+                  )}
                 </Grid>
               }
               metadataTitle="Dai to redeem"
@@ -399,6 +444,11 @@ function Overview() {
               onSelected={() => {
                 Router.push('/migration/redeemDai');
               }}
+              disabled={
+                !thawTriggered ||
+                secondsUntilAuctionClose > 0 ||
+                !fixedPrices.every(p => p.gt(0))
+              }
             />
           )}
         </Grid>
