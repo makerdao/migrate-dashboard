@@ -9,42 +9,30 @@ function CollateralTable({ data }) {
             <Table.th>
               <Text t="subheading">Token</Text>
             </Table.th>
-            <Table.th>
-              <Text t="subheading">Shutdown Value</Text>
-            </Table.th>
+            {/* <Table.th> */}
+            {/*   <Text t="subheading">Shutdown Value</Text> */}
+            {/* </Table.th> */}
             <Table.th>
               <Text t="subheading">Exchange Rate</Text>
             </Table.th>
-            <Table.th>
-              <Text t="subheading">Amount</Text>
-            </Table.th>
+            {/* <Table.th> */}
+            {/*   <Text t="subheading">Amount</Text> */}
+            {/* </Table.th> */}
           </Table.tr>
         </Table.thead>
         <Table.tbody>
           {data &&
-            data.map(({ token, value, rate, amount }, idx) => (
+            data.map(({ ilk, price }, idx) => (
               <Table.tr key={idx}>
                 <Table.th>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
-                    {token}
+                    {ilk}
                   </Text.p>
                 </Table.th>
 
                 <Table.th>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
-                    {`$${value}`}
-                  </Text.p>
-                </Table.th>
-
-                <Table.th>
-                  <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
-                    {`1 DAI : ${rate} ${token}`}
-                  </Text.p>
-                </Table.th>
-
-                <Table.th>
-                  <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
-                    {`${amount} ${token}`}
+                    {`1 DAI : ${price} ${ilk.split('-')[0]}`}
                   </Text.p>
                 </Table.th>
               </Table.tr>

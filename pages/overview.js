@@ -22,7 +22,7 @@ import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
 import { SAI, DAI } from '../maker';
 import TooltipContents from '../components/TooltipContents';
-import { stringToBytes, fromRay } from '../utils/ethereum';
+import { stringToBytes, fromRay, fromRad } from '../utils/ethereum';
 
 function clock(delta) {
   // const days = Math.floor(delta / 86400);
@@ -145,7 +145,7 @@ function Overview() {
     {
       emergencyShutdownActive,
       secondsUntilAuctionClose,
-      thawTriggered,
+      systemDebt,
       fixedPrices,
       cdpMigrationCheck: cdps,
       saiBalance,
@@ -182,14 +182,14 @@ function Overview() {
         live,
         wait,
         when,
-        debt,
+        systemDebt,
         ethFixedPrice,
         batFixedPrice
       ] = await Promise.all([
         end.live(),
         end.wait(),
         end.when(),
-        end.debt(),
+        end.debt().then(fromRad),
         ...['ETH-A', 'BAT-A'].map(ilk =>
           end.fix(stringToBytes(ilk)).then(fromRay)
         )
@@ -203,8 +203,11 @@ function Overview() {
       const diff = Math.floor((auctionCloseTime.getTime() - Date.now()) / 1000);
 
       const secondsUntilAuctionClose = diff > 0 ? diff : 0;
-      const thawTriggered = debt.gt(0);
-      const fixedPrices = [ethFixedPrice, batFixedPrice];
+
+      const fixedPrices = [
+        { ilk: 'ETH-A', price: ethFixedPrice },
+        { ilk: 'BAT-A', price: batFixedPrice }
+      ];
 
       const parsedVaultsData = vaultsData.map(vault => {
         const claim = validClaims.find(c => c.id.toNumber() === vault.id);
@@ -236,7 +239,7 @@ function Overview() {
           emergencyShutdownActive,
           emergencyShutdownTime,
           secondsUntilAuctionClose,
-          thawTriggered,
+          systemDebt,
           fixedPrices,
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
@@ -250,7 +253,6 @@ function Overview() {
   }, [maker, account, dispatch]);
 
   const { mkrLockedDirectly, mkrLockedViaProxy } = chiefMigrationCheck || {};
-
   const shouldShowCdps = countCdps(cdps) > 0;
   const shouldShowDai = saiBalance && saiBalance.gt(0);
   const shouldShowMkr = oldMkrBalance && oldMkrBalance.gt(0);
@@ -262,7 +264,7 @@ function Overview() {
     daiBalance.gt(0) &&
     emergencyShutdownActive &&
     secondsUntilAuctionClose !== undefined &&
-    thawTriggered !== undefined &&
+    systemDebt !== undefined &&
     fixedPrices !== undefined;
   const shouldShowRedeemVaults =
     vaultsToRedeem && vaultsToRedeem.claims.length > 0;
@@ -416,7 +418,7 @@ function Overview() {
                   </Text.p>
                   {secondsUntilAuctionClose > 0 ? (
                     <Timer seconds={secondsUntilAuctionClose} />
-                  ) : !thawTriggered ? (
+                  ) : !systemDebt.gt(0) ? (
                     <Text.p
                       fontSize="15px"
                       fontWeight={500}
@@ -425,7 +427,7 @@ function Overview() {
                       The end.thaw() function must be triggered before DAI can
                       be redeemed.
                     </Text.p>
-                  ) : !fixedPrices.every(p => p.gt(0)) ? (
+                  ) : !fixedPrices.every(({ price }) => price.gt(0)) ? (
                     <Text.p
                       fontSize="15px"
                       fontWeight={500}
@@ -445,9 +447,9 @@ function Overview() {
                 Router.push('/migration/redeemDai');
               }}
               disabled={
-                !thawTriggered ||
+                !systemDebt.gt(0) ||
                 secondsUntilAuctionClose > 0 ||
-                !fixedPrices.every(p => p.gt(0))
+                !fixedPrices.every(({ price }) => price.gt(0))
               }
             />
           )}
