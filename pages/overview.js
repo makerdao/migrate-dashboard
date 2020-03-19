@@ -216,8 +216,9 @@ function OverviewDataFetch() {
 
       const tub = maker.service('smartContract').getContract('SAI_TUB');
       const tubState = {
-        off: await tub.off(),
-        out: await tub.out()
+        per: await tub.per(), // WETH/PETH ratio 
+        off: true, //await tub.off(), // SCD is shut down
+        out: false //await tub.out() // cooldown ended
       };
 
       setFetching(false);
@@ -284,7 +285,7 @@ function Overview({ fetching }) {
 
   // console.log(tubState);
   const shouldShowSCDESCollateral = tubState.off && countCdps(cdps) > 0;
-  const shouldShowSCDESSai = tubState.out && shouldShowDai;
+  const shouldShowSCDESSai = tubState.off && shouldShowDai;
 
   const noMigrations =
     !shouldShowCdps &&
@@ -457,10 +458,33 @@ function Overview({ fetching }) {
           )}
 
           {shouldShowSCDESCollateral && (
-            <MigrationCard title="Withdraw collateral from SCD CDPs" />
+            <MigrationCard
+              title="Withdraw collateral from Sai CDPs"
+              onSelected={() => Router.push('/migration/scd-es-cdp')}
+            >
+              <>
+                <Text.p t="body">
+                  Redeem collateral from your Single-Collateral Sai CDP for a
+                  proportional amount of WETH.
+                </Text.p>
+                {!tubState.out && (
+                  <Text.p t="body">
+                    Sai redemption in progress. Cooldown period ends in
+                    TODO
+                  </Text.p>
+                )}
+              </>
+            </MigrationCard>
           )}
           {shouldShowSCDESSai && (
-            <MigrationCard title="Redeem Sai for collateral" />
+            <MigrationCard
+              title="Redeem Sai for collateral"
+              onSelected={() => Router.push('/migration/scd-es-sai')}
+            >
+              <Text.p t='body'>
+                Redeem your Sai for a proportional amount of WETH from the Single-Collateral Sai system.
+              </Text.p>
+            </MigrationCard>
           )}
         </Grid>
         {fetching ? (
