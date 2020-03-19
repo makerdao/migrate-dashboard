@@ -44,7 +44,7 @@ test('can fetch a list of all migrations', () => {
       Migrations.CHIEF_MIGRATE
     ])
   );
-  expect(ids.length).toEqual(8);
+  expect(ids.length).toEqual(9);
 });
 
 test('getting each migration returns a valid migration', () => {
@@ -78,7 +78,8 @@ test('runAllChecks', async () => {
     [Migrations.DAI_TO_SAI]: expect.anything(),
     [Migrations.SINGLE_TO_MULTI_CDP]: {},
     [Migrations.CHIEF_MIGRATE]: expect.anything(),
-    [Migrations.MKR_REDEEMER]: expect.anything()
+    [Migrations.MKR_REDEEMER]: expect.anything(),
+    [Migrations.GLOBAL_SETTLEMENT_COLLATERAL_CLAIMS]: expect.anything()
   });
   expect(result[Migrations.SAI_TO_DAI].eq(0)).toBeTruthy();
 });
