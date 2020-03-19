@@ -44,7 +44,7 @@ test('can fetch a list of all migrations', () => {
       Migrations.CHIEF_MIGRATE
     ])
   );
-  expect(ids.length).toEqual(9);
+  expect(ids.length).toEqual(8);
 });
 
 test('getting each migration returns a valid migration', () => {
