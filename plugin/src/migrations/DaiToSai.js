@@ -12,7 +12,7 @@ export default class DaiToSai {
     return this._dai.balance();
   }
 
-  // @tracksTransactions
+  @tracksTransactions
   async execute(amount, { promise }) {
     const formattedAmount = DAI(amount).toFixed('wei');
     const address = this._manager.get('web3').currentAddress();

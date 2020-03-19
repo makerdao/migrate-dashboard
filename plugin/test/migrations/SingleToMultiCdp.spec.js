@@ -156,7 +156,7 @@ describe('SCD to MCD CDP Migration', () => {
       const mcdCdpId = mcdCdpsAfterMigration[0].id;
       expect(newId).toEqual(mcdCdpId);
 
-      maker.service('mcd:cdpType').reset();
+      maker.service('mcd:cdpType').resetAllCdpTypes();
       const mcdCdp = await manager.getCdp(mcdCdpId);
       const mcdCollateral = mcdCdp.collateralAmount.toNumber();
       const mcdDebt = mcdCdp.debtValue.toNumber();

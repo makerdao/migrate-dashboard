@@ -12,7 +12,7 @@ export default class SaiToDai {
     return this._sai.balance();
   }
 
-  // @tracksTransactions
+  @tracksTransactions
   async execute(amount, { promise }) {
     const formattedAmount = SAI(amount).toFixed('wei');
     const address = this._manager.get('web3').currentAddress();
