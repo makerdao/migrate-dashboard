@@ -1,18 +1,28 @@
 {
   "version": 2,
-  "name": "Migrate Dashboard",
+  "name": "migrate-dashboard",
   "alias": "migrate-dashboard-staging",
   "builds": [
     {
       "src": "package.json",
       "use": "@now/static-build",
-      "config": { "distDir": "out" }
+      "config": {
+        "distDir": "out"
+      }
     },
-    { "src": "./static", "use": "@now/static" }
+    {
+      "src": "./static",
+      "use": "@now/static"
+    }
   ],
   "routes": [
-    { "handle": "filesystem" },
-    { "src": "^/favicon.ico$", "dest": "/static/favicon.ico" }
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "^/favicon.ico$",
+      "dest": "/static/favicon.ico"
+    }
   ],
   "github": {
     "enabled": false

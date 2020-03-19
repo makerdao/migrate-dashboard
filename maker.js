@@ -1,6 +1,7 @@
 import Maker from '@makerdao/dai';
-import mcdPlugin, { MDAI } from '@makerdao/dai-plugin-mcd';
-import migrationPlugin from '@makerdao/dai-plugin-migrations';
+import mcdPlugin, { MDAI, BAT } from '@makerdao/dai-plugin-mcd';
+// import migrationPlugin from '@makerdao/dai-plugin-migrations';
+import migrationPlugin from './plugin/src/index';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import walletLinkPlugin from '@makerdao/dai-plugin-walletlink';
 import walletConnectPlugin from '@makerdao/dai-plugin-walletconnect';
@@ -32,6 +33,22 @@ export async function instantiateMaker(network) {
   // code that will break if run server-side
   const trezorPlugin = require('@makerdao/dai-plugin-trezor-web').default;
 
+  const mcdPluginConfig = {
+    cdpTypes: [
+      { currency: SAI, ilk: 'SAI' },
+      { currency: ETH, ilk: 'ETH-A' },
+      { currency: BAT, ilk: 'BAT-A' }
+    ]
+  };
+
+  const migrationPluginConfig = {};
+
+  if (network === 'kovan') {
+    const addresses = require('./addresses-kovan.json');
+    mcdPluginConfig.addressOverrides = addresses;
+    migrationPluginConfig.addressOverrides = addresses;
+  }
+
   const config = {
     url,
     log: false,
@@ -41,16 +58,8 @@ export async function instantiateMaker(network) {
       ledgerPlugin,
       walletLinkPlugin,
       walletConnectPlugin,
-      [
-        mcdPlugin,
-        {
-          cdpTypes: [
-            { currency: SAI, ilk: 'SAI' },
-            { currency: ETH, ilk: 'ETH-A' }
-          ]
-        }
-      ],
-      migrationPlugin
+      [mcdPlugin, mcdPluginConfig],
+      [migrationPlugin, migrationPluginConfig]
     ],
     smartContract: {
       addressOverrides: {
