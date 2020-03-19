@@ -136,27 +136,10 @@ function showAmount(tok) {
   return prettifyNumber(tok, false, 2, false);
 }
 
-function Overview() {
+function OverviewDataFetch() {
+  const [, dispatch] = useStore();
   const { maker, account } = useMaker();
-  const [initialFetchComplete, setInitialFetchComplete] = useState(false);
-
-  const [
-    {
-      emergencyShutdownActive,
-      secondsUntilAuctionClose,
-      systemDebt,
-      fixedPrices,
-      cdpMigrationCheck: cdps,
-      saiBalance,
-      daiBalance,
-      saiAvailable,
-      daiAvailable,
-      oldMkrBalance,
-      chiefMigrationCheck,
-      vaultsToRedeem
-    },
-    dispatch
-  ] = useStore();
+  const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
     if (maker && !account) Router.replace('/');
@@ -231,7 +214,14 @@ function Overview() {
 
       const _daiBalance = DAI(await maker.getToken('MDAI').balance());
 
-      setInitialFetchComplete(true);
+      const tub = maker.service('smartContract').getContract('SAI_TUB');
+      const tubState = {
+        off: await tub.off(),
+        out: await tub.out()
+      };
+
+      setFetching(false);
+
       dispatch({
         type: 'assign',
         payload: {
@@ -245,11 +235,35 @@ function Overview() {
           daiBalance: _daiBalance,
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
-          vaultsToRedeem: { claims: validClaims, parsedVaultsData }
+          vaultsToRedeem: { claims: validClaims, parsedVaultsData },
+          tubState
         }
       });
     })();
   }, [maker, account, dispatch]);
+
+  return <Overview fetching={fetching} />;
+}
+
+function Overview({ fetching }) {
+  const { account } = useMaker();
+  const [
+    {
+      emergencyShutdownActive,
+      secondsUntilAuctionClose,
+      systemDebt,
+      fixedPrices,
+      cdpMigrationCheck: cdps,
+      saiBalance,
+      daiBalance,
+      saiAvailable,
+      daiAvailable,
+      oldMkrBalance,
+      chiefMigrationCheck,
+      vaultsToRedeem,
+      tubState = {}
+    }
+  ] = useStore();
 
   const { mkrLockedDirectly, mkrLockedViaProxy } = chiefMigrationCheck || {};
   const shouldShowCdps = countCdps(cdps) > 0;
@@ -267,13 +281,21 @@ function Overview() {
     fixedPrices !== undefined;
   const shouldShowRedeemVaults =
     vaultsToRedeem && vaultsToRedeem.claims.length > 0;
+
+  // console.log(tubState);
+  const shouldShowSCDESCollateral = tubState.off && countCdps(cdps) > 0;
+  const shouldShowSCDESSai = tubState.out && shouldShowDai;
+
   const noMigrations =
     !shouldShowCdps &&
     !shouldShowDai &&
     !shouldShowMkr &&
     !shouldShowReverse &&
     !shouldShowChief &&
-    !shouldShowRedeemVaults;
+    !shouldShowCollateral &&
+    !shouldShowRedeemVaults &&
+    !shouldShowSCDESCollateral &&
+    !shouldShowSCDESSai;
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -446,8 +468,25 @@ function Overview() {
               }
             />
           )}
+
+          {shouldShowSCDESCollateral && (
+            <MigrationCard title="Withdraw collateral from SCD CDPs" />
+          )}
+          {shouldShowSCDESSai && (
+            <MigrationCard title="Redeem Sai for collateral" />
+          )}
         </Grid>
-        {initialFetchComplete ? (
+        {fetching ? (
+          <Loader
+            mt="4rem"
+            mb="4rem"
+            size="1.8rem"
+            color={getColor('makerTeal')}
+            justifySelf="end"
+            m="auto"
+            bg={getColor('lightGrey')}
+          />
+        ) : (
           noMigrations && (
             <Card mt="l">
               <Flex justifyContent="center" py="l" px="m">
@@ -462,20 +501,10 @@ function Overview() {
               </Flex>
             </Card>
           )
-        ) : (
-          <Loader
-            mt="4rem"
-            mb="4rem"
-            size="1.8rem"
-            color={getColor('makerTeal')}
-            justifySelf="end"
-            m="auto"
-            bg={getColor('lightGrey')}
-          />
         )}
       </Box>
     </Flex>
   );
 }
 
-export default Overview;
+export default OverviewDataFetch;
