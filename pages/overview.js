@@ -80,7 +80,6 @@ const Timer = ({ seconds }) => {
 function MigrationCard({
   title,
   body,
-  recommended,
   metadataTitle,
   metadataValue,
   onSelected,
@@ -101,7 +100,7 @@ function MigrationCard({
         <Button
           px="xl"
           disabled={disabled}
-          variant={recommended ? 'primary' : 'secondary-outline'}
+          variant="primary"
           onClick={onSelected}
         >
           {buttonLabel}
@@ -302,7 +301,6 @@ function Overview() {
         >
           {shouldShowCdps && (
             <MigrationCard
-              recommended
               title="CDP Upgrade"
               metadataTitle={`CDP${
                 countCdps(cdps) === 1 ? '' : 's'
@@ -320,7 +318,6 @@ function Overview() {
           )}
           {shouldShowDai && (
             <MigrationCard
-              recommended
               title="Single-Collateral Sai Upgrade"
               body={
                 <Text.p t="body">
@@ -336,7 +333,6 @@ function Overview() {
           )}
           {shouldShowReverse && (
             <MigrationCard
-              recommended
               title="Swap Dai for Sai"
               body={
                 <Text.p t="body">
@@ -354,7 +350,6 @@ function Overview() {
           )}
           {shouldShowChief && (
             <MigrationCard
-              recommended
               title="DSChief MKR Withdrawal"
               body={
                 <Text.p t="body">
@@ -374,7 +369,6 @@ function Overview() {
           )}
           {shouldShowRedeemVaults && (
             <MigrationCard
-              recommended
               title="Withdraw Excess Collateral from Vaults"
               body={
                 <Text.p t="body">
@@ -407,7 +401,6 @@ function Overview() {
 
           {shouldShowCollateral && (
             <MigrationCard
-              recommended
               title="Redeem Dai for collateral"
               body={
                 <Grid gridRowGap="l">
