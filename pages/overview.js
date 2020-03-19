@@ -79,7 +79,7 @@ const Timer = ({ seconds }) => {
 
 function MigrationCard({
   title,
-  body,
+  children,
   metadataTitle,
   metadataValue,
   onSelected,
@@ -116,7 +116,7 @@ function MigrationCard({
         <Box gridArea="title" alignSelf="center">
           <Text.h4>{title}</Text.h4>
         </Box>
-        <Box gridArea="body">{body}</Box>
+        <Box gridArea="body">{children}</Box>
       </Grid>
     </ButtonCard>
   );
@@ -328,58 +328,45 @@ function Overview({ fetching }) {
                 countCdps(cdps) === 1 ? '' : 's'
               } to upgrade`}
               metadataValue={showCdpCount(cdps)}
-              body={
-                <Text.p t="body">
-                  {`Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai liquidity: ${prettifyNumber(
-                    saiAvailable
-                  )}`}
-                </Text.p>
-              }
               onSelected={() => Router.push('/migration/cdp')}
-            />
+            >
+              <Text.p t="body">
+                Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai
+                liquidity: {prettifyNumber(saiAvailable)}
+              </Text.p>
+            </MigrationCard>
           )}
           {shouldShowDai && (
             <MigrationCard
               title="Single-Collateral Sai Upgrade"
-              body={
-                <Text.p t="body">
-                  {`Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai availability: ${prettifyNumber(
-                    daiAvailable
-                  )}`}
-                </Text.p>
-              }
               metadataTitle="Sai to upgrade"
               metadataValue={showAmount(saiBalance)}
               onSelected={() => Router.push('/migration/dai')}
-            />
+            >
+              <Text.p t="body">
+                Upgrade your Single-Collateral Sai to Multi-Collateral Dai.
+                Current Dai availability: {prettifyNumber(daiAvailable)}
+              </Text.p>
+            </MigrationCard>
           )}
           {shouldShowReverse && (
             <MigrationCard
               title="Swap Dai for Sai"
-              body={
-                <Text.p t="body">
-                  {`Swap your Multi-Collateral Dai back to Single-Collateral Sai. Current Sai liquidity: ${prettifyNumber(
-                    saiAvailable
-                  )}`}
-                </Text.p>
-              }
               metadataTitle="Dai available to swap"
               metadataValue={showAmount(daiBalance)}
               onSelected={() => {
                 Router.push('/migration/sai');
               }}
-            />
+            >
+              <Text.p t="body">
+                Swap your Multi-Collateral Dai back to Single-Collateral Sai.
+                Current Sai liquidity: {prettifyNumber(saiAvailable)}
+              </Text.p>
+            </MigrationCard>
           )}
           {shouldShowChief && (
             <MigrationCard
               title="DSChief MKR Withdrawal"
-              body={
-                <Text.p t="body">
-                  {
-                    'Due to the recent discovery of a potential exploit in the Maker Governance Contract (DSChief), all users are requested to withdraw any MKR deposited into one of the voting contracts back to their wallet.'
-                  }
-                </Text.p>
-              }
               metadataTitle="MKR to claim"
               metadataValue={showAmount(
                 mkrLockedDirectly.plus(mkrLockedViaProxy)
@@ -387,75 +374,45 @@ function Overview({ fetching }) {
               onSelected={() => {
                 window.open('https://chief-migration.makerdao.com/', '_blank');
               }}
-            />
+            >
+              <Text.p t="body">
+                Due to the recent discovery of a potential exploit in the Maker
+                Governance Contract (DSChief), all users are requested to
+                withdraw any MKR deposited into one of the voting contracts back
+                to their wallet.
+              </Text.p>
+            </MigrationCard>
           )}
           {shouldShowRedeemVaults && (
             <MigrationCard
               title="Withdraw Excess Collateral from Vaults"
-              body={
-                <Text.p t="body">
-                  {
-                    'Withdraw excess collateral from your Multi-Collateral Dai Vaults.'
-                  }
-                </Text.p>
-              }
               metadataTitle="vaults to redeem"
               metadataValue={vaultsToRedeem.claims.length}
               onSelected={() => Router.push('/migration/vaults')}
-            />
+            >
+              <Text.p t="body">
+                Withdraw excess collateral from your Multi-Collateral Dai
+                Vaults.
+              </Text.p>
+            </MigrationCard>
           )}
           {shouldShowMkr && (
             <MigrationCard
               recommended
               title="Redeem New MKR"
-              body={
-                <Text.p t="body">
-                  {
-                    'Swap your old MKR for new MKR by upgrading to the new ds-token.'
-                  }
-                </Text.p>
-              }
               onSelected={() => {
                 window.open('https://makerdao.com/redeem/', '_blank');
               }}
-            />
+            >
+              <Text.p t="body">
+                Swap your old MKR for new MKR by upgrading to the new ds-token.
+              </Text.p>
+            </MigrationCard>
           )}
 
           {shouldShowCollateral && (
             <MigrationCard
               title="Redeem Dai for collateral"
-              body={
-                <Grid gridRowGap="l">
-                  <Text.p t="body">
-                    {
-                      'Redeem your Dai for a proportional amount of underlying collateral from the Multi-Collateral Dai system'
-                    }
-                  </Text.p>
-                  {secondsUntilAuctionClose > 0 ? (
-                    <Timer seconds={secondsUntilAuctionClose} />
-                  ) : !systemDebt.gt(0) ? (
-                    <Text.p
-                      fontSize="15px"
-                      fontWeight={500}
-                      color={getColor('steel')}
-                    >
-                      The end.thaw() function must be triggered before DAI can
-                      be redeemed.
-                    </Text.p>
-                  ) : !fixedPrices.every(({ price }) => price.gt(0)) ? (
-                    <Text.p
-                      fontSize="15px"
-                      fontWeight={500}
-                      color={getColor('steel')}
-                    >
-                      The end.flow() function must be executed on each
-                      collateral type.
-                    </Text.p>
-                  ) : (
-                    'You can now redeem your DAI for collateral'
-                  )}
-                </Grid>
-              }
               metadataTitle="Dai to redeem"
               metadataValue={showAmount(daiBalance)}
               onSelected={() => {
@@ -466,7 +423,37 @@ function Overview({ fetching }) {
                 secondsUntilAuctionClose > 0 ||
                 !fixedPrices.every(({ price }) => price.gt(0))
               }
-            />
+            >
+              <Grid gridRowGap="l">
+                <Text.p t="body">
+                  Redeem your Dai for a proportional amount of underlying
+                  collateral from the Multi-Collateral Dai system
+                </Text.p>
+                {secondsUntilAuctionClose > 0 ? (
+                  <Timer seconds={secondsUntilAuctionClose} />
+                ) : !systemDebt.gt(0) ? (
+                  <Text.p
+                    fontSize="15px"
+                    fontWeight={500}
+                    color={getColor('steel')}
+                  >
+                    The end.thaw() function must be triggered before DAI can be
+                    redeemed.
+                  </Text.p>
+                ) : !fixedPrices.every(({ price }) => price.gt(0)) ? (
+                  <Text.p
+                    fontSize="15px"
+                    fontWeight={500}
+                    color={getColor('steel')}
+                  >
+                    The end.flow() function must be executed on each collateral
+                    type.
+                  </Text.p>
+                ) : (
+                  'You can now redeem your DAI for collateral'
+                )}
+              </Grid>
+            </MigrationCard>
           )}
 
           {shouldShowSCDESCollateral && (
