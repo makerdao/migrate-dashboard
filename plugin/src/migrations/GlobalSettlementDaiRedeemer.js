@@ -24,6 +24,7 @@ export default class GlobalSettlementDaiRedeemer {
 
     const cdpManagerAddress = smartContract.getContractAddress('CDP_MANAGER_1');
 
+    //TODO; don't just look at ilks related to the address's Vaults
     const [, , ilks] = await smartContract
       .getContract('GET_CDPS_1')
       .getCdpsDesc(cdpManagerAddress, address);
@@ -37,4 +38,16 @@ export default class GlobalSettlementDaiRedeemer {
 
     return fixes.some(fix => fix.gt(0));
   }
+
+  async pack(daiAmount){
+    const endAddress = this._container.get('smartContract').getContractAddress('MCD_END_1');
+    const daiJoinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_DAI');
+    return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').pack(
+      endAddress,
+      daiJoinAddress,
+      daiAmount,
+      { dsProxy: true }
+    );
+  }
+
 }
