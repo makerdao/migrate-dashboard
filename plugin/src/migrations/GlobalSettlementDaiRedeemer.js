@@ -1,4 +1,5 @@
 import { MDAI_1 } from '../index';
+import { stringToBytes } from '../utils';
 
 export default class GlobalSettlementDaiRedeemer {
   constructor(container) {
@@ -45,6 +46,45 @@ export default class GlobalSettlementDaiRedeemer {
     return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').pack(
       endAddress,
       daiJoinAddress,
+      daiAmount,
+      { dsProxy: true }
+    );
+  }
+
+  async cashEth(daiAmount){
+    const joinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_ETH_A');
+    const endAddress = this._container.get('smartContract').getContractAddress('MCD_END_1');
+    const ilkBytes = stringToBytes('ETH-A');
+    return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').cashETH(
+      joinAddress,
+      endAddress,
+      ilkBytes,
+      daiAmount,
+      { dsProxy: true }
+    );
+  }
+
+  async cashBat(daiAmount){
+    const joinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_BAT_A');
+    const endAddress = this._container.get('smartContract').getContractAddress('MCD_END_1');
+    const ilkBytes = stringToBytes('BAT-A');
+    return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').cashGem(
+      joinAddress,
+      endAddress,
+      ilkBytes,
+      daiAmount,
+      { dsProxy: true }
+    );
+  }
+
+  async cashUsdc(daiAmount){
+    const joinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_USDC_A');
+    const endAddress = this._container.get('smartContract').getContractAddress('MCD_END_1');
+    const ilkBytes = stringToBytes('USDC-A');
+    return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').cashGem(
+      joinAddress,
+      endAddress,
+      ilkBytes,
       daiAmount,
       { dsProxy: true }
     );
