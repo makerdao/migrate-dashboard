@@ -40,18 +40,26 @@ export default class GlobalSettlementDaiRedeemer {
     return fixes.some(fix => fix.gt(0));
   }
 
-  async pack(daiAmount){
+  async bagAmount(address){
+    const end = this._container.get('smartContract').getContract('MCD_END_1');
+    return end.bag(address);
+  }
+
+  async packDai(daiAmount){
+    const formattedAmount = MDAI_1(daiAmount).toFixed('wei');
     const endAddress = this._container.get('smartContract').getContractAddress('MCD_END_1');
     const daiJoinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_DAI');
+    console.log('formattedAmount', formattedAmount);
     return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').pack(
       endAddress,
       daiJoinAddress,
-      daiAmount,
+      formattedAmount,
       { dsProxy: true }
     );
   }
 
   async cashEth(daiAmount){
+    const formattedAmount = MDAI_1(daiAmount).toFixed('wei');
     const joinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_ETH_A');
     const endAddress = this._container.get('smartContract').getContractAddress('MCD_END_1');
     const ilkBytes = stringToBytes('ETH-A');
@@ -59,12 +67,13 @@ export default class GlobalSettlementDaiRedeemer {
       joinAddress,
       endAddress,
       ilkBytes,
-      daiAmount,
+      formattedAmount,
       { dsProxy: true }
     );
   }
 
   async cashBat(daiAmount){
+    const formattedAmount = MDAI_1(daiAmount).toFixed('wei');
     const joinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_BAT_A');
     const endAddress = this._container.get('smartContract').getContractAddress('MCD_END_1');
     const ilkBytes = stringToBytes('BAT-A');
@@ -72,12 +81,13 @@ export default class GlobalSettlementDaiRedeemer {
       joinAddress,
       endAddress,
       ilkBytes,
-      daiAmount,
+      formattedAmount,
       { dsProxy: true }
     );
   }
 
   async cashUsdc(daiAmount){
+    const formattedAmount = MDAI_1(daiAmount).toFixed('wei');
     const joinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_USDC_A');
     const endAddress = this._container.get('smartContract').getContractAddress('MCD_END_1');
     const ilkBytes = stringToBytes('USDC-A');
@@ -85,7 +95,7 @@ export default class GlobalSettlementDaiRedeemer {
       joinAddress,
       endAddress,
       ilkBytes,
-      daiAmount,
+      formattedAmount,
       { dsProxy: true }
     );
   }

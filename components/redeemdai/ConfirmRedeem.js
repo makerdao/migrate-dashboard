@@ -14,16 +14,18 @@ import useProxy from '../../hooks/useProxy';
 import LoadingToggle from '../LoadingToggle';
 import useMaker from '../../hooks/useMaker';
 import { MDAI } from '@makerdao/dai-plugin-mcd';
+import useStore from '../../hooks/useStore';
+import MigrationService from '../../plugin/src/MigrationService';
 
 function ConfirmRedeem({
   onPrev,
   redeemAmount,
   setRedeemTxHash,
   onNext,
-  dispatch,
-  collateralData
+  dispatch
 }) {
   const { maker, account } = useMaker();
+  const [{ fixedPrices }] = useStore();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [redeemInitiated, setRedeemInitiated] = useState(false);
   const {
@@ -74,6 +76,21 @@ function ConfirmRedeem({
     setAllowanceLoading(false);
   };
 
+  const packDai = async () => {
+    try {
+      const mig = maker
+        .service('migration')
+        .getMigration('global-settlement-dai-redeemer');
+      console.log('about to pack dai');
+      mig.packDai(redeemAmount); //todo subtract amount already packed if exists
+    } catch (err) {
+      const message = err.message ? err.message : err;
+      const errMsg = `pack dai tx failed ${message}`;
+      console.error(errMsg);
+      addToastWithTimeout(errMsg, dispatch);
+    }
+  };
+
   useEffect(() => {
     (async () => {
       if (!maker || !account) return;
@@ -99,7 +116,7 @@ function ConfirmRedeem({
         <Grid gridRowGap="s">
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
             <Grid gridRowGap="s" width="567px">
-              <CollateralTable data={collateralData} />
+              <CollateralTable data={fixedPrices} />
               <Grid gridRowGap="s" px="s" width="300px">
                 {showProxy && (
                   <LoadingToggle
@@ -121,6 +138,13 @@ function ConfirmRedeem({
                   isComplete={hasAllowance}
                   onToggle={giveProxyDaiAllowance}
                   disabled={!hasProxy || hasAllowance}
+                  reverse={false}
+                />
+                <LoadingToggle
+                  defaultText={'Pack DAI'}
+                  loadingText={'Packing DAI'}
+                  completeText={'DAI Unlocked'}
+                  onToggle={packDai}
                   reverse={false}
                 />
               </Grid>

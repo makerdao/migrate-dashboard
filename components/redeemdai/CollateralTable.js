@@ -26,7 +26,7 @@ function CollateralTable({ data }) {
               <Table.tr key={idx}>
                 <Table.th>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
-                    {ilk}
+                  {ilk.split('-')[0]}
                   </Text.p>
                 </Table.th>
 

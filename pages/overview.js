@@ -159,7 +159,7 @@ function OverviewDataFetch() {
         )
       ]);
 
-      const end = maker.service('smartContract').getContract('MCD_END');
+      const end = maker.service('smartContract').getContract('MCD_END_1');
       const [
         live,
         wait,
