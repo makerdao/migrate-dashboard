@@ -42,14 +42,14 @@ export default class GlobalSettlementDaiRedeemer {
 
   async bagAmount(address){
     const end = this._container.get('smartContract').getContract('MCD_END_1');
-    return end.bag(address);
+    const bag = await end.bag(address);
+    return MDAI_1.wei(bag);
   }
 
   async packDai(daiAmount){
     const formattedAmount = MDAI_1(daiAmount).toFixed('wei');
     const endAddress = this._container.get('smartContract').getContractAddress('MCD_END_1');
     const daiJoinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_DAI');
-    console.log('formattedAmount', formattedAmount);
     return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').pack(
       endAddress,
       daiJoinAddress,

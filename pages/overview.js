@@ -213,6 +213,13 @@ function OverviewDataFetch() {
       });
 
       const _daiBalance = DAI(await maker.getToken('MDAI').balance());
+      const proxyAddress = await maker.service('proxy').currentProxy();
+      const _bagBalance = DAI(await maker
+        .service('migration')
+        .getMigration('global-settlement-dai-redeemer')
+        .bagAmount(proxyAddress));
+      const _dsrBalance = await maker.service('mcd:savings').balance();
+      const _daiDsrBagBalance = _daiBalance.plus(_bagBalance).plus(_dsrBalance);
 
       const tub = maker.service('smartContract').getContract('SAI_TUB');
       const tubState = {
@@ -234,6 +241,9 @@ function OverviewDataFetch() {
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
           daiBalance: _daiBalance,
+          bagBalance: _bagBalance,
+          dsrBalance: _dsrBalance,
+          daiDsrBagBalance: _daiDsrBagBalance,
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
           vaultsToRedeem: { claims: validClaims, parsedVaultsData },
@@ -257,6 +267,7 @@ function Overview({ fetching }) {
       cdpMigrationCheck: cdps,
       saiBalance,
       daiBalance,
+      daiDsrBagBalance,
       saiAvailable,
       daiAvailable,
       oldMkrBalance,
@@ -274,8 +285,8 @@ function Overview({ fetching }) {
   const shouldShowChief =
     chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
   const shouldShowCollateral =
-    daiBalance &&
-    daiBalance.gt(0) &&
+    daiDsrBagBalance &&
+    daiDsrBagBalance.gt(0) &&
     emergencyShutdownActive &&
     secondsUntilAuctionClose !== undefined &&
     systemDebt !== undefined &&
@@ -415,7 +426,7 @@ function Overview({ fetching }) {
             <MigrationCard
               title="Redeem Dai for collateral"
               metadataTitle="Dai to redeem"
-              metadataValue={showAmount(daiBalance)}
+              metadataValue={showAmount(daiDsrBagBalance)}
               onSelected={() => {
                 Router.push('/migration/redeemDai');
               }}
