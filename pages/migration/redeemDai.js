@@ -7,11 +7,14 @@ import useMaker from '../../hooks/useMaker';
 import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
 import DaiRedeem from '../../components/redeemdai/DaiRedeem';
+import DeployProxy from '../../components/redeemdai/DeployProxy';
 import ConfirmRedeem from '../../components/redeemdai/ConfirmRedeem';
 import Complete from '../../components/redeemdai/Complete';
+import useStore from '../../hooks/useStore';
 
 const steps = [
   props => <DaiRedeem {...props} />,
+  props => <DeployProxy {...props}/>,
   props => <ConfirmRedeem {...props} />,
   props => <Complete {...props} />,
   props => (
@@ -38,6 +41,7 @@ export default function() {
   const [redeemTxHash, setRedeemTxHash] = useState(null);
   const [redeemAmount, setRedeemAmount] = useState();
   const [collateralData, setCollateralData] = useState([]);
+  const [{ proxyAddress }] = useStore();
 
   useEffect(() => {
     if (!account) Router.replace('/');
@@ -45,9 +49,9 @@ export default function() {
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
-    setCurrentStep(s => s - 1);
+    setCurrentStep(s => s===2 && proxyAddress ? s - 2 : s - 1);
   };
-  const toNextStep = () => setCurrentStep(s => s + 1);
+  const toNextStep = () => setCurrentStep(s => s===0 && proxyAddress ? s + 2 : s + 1);
   const reset = () => setCurrentStep(0);
   const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
 
@@ -63,7 +67,7 @@ export default function() {
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
         <FlowHeader account={account} showClose={currentStep <= 1} />
         <Stepper
-          steps={['Redeem Dai', 'Confirmation']}
+          steps={['Redeem Dai', 'Set Up Proxy', 'Confirmation']}
           selected={currentStep}
           m="0 auto"
           mt={'m'}

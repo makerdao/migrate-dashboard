@@ -51,8 +51,8 @@ export default class GlobalSettlementDaiRedeemer {
     const endAddress = this._container.get('smartContract').getContractAddress('MCD_END_1');
     const daiJoinAddress = this._container.get('smartContract').getContractAddress('MCD_JOIN_DAI');
     return this._container.get('smartContract').getContract('PROXY_ACTIONS_END').pack(
-      endAddress,
       daiJoinAddress,
+      endAddress,
       formattedAmount,
       { dsProxy: true }
     );

@@ -214,12 +214,12 @@ function OverviewDataFetch() {
 
       const _daiBalance = DAI(await maker.getToken('MDAI').balance());
       const proxyAddress = await maker.service('proxy').currentProxy();
-      const _bagBalance = DAI(
-        await maker
+      let _bagBalance = DAI(0);
+      if(proxyAddress)
+        _bagBalance = DAI(await maker
           .service('migration')
           .getMigration('global-settlement-dai-redeemer')
-          .bagAmount(proxyAddress)
-      );
+          .bagAmount(proxyAddress));
       const _dsrBalance = await maker.service('mcd:savings').balance();
       const _daiDsrBagBalance = _daiBalance.plus(_bagBalance).plus(_dsrBalance);
 
@@ -245,6 +245,7 @@ function OverviewDataFetch() {
           daiBalance: _daiBalance,
           bagBalance: _bagBalance,
           dsrBalance: _dsrBalance,
+          proxyAddress,
           daiDsrBagBalance: _daiDsrBagBalance,
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
