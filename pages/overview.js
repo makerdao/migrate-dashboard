@@ -214,16 +214,18 @@ function OverviewDataFetch() {
 
       const _daiBalance = DAI(await maker.getToken('MDAI').balance());
       const proxyAddress = await maker.service('proxy').currentProxy();
-      const _bagBalance = DAI(await maker
-        .service('migration')
-        .getMigration('global-settlement-dai-redeemer')
-        .bagAmount(proxyAddress));
+      const _bagBalance = DAI(
+        await maker
+          .service('migration')
+          .getMigration('global-settlement-dai-redeemer')
+          .bagAmount(proxyAddress)
+      );
       const _dsrBalance = await maker.service('mcd:savings').balance();
       const _daiDsrBagBalance = _daiBalance.plus(_bagBalance).plus(_dsrBalance);
 
       const tub = maker.service('smartContract').getContract('SAI_TUB');
       const tubState = {
-        per: await tub.per(), // WETH/PETH ratio 
+        per: await tub.per(), // WETH/PETH ratio
         off: true, //await tub.off(), // SCD is shut down
         out: false //await tub.out() // cooldown ended
       };
@@ -294,7 +296,7 @@ function Overview({ fetching }) {
   const shouldShowRedeemVaults =
     vaultsToRedeem && vaultsToRedeem.claims.length > 0;
 
-  // console.log(tubState);
+  console.log('tub state:', tubState);
   const shouldShowSCDESCollateral = tubState.off && countCdps(cdps) > 0;
   const shouldShowSCDESSai = tubState.off && shouldShowDai;
 
@@ -480,8 +482,7 @@ function Overview({ fetching }) {
                 </Text.p>
                 {!tubState.out && (
                   <Text.p t="body">
-                    Sai redemption in progress. Cooldown period ends in
-                    TODO
+                    Sai redemption in progress. Cooldown period ends in TODO
                   </Text.p>
                 )}
               </>
@@ -492,8 +493,9 @@ function Overview({ fetching }) {
               title="Redeem Sai for collateral"
               onSelected={() => Router.push('/migration/scd-es-sai')}
             >
-              <Text.p t='body'>
-                Redeem your Sai for a proportional amount of WETH from the Single-Collateral Sai system.
+              <Text.p t="body">
+                Redeem your Sai for a proportional amount of WETH from the
+                Single-Collateral Sai system.
               </Text.p>
             </MigrationCard>
           )}

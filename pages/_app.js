@@ -23,13 +23,14 @@ export default class MyApp extends App {
 
   componentDidMount() {
     this.setState({
-      network: window.location.search.includes('kovan') ? 'kovan' : 'mainnet'
+      network: window.location.search.includes('kovan') ? 'kovan' : 'mainnet',
+      scdESTest: !!window.location.search.includes('scdes')
     });
   }
 
   render() {
     const { Component, pageProps } = this.props;
-    const { network } = this.state;
+    const { network, scdESTest } = this.state;
     return (
       <Fragment>
         <Head>
@@ -37,7 +38,7 @@ export default class MyApp extends App {
         </Head>
         <GlobalStyle />
         <ThemeProvider theme={theme}>
-          <MakerProvider network={network}>
+          <MakerProvider network={network} options={{scdESTest}}>
             <StoreProvider>
               <Component {...pageProps} />
               <Toast />

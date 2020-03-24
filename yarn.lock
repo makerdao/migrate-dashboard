@@ -915,6 +915,13 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
+"@babel/runtime@^7.7.4":
+  version "7.9.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.9.2.tgz#d90df0583a3a252f09aaa619665367bae518db06"
+  integrity sha512-NE2DtOdufG7R5vnfQUTehdTfNycfUANEtCa9PssN9O/xmTzP4E08UI797ixaei6hBEVL9BI/PsdJS5x7mWoB9Q==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/template@^7.4.0", "@babel/template@^7.6.0", "@babel/template@^7.7.0":
   version "7.7.0"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.7.0.tgz#4fadc1b8e734d97f56de39c77de76f2562e597d0"
@@ -1335,14 +1342,14 @@
     babel-runtime "^6.26.0"
     walletlink "^1.0.0"
 
-"@makerdao/dai@^0.23.2":
-  version "0.23.2"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.23.2.tgz#6c9dcf999ac2fd37904b666f9dd15038ebed46d2"
-  integrity sha512-N4V3kGaJl2/eerFXjW/GmZvjDHeIduYp7qrp6E4B9AXQOaSoD8mTIeqvlyweHHr/iNpNidlE/stQsM/rNKt/aw==
+"@makerdao/dai@^0.28.2":
+  version "0.28.2"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.28.2.tgz#b1203b28194172238b51de315901c6096e5ceef1"
+  integrity sha512-s3SWHCG0XYxG23itwT0Stec4Wg93FODsZMbCAKgDBgI1WFkV60XyenCX07B90jy0Lpttg+80CM5AXO2Uh03HKA==
   dependencies:
     "@babel/runtime" "^7.3.4"
     "@makerdao/currency" "^0.9.5"
-    "@makerdao/multicall" "^0.9.0-rc.2"
+    "@makerdao/multicall" "^0.11.0"
     "@makerdao/services-core" "^0.9.9"
     assert "^1.4.1"
     bignumber.js "^7.2.1"
@@ -1356,6 +1363,7 @@
     isomorphic-fetch "^2.2.1"
     lodash "^4.17.11"
     promise-props "^1.0.0"
+    rxjs "^6.5.4"
     toposort "^2.0.2"
     web3 "1.2.1"
     web3-provider-engine makerdao/provider-engine#kovan-fix-dist
@@ -1370,16 +1378,17 @@
   resolved "https://registry.yarnpkg.com/@makerdao/i18n-helper/-/i18n-helper-0.1.7.tgz#e0e06bf8bc0ee60b2ccd9a35d91253ab7275be4a"
   integrity sha512-z3bdSoJr3bEazKmEtjPYtfhmLaWVaA3EyEfu3thPrdTRjIjrAwAbh4mu0/aW6/nV/pbCA7ZxobI3r2WTpVPJlg==
 
-"@makerdao/multicall@^0.9.0-rc.2":
-  version "0.9.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@makerdao/multicall/-/multicall-0.9.0-rc.2.tgz#2a005df4f41f5097784781be077f09d9c82776e2"
-  integrity sha512-WRiMqugAIDvPFAadNg3+dgV16G94K5EGIJUUs2Ee9tzprX8+lPOhytVxQpnkAiLTP3ac108QtjTiKpKYLdOhpw==
+"@makerdao/multicall@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@makerdao/multicall/-/multicall-0.11.0.tgz#690f0fc85f0ca0d430263034df6956b3ad71cbf7"
+  integrity sha512-qr5Isrw42z3MAxqn3vcb2z56/RmecZ+cC59hTbTrBrPwCOVpTRC8bD9trh6Q0HD2P9sXnbMa8PAJDaUyjaGiPg==
   dependencies:
+    "@babel/runtime" "^7.7.4"
     cross-fetch "^3.0.4"
     debug "^4.1.1"
     ethers "^4.0.27"
+    invariant "^2.2.4"
     isomorphic-ws "^4.0.1"
-    js-sha3 "^0.8.0"
     lodash "^4.17.11"
     ws "^7.2.0"
 
@@ -7100,11 +7109,6 @@ js-sha3@^0.6.1:
   resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.6.1.tgz#5b89f77a7477679877f58c4a075240934b1f95c0"
   integrity sha1-W4n3enR3Z5h39YxKB1JAk0sflcA=
 
-js-sha3@^0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.8.0.tgz#b9b7a5da73afad7dedd0f8c463954cbde6818840"
-  integrity sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==
-
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -9951,6 +9955,11 @@ regenerator-runtime@^0.13.2:
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.3.tgz#7cf6a77d8f5c6f60eb73c5fc1955b2ceb01e6bf5"
   integrity sha512-naKIZz2GQ8JWh///G7L3X6LaQUAMp2lvb1rvwwsURe/VXwD6VMfr+/1NuNw3ag8v2kY1aQ/go5SNn79O9JU7yw==
 
+regenerator-runtime@^0.13.4:
+  version "0.13.5"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.5.tgz#d878a1d094b4306d10b9096484b33ebd55e26697"
+  integrity sha512-ZS5w8CpKFinUzOwW3c83oPeVXoNsrLsaCoLtJvAClH135j/R77RuymhiSErhm2lKcwSCIpmvIWSbDkIfAqKQlA==
+
 regenerator-transform@^0.10.0:
   version "0.10.1"
   resolved "https://registry.yarnpkg.com/regenerator-transform/-/regenerator-transform-0.10.1.tgz#1e4996837231da8b7f3cf4114d71b5691a0680dd"
@@ -10278,6 +10287,13 @@ rxjs@^6.3.3, rxjs@^6.4.0, rxjs@^6.5.3:
   version "6.5.3"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.3.tgz#510e26317f4db91a7eb1de77d9dd9ba0a4899a3a"
   integrity sha512-wuYsAYYFdWTAnAaPoKGNhfpWwKZbJW+HgAJ+mImp+Epl7BG8oNWBCTyRM8gba9k4lk8BgWdoYm21Mo/RYhhbgA==
+  dependencies:
+    tslib "^1.9.0"
+
+rxjs@^6.5.4:
+  version "6.5.4"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.4.tgz#e0777fe0d184cec7872df147f303572d414e211c"
+  integrity sha512-naMQXcgEo3csAEGvw/NydRA0fuS2nDZJiw1YUWFKU7aPPAPGZEsD4Iimit96qwCieH6y614MCLYwdkrWx7z/7Q==
   dependencies:
     tslib "^1.9.0"
 
