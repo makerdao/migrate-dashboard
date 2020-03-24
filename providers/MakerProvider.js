@@ -3,13 +3,13 @@ import { instantiateMaker } from '../maker';
 
 export const MakerObjectContext = createContext();
 
-function MakerProvider({ children, network, options }) {
+function MakerProvider({ children, network }) {
   const [account, setAccount] = useState(null);
   const [maker, setMaker] = useState(null);
 
   useEffect(() => {
     if (!network) return;
-    instantiateMaker(network, options).then(maker => {
+    instantiateMaker(network).then(maker => {
       setMaker(maker);
       if (maker.service('accounts').hasAccount())
         setAccount(maker.currentAccount());

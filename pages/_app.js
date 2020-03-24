@@ -21,16 +21,21 @@ const GlobalStyle = createGlobalStyle`
 export default class MyApp extends App {
   state = {};
 
+  UNSAFE_componentWillMount() {
+    if (typeof window !== 'undefined') {
+      global.scdESTest = !!window.location.search.includes('scdes');
+    }
+  }
+
   componentDidMount() {
     this.setState({
-      network: window.location.search.includes('kovan') ? 'kovan' : 'mainnet',
-      scdESTest: !!window.location.search.includes('scdes')
+      network: window.location.search.includes('kovan') ? 'kovan' : 'mainnet'
     });
   }
 
   render() {
     const { Component, pageProps } = this.props;
-    const { network, scdESTest } = this.state;
+    const { network } = this.state;
     return (
       <Fragment>
         <Head>
@@ -38,7 +43,7 @@ export default class MyApp extends App {
         </Head>
         <GlobalStyle />
         <ThemeProvider theme={theme}>
-          <MakerProvider network={network} options={{scdESTest}}>
+          <MakerProvider network={network}>
             <StoreProvider>
               <Component {...pageProps} />
               <Toast />

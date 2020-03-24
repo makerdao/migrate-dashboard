@@ -10,6 +10,27 @@ export default class SingleToMultiCdp {
 
   async check() {
     const address = this._manager.get('accounts').currentAddress();
+
+    if (global.scdESTest) {
+      console.log('looking up cdp ids from logs; excludes proxy cdps');
+      const scs = this._manager.get('smartContract');
+      const ws = this._manager.get('web3');
+      const { utils } = ws._web3;
+      const { LogNewCup } = scs.getContract('SAI_TUB').interface.events;
+
+      const logs = await ws.getPastLogs({
+        address: scs.getContractAddress('SAI_TUB'),
+        topics: [
+          utils.keccak256(utils.toHex(LogNewCup.signature)),
+          '0x000000000000000000000000' + address.replace(/^0x/, '')
+        ],
+        fromBlock: 4750000 // Dec 17, 2017 on mainnet; earlier on Kovan
+      });
+      return logs.length > 0
+        ? { [address]: logs.map(l => parseInt(l.data, 16)) }
+        : {};
+    }
+
     const proxyAddress = await this._manager.get('proxy').currentProxy();
     const idsFromProxy = proxyAddress
       ? await this._manager.get('cdp').getCdpIds(proxyAddress)

@@ -41,7 +41,7 @@ const scdESTestAddressOverrides = {
   SAI_ADM: '0xdE6058CeBF6C5C2FE7aD791df862Ff683Cf3D7e9'
 };
 
-export async function instantiateMaker(network, { scdESTest }) {
+export async function instantiateMaker(network) {
   const url =
     network === 'test'
       ? process.env.TEST_RPC_URL
@@ -90,7 +90,7 @@ export async function instantiateMaker(network, { scdESTest }) {
     token: { addressOverrides: {} }
   };
 
-  if (scdESTest) {
+  if (global.scdESTest) {
     console.log('using custom SCD deployment');
     Object.assign(config.token.addressOverrides, {
       PETH: scdESTestAddressOverrides.SAI_SKR,
