@@ -15,7 +15,6 @@ import LoadingToggle from '../LoadingToggle';
 import useMaker from '../../hooks/useMaker';
 import { MDAI } from '@makerdao/dai-plugin-mcd';
 import useStore from '../../hooks/useStore';
-import MigrationService from '../../plugin/src/MigrationService';
 
 function ConfirmRedeem({
   onPrev,
@@ -116,7 +115,7 @@ function ConfirmRedeem({
         <Grid gridRowGap="s">
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
             <Grid gridRowGap="s" width="567px">
-              <CollateralTable data={fixedPrices} />
+              <CollateralTable data={fixedPrices} amount={redeemAmount} />
               <Grid gridRowGap="s" px="s" width="300px">
                 {showProxy && (
                   <LoadingToggle
