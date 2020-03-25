@@ -216,12 +216,15 @@ function OverviewDataFetch() {
 
       const tub = maker.service('smartContract').getContract('SAI_TUB');
       const tubState = {
-        per: await tub.per(), // WETH/PETH ratio 
+        per: await tub.per(), // WETH/PETH ratio
         off: true, //await tub.off(), // SCD is shut down
         out: false //await tub.out() // cooldown ended
       };
 
       setFetching(false);
+
+      const pethInVaults = 0
+      const pethInAccount = 0
 
       dispatch({
         type: 'assign',
@@ -237,7 +240,8 @@ function OverviewDataFetch() {
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
           vaultsToRedeem: { claims: validClaims, parsedVaultsData },
-          tubState
+          tubState,
+
         }
       });
     })();
@@ -460,6 +464,8 @@ function Overview({ fetching }) {
           {shouldShowSCDESCollateral && (
             <MigrationCard
               title="Withdraw collateral from Sai CDPs"
+              metadataTitle="PETH holdings"
+              metadataValue={showAmount(totalPeth)}
               onSelected={() => Router.push('/migration/scd-es-cdp')}
             >
               <>
@@ -480,6 +486,8 @@ function Overview({ fetching }) {
             <MigrationCard
               title="Redeem Sai for collateral"
               onSelected={() => Router.push('/migration/scd-es-sai')}
+              metadataTitle="SAI to Redeem"
+              metadataValue={showAmount(saiBalance)}
             >
               <Text.p t='body'>
                 Redeem your Sai for a proportional amount of WETH from the Single-Collateral Sai system.

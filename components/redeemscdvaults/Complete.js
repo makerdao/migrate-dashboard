@@ -15,8 +15,8 @@ import useMaker from '../../hooks/useMaker';
 function Complete({ onClose, txHash }) {
   const { network } = useMaker();
   // To set up
-  const [{ collateralAmountToRedeem }] = useStore();
-  const amount = prettifyNumber(collateralAmountToRedeem.toNumber());
+  const [{ redeemedCollateral }] = useStore();
+  const amount = prettifyNumber(redeemedCollateral.toNumber());
 
   return (
     <Grid gridRowGap="m" mx={'s'}>
@@ -61,6 +61,7 @@ function Complete({ onClose, txHash }) {
                 <Table.td>
                   <Text display={'block'}>Exchange Rate (PETH/WETH)</Text>
                   <Text t="heading" display={'block'} fontWeight="bold">
+                  // Pass in actual exchange rate
                     1:1
                   </Text>
                 </Table.td>

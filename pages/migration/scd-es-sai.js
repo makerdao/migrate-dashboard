@@ -15,11 +15,12 @@ import InProgress from '../../components/InProgress';
 import Complete from '../../components/redeemsai/Complete'
 import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
+import InProgressImage from '../../assets/icons/daiRedeem.svg';
 
 const steps = [
   props => <SaiRedeem {...props} />,
   props => <Confirmation {...props} />,
-  props => <InProgress {...props} title="Your Sai is being redeemed" />,
+  props => <InProgress {...props} title="Your SAI is being redeemed" image={InProgressImage} />,
   props => <Complete {...props} />,
   props => (
     <Failed

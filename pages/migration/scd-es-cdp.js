@@ -15,11 +15,12 @@ import InProgress from '../../components/InProgress';
 import Complete from '../../components/redeemscdvaults/Complete'
 import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
+import InProgressImage from '../../assets/icons/daiRedeem.svg';
 
 const steps = [
   props => <CollateralRedeem {...props} />,
   props => <Confirmation {...props} />,
-  props => <InProgress {...props} title="Your collateral is being redeemed" />,
+  props => <InProgress {...props} title="Your ETH is being redeemed" image={InProgressImage} />,
   props => <Complete {...props} />,
   props => (
     <Failed

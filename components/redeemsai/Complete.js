@@ -61,6 +61,7 @@ function Complete({ onClose, txHash }) {
                 <Table.td>
                   <Text display={'block'}>Exchange Rate</Text>
                   <Text t="heading" display={'block'} fontWeight="bold">
+                  // Pass in actual exchange rate
                     1:1
                   </Text>
                 </Table.td>
