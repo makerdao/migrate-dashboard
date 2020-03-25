@@ -1,9 +1,8 @@
-import { Text, Grid, Table } from '@makerdao/ui-components-core';
+import { Text, Grid, Table, Button } from '@makerdao/ui-components-core';
 import { prettifyNumber } from '../../utils/ui';
 import BigNumber from 'bignumber.js';
-import { MDAI } from '@makerdao/dai-plugin-mcd';
 
-function CollateralTable({ data, amount }) {
+function CollateralTable({ data, amount, redeemDai }) {
   return (
     <Grid gridRowGap="s" p="m">
       <Table>
@@ -47,10 +46,23 @@ function CollateralTable({ data, amount }) {
 
                 <Table.th>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
-                    {amount ? `${prettifyNumber(MDAI(price).times(amount))} ${ilk.split('-')[0]}` : ''}
+                    {amount ? `${prettifyNumber(price.times(amount.toBigNumber()))} ${ilk.split('-')[0]}` : ''}
                   </Text.p>
                 </Table.th>
-                
+                {redeemDai ?
+                (<Table.th>
+                  <Button
+                    px="16px"
+                    py="4px"
+                    justifySelf="center"
+                    fontSize={'13px'}
+                    loading={false}
+                    disabled={false}
+                    onClick={() => redeemDai(ilk)}
+                  >
+                    Redeem
+                  </Button>
+                </Table.th>):(<Table.th/>)}
               </Table.tr>
             ))}
         </Table.tbody>
