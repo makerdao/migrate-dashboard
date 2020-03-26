@@ -14,7 +14,6 @@ function DaiRedeem({
 }) {
   const [{ daiBalance, fixedPrices }] = useStore();
   const [valid, setValid] = useState(true);
-
   const validate = value => {
     let msg;
     if (value.lte(0)) msg = 'Amount must be greater than 0';
@@ -35,7 +34,7 @@ function DaiRedeem({
         <div />
         <Grid width="567px" gridRowGap="l">
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
-            <CollateralTable data={fixedPrices} />
+            <CollateralTable data={fixedPrices} amount={redeemAmount} />
           </Card>
 
           <AmountInputCard

@@ -1,6 +1,8 @@
-import { Text, Grid, Table } from '@makerdao/ui-components-core';
+import { Text, Grid, Table, Button } from '@makerdao/ui-components-core';
+import { prettifyNumber } from '../../utils/ui';
+import BigNumber from 'bignumber.js';
 
-function CollateralTable({ data }) {
+function CollateralTable({ data, amount, redeemDai }) {
   return (
     <Grid gridRowGap="s" p="m">
       <Table>
@@ -9,15 +11,15 @@ function CollateralTable({ data }) {
             <Table.th>
               <Text t="subheading">Token</Text>
             </Table.th>
-            {/* <Table.th> */}
-            {/*   <Text t="subheading">Shutdown Value</Text> */}
-            {/* </Table.th> */}
+            <Table.th> 
+              <Text t="subheading">Shutdown Value</Text>
+            </Table.th>
             <Table.th>
               <Text t="subheading">Exchange Rate</Text>
             </Table.th>
-            {/* <Table.th> */}
-            {/*   <Text t="subheading">Amount</Text> */}
-            {/* </Table.th> */}
+            <Table.th>
+              <Text t="subheading">Amount</Text>
+            </Table.th>
           </Table.tr>
         </Table.thead>
         <Table.tbody>
@@ -32,9 +34,35 @@ function CollateralTable({ data }) {
 
                 <Table.th>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
-                    {`1 DAI : ${price} ${ilk.split('-')[0]}`}
+                    {`$${prettifyNumber(BigNumber(1).div(price))}`}
                   </Text.p>
                 </Table.th>
+
+                <Table.th>
+                  <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
+                    {`1 DAI : ${prettifyNumber(price, false, 4)} ${ilk.split('-')[0]}`}
+                  </Text.p>
+                </Table.th>
+
+                <Table.th>
+                  <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
+                    {amount ? `${prettifyNumber(price.times(amount.toBigNumber()))} ${ilk.split('-')[0]}` : ''}
+                  </Text.p>
+                </Table.th>
+                {redeemDai ?
+                (<Table.th>
+                  <Button
+                    px="16px"
+                    py="4px"
+                    justifySelf="center"
+                    fontSize={'13px'}
+                    loading={false}
+                    disabled={false}
+                    onClick={() => redeemDai(ilk)}
+                  >
+                    Redeem
+                  </Button>
+                </Table.th>):(<Table.th/>)}
               </Table.tr>
             ))}
         </Table.tbody>

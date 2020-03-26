@@ -67,6 +67,12 @@ export async function instantiateMaker(network) {
     migrationPluginConfig.addressOverrides = addresses;
   }
 
+  if (network === 'testnet') {
+    const addresses = require('./addresses-testnet.json');
+    mcdPluginConfig.addressOverrides = addresses;
+    migrationPluginConfig.addressOverrides = addresses;
+  }
+
   const config = {
     url,
     log: false,
