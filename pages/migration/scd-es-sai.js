@@ -12,16 +12,64 @@ import Router from 'next/router';
 import SaiRedeem from '../../components/redeemsai/SaiRedeem'
 import Confirmation from '../../components/redeemsai/Confirmation';
 import InProgress from '../../components/InProgress';
-import Complete from '../../components/redeemsai/Complete'
+import Complete from '../../components/Complete'
 import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
 import InProgressImage from '../../assets/icons/daiRedeem.svg';
 
+const [{ saiAmountToRedeem }] = useStore();
+const amount = saiAmountToRedeem ? prettifyNumber(saiAmountToRedeem.toNumber()) : 0;
+const completeBody = () => {
+  return (
+    <Card>
+      <Grid
+        gridRowGap="s"
+        color="darkPurple"
+        px={{ s: 'm' }}
+        py={{ s: 'xs' }}
+      >
+        <Table p={0}>
+          <Table.tbody>
+            <Table.tr>
+              <Table.td>
+                <Text display={'block'}>Sent: Sai</Text>
+                <Text t="heading" display={'block'} fontWeight="bold">
+                  {`${amount} SAI`}
+                </Text>
+              </Table.td>
+            </Table.tr>
+            <Table.tr>
+              <Table.td>
+                <Text display={'block'}>Exchange Rate</Text>
+                <Text t="heading" display={'block'} fontWeight="bold">
+                // Pass in actual exchange rate
+                  1:1
+                </Text>
+              </Table.td>
+            </Table.tr>
+            <Table.tr>
+              <Table.td>
+                <Text display={'block'}>Received: ETH</Text>
+                <Text t="heading" display={'block'} fontWeight="bold">
+                  {`${amount} ETH`}
+                </Text>
+              </Table.td>
+            </Table.tr>
+          </Table.tbody>
+        </Table>
+      </Grid>
+    </Card>
+  )
+}
+
 const steps = [
   props => <SaiRedeem {...props} />,
-  props => <Confirmation {...props} />,
   props => <InProgress {...props} title="Your SAI is being redeemed" image={InProgressImage} />,
-  props => <Complete {...props} />,
+  props => <Complete {...props}
+    title="Redemption Complete"
+    description="You&apos;ve successfully redeemed your Sai for ETH."
+    completeBody={completeBody}
+  />,
   props => (
     <Failed
       {...props}
@@ -52,17 +100,7 @@ export default function() {
     <FlowBackground>
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
         <FlowHeader account={account} showClose={currentStep <= 1} />
-        <Stepper
-          steps={['Collateral Redemption', 'Confirmation']}
-          selected={currentStep}
-          m="0 auto"
-          mt={'m'}
-          p={['0 80px', '0']}
-          opacity={currentStep < 2 ? 1 : 0}
-          transition="opacity 0.2s"
-        />
-
-        <Flex position="relative" justifyContent="center">
+        <Flex position="relative" justifyContent="center" mt="xl">
           {steps.map((step, index) => {
             return (
               <FadeInFromSide

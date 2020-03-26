@@ -1,18 +1,30 @@
-import React, { useState } from 'react';
-import { Text, Button, Grid, Card, Box } from '@makerdao/ui-components-core';
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Text,
+  Button,
+  Grid,
+  Table,
+  Link,
+  Card,
+  Checkbox,
+  Flex
+} from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
+import useMaker from '../../hooks/useMaker';
 import { TextBlock } from '../Typography';
+import LoadingToggle from '../LoadingToggle';
+import { addToastWithTimeout } from '../Toast';
 import { prettifyNumber } from '../../utils/ui';
 import { SAI, DAI } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
 
 export default ({ onNext, onPrev }) => {
   let [{ saiBalance = SAI(0)}, dispatch] = useStore();
-  // if (saiAvailable) saiAvailable = saiAvailable.toBigNumber();
-  const [saiAmountToRedeem, setSaiAmountToRedeem] = useState();
+  const [saiAmountToRedeem, setSaiAmountToRedeem] = useState(SAI(0));
   const [valid, setValid] = useState(true);
   const max = saiBalance
-  const exchangeRate = 0
+  const exchangeRate = 1
 
   const validate = value => {
     let msg;
@@ -22,6 +34,72 @@ export default ({ onNext, onPrev }) => {
     setValid(!msg);
     return msg;
   };
+
+  const { maker, account } = useMaker();
+  const [hasReadTOS, setHasReadTOS] = useState(false);
+  const [saiApprovePending, setSaiApprovePending] = useState(false);
+  const [redemptionInitiated, setRedemptionInitiated] = useState(false);
+  const [proxyDetails, setProxyDetails] = useState({});
+  const migrationContractAddress = maker
+    .service('smartContract')
+    .getContract('MIGRATION').address;
+
+  const giveProxySaiAllowance = async () => {
+    setSaiApprovePending(true);
+    try {
+      await maker
+        .getToken('SAI')
+        .approveUnlimited(migrationContractAddress);
+      setProxyDetails(proxyDetails => ({
+        ...proxyDetails,
+        hasSaiAllowance: true
+      }));
+    } catch (err) {
+      const message = err.message ? err.message : err;
+      const errMsg = `unlock sai tx failed ${message}`;
+      console.error(errMsg);
+      addToastWithTimeout(errMsg, dispatch);
+    }
+    setSaiApprovePending(false);
+  };
+
+  const redeemSai = async () => {
+    try {
+      setRedemptionInitiated(true);
+      onNext()
+      // const mig = await maker.service('migration').getMigration('dai-to-sai');
+    //   const migrationTxObject = mig.execute(daiAmountToMigrate);
+    //   maker.service('transactionManager').listen(migrationTxObject, {
+    //     pending: tx => {
+    //       setMigrationTxHash(tx.hash);
+    //       onNext();
+    //     },
+    //     error: () => showErrorMessageAndAllowExiting()
+    //   });
+    //   migrationTxObject.then(onNext);
+    } catch (err) {
+    //   const message = err.message ? err.message : err;
+    //   const errMsg = `migrate tx failed ${message}`;
+    //   console.error(errMsg);
+    //   addToastWithTimeout(errMsg, dispatch);
+    }
+  };
+
+  // Allowance Check
+  useEffect(() => {
+    (async () => {
+      if (maker && account) {
+        const connectedWalletAllowance = await maker
+          .getToken('SAI')
+          .allowance(account.address, migrationContractAddress);
+        const hasSaiAllowance = connectedWalletAllowance.gte(
+          saiAmountToRedeem.toBigNumber().times(1.05)
+        );
+        setProxyDetails({ hasSaiAllowance });
+      }
+    })();
+  }, [account, maker, saiAmountToRedeem]);
+
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
@@ -38,11 +116,12 @@ export default ({ onNext, onPrev }) => {
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
         gridGap="m"
-        my={{ s: 's', l: 'l' }}
+        mt={{ s: 'xs', l: 'm' }}
+        mb={{ s: 's', l: 'l' }}
       >
         <AmountInputCard
           max={max}
-          unit={DAI}
+          unit={SAI}
           update={setSaiAmountToRedeem}
           validate={validate}
           title="Enter the amount you would like to redeem."
@@ -79,12 +158,54 @@ export default ({ onNext, onPrev }) => {
                 SAI Balance in ETH
               </TextBlock>
               <TextBlock t="body">
-                {saiBalance * exchangeRate}
+                {saiBalance.toNumber() * exchangeRate}
               </TextBlock>
             </Grid>
           </Grid>
         </Card>
       </Grid>
+      {/* <Card>
+        <Grid px={'m'} py={'m'}>
+          <LoadingToggle
+            completeText={'SAI unlocked'}
+            loadingText={'Unlocking SAI'}
+            defaultText={'Unlock SAI to continue'}
+            tokenDisplayName={'SAI'}
+            isLoading={saiApprovePending}
+            isComplete={proxyDetails.hasSaiAllowance}
+            onToggle={giveProxySaiAllowance}
+            disabled={proxyDetails.hasSaiAllowance}
+            testId="allowance-toggle"
+          />
+        </Grid>
+      </Card> */}
+        <Flex
+          alignItems="center"
+          gridTemplateColumns="auto 1fr"
+          flexDirection="row"
+          justifyContent="center"
+          // px={'m'}
+          pb={'m'}
+        >
+          <Checkbox
+            mr="s"
+            fontSize="l"
+            checked={hasReadTOS}
+            onChange={() => setHasReadTOS(!hasReadTOS)}
+          />
+          <Text
+            t="caption"
+            color="steel"
+            data-testid="terms"
+            onClick={() => setHasReadTOS(!hasReadTOS)}
+          >
+            I have read and accept the{' '}
+            <Link target="_blank" href="/terms">
+              Terms of Service
+            </Link>
+            .
+          </Text>
+        </Flex>
       <Grid
         justifySelf="center"
         justifyContent="center"
@@ -95,10 +216,10 @@ export default ({ onNext, onPrev }) => {
           Cancel
         </Button>
         <Button
-          disabled={!saiAmountToRedeem || !valid}
+          disabled={!hasReadTOS || !proxyDetails.hasSaiAllowance || redemptionInitiated}
           onClick={() => {
             dispatch({ type: 'assign', payload: { saiAmountToRedeem } });
-            onNext();
+            redeemSai()
           }}
         >
           Continue
