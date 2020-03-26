@@ -20,7 +20,7 @@ import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
-import { SAI, DAI } from '../maker';
+import { SAI, DAI, ETH } from '../maker';
 import TooltipContents from '../components/TooltipContents';
 import { stringToBytes, fromRay, fromRad } from '../utils/ethereum';
 
@@ -232,9 +232,9 @@ function OverviewDataFetch() {
 
       setFetching(false);
 
-      const pethInVaults = 0
-      const pethInAccount = 0
-
+      const pethInVaults = ETH(0)
+      const pethInAccount = ETH(0)
+      const totalPeth = pethInVaults.add(pethInAccount)
       dispatch({
         type: 'assign',
         payload: {
@@ -254,7 +254,9 @@ function OverviewDataFetch() {
           chiefMigrationCheck: checks['chief-migrate'],
           vaultsToRedeem: { claims: validClaims, parsedVaultsData },
           tubState,
-
+          pethInVaults,
+          pethInAccount,
+          totalPeth
         }
       });
     })();
@@ -280,7 +282,8 @@ function Overview({ fetching }) {
       oldMkrBalance,
       chiefMigrationCheck,
       vaultsToRedeem,
-      tubState = {}
+      tubState = {},
+      totalPeth
     }
   ] = useStore();
 
@@ -302,9 +305,10 @@ function Overview({ fetching }) {
     vaultsToRedeem && vaultsToRedeem.claims.length > 0;
 
   console.log('tub state:', tubState);
-  const shouldShowSCDESCollateral = tubState.off && countCdps(cdps) > 0;
-  const shouldShowSCDESSai = tubState.off && shouldShowDai;
-
+  // const shouldShowSCDESCollateral = tubState.off && countCdps(cdps) > 0;
+  // const shouldShowSCDESSai = tubState.off && shouldShowDai;
+  const shouldShowSCDESCollateral = true
+  const shouldShowSCDESSai = true
   const noMigrations =
     !shouldShowCdps &&
     !shouldShowDai &&
