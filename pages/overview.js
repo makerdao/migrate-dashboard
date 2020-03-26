@@ -16,11 +16,11 @@ import useMaker from '../hooks/useMaker';
 import reduce from 'lodash/reduce';
 import { getColor } from '../utils/theme';
 import { prettifyNumber } from '../utils/ui';
-import { Breakout } from '../components/Typography';
+import { TextBlock, Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
-import { SAI, DAI, ETH } from '../maker';
+import { SAI, DAI, ETH, PETH } from '../maker';
 import TooltipContents from '../components/TooltipContents';
 import { stringToBytes, fromRay, fromRad } from '../utils/ethereum';
 
@@ -231,10 +231,23 @@ function OverviewDataFetch() {
       };
 
       setFetching(false);
+      const cdpService = await maker.service('cdp')
+      const addressCdpsIds = await cdpService.getCdpIds(account.address)
+      const proxyCdpsIds = proxyAddress ? await cdpService.getCdpIds(proxyAddress) : []
 
-      const pethInVaults = ETH(0)
-      const pethInAccount = ETH(0)
+      const cdpsCollateralFetch = async (addressCdpIds, proxyCdpIds) => {
+        const addressCdps = addressCdpIds.map(async (id) => await cdpService.getCdp(id))
+        const proxyCdps = proxyCdpIds.map(async (id) => await cdpService.getCdp(id, proxyAddress))
+        const cdpReducer = async (accumulator, cdp) => accumulator.add(await cdp.getCollateralValue(PETH))
+        const pethInAddressCdps = addressCdps.reduce(cdpReducer, PETH(0))
+        const pethInProxyCdps = proxyCdps.reduce(cdpReducer, PETH(0))
+        return pethInAddressCdps.add(pethInProxyCdps)
+      }
+
+      const pethInVaults = await cdpsCollateralFetch(addressCdpsIds, proxyCdpsIds)
+      const pethInAccount = await maker.service('token').getToken('PETH').balance()
       const totalPeth = pethInVaults.add(pethInAccount)
+
       dispatch({
         type: 'assign',
         payload: {
@@ -305,10 +318,8 @@ function Overview({ fetching }) {
     vaultsToRedeem && vaultsToRedeem.claims.length > 0;
 
   console.log('tub state:', tubState);
-  // const shouldShowSCDESCollateral = tubState.off && countCdps(cdps) > 0;
-  // const shouldShowSCDESSai = tubState.off && shouldShowDai;
-  const shouldShowSCDESCollateral = true
-  const shouldShowSCDESSai = true
+  const shouldShowSCDESCollateral = tubState.off && countCdps(cdps) > 0;
+  const shouldShowSCDESSai = tubState.off && shouldShowDai;
   const noMigrations =
     !shouldShowCdps &&
     !shouldShowDai &&
@@ -481,34 +492,34 @@ function Overview({ fetching }) {
 
           {shouldShowSCDESCollateral && (
             <MigrationCard
-              title="Withdraw collateral from Sai CDPs"
-              metadataTitle="PETH holdings"
+              title="Withdraw ETH from SAI CDP"
+              metadataTitle="PETH in Vault(s)"
               metadataValue={showAmount(totalPeth)}
               onSelected={() => Router.push('/migration/scd-es-cdp')}
             >
               <>
                 <Text.p t="body">
-                  Redeem collateral from your Single-Collateral Sai CDP for a
-                  proportional amount of WETH.
+                  Redeem your ETH from your Single-Collateral Dai Vault(s) for a
+                  proportional amount of ETH from the system.
                 </Text.p>
                 {!tubState.out && (
-                  <Text.p t="body">
+                  <TextBlock t="body" mt={'m'} color="#708390" fontWeight="500">
                     Sai redemption in progress. Cooldown period ends in TODO
-                  </Text.p>
+                  </TextBlock>
                 )}
               </>
             </MigrationCard>
           )}
           {shouldShowSCDESSai && (
             <MigrationCard
-              title="Redeem Sai for collateral"
+              title="Redeem SAI for collateral"
               onSelected={() => Router.push('/migration/scd-es-sai')}
               metadataTitle="SAI to Redeem"
               metadataValue={showAmount(saiBalance)}
             >
               <Text.p t="body">
-                Redeem your Sai for a proportional amount of WETH from the
-                Single-Collateral Sai system.
+                Redeem your Single-Collateral Dai (SAI) for a proportional amount of ETH from the
+                Single-Collateral Dai system.
               </Text.p>
             </MigrationCard>
           )}
