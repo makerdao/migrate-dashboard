@@ -24,7 +24,6 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
   const [saiAmountToRedeem, setSaiAmountToRedeem] = useState(SAI(0));
   const [valid, setValid] = useState(true);
   const max = saiBalance
-  const exchangeRate = 1
 
   const validate = value => {
     let msg;
@@ -38,6 +37,7 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [saiApprovePending, setSaiApprovePending] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState(1)
   const [redemptionInitiated, setRedemptionInitiated] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
   const migrationContractAddress = maker
@@ -83,6 +83,15 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
       addToastWithTimeout(errMsg, dispatch);
     }
   };
+  useEffect(() => {
+    (async () => {
+      if (maker) {
+        const tapContract = maker.service('smartContract').getContract('SAI_TAP')
+        const xRate = (await tapContract.fix()).toNumber()
+        setExchangeRate(xRate)
+      }
+    })()
+  }, [maker]);
 
   // Allowance Check
   // useEffect(() => {
@@ -143,14 +152,13 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
               <TextBlock t="h5" lineHeight="normal">
                 SAI Balance
               </TextBlock>
-              <TextBlock t="body">{`${saiBalance} SAI`}</TextBlock>
+              <TextBlock t="body">{`${saiBalance}`}</TextBlock>
             </Grid>
             <Grid gridRowGap="xs">
               <TextBlock t="h5" lineHeight="normal">
                 Exchange Rate
               </TextBlock>
-              {/*//TODO */}
-              <TextBlock t="body">1 SAI : 0.005 ETH</TextBlock>
+              <TextBlock t="body">{exchangeRate}</TextBlock>
             </Grid>
             <Grid gridRowGap="xs">
               <TextBlock t="h5" lineHeight="normal">
@@ -219,7 +227,7 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
             !hasReadTOS ||
             // !proxyDetails.hasSaiAllowance ||
             redemptionInitiated ||
-            !saiAmountToRedeem ||
+            !saiAmountToRedeem.toNumber() ||
             !valid
           }
           onClick={() => {
