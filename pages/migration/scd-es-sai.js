@@ -4,22 +4,24 @@
 
 import React, { useState, useEffect } from 'react';
 import useMaker from '../../hooks/useMaker';
+import useStore from '../../hooks/useStore'
+import { prettifyNumber } from '../../utils/ui';
 import FlowBackground from '../../components/FlowBackground';
 import FlowHeader from '../../components/FlowHeader';
-import { Stepper, Grid, Flex } from '@makerdao/ui-components-core';
+import { Stepper, Grid, Flex, Card, Table, Text } from '@makerdao/ui-components-core';
 import Router from 'next/router';
 // To add
 import SaiRedeem from '../../components/redeemsai/SaiRedeem'
-import Confirmation from '../../components/redeemsai/Confirmation';
 import InProgress from '../../components/InProgress';
 import Complete from '../../components/Complete'
 import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
 import InProgressImage from '../../assets/icons/daiRedeem.svg';
 
-const [{ saiAmountToRedeem }] = useStore();
-const amount = saiAmountToRedeem ? prettifyNumber(saiAmountToRedeem.toNumber()) : 0;
+
 const completeBody = () => {
+  const [{ saiAmountToRedeem }] = useStore();
+  const amount = saiAmountToRedeem ? prettifyNumber(saiAmountToRedeem.toNumber()) : 0;
   return (
     <Card>
       <Grid
@@ -68,7 +70,7 @@ const steps = [
   props => <Complete {...props}
     title="Redemption Complete"
     description="You&apos;ve successfully redeemed your Sai for ETH."
-    completeBody={completeBody}
+    completeBody
   />,
   props => (
     <Failed

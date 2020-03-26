@@ -19,7 +19,7 @@ import { prettifyNumber } from '../../utils/ui';
 import { SAI, DAI } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
 
-export default ({ onNext, onPrev }) => {
+export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) => {
   let [{ saiBalance = SAI(0)}, dispatch] = useStore();
   const [saiAmountToRedeem, setSaiAmountToRedeem] = useState(SAI(0));
   const [valid, setValid] = useState(true);
@@ -66,39 +66,38 @@ export default ({ onNext, onPrev }) => {
   const redeemSai = async () => {
     try {
       setRedemptionInitiated(true);
-      onNext()
-      // const mig = await maker.service('migration').getMigration('dai-to-sai');
-    //   const migrationTxObject = mig.execute(daiAmountToMigrate);
-    //   maker.service('transactionManager').listen(migrationTxObject, {
-    //     pending: tx => {
-    //       setMigrationTxHash(tx.hash);
-    //       onNext();
-    //     },
-    //     error: () => showErrorMessageAndAllowExiting()
-    //   });
-    //   migrationTxObject.then(onNext);
+      const saiTap = await maker.service('smartContract').getContract('TAP')
+      const redeemTxObject = saiTap.cash(saiAmountToRedeem);
+      maker.service('transactionManager').listen(redeemTxObject, {
+        pending: tx => {
+          setTxHash(tx.hash);
+          onNext();
+        },
+        error: () => showErrorMessageAndAllowExiting()
+      });
+      redeemTxObject.then(onNext)
     } catch (err) {
-    //   const message = err.message ? err.message : err;
-    //   const errMsg = `migrate tx failed ${message}`;
-    //   console.error(errMsg);
-    //   addToastWithTimeout(errMsg, dispatch);
+      const message = err.message ? err.message : err;
+      const errMsg = `migrate tx failed ${message}`;
+      console.error(errMsg);
+      addToastWithTimeout(errMsg, dispatch);
     }
   };
 
   // Allowance Check
-  useEffect(() => {
-    (async () => {
-      if (maker && account) {
-        const connectedWalletAllowance = await maker
-          .getToken('SAI')
-          .allowance(account.address, migrationContractAddress);
-        const hasSaiAllowance = connectedWalletAllowance.gte(
-          saiAmountToRedeem.toBigNumber().times(1.05)
-        );
-        setProxyDetails({ hasSaiAllowance });
-      }
-    })();
-  }, [account, maker, saiAmountToRedeem]);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (maker && account) {
+  //       const connectedWalletAllowance = await maker
+  //         .getToken('SAI')
+  //         .allowance(account.address, migrationContractAddress);
+  //       const hasSaiAllowance = connectedWalletAllowance.gte(
+  //         saiAmountToRedeem.toBigNumber().times(1.05)
+  //       );
+  //       setProxyDetails({ hasSaiAllowance });
+  //     }
+  //   })();
+  // }, [account, maker, saiAmountToRedeem]);
 
 
   return (
@@ -216,7 +215,13 @@ export default ({ onNext, onPrev }) => {
           Cancel
         </Button>
         <Button
-          disabled={!hasReadTOS || !proxyDetails.hasSaiAllowance || redemptionInitiated}
+          disabled={
+            !hasReadTOS ||
+            // !proxyDetails.hasSaiAllowance ||
+            redemptionInitiated ||
+            !saiAmountToRedeem ||
+            !valid
+          }
           onClick={() => {
             dispatch({ type: 'assign', payload: { saiAmountToRedeem } });
             redeemSai()

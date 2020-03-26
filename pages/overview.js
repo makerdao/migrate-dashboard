@@ -230,6 +230,7 @@ function OverviewDataFetch() {
         out: false //await tub.out() // cooldown ended
       };
 
+      // Run this only if shutdown happens
       setFetching(false);
       const cdpService = await maker.service('cdp')
       const addressCdpsIds = await cdpService.getCdpIds(account.address)
@@ -241,10 +242,34 @@ function OverviewDataFetch() {
         const cdpReducer = async (accumulator, cdp) => accumulator.add(await cdp.getCollateralValue(PETH))
         const pethInAddressCdps = addressCdps.reduce(cdpReducer, PETH(0))
         const pethInProxyCdps = proxyCdps.reduce(cdpReducer, PETH(0))
-        return pethInAddressCdps.add(pethInProxyCdps)
+        return {
+          pethInVaults: pethInAddressCdps.add(pethInProxyCdps),
+          cdps: addressCdps.concat(proxyCdps)
+        }
       }
+      // checks['single-to-multi-cdp']
+      // async function getCdpCollateralValue(cdp) {
+      //   const collateralValue = await cdp.getCollateralValue(PETH);
+      //   return {
+      //     collateralValue,
+      //   };
+      // }
+      //
+      // async function getAllCdpData(allCdps, maker) {
+      //   const cdpIds = Object.values(allCdps).flat();
+      //   const allCdpData = await Promise.all(
+      //     cdpIds.map(async id => {
+      //       const cdp = await maker.getCdp(id);
+      //       const data = await getCdpData(cdp);
+      //       return { ...cdp, ...data, give: cdp.give };
+      //     })
+      //   );
+      //   return allCdpData.sort(
+      //     (a, b) => b.debtValueExact.toNumber() - a.debtValueExact.toNumber()
+      //   );
+      // }
 
-      const pethInVaults = await cdpsCollateralFetch(addressCdpsIds, proxyCdpsIds)
+      const { pethInVaults, cdps } = await cdpsCollateralFetch(addressCdpsIds, proxyCdpsIds)
       const pethInAccount = await maker.service('token').getToken('PETH').balance()
       const totalPeth = pethInVaults.add(pethInAccount)
 
@@ -269,7 +294,8 @@ function OverviewDataFetch() {
           tubState,
           pethInVaults,
           pethInAccount,
-          totalPeth
+          totalPeth,
+          cdps
         }
       });
     })();
@@ -296,7 +322,7 @@ function Overview({ fetching }) {
       chiefMigrationCheck,
       vaultsToRedeem,
       tubState = {},
-      totalPeth
+      pethInVaults
     }
   ] = useStore();
 
@@ -494,7 +520,7 @@ function Overview({ fetching }) {
             <MigrationCard
               title="Withdraw ETH from SAI CDP"
               metadataTitle="PETH in Vault(s)"
-              metadataValue={showAmount(totalPeth)}
+              metadataValue={showAmount(pethInVaults)}
               onSelected={() => Router.push('/migration/scd-es-cdp')}
             >
               <>

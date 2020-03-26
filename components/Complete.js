@@ -5,9 +5,9 @@ import {
   Button,
   Link
 } from '@makerdao/ui-components-core';
-import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
-import { etherscanLink, prettifyNumber } from '../../utils/ui';
-import useMaker from '../../hooks/useMaker';
+import arrowTopRight from '../assets/icons/arrowTopRight.svg';
+import { etherscanLink } from '../utils/ui';
+import useMaker from '../hooks/useMaker';
 
 function Complete({ onClose, txHash, title, description, completeBody }) {
   const { network } = useMaker();
@@ -34,7 +34,7 @@ function Complete({ onClose, txHash, title, description, completeBody }) {
           View transaction details <img src={arrowTopRight} />
         </Button>
       </Link>
-
+      {completeBody}
       <Button
         mt="s"
         onClick={onClose}
