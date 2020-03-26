@@ -8,8 +8,10 @@ export default class SingleToMultiCdp {
     return this;
   }
 
-  async check() {
+  async check(network) {
     const address = this._manager.get('accounts').currentAddress();
+
+    if (network === 'testnet') return [];
 
     if (global.scdESTest) {
       console.log('looking up cdp ids from logs; excludes proxy cdps');

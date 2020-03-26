@@ -138,7 +138,7 @@ function showAmount(tok) {
 
 function OverviewDataFetch() {
   const [, dispatch] = useStore();
-  const { maker, account } = useMaker();
+  const { maker, account, network } = useMaker();
   const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
@@ -149,7 +149,7 @@ function OverviewDataFetch() {
     (async () => {
       if (!maker || !account) return;
       const mig = maker.service('migration');
-      const checks = await mig.runAllChecks();
+      const checks = await mig.runAllChecks(network);
       const claims = checks['global-settlement-collateral-claims'];
       const validClaims = claims.filter(c => c.redeemable);
 

@@ -28,8 +28,17 @@ export default class MyApp extends App {
   }
 
   componentDidMount() {
+    let network;
+    if (window.location.search.includes('kovan')) {
+      network = 'kovan';
+    } else if (window.location.search.includes('testnet')) {
+      network = 'testnet';
+    } else {
+      network = 'mainnet';
+    }
+
     this.setState({
-      network: window.location.search.includes('kovan') ? 'kovan' : 'mainnet'
+      network: network
     });
   }
 

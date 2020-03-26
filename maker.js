@@ -43,8 +43,8 @@ const scdESTestAddressOverrides = {
 
 export async function instantiateMaker(network) {
   const url =
-    network === 'test'
-      ? process.env.TEST_RPC_URL
+    network === 'testnet'
+      ? 'http://localhost:2000'
       : `https://${network}.infura.io/v3/${INFURA_KEY}`;
 
   // this is required here instead of being imported normally because it runs
@@ -63,6 +63,12 @@ export async function instantiateMaker(network) {
 
   if (network === 'kovan') {
     const addresses = require('./addresses-kovan.json');
+    mcdPluginConfig.addressOverrides = addresses;
+    migrationPluginConfig.addressOverrides = addresses;
+  }
+
+  if (network === 'testnet') {
+    const addresses = require('./addresses-testnet.json');
     mcdPluginConfig.addressOverrides = addresses;
     migrationPluginConfig.addressOverrides = addresses;
   }

@@ -50,11 +50,11 @@ export default class MigrationService extends PublicService {
     return this._getCachedMigration(id);
   }
 
-  async runAllChecks() {
+  async runAllChecks(network) {
     return {
       [SINGLE_TO_MULTI_CDP]: await this.getMigration(
         SINGLE_TO_MULTI_CDP
-      ).check(),
+      ).check(network),
       [SAI_TO_DAI]: await this.getMigration(SAI_TO_DAI).check(),
       [DAI_TO_SAI]: await this.getMigration(DAI_TO_SAI).check(),
       [CHIEF_MIGRATE]: await this.getMigration(CHIEF_MIGRATE).check(),
