@@ -43,8 +43,8 @@ const scdESTestAddressOverrides = {
 
 export async function instantiateMaker(network) {
   const url =
-    network === 'testnet'
-      ? 'http://localhost:2000'
+    network === 'test'
+      ? process.env.TEST_RPC_URL
       : `https://${network}.infura.io/v3/${INFURA_KEY}`;
 
   // this is required here instead of being imported normally because it runs
