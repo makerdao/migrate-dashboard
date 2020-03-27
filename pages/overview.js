@@ -167,7 +167,9 @@ function OverviewDataFetch() {
         when,
         systemDebt,
         ethFixedPrice,
-        batFixedPrice
+        batFixedPrice,
+        ethTagPrice,
+        batTagPrice
       ] = await Promise.all([
         end.live(),
         end.wait(),
@@ -175,6 +177,9 @@ function OverviewDataFetch() {
         end.debt().then(fromRad),
         ...['ETH-A', 'BAT-A'].map(ilk =>
           end.fix(stringToBytes(ilk)).then(fromRay)
+        ),
+        ...['ETH-A', 'BAT-A'].map(ilk =>
+          end.tag(stringToBytes(ilk)).then(fromRay)
         )
       ]);
       const emergencyShutdownActive = live.eq(0);
@@ -190,6 +195,11 @@ function OverviewDataFetch() {
       const fixedPrices = [
         { ilk: 'ETH-A', price: ethFixedPrice },
         { ilk: 'BAT-A', price: batFixedPrice }
+      ];
+
+      const tagPrices = [
+        { ilk: 'ETH-A', price: ethTagPrice },
+        { ilk: 'BAT-A', price: batTagPrice }
       ];
 
       const parsedVaultsData = vaultsData.map(vault => {
@@ -259,6 +269,7 @@ function OverviewDataFetch() {
           secondsUntilAuctionClose,
           systemDebt,
           fixedPrices,
+          tagPrices,
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
           daiBalance: _daiBalance,

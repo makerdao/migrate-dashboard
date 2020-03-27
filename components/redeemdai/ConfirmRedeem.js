@@ -23,7 +23,7 @@ function ConfirmRedeem({
   dispatch
 }) {
   const { maker, account } = useMaker();
-  const [{ fixedPrices, bagBalance }] = useStore();
+  const [{ fixedPrices, tagPrices, bagBalance }] = useStore();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [redeemInitiated, setRedeemInitiated] = useState(false);
   const [redeemComplete, setRedeemComplete] = useState([]);
@@ -35,11 +35,10 @@ function ConfirmRedeem({
     startedWithoutProxy,
     hasProxy
   } = useProxy();
-  console.log('bagBalance', bagBalance.toString());
   const [hasAllowance, setHasAllowance] = useState(false);
   const [allowanceLoading, setAllowanceLoading] = useState(false);
 
-  const [hasDeposit, setHasDeposit] = useState(bagBalance >= redeemAmount);
+  const [hasDeposit, setHasDeposit] = useState(bagBalance.gt(redeemAmount));
   const [depositLoading, setDepositLoading] = useState(false);
 
   const showProxy =
@@ -69,7 +68,7 @@ function ConfirmRedeem({
         .service('migration')
         .getMigration('global-settlement-dai-redeemer');
       const packAmount = redeemAmount.minus(bagBalance);
-      if (packAmount.gt(0)) await mig.packDai(redeemAmount);
+      if (packAmount.gt(0)) await mig.packDai(packAmount);
       setHasDeposit(true);
     } catch (err) {
       const message = err.message ? err.message : err;
@@ -81,6 +80,7 @@ function ConfirmRedeem({
   };
 
   const redeemDai = async (ilk) => {
+
     try {
       setRedeemInitiated(ilk);
       const mig = maker
@@ -124,7 +124,7 @@ function ConfirmRedeem({
         <Grid gridRowGap="s">
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
             <Grid gridRowGap="s" width="567px">
-              <CollateralTable data={fixedPrices} amount={redeemAmount} redeemDai={redeemDai}
+              <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} redeemDai={redeemDai}
               buttonDisabled={!hasAllowance || !hasReadTOS || !hasDeposit} redeemComplete={redeemComplete}
               buttonLoading={redeemInitiated}/>
               <Grid gridRowGap="s" px="s" width="300px">
