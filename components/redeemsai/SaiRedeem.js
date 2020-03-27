@@ -87,7 +87,7 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
     (async () => {
       if (maker) {
         const tapContract = maker.service('smartContract').getContract('SAI_TAP')
-        const xRate = (await tapContract.fix()).toNumber()
+        const xRate = (await tapContract.fix()).toNumber() / Math.pow(10, 27)
         setExchangeRate(xRate)
       }
     })()
@@ -158,7 +158,7 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
               <TextBlock t="h5" lineHeight="normal">
                 Exchange Rate
               </TextBlock>
-              <TextBlock t="body">{exchangeRate}</TextBlock>
+              <TextBlock t="body">{`1 SAI : ${exchangeRate} ETH`}</TextBlock>
             </Grid>
             <Grid gridRowGap="xs">
               <TextBlock t="h5" lineHeight="normal">
