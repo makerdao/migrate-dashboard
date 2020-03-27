@@ -40,6 +40,9 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
   const [exchangeRate, setExchangeRate] = useState(1)
   const [redemptionInitiated, setRedemptionInitiated] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
+
+  if (!maker) return null;
+
   const migrationContractAddress = maker
     .service('smartContract')
     .getContract('MIGRATION').address;
