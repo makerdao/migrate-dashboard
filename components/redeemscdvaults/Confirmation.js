@@ -101,7 +101,7 @@
               color="darkPurple"
               px={{ s: 'm' }}
               py={{ s: 'xs' }}
-              gridTemplateColumns{'auto' 'auto'}}
+              gridTemplateColumns='auto auto'
             >
               <Table p={0}>
                 <Table.tbody>

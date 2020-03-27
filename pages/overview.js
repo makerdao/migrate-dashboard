@@ -13,6 +13,7 @@ import {
   Tooltip
 } from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
+import flatten from 'lodash/flatten';
 import reduce from 'lodash/reduce';
 import { getColor } from '../utils/theme';
 import { prettifyNumber } from '../utils/ui';
@@ -166,7 +167,9 @@ function OverviewDataFetch() {
         when,
         systemDebt,
         ethFixedPrice,
-        batFixedPrice
+        batFixedPrice,
+        ethTagPrice,
+        batTagPrice
       ] = await Promise.all([
         end.live(),
         end.wait(),
@@ -174,6 +177,9 @@ function OverviewDataFetch() {
         end.debt().then(fromRad),
         ...['ETH-A', 'BAT-A'].map(ilk =>
           end.fix(stringToBytes(ilk)).then(fromRay)
+        ),
+        ...['ETH-A', 'BAT-A'].map(ilk =>
+          end.tag(stringToBytes(ilk)).then(fromRay)
         )
       ]);
       const emergencyShutdownActive = live.eq(0);
@@ -189,6 +195,11 @@ function OverviewDataFetch() {
       const fixedPrices = [
         { ilk: 'ETH-A', price: ethFixedPrice },
         { ilk: 'BAT-A', price: batFixedPrice }
+      ];
+
+      const tagPrices = [
+        { ilk: 'ETH-A', price: ethTagPrice },
+        { ilk: 'BAT-A', price: batTagPrice }
       ];
 
       const parsedVaultsData = vaultsData.map(vault => {
@@ -215,63 +226,40 @@ function OverviewDataFetch() {
       const _daiBalance = DAI(await maker.getToken('MDAI').balance());
       const proxyAddress = await maker.service('proxy').currentProxy();
       let _bagBalance = DAI(0);
-      if(proxyAddress)
-        _bagBalance = DAI(await maker
-          .service('migration')
-          .getMigration('global-settlement-dai-redeemer')
-          .bagAmount(proxyAddress));
+      if (proxyAddress)
+        _bagBalance = DAI(
+          await maker
+            .service('migration')
+            .getMigration('global-settlement-dai-redeemer')
+            .bagAmount(proxyAddress)
+        );
       const _dsrBalance = await maker.service('mcd:savings').balance();
       const _daiDsrBagBalance = _daiBalance.plus(_bagBalance).plus(_dsrBalance);
 
       const tub = maker.service('smartContract').getContract('SAI_TUB');
       const tubState = {
         per: await tub.per(), // WETH/PETH ratio
-        off: true, //await tub.off(), // SCD is shut down
-        out: false //await tub.out() // cooldown ended
+        off: await tub.off(), // SCD is shut down
+        out: await tub.out() // cooldown ended
       };
 
-      // Run this only if shutdown happens
-      setFetching(false);
-      const cdpService = await maker.service('cdp')
-      const addressCdpsIds = await cdpService.getCdpIds(account.address)
-      const proxyCdpsIds = proxyAddress ? await cdpService.getCdpIds(proxyAddress) : []
-
-      const cdpsCollateralFetch = async (addressCdpIds, proxyCdpIds) => {
-        const addressCdps = addressCdpIds.map(async (id) => await cdpService.getCdp(id))
-        const proxyCdps = proxyCdpIds.map(async (id) => await cdpService.getCdp(id, proxyAddress))
-        const cdpReducer = async (accumulator, cdp) => accumulator.add(await cdp.getCollateralValue(PETH))
-        const pethInAddressCdps = addressCdps.reduce(cdpReducer, PETH(0))
-        const pethInProxyCdps = proxyCdps.reduce(cdpReducer, PETH(0))
-        return {
-          pethInVaults: pethInAddressCdps.add(pethInProxyCdps),
-          cdps: addressCdps.concat(proxyCdps)
+      let pethInVaults = PETH(0);
+      let pethInAccount, totalPeth;
+      if (tubState.off && countCdps(checks['single-to-multi-cdp']) > 0) {
+        const cdpService = maker.service('cdp');
+        const ids = flatten(Object.values(checks['single-to-multi-cdp']));
+        for (const id of ids) {
+          const value = await cdpService.getCollateralValue(id);
+          pethInVaults = pethInVaults.plus(PETH(value));
         }
+        pethInAccount = await maker
+          .service('token')
+          .getToken('PETH')
+          .balance();
+        totalPeth = pethInVaults.plus(pethInAccount);
       }
-      // checks['single-to-multi-cdp']
-      // async function getCdpCollateralValue(cdp) {
-      //   const collateralValue = await cdp.getCollateralValue(PETH);
-      //   return {
-      //     collateralValue,
-      //   };
-      // }
-      //
-      // async function getAllCdpData(allCdps, maker) {
-      //   const cdpIds = Object.values(allCdps).flat();
-      //   const allCdpData = await Promise.all(
-      //     cdpIds.map(async id => {
-      //       const cdp = await maker.getCdp(id);
-      //       const data = await getCdpData(cdp);
-      //       return { ...cdp, ...data, give: cdp.give };
-      //     })
-      //   );
-      //   return allCdpData.sort(
-      //     (a, b) => b.debtValueExact.toNumber() - a.debtValueExact.toNumber()
-      //   );
-      // }
 
-      const { pethInVaults, cdps } = await cdpsCollateralFetch(addressCdpsIds, proxyCdpsIds)
-      const pethInAccount = await maker.service('token').getToken('PETH').balance()
-      const totalPeth = pethInVaults.add(pethInAccount)
+      setFetching(false);
 
       dispatch({
         type: 'assign',
@@ -281,6 +269,7 @@ function OverviewDataFetch() {
           secondsUntilAuctionClose,
           systemDebt,
           fixedPrices,
+          tagPrices,
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
           daiBalance: _daiBalance,
@@ -294,8 +283,7 @@ function OverviewDataFetch() {
           tubState,
           pethInVaults,
           pethInAccount,
-          totalPeth,
-          cdps
+          totalPeth
         }
       });
     })();
@@ -346,6 +334,7 @@ function Overview({ fetching }) {
   console.log('tub state:', tubState);
   const shouldShowSCDESCollateral = tubState.off && countCdps(cdps) > 0;
   const shouldShowSCDESSai = tubState.off && shouldShowDai;
+
   const noMigrations =
     !shouldShowCdps &&
     !shouldShowDai &&
@@ -544,8 +533,8 @@ function Overview({ fetching }) {
               metadataValue={showAmount(saiBalance)}
             >
               <Text.p t="body">
-                Redeem your Single-Collateral Dai (SAI) for a proportional amount of ETH from the
-                Single-Collateral Dai system.
+                Redeem your Single-Collateral Dai (SAI) for a proportional
+                amount of ETH from the Single-Collateral Dai system.
               </Text.p>
             </MigrationCard>
           )}
