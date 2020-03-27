@@ -42,7 +42,7 @@ export default ({ migrationTxHash, title, image }) => {
         <Flex justifyContent="center">
           <img
             src={image}
-            css={{ marginTop: '5px', width: '80px', height: '80px' }}
+            css={{ marginTop: '20px'}}
           />
         </Flex>
       )}

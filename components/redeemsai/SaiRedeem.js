@@ -21,9 +21,17 @@ import AmountInputCard from '../AmountInputCard';
 
 export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) => {
   let [{ saiBalance = SAI(0)}, dispatch] = useStore();
+  const { maker, account } = useMaker();
+  const [hasReadTOS, setHasReadTOS] = useState(false);
+  const [saiApprovePending, setSaiApprovePending] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState(1)
+  const [redemptionInitiated, setRedemptionInitiated] = useState(false);
+  const [proxyDetails, setProxyDetails] = useState({});
   const [saiAmountToRedeem, setSaiAmountToRedeem] = useState(SAI(0));
   const [valid, setValid] = useState(true);
   const max = saiBalance
+
+  if (!maker) return null;
 
   const validate = value => {
     let msg;
@@ -32,38 +40,6 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
     else if (value.gt(saiAvailable)) msg = 'Amount exceeds Collateral availability';
     setValid(!msg);
     return msg;
-  };
-
-  const { maker, account } = useMaker();
-  const [hasReadTOS, setHasReadTOS] = useState(false);
-  const [saiApprovePending, setSaiApprovePending] = useState(false);
-  const [exchangeRate, setExchangeRate] = useState(1)
-  const [redemptionInitiated, setRedemptionInitiated] = useState(false);
-  const [proxyDetails, setProxyDetails] = useState({});
-
-  if (!maker) return null;
-
-  const migrationContractAddress = maker
-    .service('smartContract')
-    .getContract('MIGRATION').address;
-
-  const giveProxySaiAllowance = async () => {
-    setSaiApprovePending(true);
-    try {
-      await maker
-        .getToken('SAI')
-        .approveUnlimited(migrationContractAddress);
-      setProxyDetails(proxyDetails => ({
-        ...proxyDetails,
-        hasSaiAllowance: true
-      }));
-    } catch (err) {
-      const message = err.message ? err.message : err;
-      const errMsg = `unlock sai tx failed ${message}`;
-      console.error(errMsg);
-      addToastWithTimeout(errMsg, dispatch);
-    }
-    setSaiApprovePending(false);
   };
 
   const redeemSai = async () => {
@@ -86,6 +62,7 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
       addToastWithTimeout(errMsg, dispatch);
     }
   };
+
   useEffect(() => {
     (async () => {
       if (maker) {
@@ -95,22 +72,6 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
       }
     })()
   }, [maker]);
-
-  // Allowance Check
-  // useEffect(() => {
-  //   (async () => {
-  //     if (maker && account) {
-  //       const connectedWalletAllowance = await maker
-  //         .getToken('SAI')
-  //         .allowance(account.address, migrationContractAddress);
-  //       const hasSaiAllowance = connectedWalletAllowance.gte(
-  //         saiAmountToRedeem.toBigNumber().times(1.05)
-  //       );
-  //       setProxyDetails({ hasSaiAllowance });
-  //     }
-  //   })();
-  // }, [account, maker, saiAmountToRedeem]);
-
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
@@ -174,27 +135,11 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
           </Grid>
         </Card>
       </Grid>
-      {/* <Card>
-        <Grid px={'m'} py={'m'}>
-          <LoadingToggle
-            completeText={'SAI unlocked'}
-            loadingText={'Unlocking SAI'}
-            defaultText={'Unlock SAI to continue'}
-            tokenDisplayName={'SAI'}
-            isLoading={saiApprovePending}
-            isComplete={proxyDetails.hasSaiAllowance}
-            onToggle={giveProxySaiAllowance}
-            disabled={proxyDetails.hasSaiAllowance}
-            testId="allowance-toggle"
-          />
-        </Grid>
-      </Card> */}
         <Flex
           alignItems="center"
           gridTemplateColumns="auto 1fr"
           flexDirection="row"
           justifyContent="center"
-          // px={'m'}
           pb={'m'}
         >
           <Checkbox
@@ -228,7 +173,6 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
         <Button
           disabled={
             !hasReadTOS ||
-            // !proxyDetails.hasSaiAllowance ||
             redemptionInitiated ||
             !saiAmountToRedeem.toNumber() ||
             !valid
