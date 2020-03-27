@@ -37,9 +37,18 @@ describe('SCD Shutdown', () => {
   })
 
   test('should get the exchange rate', async () => {
-    // this value seems weird
+    // this value seems weird, this and the
+    // following test should be improved once
+    // the weird values are solved
     const rate = await migration.getRate();
+    console.log('fix:', rate.toString())
     expect(rate).toBeDefined();
+  });
+
+  test('should get the collateral pending liquidation', async () => {
+    const fog = await migration.fog();
+    console.log('fog:', fog.toString());
+    expect(fog).toBeDefined();
   });
 
   test('should redeem sai', async () => {
@@ -52,6 +61,5 @@ describe('SCD Shutdown', () => {
       console.error(err);
     }
     const balanceAfterRedemption = await sai.balanceOf(address);
-    console.log(balanceAfterRedemption.toNumber());
   });
 });

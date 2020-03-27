@@ -9,6 +9,10 @@ export default class RedeemSai {
     return this._tap.off();
   }
 
+  fog() {
+    return this._tap.fog();
+  }
+
   getRate() {
     return this._tap.fix();
   }
