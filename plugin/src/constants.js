@@ -13,7 +13,7 @@ export const Migrations = {
   GLOBAL_SETTLEMENT_DAI_REDEEMER: 'global-settlement-dai-redeemer',
   MKR_REDEEMER: 'mkr-redeemer',
   CHIEF_MIGRATE: 'chief-migrate',
-  SCD_SHUTDOWN: 'scd-shutdown'
+  REDEEM_SAI: 'redeem-sai'
 };
 
 export const WAD = new BigNumber('1e18');

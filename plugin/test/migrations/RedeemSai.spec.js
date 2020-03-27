@@ -2,12 +2,13 @@ import { migrationMaker } from '../helpers';
 import { ServiceRoles, Migrations } from '../../src/constants';
 import { takeSnapshot, restoreSnapshot } from '@makerdao/test-helpers';
 
-let maker, migration, snapshotData;
+let cdp, maker, migration, snapshotData;
 
 async function shutDownScd() {
   const top = maker.service('smartContract').getContract('SAI_TOP');
-  await openLockAndDrawScdCdp();
+  cdp = await openLockAndDrawScdCdp();
   await top.cage();
+  await cdp.bite();
 }
 
 async function openLockAndDrawScdCdp() {
@@ -22,7 +23,7 @@ describe('SCD Shutdown', () => {
     maker = await migrationMaker();
     snapshotData = await takeSnapshot(maker);
     const service = maker.service(ServiceRoles.MIGRATION);
-    migration = service.getMigration(Migrations.SCD_SHUTDOWN);
+    migration = service.getMigration(Migrations.REDEEM_SAI);
     await shutDownScd();
   });
 
@@ -30,14 +31,27 @@ describe('SCD Shutdown', () => {
     await restoreSnapshot(snapshotData, maker);
   });
 
-  test('shutdown on testnet initiates as expected', async () => {
-    const off = await maker.service('smartContract').getContract('SAI_TAP').off();
+  test('should be off after shutdown', async () => {
+    const off = await migration.off();
     expect(off).toBe(true);
-  });
+  })
 
   test('should get the exchange rate', async () => {
     // this value seems weird
-    const rate = await migration._tap.fix();
+    const rate = await migration.getRate();
     expect(rate).toBeDefined();
+  });
+
+  test('should redeem sai', async () => {
+    const sai = maker.getToken('DAI');
+    const address = maker.service('web3').currentAddress();
+    const balanceBeforeRedemption = await sai.balanceOf(address);
+    try {
+      await migration.redeemSai(5);
+    } catch (err) {
+      console.error(err);
+    }
+    const balanceAfterRedemption = await sai.balanceOf(address);
+    console.log(balanceAfterRedemption.toNumber());
   });
 });
