@@ -2,6 +2,8 @@ import { migrationMaker } from '../helpers';
 import { ServiceRoles, Migrations } from '../../src/constants';
 import { takeSnapshot, restoreSnapshot } from '@makerdao/test-helpers';
 import { SAI } from '../../src';
+import { getCurrency } from '@makerdao/currency';
+import { DAI } from '@makerdao/dai/dist/src/eth/Currency';
 
 let cdp, maker, migration, snapshotData;
 
@@ -21,7 +23,7 @@ async function openLockAndDrawScdCdp() {
 }
 
 describe('Redeem Sai', () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
     maker = await migrationMaker();
     snapshotData = await takeSnapshot(maker);
     const service = maker.service(ServiceRoles.MIGRATION);
@@ -29,7 +31,7 @@ describe('Redeem Sai', () => {
     await shutDownScd();
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await restoreSnapshot(snapshotData, maker);
   });
 
@@ -39,18 +41,13 @@ describe('Redeem Sai', () => {
   })
 
   test('should get the exchange rate', async () => {
-    // this value seems weird, this and the
-    // following test should be improved once
-    // the weird values are solved
     const rate = await migration.getRate();
-    console.log('fix:', rate)
-    expect(rate).toBeDefined();
+    expect(rate).toBe(0.0025);
   });
 
   test('should get the collateral pending liquidation', async () => {
     const fog = await migration.fog();
-    console.log('fog:', fog.toString());
-    expect(fog).toBeDefined();
+    expect(fog).toBe(0.025);
   });
 
   test('should redeem sai', async () => {
@@ -60,16 +57,13 @@ describe('Redeem Sai', () => {
     await sai.approveUnlimited(migration._tap.address);
     const saiBalanceBeforeRedemption = await sai.balanceOf(address);
     const wethBalanceBeforeRedemption = await gem.balanceOf(address);
-    try {
-      await migration.redeemSai(sai._valueForContract(5, 'DAI'));
-    } catch (err) {
-      console.error(err);
-    }
+    await migration.redeemSai(5);
     const saiBalanceAfterRedemption = await sai.balanceOf(address);
     const wethBalanceAfterRedemption = await gem.balanceOf(address);
-    console.log('saiBalanceBeforeRedemption', saiBalanceBeforeRedemption.toNumber());
-    console.log('saiBalanceAfterRedemption', saiBalanceAfterRedemption.toNumber());
-    console.log('wethBalanceBeforeRedemption', wethBalanceBeforeRedemption.toNumber());
-    console.log('wethBalanceAfterRedemption', wethBalanceAfterRedemption.toNumber());
+
+    expect(saiBalanceBeforeRedemption.toNumber()).toBe(10);
+    expect(saiBalanceAfterRedemption.toNumber()).toBe(5);
+    expect(wethBalanceBeforeRedemption.toNumber()).toBe(0);
+    expect(wethBalanceAfterRedemption.toNumber()).toBe(0.0125);
   });
 });

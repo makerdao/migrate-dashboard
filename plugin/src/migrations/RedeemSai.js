@@ -1,3 +1,5 @@
+import { DAI } from "..";
+
 export default class RedeemSai {
   constructor(manager) {
     this._manager = manager;
@@ -20,6 +22,6 @@ export default class RedeemSai {
   }
 
   redeemSai(wad) {
-    return this._tap.cash(wad);
+    return this._tap.cash(DAI(wad).toFixed(18));
   }
 }
