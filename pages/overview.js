@@ -35,14 +35,14 @@ function clock(delta) {
   const minutes = Math.floor(delta / 60) % 60;
   delta -= minutes * 60;
 
-  const seconds = delta % 60;
+  const seconds = Math.floor(delta) % 60;
 
   const pad = val => (val < 10 ? '0' + val.toString() : val.toString());
 
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
-const Timer = ({ seconds }) => {
+const Timer = ({ seconds, children }) => {
   // initialize timeLeft with the seconds prop
   const [timeLeft, setTimeLeft] = useState(seconds);
 
@@ -65,14 +65,7 @@ const Timer = ({ seconds }) => {
         fontSize="m"
         ml="xs"
         color={getColor('steel')}
-        content={
-          <TooltipContents>
-            Dai holders need to wait for the cooldown period to complete because
-            vaults have priority as their debt needs to be cleared first. This
-            will allow the correct amount of underlying collateral to be
-            calculated as part of your Dai redemption.
-          </TooltipContents>
-        }
+        content={<TooltipContents>{children}</TooltipContents>}
       />
     </Flex>
   );
@@ -236,11 +229,15 @@ function OverviewDataFetch() {
       const _dsrBalance = await maker.service('mcd:savings').balance();
       const _daiDsrBagBalance = _daiBalance.plus(_bagBalance).plus(_dsrBalance);
 
-      const tub = maker.service('smartContract').getContract('SAI_TUB');
+      const scs = maker.service('smartContract');
+      const tub = scs.getContract('SAI_TUB');
+      const top = scs.getContract('SAI_TOP');
       const tubState = {
         per: await tub.per(), // WETH/PETH ratio
         off: await tub.off(), // SCD is shut down
-        out: await tub.out() // cooldown ended
+        out: await tub.out(), // cooldown ended
+        caged: await top.caged(),
+        cooldown: await top.cooldown()
       };
 
       let pethInVaults = PETH(0);
@@ -479,7 +476,13 @@ function Overview({ fetching }) {
                   collateral from the Multi-Collateral Dai system
                 </Text.p>
                 {secondsUntilAuctionClose > 0 ? (
-                  <Timer seconds={secondsUntilAuctionClose} />
+                  <Timer seconds={secondsUntilAuctionClose}>
+                    Dai holders need to wait for the cooldown period to complete
+                    because vaults have priority as their debt needs to be
+                    cleared first. This will allow the correct amount of
+                    underlying collateral to be calculated as part of your Dai
+                    redemption.
+                  </Timer>
                 ) : !systemDebt.gt(0) ? (
                   <Text.p
                     fontSize="15px"
@@ -506,24 +509,7 @@ function Overview({ fetching }) {
           )}
 
           {shouldShowSCDESCollateral && (
-            <MigrationCard
-              title="Withdraw ETH from SAI CDP"
-              metadataTitle="PETH in Vault(s)"
-              metadataValue={showAmount(pethInVaults)}
-              onSelected={() => Router.push('/migration/scd-es-cdp')}
-            >
-              <>
-                <Text.p t="body">
-                  Redeem your ETH from your Single-Collateral Dai Vault(s) for a
-                  proportional amount of ETH from the system.
-                </Text.p>
-                {!tubState.out && (
-                  <TextBlock t="body" mt={'m'} color="#708390" fontWeight="500">
-                    Sai redemption in progress. Cooldown period ends in TODO
-                  </TextBlock>
-                )}
-              </>
-            </MigrationCard>
+            <SCDESCollateralCard {...{ tubState, pethInVaults }} />
           )}
           {shouldShowSCDESSai && (
             <MigrationCard
@@ -567,6 +553,49 @@ function Overview({ fetching }) {
         )}
       </Box>
     </Flex>
+  );
+}
+
+function SCDESCollateralCard({ tubState, pethInVaults }) {
+  const { out, caged, cooldown } = tubState;
+  const endTime = !out && caged.toNumber() + cooldown.toNumber();
+  const seconds = endTime - new Date().getTime() / 1000;
+  const canEnter = seconds <= 0;
+
+  return (
+    <MigrationCard
+      title="Withdraw ETH from SAI CDP"
+      metadataTitle="PETH in Vault(s)"
+      metadataValue={showAmount(pethInVaults)}
+      onSelected={() => Router.push('/migration/scd-es-cdp')}
+      disabled={!canEnter}
+    >
+      <>
+        <Text.p t="body">
+          Redeem your ETH from your Single-Collateral Dai Vault(s) for a
+          proportional amount of ETH from the system.
+        </Text.p>
+        {!out &&
+          (canEnter ? (
+            <TextBlock t="body" mt={'m'} color="#708390" fontWeight="500">
+              Sai redemption in progress. Cooldown period ends in{' '}
+              <Timer seconds={seconds}>
+                CDP holders must wait for all outstanding debt to be removed in
+                order to balance out the ETH:PETH ratio.
+              </Timer>
+            </TextBlock>
+          ) : (
+            <TextBlock
+              t="body"
+              mt={'m'}
+              color="#708390"
+              fontWeight="500"
+            >
+              Cooldown period has ended and access will be granted soon.
+            </TextBlock>
+          ))}
+      </>
+    </MigrationCard>
   );
 }
 
