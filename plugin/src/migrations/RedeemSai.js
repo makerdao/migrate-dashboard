@@ -9,12 +9,14 @@ export default class RedeemSai {
     return this._tap.off();
   }
 
-  fog() {
-    return this._tap.fog();
+  async fog() {
+    const fog = await this._tap.fog();
+    return fog / Math.pow(10, 18);
   }
 
-  getRate() {
-    return this._tap.fix();
+  async getRate() {
+    const fix = await this._tap.fix();
+    return fix / Math.pow(10, 27);
   }
 
   redeemSai(wad) {

@@ -1,6 +1,7 @@
 import { migrationMaker } from '../helpers';
 import { ServiceRoles, Migrations } from '../../src/constants';
 import { takeSnapshot, restoreSnapshot } from '@makerdao/test-helpers';
+import { SAI } from '../../src';
 
 let cdp, maker, migration, snapshotData;
 
@@ -9,6 +10,7 @@ async function shutDownScd() {
   cdp = await openLockAndDrawScdCdp();
   await top.cage();
   await cdp.bite();
+  SAI
 }
 
 async function openLockAndDrawScdCdp() {
@@ -18,7 +20,7 @@ async function openLockAndDrawScdCdp() {
   return cdp;
 }
 
-describe('SCD Shutdown', () => {
+describe('Redeem Sai', () => {
   beforeEach(async () => {
     maker = await migrationMaker();
     snapshotData = await takeSnapshot(maker);
@@ -41,7 +43,7 @@ describe('SCD Shutdown', () => {
     // following test should be improved once
     // the weird values are solved
     const rate = await migration.getRate();
-    console.log('fix:', rate.toString())
+    console.log('fix:', rate)
     expect(rate).toBeDefined();
   });
 
@@ -53,13 +55,21 @@ describe('SCD Shutdown', () => {
 
   test('should redeem sai', async () => {
     const sai = maker.getToken('DAI');
+    const gem = maker.getToken('WETH');
     const address = maker.service('web3').currentAddress();
-    const balanceBeforeRedemption = await sai.balanceOf(address);
+    await sai.approveUnlimited(migration._tap.address);
+    const saiBalanceBeforeRedemption = await sai.balanceOf(address);
+    const wethBalanceBeforeRedemption = await gem.balanceOf(address);
     try {
-      await migration.redeemSai(5);
+      await migration.redeemSai(sai._valueForContract(5, 'DAI'));
     } catch (err) {
       console.error(err);
     }
-    const balanceAfterRedemption = await sai.balanceOf(address);
+    const saiBalanceAfterRedemption = await sai.balanceOf(address);
+    const wethBalanceAfterRedemption = await gem.balanceOf(address);
+    console.log('saiBalanceBeforeRedemption', saiBalanceBeforeRedemption.toNumber());
+    console.log('saiBalanceAfterRedemption', saiBalanceAfterRedemption.toNumber());
+    console.log('wethBalanceBeforeRedemption', wethBalanceBeforeRedemption.toNumber());
+    console.log('wethBalanceAfterRedemption', wethBalanceAfterRedemption.toNumber());
   });
 });
