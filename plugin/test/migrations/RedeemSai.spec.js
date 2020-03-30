@@ -1,22 +1,8 @@
-import { migrationMaker } from '../helpers';
+import { migrationMaker, shutDown } from '../helpers';
 import { ServiceRoles, Migrations } from '../../src/constants';
 import { takeSnapshot, restoreSnapshot } from '@makerdao/test-helpers';
 
-let cdp, maker, migration, snapshotData;
-
-async function shutDownScd() {
-  const top = maker.service('smartContract').getContract('SAI_TOP');
-  cdp = await openLockAndDrawScdCdp();
-  await top.cage();
-  await cdp.bite();
-}
-
-async function openLockAndDrawScdCdp() {
-  const cdp = await maker.openCdp();
-  await cdp.lockEth(1);
-  await cdp.drawDai(10);
-  return cdp;
-}
+let maker, migration, snapshotData;
 
 describe('Redeem Sai', () => {
   beforeAll(async () => {
@@ -24,7 +10,7 @@ describe('Redeem Sai', () => {
     snapshotData = await takeSnapshot(maker);
     const service = maker.service(ServiceRoles.MIGRATION);
     migration = service.getMigration(Migrations.REDEEM_SAI);
-    await shutDownScd();
+    await shutDown();
   });
 
   afterAll(async () => {
@@ -43,7 +29,7 @@ describe('Redeem Sai', () => {
 
   test('should get the collateral pending liquidation', async () => {
     const fog = await migration.fog();
-    expect(fog).toBe(0.025);
+    expect(fog).toBe(0.075);
   });
 
   test('should redeem sai', async () => {
@@ -57,8 +43,8 @@ describe('Redeem Sai', () => {
     const saiBalanceAfterRedemption = await sai.balanceOf(address);
     const wethBalanceAfterRedemption = await gem.balanceOf(address);
 
-    expect(saiBalanceBeforeRedemption.toNumber()).toBe(10);
-    expect(saiBalanceAfterRedemption.toNumber()).toBe(5);
+    expect(saiBalanceBeforeRedemption.toNumber()).toBe(30);
+    expect(saiBalanceAfterRedemption.toNumber()).toBe(25);
     expect(wethBalanceBeforeRedemption.toNumber()).toBe(0);
     expect(wethBalanceAfterRedemption.toNumber()).toBe(0.0125);
   });

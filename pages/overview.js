@@ -24,6 +24,7 @@ import useStore from '../hooks/useStore';
 import { SAI, DAI, ETH, PETH } from '../maker';
 import TooltipContents from '../components/TooltipContents';
 import { stringToBytes, fromRay, fromRad } from '../utils/ethereum';
+import { shutDown } from '../plugin/test/helpers';
 
 function clock(delta) {
   // const days = Math.floor(delta / 86400);
@@ -144,6 +145,9 @@ function OverviewDataFetch() {
       if (!maker || !account) return;
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
+      // the following can be removed when we're done testing this
+      if (global.scdESTest && global.testnet) await shutDown();
+      console.log('off:', await maker.service('migration').getMigration('redeem-sai').off());
       const claims = checks['global-settlement-collateral-claims'];
       const validClaims = claims.filter(c => c.redeemable);
 
