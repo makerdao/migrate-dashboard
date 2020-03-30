@@ -218,16 +218,16 @@ function OverviewDataFetch() {
 
       const _daiBalance = DAI(await maker.getToken('MDAI').balance());
       const proxyAddress = await maker.service('proxy').currentProxy();
-      let _bagBalance = DAI(0);
+      let _endBalance = DAI(0);
       if (proxyAddress)
-        _bagBalance = DAI(
+        _endBalance = DAI(
           await maker
             .service('migration')
             .getMigration('global-settlement-dai-redeemer')
             .bagAmount(proxyAddress)
         );
       const _dsrBalance = await maker.service('mcd:savings').balance();
-      const _daiDsrBagBalance = _daiBalance.plus(_bagBalance).plus(_dsrBalance);
+      const _daiDsrEndBalance = _daiBalance.plus(_endBalance).plus(_dsrBalance);
 
       const scs = maker.service('smartContract');
       const tub = scs.getContract('SAI_TUB');
@@ -270,10 +270,10 @@ function OverviewDataFetch() {
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
           daiBalance: _daiBalance,
-          bagBalance: _bagBalance,
+          endBalance: _endBalance,
           dsrBalance: _dsrBalance,
           proxyAddress,
-          daiDsrBagBalance: _daiDsrBagBalance,
+          daiDsrEndBalance: _daiDsrEndBalance,
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
           vaultsToRedeem: { claims: validClaims, parsedVaultsData },
@@ -300,7 +300,7 @@ function Overview({ fetching }) {
       cdpMigrationCheck: cdps,
       saiBalance,
       daiBalance,
-      daiDsrBagBalance,
+      daiDsrEndBalance,
       saiAvailable,
       daiAvailable,
       oldMkrBalance,
@@ -319,8 +319,8 @@ function Overview({ fetching }) {
   const shouldShowChief =
     chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
   const shouldShowCollateral =
-    daiDsrBagBalance &&
-    daiDsrBagBalance.gt(0) &&
+    daiDsrEndBalance &&
+    daiDsrEndBalance.gt(0) &&
     emergencyShutdownActive &&
     secondsUntilAuctionClose !== undefined &&
     systemDebt !== undefined &&
@@ -460,7 +460,7 @@ function Overview({ fetching }) {
             <MigrationCard
               title="Redeem Dai for collateral"
               metadataTitle="Dai to redeem"
-              metadataValue={showAmount(daiDsrBagBalance)}
+              metadataValue={showAmount(daiDsrEndBalance)}
               onSelected={() => {
                 Router.push('/migration/redeemDai');
               }}

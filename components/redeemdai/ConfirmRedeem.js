@@ -23,7 +23,7 @@ function ConfirmRedeem({
   dispatch
 }) {
   const { maker, account } = useMaker();
-  const [{ fixedPrices, tagPrices, bagBalance }] = useStore();
+  const [{ fixedPrices, tagPrices, endBalance }] = useStore();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [redeemInitiated, setRedeemInitiated] = useState(false);
   const [redeemComplete, setRedeemComplete] = useState([]);
@@ -38,7 +38,7 @@ function ConfirmRedeem({
   const [hasAllowance, setHasAllowance] = useState(false);
   const [allowanceLoading, setAllowanceLoading] = useState(false);
 
-  const [hasDeposit, setHasDeposit] = useState(bagBalance.gt(redeemAmount));
+  const [hasDeposit, setHasDeposit] = useState(endBalance.gte(redeemAmount));
   const [depositLoading, setDepositLoading] = useState(false);
 
   const showProxy =
@@ -67,7 +67,7 @@ function ConfirmRedeem({
       const mig = maker
         .service('migration')
         .getMigration('global-settlement-dai-redeemer');
-      const packAmount = redeemAmount.minus(bagBalance);
+      const packAmount = redeemAmount.minus(endBalance);
       if (packAmount.gt(0)) await mig.packDai(packAmount);
       setHasDeposit(true);
     } catch (err) {

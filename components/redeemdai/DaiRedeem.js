@@ -3,24 +3,54 @@ import { Text, Grid, Card, Button, Box } from '@makerdao/ui-components-core';
 import { DAI } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
 import CollateralTable from './CollateralTable';
+import LoadingToggle from '../LoadingToggle';
 import useStore from '../../hooks/useStore';
+import { addToastWithTimeout } from '../Toast';
+import useMaker from '../../hooks/useMaker';
+import { prettifyNumber } from '../../utils/ui';
 
 function DaiRedeem({
   onClose,
   setRedeemAmount,
   redeemAmount,
   onNext,
-  collateralData
 }) {
-  const [{ daiBalance, fixedPrices, tagPrices }] = useStore();
+  const { maker } = useMaker();
+  const [{ dsrBalance, daiBalance, endBalance, fixedPrices, tagPrices }, dispatch] = useStore();
+  const daiEndBalance = daiBalance.plus(endBalance);
   const [valid, setValid] = useState(true);
+  console.log('dsrBalance', dsrBalance.toString());
+  const [dsrWithdrawn, setDsrWithdrawn] = useState(dsrBalance.eq(0));
+  const [dsrWithdrawing, setDsrWithdrawing] = useState(false);
   const validate = value => {
     let msg;
     if (value.lte(0)) msg = 'Amount must be greater than 0';
-    else if (value.gt(daiBalance)) msg = 'Insufficient Dai balance';
+    else if (value.gt(daiEndBalance)) msg = 'Insufficient Dai balance';
 
     setValid(!msg);
     return msg;
+  };
+
+  const withdrawDsr = async () => {
+    setDsrWithdrawing(true);
+    try {
+      await maker.service('mcd:savings').exitAll();
+      const newDaiBalance = DAI(await maker.getToken('MDAI').balance());
+      dispatch({
+        type: 'assign',
+        payload: {
+          daiBalance: newDaiBalance,
+          dsrBalance: DAI(0)
+        }
+      });
+      setDsrWithdrawn(true);
+    } catch (err) {
+      const message = err.message ? err.message : err;
+      const errMsg = `withdraw savings Dai tx failed: ${message}`;
+      console.error(errMsg);
+      addToastWithTimeout(errMsg, dispatch);
+    }
+    setDsrWithdrawing(false);
   };
 
   return (
@@ -36,9 +66,21 @@ function DaiRedeem({
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
             <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} />
           </Card>
-
+          {dsrBalance.gt(0) ?
+          <Card>
+           <LoadingToggle
+                  defaultText={`Withdraw ${prettifyNumber(dsrBalance.toBigNumber())} Savings DAI`}
+                  loadingText={`Withdrawing ${prettifyNumber(dsrBalance.toBigNumber())} Savings DAI`}
+                  completeText={`${prettifyNumber(dsrBalance.toBigNumber())} Savings DAI Withdrawn`}
+                  isLoading={dsrWithdrawing}
+                  isComplete={dsrWithdrawn}
+                  onToggle={withdrawDsr}
+                  disabled={dsrWithdrawn}
+                  reverse={false}
+                />
+          </Card>: ''}
           <AmountInputCard
-            max={daiBalance}
+            max={daiEndBalance}
             unit={DAI}
             update={setRedeemAmount}
             validate={validate}
@@ -52,8 +94,8 @@ function DaiRedeem({
                 ml="s"
                 color="darkLavender"
               >
-                {daiBalance && daiBalance.gt(0)
-                  ? `${daiBalance.toString(4).split(' ')[0]} DAI`
+                {daiEndBalance && daiEndBalance.gt(0)
+                  ? `${prettifyNumber(dsrBalance.toBigNumber())} DAI`
                   : '--'}
               </Text>
             </Box>
