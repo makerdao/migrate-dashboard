@@ -1,9 +1,6 @@
 import { migrationMaker } from '../helpers';
 import { ServiceRoles, Migrations } from '../../src/constants';
 import { takeSnapshot, restoreSnapshot } from '@makerdao/test-helpers';
-import { SAI } from '../../src';
-import { getCurrency } from '@makerdao/currency';
-import { DAI } from '@makerdao/dai/dist/src/eth/Currency';
 
 let cdp, maker, migration, snapshotData;
 
@@ -12,7 +9,6 @@ async function shutDownScd() {
   cdp = await openLockAndDrawScdCdp();
   await top.cage();
   await cdp.bite();
-  SAI
 }
 
 async function openLockAndDrawScdCdp() {
