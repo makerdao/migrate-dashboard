@@ -1,34 +1,108 @@
+//////////////////////
+/// Sai Redemption ///
+//////////////////////
+
+import React, { useState, useEffect } from 'react';
 import useMaker from '../../hooks/useMaker';
+import useStore from '../../hooks/useStore'
+import { prettifyNumber } from '../../utils/ui';
 import FlowBackground from '../../components/FlowBackground';
-import { Grid, Flex } from '@makerdao/ui-components-core';
 import FlowHeader from '../../components/FlowHeader';
+import { Stepper, Grid, Flex, Card, Table, Text } from '@makerdao/ui-components-core';
+import Router from 'next/router';
+// To add
+import SaiRedeem from '../../components/redeemsai/SaiRedeem'
 import InProgress from '../../components/InProgress';
+import Complete from '../../components/Complete'
+import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
-import { useState } from 'react';
-import { Router } from 'next/router';
+import InProgressImage from '../../assets/icons/daiRedeem.svg';
 
-/*
 
-Form:
-- 
-
-*/
+const completeBody = () => {
+  const [{ saiAmountToRedeem }] = useStore();
+  const amount = saiAmountToRedeem ? prettifyNumber(saiAmountToRedeem.toNumber()) : 0;
+  return (
+    <Card>
+      <Grid
+        gridRowGap="s"
+        color="darkPurple"
+        px={{ s: 'm' }}
+        py={{ s: 'xs' }}
+      >
+        <Table p={0}>
+          <Table.tbody>
+            <Table.tr>
+              <Table.td>
+                <Text display={'block'}>Sent: Sai</Text>
+                <Text t="heading" display={'block'} fontWeight="bold">
+                  {`${amount} SAI`}
+                </Text>
+              </Table.td>
+            </Table.tr>
+            <Table.tr>
+              <Table.td>
+                <Text display={'block'}>Exchange Rate</Text>
+                <Text t="heading" display={'block'} fontWeight="bold">
+                // Pass in actual exchange rate
+                  1:1
+                </Text>
+              </Table.td>
+            </Table.tr>
+            <Table.tr>
+              <Table.td>
+                <Text display={'block'}>Received: ETH</Text>
+                <Text t="heading" display={'block'} fontWeight="bold">
+                  {`${amount} ETH`}
+                </Text>
+              </Table.td>
+            </Table.tr>
+          </Table.tbody>
+        </Table>
+      </Grid>
+    </Card>
+  )
+}
 
 const steps = [
-  props => <Form {...props} />,
-  props => <InProgress {...props} title="Exchanging Sai for WETH" />
+  props => <SaiRedeem {...props} />,
+  props => <InProgress {...props} title="Your SAI is being redeemed" image={InProgressImage} />,
+  props => <Complete {...props}
+    title="Redemption Complete"
+    description="You&apos;ve successfully redeemed your Sai for ETH."
+    completeBody
+  />,
+  props => (
+    <Failed
+      {...props}
+      title="Redemption failed"
+      subtitle="Your Sai was not redeemed"
+    />
+  )
 ];
 
 export default function() {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
-  const [migrationTxHash, setMigrationTxHash] = useState(null);
+  const [txHash, setTxHash] = useState(null);
+
+  useEffect(() => {
+    if (!account) Router.replace('/');
+  }, []); // eslint-disable-line
+
+  const toPrevStepOrClose = () => {
+    if (currentStep <= 0) Router.replace('/overview');
+    setCurrentStep(s => s - 1);
+  };
+  const toNextStep = () => setCurrentStep(s => s + 1);
+  const reset = () => setCurrentStep(0);
+  const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
 
   return (
     <FlowBackground>
-      <Grid>
-        <FlowHeader account={account} />
-        <Flex position="relative" justifyContent="center">
+      <Grid gridRowGap={{ s: 's', l: 'xl' }}>
+        <FlowHeader account={account} showClose={currentStep <= 1} />
+        <Flex position="relative" justifyContent="center" mt="xl">
           {steps.map((step, index) => {
             return (
               <FadeInFromSide
@@ -39,10 +113,12 @@ export default function() {
               >
                 {step({
                   onClose: () => Router.replace('/overview'),
-                  onPrev: () => setCurrentStep(s => s - 1),
-                  onNext: () => setCurrentStep(s => s + 1),
-                  migrationTxHash,
-                  setMigrationTxHash
+                  onPrev: toPrevStepOrClose,
+                  onNext: toNextStep,
+                  onReset: reset,
+                  setTxHash,
+                  txHash,
+                  showErrorMessageAndAllowExiting
                 })}
               </FadeInFromSide>
             );
@@ -52,8 +128,3 @@ export default function() {
     </FlowBackground>
   );
 }
-
-function Form() {
-  return <div>TODO show form</div>
-}
-

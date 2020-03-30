@@ -10,6 +10,7 @@ import { createCurrency } from '@makerdao/currency';
 import assert from 'assert';
 
 export const SAI = createCurrency('SAI');
+export const PETH = createCurrency('PETH')
 export const ETH = Maker.ETH;
 export const USD = Maker.USD;
 export const DAI = MDAI;

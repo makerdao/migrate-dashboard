@@ -12,7 +12,7 @@ function DaiRedeem({
   onNext,
   collateralData
 }) {
-  const [{ daiBalance, fixedPrices }] = useStore();
+  const [{ daiBalance, fixedPrices, tagPrices }] = useStore();
   const [valid, setValid] = useState(true);
   const validate = value => {
     let msg;
@@ -34,7 +34,7 @@ function DaiRedeem({
         <div />
         <Grid width="567px" gridRowGap="l">
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
-            <CollateralTable data={fixedPrices} amount={redeemAmount} />
+            <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} />
           </Card>
 
           <AmountInputCard

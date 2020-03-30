@@ -19,14 +19,14 @@ import useStore from '../../hooks/useStore';
 function ConfirmRedeem({
   onPrev,
   redeemAmount,
-  setRedeemTxHash,
   onNext,
   dispatch
 }) {
   const { maker, account } = useMaker();
-  const [{ fixedPrices }] = useStore();
+  const [{ fixedPrices, tagPrices, bagBalance }] = useStore();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [redeemInitiated, setRedeemInitiated] = useState(false);
+  const [redeemComplete, setRedeemComplete] = useState([]);
   const {
     proxyAddress,
     proxyLoading,
@@ -35,25 +35,11 @@ function ConfirmRedeem({
     startedWithoutProxy,
     hasProxy
   } = useProxy();
-
   const [hasAllowance, setHasAllowance] = useState(false);
   const [allowanceLoading, setAllowanceLoading] = useState(false);
 
-  const redeemCollateral = async () => {
-    try {
-      setRedeemInitiated(true);
-
-      const mockHash =
-        '0x5179b053b1f0f810ba7a14f82562b389f06db4be6114ac6c40b2744dcf272d95';
-      setRedeemTxHash(mockHash);
-      onNext();
-    } catch (err) {
-      const message = err.message ? err.message : err;
-      const errMsg = `redeem vaults tx failed ${message}`;
-      console.error(errMsg);
-      addToastWithTimeout(errMsg, dispatch);
-    }
-  };
+  const [hasDeposit, setHasDeposit] = useState(bagBalance.gt(redeemAmount));
+  const [depositLoading, setDepositLoading] = useState(false);
 
   const showProxy =
     !initialProxyCheck && (startedWithoutProxy || proxyLoading || !hasProxy);
@@ -77,34 +63,40 @@ function ConfirmRedeem({
 
   const packDai = async () => {
     try {
+      setDepositLoading();
       const mig = maker
         .service('migration')
         .getMigration('global-settlement-dai-redeemer');
-      console.log('about to pack dai');
-      await mig.packDai(redeemAmount); //todo subtract amount already packed if exists
+      const packAmount = redeemAmount.minus(bagBalance);
+      if (packAmount.gt(0)) await mig.packDai(packAmount);
+      setHasDeposit(true);
     } catch (err) {
       const message = err.message ? err.message : err;
       const errMsg = `pack dai tx failed ${message}`;
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
     }
+    setDepositLoading(false);
   };
 
   const redeemDai = async (ilk) => {
+
     try {
-      console.log('about to redeem dai for ilk: ', ilk);
+      setRedeemInitiated(ilk);
       const mig = maker
         .service('migration')
         .getMigration('global-settlement-dai-redeemer');
       if(ilk==='ETH-A') await mig.cashEth(redeemAmount);
       if(ilk==='BAT-A') await mig.cashBat(redeemAmount);
       if(ilk==='USDC-A') await mig.cashUsdc(redeemAmount);
+      setRedeemComplete([...redeemComplete, ilk]);
     } catch (err) {
       const message = err.message ? err.message : err;
       const errMsg = `cash tx failed ${message}`;
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
     }
+    setRedeemInitiated(false);
   };
 
   useEffect(() => {
@@ -126,13 +118,15 @@ function ConfirmRedeem({
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
-      <Text.h2 textAlign="center">Confirm Transaction</Text.h2>
+      <Text.h2 textAlign="center">Redeem Dai</Text.h2>
       <Grid gridTemplateColumns="1fr 1fr 1fr">
         <div />
         <Grid gridRowGap="s">
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
             <Grid gridRowGap="s" width="567px">
-              <CollateralTable data={fixedPrices} amount={redeemAmount} redeemDai={redeemDai} />
+              <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} redeemDai={redeemDai}
+              buttonDisabled={!hasAllowance || !hasReadTOS || !hasDeposit} redeemComplete={redeemComplete}
+              buttonLoading={redeemInitiated}/>
               <Grid gridRowGap="s" px="s" width="300px">
                 {showProxy && (
                   <LoadingToggle
@@ -153,13 +147,16 @@ function ConfirmRedeem({
                   isLoading={allowanceLoading}
                   isComplete={hasAllowance}
                   onToggle={giveProxyDaiAllowance}
-                  disabled={!hasProxy || hasAllowance}
+                  disabled={hasAllowance}
                   reverse={false}
                 />
                 <LoadingToggle
-                  defaultText={'Pack DAI'}
-                  loadingText={'Packing DAI'}
-                  completeText={'DAI Unlocked'}
+                  defaultText={'Deposit DAI'}
+                  loadingText={'Depositing DAI'}
+                  completeText={'DAI Deposited'}
+                  isLoading={depositLoading}
+                  isComplete={hasDeposit}
+                  disabled={hasDeposit}
                   onToggle={packDai}
                   reverse={false}
                 />
@@ -208,15 +205,12 @@ function ConfirmRedeem({
         gridColumnGap="m"
       >
         <Button variant="secondary-outline" onClick={onPrev}>
-          Cancel
+          Back
         </Button>
         <Button
-          disabled={
-            redeemInitiated || !hasReadTOS || !hasProxy || !hasAllowance
-          }
-          onClick={redeemCollateral}
+          onClick={onNext}
         >
-          Convert Dai
+          Close
         </Button>
       </Grid>
     </Grid>

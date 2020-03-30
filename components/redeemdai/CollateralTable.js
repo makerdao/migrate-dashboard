@@ -2,7 +2,7 @@ import { Text, Grid, Table, Button } from '@makerdao/ui-components-core';
 import { prettifyNumber } from '../../utils/ui';
 import BigNumber from 'bignumber.js';
 
-function CollateralTable({ data, amount, redeemDai }) {
+function CollateralTable({ data, tagData, amount, redeemDai, buttonDisabled, buttonLoading, redeemComplete }) {
   return (
     <Grid gridRowGap="s" p="m">
       <Table>
@@ -34,7 +34,7 @@ function CollateralTable({ data, amount, redeemDai }) {
 
                 <Table.th>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
-                    {`$${prettifyNumber(BigNumber(1).div(price))}`}
+                    {`$${prettifyNumber(BigNumber(1).div(tagData.find(t => t.ilk===ilk).price))}`}
                   </Text.p>
                 </Table.th>
 
@@ -56,8 +56,8 @@ function CollateralTable({ data, amount, redeemDai }) {
                     py="4px"
                     justifySelf="center"
                     fontSize={'13px'}
-                    loading={false}
-                    disabled={false}
+                    loading={buttonLoading===ilk}
+                    disabled={buttonDisabled || redeemComplete.includes(ilk)}
                     onClick={() => redeemDai(ilk)}
                   >
                     Redeem

@@ -13,14 +13,15 @@ import {
   Tooltip
 } from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
+import flatten from 'lodash/flatten';
 import reduce from 'lodash/reduce';
 import { getColor } from '../utils/theme';
 import { prettifyNumber } from '../utils/ui';
-import { Breakout } from '../components/Typography';
+import { TextBlock, Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
-import { SAI, DAI } from '../maker';
+import { SAI, DAI, ETH, PETH } from '../maker';
 import TooltipContents from '../components/TooltipContents';
 import { stringToBytes, fromRay, fromRad } from '../utils/ethereum';
 
@@ -34,14 +35,14 @@ function clock(delta) {
   const minutes = Math.floor(delta / 60) % 60;
   delta -= minutes * 60;
 
-  const seconds = delta % 60;
+  const seconds = Math.floor(delta) % 60;
 
   const pad = val => (val < 10 ? '0' + val.toString() : val.toString());
 
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
-const Timer = ({ seconds }) => {
+const Timer = ({ seconds, children }) => {
   // initialize timeLeft with the seconds prop
   const [timeLeft, setTimeLeft] = useState(seconds);
 
@@ -64,14 +65,7 @@ const Timer = ({ seconds }) => {
         fontSize="m"
         ml="xs"
         color={getColor('steel')}
-        content={
-          <TooltipContents>
-            Dai holders need to wait for the cooldown period to complete because
-            vaults have priority as their debt needs to be cleared first. This
-            will allow the correct amount of underlying collateral to be
-            calculated as part of your Dai redemption.
-          </TooltipContents>
-        }
+        content={<TooltipContents>{children}</TooltipContents>}
       />
     </Flex>
   );
@@ -166,7 +160,9 @@ function OverviewDataFetch() {
         when,
         systemDebt,
         ethFixedPrice,
-        batFixedPrice
+        batFixedPrice,
+        ethTagPrice,
+        batTagPrice
       ] = await Promise.all([
         end.live(),
         end.wait(),
@@ -174,6 +170,9 @@ function OverviewDataFetch() {
         end.debt().then(fromRad),
         ...['ETH-A', 'BAT-A'].map(ilk =>
           end.fix(stringToBytes(ilk)).then(fromRay)
+        ),
+        ...['ETH-A', 'BAT-A'].map(ilk =>
+          end.tag(stringToBytes(ilk)).then(fromRay)
         )
       ]);
       const emergencyShutdownActive = live.eq(0);
@@ -189,6 +188,11 @@ function OverviewDataFetch() {
       const fixedPrices = [
         { ilk: 'ETH-A', price: ethFixedPrice },
         { ilk: 'BAT-A', price: batFixedPrice }
+      ];
+
+      const tagPrices = [
+        { ilk: 'ETH-A', price: ethTagPrice },
+        { ilk: 'BAT-A', price: batTagPrice }
       ];
 
       const parsedVaultsData = vaultsData.map(vault => {
@@ -215,20 +219,42 @@ function OverviewDataFetch() {
       const _daiBalance = DAI(await maker.getToken('MDAI').balance());
       const proxyAddress = await maker.service('proxy').currentProxy();
       let _bagBalance = DAI(0);
-      if(proxyAddress)
-        _bagBalance = DAI(await maker
-          .service('migration')
-          .getMigration('global-settlement-dai-redeemer')
-          .bagAmount(proxyAddress));
+      if (proxyAddress)
+        _bagBalance = DAI(
+          await maker
+            .service('migration')
+            .getMigration('global-settlement-dai-redeemer')
+            .bagAmount(proxyAddress)
+        );
       const _dsrBalance = await maker.service('mcd:savings').balance();
       const _daiDsrBagBalance = _daiBalance.plus(_bagBalance).plus(_dsrBalance);
 
-      const tub = maker.service('smartContract').getContract('SAI_TUB');
+      const scs = maker.service('smartContract');
+      const tub = scs.getContract('SAI_TUB');
+      const top = scs.getContract('SAI_TOP');
       const tubState = {
         per: await tub.per(), // WETH/PETH ratio
-        off: true, //await tub.off(), // SCD is shut down
-        out: false //await tub.out() // cooldown ended
+        off: await tub.off(), // SCD is shut down
+        out: await tub.out(), // cooldown ended
+        caged: await top.caged(),
+        cooldown: await top.cooldown()
       };
+
+      let pethInVaults = PETH(0);
+      let pethInAccount, totalPeth;
+      if (tubState.off && countCdps(checks['single-to-multi-cdp']) > 0) {
+        const cdpService = maker.service('cdp');
+        const ids = flatten(Object.values(checks['single-to-multi-cdp']));
+        for (const id of ids) {
+          const value = await cdpService.getCollateralValue(id);
+          pethInVaults = pethInVaults.plus(PETH(value));
+        }
+        pethInAccount = await maker
+          .service('token')
+          .getToken('PETH')
+          .balance();
+        totalPeth = pethInVaults.plus(pethInAccount);
+      }
 
       setFetching(false);
 
@@ -240,6 +266,7 @@ function OverviewDataFetch() {
           secondsUntilAuctionClose,
           systemDebt,
           fixedPrices,
+          tagPrices,
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
           daiBalance: _daiBalance,
@@ -250,7 +277,10 @@ function OverviewDataFetch() {
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
           vaultsToRedeem: { claims: validClaims, parsedVaultsData },
-          tubState
+          tubState,
+          pethInVaults,
+          pethInAccount,
+          totalPeth
         }
       });
     })();
@@ -276,7 +306,8 @@ function Overview({ fetching }) {
       oldMkrBalance,
       chiefMigrationCheck,
       vaultsToRedeem,
-      tubState = {}
+      tubState = {},
+      pethInVaults
     }
   ] = useStore();
 
@@ -445,7 +476,13 @@ function Overview({ fetching }) {
                   collateral from the Multi-Collateral Dai system
                 </Text.p>
                 {secondsUntilAuctionClose > 0 ? (
-                  <Timer seconds={secondsUntilAuctionClose} />
+                  <Timer seconds={secondsUntilAuctionClose}>
+                    Dai holders need to wait for the cooldown period to complete
+                    because vaults have priority as their debt needs to be
+                    cleared first. This will allow the correct amount of
+                    underlying collateral to be calculated as part of your Dai
+                    redemption.
+                  </Timer>
                 ) : !systemDebt.gt(0) ? (
                   <Text.p
                     fontSize="15px"
@@ -472,31 +509,18 @@ function Overview({ fetching }) {
           )}
 
           {shouldShowSCDESCollateral && (
-            <MigrationCard
-              title="Withdraw collateral from Sai CDPs"
-              onSelected={() => Router.push('/migration/scd-es-cdp')}
-            >
-              <>
-                <Text.p t="body">
-                  Redeem collateral from your Single-Collateral Sai CDP for a
-                  proportional amount of WETH.
-                </Text.p>
-                {!tubState.out && (
-                  <Text.p t="body">
-                    Sai redemption in progress. Cooldown period ends in TODO
-                  </Text.p>
-                )}
-              </>
-            </MigrationCard>
+            <SCDESCollateralCard {...{ tubState, pethInVaults }} />
           )}
           {shouldShowSCDESSai && (
             <MigrationCard
-              title="Redeem Sai for collateral"
+              title="Redeem SAI for collateral"
               onSelected={() => Router.push('/migration/scd-es-sai')}
+              metadataTitle="SAI to Redeem"
+              metadataValue={showAmount(saiBalance)}
             >
               <Text.p t="body">
-                Redeem your Sai for a proportional amount of WETH from the
-                Single-Collateral Sai system.
+                Redeem your Single-Collateral Dai (SAI) for a proportional
+                amount of ETH from the Single-Collateral Dai system.
               </Text.p>
             </MigrationCard>
           )}
@@ -529,6 +553,49 @@ function Overview({ fetching }) {
         )}
       </Box>
     </Flex>
+  );
+}
+
+function SCDESCollateralCard({ tubState, pethInVaults }) {
+  const { out, caged, cooldown } = tubState;
+  const endTime = !out && caged.toNumber() + cooldown.toNumber();
+  const seconds = endTime - new Date().getTime() / 1000;
+  const canEnter = seconds <= 0;
+
+  return (
+    <MigrationCard
+      title="Withdraw ETH from SAI CDP"
+      metadataTitle="PETH in Vault(s)"
+      metadataValue={showAmount(pethInVaults)}
+      onSelected={() => Router.push('/migration/scd-es-cdp')}
+      disabled={!canEnter}
+    >
+      <>
+        <Text.p t="body">
+          Redeem your ETH from your Single-Collateral Dai Vault(s) for a
+          proportional amount of ETH from the system.
+        </Text.p>
+        {!out &&
+          (canEnter ? (
+            <TextBlock t="body" mt={'m'} color="#708390" fontWeight="500">
+              Sai redemption in progress. Cooldown period ends in{' '}
+              <Timer seconds={seconds}>
+                CDP holders must wait for all outstanding debt to be removed in
+                order to balance out the ETH:PETH ratio.
+              </Timer>
+            </TextBlock>
+          ) : (
+            <TextBlock
+              t="body"
+              mt={'m'}
+              color="#708390"
+              fontWeight="500"
+            >
+              Cooldown period has ended and access will be granted soon.
+            </TextBlock>
+          ))}
+      </>
+    </MigrationCard>
   );
 }
 
