@@ -21,6 +21,7 @@ import AmountInputCard from '../AmountInputCard';
 
 export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) => {
   let [{ saiBalance = SAI(0)}, dispatch] = useStore();
+  const [{ saiAvailable }] = useStore();
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [saiApprovePending, setSaiApprovePending] = useState(false);
@@ -37,7 +38,7 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
     let msg;
     if (value.lte(0)) msg = 'Amount must be greater than 0';
     else if (value.gt(saiBalance)) msg = 'Insufficient Sai balance';
-    else if (value.gt(saiAvailable)) msg = 'Amount exceeds Collateral availability';
+    // else if (value.gt(saiAvailable)) msg = 'Amount exceeds Collateral availability';
     setValid(!msg);
     return msg;
   };
@@ -47,7 +48,7 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
       setRedemptionInitiated(true);
       const migration = await maker.service('migration').getMigration('redeem-sai');
       // The following should be removed when approval ui is in place
-      await maker.getToken('DAI').approveUnlimited(migration._tap.address);
+      // await maker.getToken('DAI').approveUnlimited(migration._tap.address);
       const redeemTxObject = migration.redeemSai(saiAmountToRedeem);
       maker.service('transactionManager').listen(redeemTxObject, {
         pending: tx => {
@@ -68,8 +69,7 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
   useEffect(() => {
     (async () => {
       if (maker) {
-        const tapContract = maker.service('smartContract').getContract('SAI_TAP')
-        const xRate = (await tapContract.fix()).toNumber() / Math.pow(10, 27)
+        const xRate = await maker.service('migration').getMigration('redeem-sai').getRate();
         setExchangeRate(xRate)
       }
     })()
