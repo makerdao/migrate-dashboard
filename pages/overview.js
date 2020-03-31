@@ -24,6 +24,7 @@ import useStore from '../hooks/useStore';
 import { SAI, DAI, ETH, PETH } from '../maker';
 import TooltipContents from '../components/TooltipContents';
 import { stringToBytes, fromRay, fromRad } from '../utils/ethereum';
+import { shutDown } from '../plugin/test/helpers';
 
 function clock(delta) {
   // const days = Math.floor(delta / 86400);
@@ -42,7 +43,7 @@ function clock(delta) {
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
-const Timer = ({ seconds, children }) => {
+const Timer = ({ seconds, prefix, children }) => {
   // initialize timeLeft with the seconds prop
   const [timeLeft, setTimeLeft] = useState(seconds);
 
@@ -59,14 +60,14 @@ const Timer = ({ seconds, children }) => {
   return (
     <Flex>
       <Text.p fontSize="15px" fontWeight={500} color={getColor('steel')}>
-        {`Auctions in progress. Cooldown period ends in ${clock(timeLeft)}`}
+        {prefix} {clock(timeLeft)}
+        <Tooltip
+          fontSize="m"
+          ml="xs"
+          color={getColor('steel')}
+          content={<TooltipContents>{children}</TooltipContents>}
+        />
       </Text.p>
-      <Tooltip
-        fontSize="m"
-        ml="xs"
-        color={getColor('steel')}
-        content={<TooltipContents>{children}</TooltipContents>}
-      />
     </Flex>
   );
 };
@@ -143,6 +144,11 @@ function OverviewDataFetch() {
     (async () => {
       if (!maker || !account) return;
       const mig = maker.service('migration');
+      // the following can be removed when we're done testing this
+      let off = await mig.getMigration('redeem-sai').off();
+      if (global.scdESTest && global.testnet && !off) await shutDown();
+      off = await mig.getMigration('redeem-sai').off();
+      console.log('off:', off);
       const checks = await mig.runAllChecks();
       const claims = checks['global-settlement-collateral-claims'];
       const validClaims = claims.filter(c => c.redeemable);
@@ -476,7 +482,10 @@ function Overview({ fetching }) {
                   collateral from the Multi-Collateral Dai system
                 </Text.p>
                 {secondsUntilAuctionClose > 0 ? (
-                  <Timer seconds={secondsUntilAuctionClose}>
+                  <Timer
+                    seconds={secondsUntilAuctionClose}
+                    prefix="Auctions in progress. Cooldown ends in"
+                  >
                     Dai holders need to wait for the cooldown period to complete
                     because vaults have priority as their debt needs to be
                     cleared first. This will allow the correct amount of
@@ -558,9 +567,8 @@ function Overview({ fetching }) {
 
 function SCDESCollateralCard({ tubState, pethInVaults }) {
   const { out, caged, cooldown } = tubState;
-  const endTime = !out && caged.toNumber() + cooldown.toNumber();
+  const endTime = caged.toNumber() + cooldown.toNumber();
   const seconds = endTime - new Date().getTime() / 1000;
-  const canEnter = seconds <= 0;
 
   return (
     <MigrationCard
@@ -568,32 +576,28 @@ function SCDESCollateralCard({ tubState, pethInVaults }) {
       metadataTitle="PETH in Vault(s)"
       metadataValue={showAmount(pethInVaults)}
       onSelected={() => Router.push('/migration/scd-es-cdp')}
-      disabled={!canEnter}
+      disabled={out}
     >
       <>
         <Text.p t="body">
           Redeem your ETH from your Single-Collateral Dai Vault(s) for a
           proportional amount of ETH from the system.
         </Text.p>
-        {!out &&
-          (canEnter ? (
-            <TextBlock t="body" mt={'m'} color="#708390" fontWeight="500">
-              Sai redemption in progress. Cooldown period ends in{' '}
-              <Timer seconds={seconds}>
+        {!out && (
+          <TextBlock t="body" mt={'m'} color="#708390" fontWeight="500">
+            {seconds > 0 ? (
+              <Timer
+                seconds={seconds}
+                prefix="Sai redemption in progress. Cooldown period ends in"
+              >
                 CDP holders must wait for all outstanding debt to be removed in
                 order to balance out the ETH:PETH ratio.
               </Timer>
-            </TextBlock>
-          ) : (
-            <TextBlock
-              t="body"
-              mt={'m'}
-              color="#708390"
-              fontWeight="500"
-            >
-              Cooldown period has ended and access will be granted soon.
-            </TextBlock>
-          ))}
+            ) : (
+              <>Cooldown period has ended and access will be granted soon.</>
+            )}
+          </TextBlock>
+        )}
       </>
     </MigrationCard>
   );

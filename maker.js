@@ -43,9 +43,10 @@ const scdESTestAddressOverrides = {
 };
 
 export async function instantiateMaker(network) {
+  console.log(network);
   const url =
-    network === 'test'
-      ? process.env.TEST_RPC_URL
+    network === 'test' || network === 'testnet'
+      ? 'http://localhost:2000'
       : `https://${network}.infura.io/v3/${INFURA_KEY}`;
 
   // this is required here instead of being imported normally because it runs
@@ -97,7 +98,7 @@ export async function instantiateMaker(network) {
     token: { addressOverrides: {} }
   };
 
-  if (global.scdESTest) {
+  if (global.scdESTest && !global.testnet) {
     console.log('using custom SCD deployment');
     Object.assign(config.token.addressOverrides, {
       PETH: scdESTestAddressOverrides.SAI_SKR,

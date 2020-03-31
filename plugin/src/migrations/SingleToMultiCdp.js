@@ -11,7 +11,16 @@ export default class SingleToMultiCdp {
   async check() {
     const address = this._manager.get('accounts').currentAddress();
 
-    if (global.scdESTest || global.testnet) {
+    if (global.scdESTest) {
+      if (global.testnet) {
+        console.log('fudging cdp id data for testnet');
+        const proxyAddress = await this._manager.get('proxy').currentProxy();
+        return {
+          [address]: [1],
+          [proxyAddress]: [2]
+        }
+      }
+
       console.log('looking up cdp ids from logs; excludes proxy cdps');
       const scs = this._manager.get('smartContract');
       const ws = this._manager.get('web3');
