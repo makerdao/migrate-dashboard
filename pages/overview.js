@@ -23,7 +23,8 @@ import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
 import { SAI, DAI, ETH, PETH } from '../maker';
 import TooltipContents from '../components/TooltipContents';
-import { stringToBytes, fromRay, fromRad } from '../utils/ethereum';
+import { stringToBytes, fromRay, fromRad, fromWei } from '../utils/ethereum';
+import BigNumber from 'bignumber.js';
 
 function clock(delta) {
   // const days = Math.floor(delta / 86400);
@@ -218,15 +219,33 @@ function OverviewDataFetch() {
 
       const _daiBalance = DAI(await maker.getToken('MDAI').balance());
       const proxyAddress = await maker.service('proxy').currentProxy();
+      const _dsrBalance = await maker.service('mcd:savings').balance();
+      
       let _endBalance = DAI(0);
-      if (proxyAddress)
-        _endBalance = DAI(
+      let ethOut = BigNumber(0);
+      let batOut = BigNumber(0);
+      let bagBalance = DAI(0);
+      if (proxyAddress){
+        [
+          ethOut,
+          batOut
+        ] = await Promise.all(
+          ['ETH-A', 'BAT-A'].map(ilk =>
+          end.out(stringToBytes(ilk), proxyAddress).then(fromWei)
+        ));
+        bagBalance = DAI(
           await maker
             .service('migration')
             .getMigration('global-settlement-dai-redeemer')
             .bagAmount(proxyAddress)
         );
-      const _dsrBalance = await maker.service('mcd:savings').balance();
+        _endBalance = bagBalance.minus(BigNumber.min(ethOut, batOut));
+      }
+      const outAmounts = [
+        { ilk: 'ETH-A', out: ethOut },
+        { ilk: 'BAT-A', out: batOut }
+      ];
+
       const _daiDsrEndBalance = _daiBalance.plus(_endBalance).plus(_dsrBalance);
 
       const scs = maker.service('smartContract');
@@ -269,6 +288,8 @@ function OverviewDataFetch() {
           tagPrices,
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
+          outAmounts,
+          bagBalance,
           daiBalance: _daiBalance,
           endBalance: _endBalance,
           dsrBalance: _dsrBalance,
