@@ -17,8 +17,8 @@ import {
   Text
 } from '@makerdao/ui-components-core';
 import Router from 'next/router';
-// To add
-import CollateralRedeem from '../../components/redeemscdvaults/CollateralRedeem';
+import { PETH } from '../../maker';
+import CollateralRedeem from '../../components/redeemscdvaults/CollateralRedeem'
 import Confirmation from '../../components/redeemscdvaults/Confirmation';
 import InProgress from '../../components/InProgress';
 import Complete from '../../components/Complete';
@@ -96,38 +96,11 @@ const steps = [
 ];
 
 async function getCdpData(cdp) {
-  const debtValueExact = await cdp.getDebtValue();
-  const debtValue = prettifyNumber(debtValueExact.toString());
-  const collateralValueExact = await cdp.getCollateralValue(USD);
-  const govFeeMKRExact = await cdp.getGovernanceFee();
-  const govFeeMKR =
-    govFeeMKRExact.toNumber() > 0.01
-      ? prettifyNumber(govFeeMKRExact, false, 2, false)
-      : round(govFeeMKRExact.toNumber(), 6);
-
-  const govFeeDaiExact = await cdp.getGovernanceFee(USD);
-  const govFeeDai =
-    govFeeDaiExact.toNumber() > 0.01
-      ? prettifyNumber(govFeeDaiExact, false, 2, false)
-      : round(govFeeDaiExact.toNumber(), 4);
-
-  const collateralizationRatioExact =
-    (await cdp.getCollateralizationRatio()) * 100;
-
-  const collateralizationRatio =
-    collateralizationRatioExact === Infinity
-      ? '---'
-      : prettifyNumber(collateralizationRatioExact);
-
+  const collateralValuePeth = await cdp.getCollateralValue(PETH);
+  const collateralValueEth = await cdp.getCollateralValue()
   return {
-    collateralValueExact,
-    collateralizationRatio,
-    debtValueExact,
-    govFeeDaiExact,
-    debtValue,
-    govFeeDai,
-    govFeeMKR,
-    govFeeMKRExact
+    collateralValuePeth,
+    collateralValueEth
   };
 }
 
@@ -146,13 +119,28 @@ async function getAllCdpData(allCdps, maker) {
 }
 
 export default function() {
-  const { account } = useMaker();
+  const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
+  const [cdps, setCdps] = useState([]);
+  const [loadingCdps, setLoadingCdps] = useState(true);
+  const [selectedCDPs, setSelectedCDPs] = useState([]);
   const [txHash, setTxHash] = useState(null);
+  const [txObject, setTxObject] = useState({})
 
   useEffect(() => {
     if (!account) Router.replace('/');
   }, []); // eslint-disable-line
+
+  const [{ cdpMigrationCheck }] = useStore()
+
+  useEffect(() => {
+    (async () => {
+      if (!maker || !account || !cdpMigrationCheck) return;
+      const data = await getAllCdpData(cdpMigrationCheck, maker);
+      setCdps(data);
+      setLoadingCdps(false);
+    })();
+  }, [maker, account, cdpMigrationCheck]);
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
@@ -168,7 +156,7 @@ export default function() {
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
         <FlowHeader account={account} showClose={currentStep <= 1} />
         <Stepper
-          steps={['Collateral Redemption', 'Confirmation']}
+          steps={['Select Vaults', 'Confirm']}
           selected={currentStep}
           m="0 auto"
           mt={'m'}
@@ -191,8 +179,15 @@ export default function() {
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
                   onReset: reset,
+                  onSelect: setSelectedCDPs,
+                  cdps,
+                  setCdps,
+                  loadingCdps,
+                  selectedCDPs,
                   setTxHash,
                   txHash,
+                  txObject,
+                  setTxObject,
                   showErrorMessageAndAllowExiting
                 })}
               </FadeInFromSide>

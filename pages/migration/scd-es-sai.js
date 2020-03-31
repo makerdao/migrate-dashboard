@@ -108,7 +108,7 @@ export default function() {
   };
   const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
-  const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
+  const showErrorMessageAndAllowExiting = () => setCurrentStep(3);
 
   return (
     <FlowBackground>
