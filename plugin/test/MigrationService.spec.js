@@ -41,10 +41,11 @@ test('can fetch a list of all migrations', () => {
       Migrations.GLOBAL_SETTLEMENT_COLLATERAL_CLAIMS,
       Migrations.GLOBAL_SETTLEMENT_DAI_REDEEMER,
       Migrations.MKR_REDEEMER,
-      Migrations.CHIEF_MIGRATE
+      Migrations.CHIEF_MIGRATE,
+      Migrations.REDEEM_SAI
     ])
   );
-  expect(ids.length).toEqual(8);
+  expect(ids.length).toEqual(9);
 });
 
 test('getting each migration returns a valid migration', () => {
