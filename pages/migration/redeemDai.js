@@ -62,6 +62,8 @@ export default function() {
     })();
   }, [account]);
 
+  if (!account) return null;
+
   return (
     <FlowBackground>
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
