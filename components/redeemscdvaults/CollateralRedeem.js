@@ -3,7 +3,7 @@ import { Text, Button, Grid, Card, Box } from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
 import { TextBlock } from '../Typography';
 import { prettifyNumber } from '../../utils/ui';
-import { SAI, DAI } from '../../maker';
+import { SAI, DAI, ETH } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
 
 export default ({ onNext, onPrev }) => {
@@ -16,7 +16,7 @@ export default ({ onNext, onPrev }) => {
   const shutdownPethEthRatio = 0;
   const currentPethEthRatio = 0;
   const estimatedPethEthRatio = 0;
-  const redeemedCollateral = totalPeth * currentPethEthRatio;
+  const redeemedCollateral = ETH(totalPeth.times(currentPethEthRatio));
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
@@ -79,13 +79,13 @@ export default ({ onNext, onPrev }) => {
       <Box>
         <Grid gridGap="m" gridTemplateColumns="1fr 1fr">
           <TextBlock>PETH in vaults</TextBlock>
-          <TextBlock>{pethInVaults}</TextBlock>
+          <TextBlock>{pethInVaults.toString()}</TextBlock>
           <TextBlock>PETH in account</TextBlock>
-          <TextBlock>{pethInAccount}</TextBlock>
+          <TextBlock>{pethInAccount.toString()}</TextBlock>
           <TextBlock>Total PETH balance</TextBlock>
-          <TextBlock>{totalPeth}</TextBlock>
+          <TextBlock>{totalPeth.toString()}</TextBlock>
           <TextBlock>Total Value in ETH</TextBlock>
-          <TextBlock>{`${redeemedCollateral} ETH`}</TextBlock>
+          <TextBlock>{redeemedCollateral.toString()}</TextBlock>
         </Grid>
       </Box>
       <Box>
