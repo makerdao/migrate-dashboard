@@ -9,6 +9,7 @@ import MkrRedeemer from './migrations/MkrRedeemer';
 import DaiToSai from './migrations/DaiToSai';
 import ChiefMigrate from './migrations/ChiefMigrate';
 import RedeemSai from './migrations/RedeemSai';
+import RedeemCollateral from './migrations/RedeemCollateral';
 
 const {
   SINGLE_TO_MULTI_CDP,
@@ -16,7 +17,8 @@ const {
   DAI_TO_SAI,
   MKR_REDEEMER,
   CHIEF_MIGRATE,
-  REDEEM_SAI
+  REDEEM_SAI,
+  REDEEM_COLLATERAL
 } = Migrations;
 
 const migrations = {
@@ -28,7 +30,8 @@ const migrations = {
   [Migrations.GLOBAL_SETTLEMENT_COLLATERAL_CLAIMS]: GlobalSettlementCollateralClaims,
   [Migrations.GLOBAL_SETTLEMENT_DAI_REDEEMER]: GlobalSettlementDaiRedeemer,
   [Migrations.MKR_REDEEMER]: MkrRedeemer,
-  [Migrations.REDEEM_SAI]: RedeemSai
+  [Migrations.REDEEM_SAI]: RedeemSai,
+  [Migrations.REDEEM_COLLATERAL]: RedeemCollateral
 };
 
 export default class MigrationService extends PublicService {

@@ -4,32 +4,35 @@
 
 import React, { useState, useEffect } from 'react';
 import useMaker from '../../hooks/useMaker';
-import useStore from '../../hooks/useStore'
+import useStore from '../../hooks/useStore';
 import { prettifyNumber } from '../../utils/ui';
 import FlowBackground from '../../components/FlowBackground';
 import FlowHeader from '../../components/FlowHeader';
-import { Stepper, Grid, Flex, Card, Table, Text } from '@makerdao/ui-components-core';
+import {
+  Stepper,
+  Grid,
+  Flex,
+  Card,
+  Table,
+  Text
+} from '@makerdao/ui-components-core';
 import Router from 'next/router';
 // To add
-import SaiRedeem from '../../components/redeemsai/SaiRedeem'
+import SaiRedeem from '../../components/redeemsai/SaiRedeem';
 import InProgress from '../../components/InProgress';
-import Complete from '../../components/Complete'
+import Complete from '../../components/Complete';
 import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
 import InProgressImage from '../../assets/icons/daiRedeem.svg';
 
-
-const completeBody = () => {
+const CompleteBody = () => {
   const [{ saiAmountToRedeem }] = useStore();
-  const amount = saiAmountToRedeem ? prettifyNumber(saiAmountToRedeem.toNumber()) : 0;
+  const amount = saiAmountToRedeem
+    ? prettifyNumber(saiAmountToRedeem.toNumber())
+    : 0;
   return (
     <Card>
-      <Grid
-        gridRowGap="s"
-        color="darkPurple"
-        px={{ s: 'm' }}
-        py={{ s: 'xs' }}
-      >
+      <Grid gridRowGap="s" color="darkPurple" px={{ s: 'm' }} py={{ s: 'xs' }}>
         <Table p={0}>
           <Table.tbody>
             <Table.tr>
@@ -44,8 +47,7 @@ const completeBody = () => {
               <Table.td>
                 <Text display={'block'}>Exchange Rate</Text>
                 <Text t="heading" display={'block'} fontWeight="bold">
-                // Pass in actual exchange rate
-                  1:1
+                  // Pass in actual exchange rate 1:1
                 </Text>
               </Table.td>
             </Table.tr>
@@ -61,17 +63,27 @@ const completeBody = () => {
         </Table>
       </Grid>
     </Card>
-  )
-}
+  );
+};
 
 const steps = [
   props => <SaiRedeem {...props} />,
-  props => <InProgress {...props} title="Your SAI is being redeemed" image={InProgressImage} />,
-  props => <Complete {...props}
-    title="Redemption Complete"
-    description="You&apos;ve successfully redeemed your Sai for ETH."
-    completeBody
-  />,
+  props => (
+    <InProgress
+      {...props}
+      title="Your SAI is being redeemed"
+      image={InProgressImage}
+    />
+  ),
+  props => (
+    <Complete
+      {...props}
+      title="Redemption Complete"
+      description="You've successfully redeemed your Sai for ETH."
+    >
+      <CompleteBody />
+    </Complete>
+  ),
   props => (
     <Failed
       {...props}

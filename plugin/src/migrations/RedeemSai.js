@@ -11,17 +11,14 @@ export default class RedeemSai {
     return this._tap.off();
   }
 
-  async fog() {
-    const fog = await this._tap.fog();
-    return fog / Math.pow(10, 18);
-  }
-
   async getRate() {
     const fix = await this._tap.fix();
     return fix / Math.pow(10, 27);
   }
 
   redeemSai(wad) {
+    // This will be replaced with the new contract method
+    // that atomically exits/unwraps
     return this._tap.cash(DAI(wad).toFixed(18));
   }
 }

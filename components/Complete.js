@@ -9,7 +9,7 @@ import arrowTopRight from '../assets/icons/arrowTopRight.svg';
 import { etherscanLink } from '../utils/ui';
 import useMaker from '../hooks/useMaker';
 
-function Complete({ onClose, txHash, title, description, completeBody }) {
+function Complete({ onClose, txHash, title, description, children }) {
   const { network } = useMaker();
 
   return (
@@ -34,7 +34,7 @@ function Complete({ onClose, txHash, title, description, completeBody }) {
           View transaction details <img src={arrowTopRight} />
         </Button>
       </Link>
-      {completeBody}
+      {children}
       <Button
         mt="s"
         onClick={onClose}

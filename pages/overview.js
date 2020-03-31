@@ -146,10 +146,13 @@ function OverviewDataFetch() {
       if (!maker || !account) return;
       const mig = maker.service('migration');
       // the following can be removed when we're done testing this
-      let off = await mig.getMigration('redeem-sai').off();
-      if (global.scdESTest && global.testnet && !off) await shutDown();
-      off = await mig.getMigration('redeem-sai').off();
-      console.log('off:', off);
+      if (global.scdESTest && global.testnet) {
+        const off = await mig.getMigration('redeem-sai').off();
+        if (!off) {
+          console.log('shutting down');
+          await shutDown();
+        }
+      }
       const checks = await mig.runAllChecks();
 
       const end = maker.service('smartContract').getContract('MCD_END_1');
@@ -604,7 +607,13 @@ function Overview({ fetching }) {
 function SCDESCollateralCard({ tubState, pethInVaults }) {
   const { out, caged, cooldown } = tubState;
   const endTime = caged.toNumber() + cooldown.toNumber();
-  const seconds = endTime - new Date().getTime() / 1000;
+  const [seconds, setSeconds] = useState();
+
+  useEffect(() => {
+    const val = endTime - new Date().getTime() / 1000;
+    setSeconds(val);
+    setTimeout(() => setSeconds(0), val * 1000);
+  }, []);
 
   return (
     <MigrationCard
@@ -612,7 +621,7 @@ function SCDESCollateralCard({ tubState, pethInVaults }) {
       metadataTitle="PETH in Vault(s)"
       metadataValue={showAmount(pethInVaults)}
       onSelected={() => Router.push('/migration/scd-es-cdp')}
-      disabled={out}
+      disabled={!out}
     >
       <>
         <Text.p t="body">
@@ -630,7 +639,7 @@ function SCDESCollateralCard({ tubState, pethInVaults }) {
                 order to balance out the ETH:PETH ratio.
               </Timer>
             ) : (
-              <>Cooldown period has ended and access will be granted soon.</>
+              <>Cooldown period has ended and access will be granted soon. Reload the page to see.</>
             )}
           </TextBlock>
         )}
