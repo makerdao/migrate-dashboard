@@ -144,6 +144,7 @@ export async function shutDown() {
   await top.cage();
   await normalCdp.bite();
   await proxyCdp.bite();
+  await top.setCooldown(60);
 }
 
 async function openLockAndDrawScdCdp(maker) {
