@@ -43,7 +43,6 @@ const scdESTestAddressOverrides = {
 };
 
 export async function instantiateMaker(network) {
-  console.log(network);
   const url =
     network === 'test' || network === 'testnet'
       ? 'http://localhost:2000'
