@@ -142,6 +142,7 @@ export async function shutDown() {
     proxy
   );
   await top.cage();
+  await top.setCooldown(0);
   await normalCdp.bite();
   await proxyCdp.bite();
 }
