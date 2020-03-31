@@ -150,90 +150,111 @@ function OverviewDataFetch() {
       off = await mig.getMigration('redeem-sai').off();
       console.log('off:', off);
       const checks = await mig.runAllChecks();
-      const claims = checks['global-settlement-collateral-claims'];
-      const validClaims = claims.filter(c => c.redeemable);
-
-      const vaultsData = await Promise.all([
-        ...validClaims.map(({ id }) =>
-          maker.service('mcd:cdpManager').getCdp(parseInt(id))
-        )
-      ]);
 
       const end = maker.service('smartContract').getContract('MCD_END_1');
-      const [
-        live,
-        wait,
-        when,
-        systemDebt,
-        ethFixedPrice,
-        batFixedPrice,
-        ethTagPrice,
-        batTagPrice
-      ] = await Promise.all([
-        end.live(),
-        end.wait(),
-        end.when(),
-        end.debt().then(fromRad),
-        ...['ETH-A', 'BAT-A'].map(ilk =>
-          end.fix(stringToBytes(ilk)).then(fromRay)
-        ),
-        ...['ETH-A', 'BAT-A'].map(ilk =>
-          end.tag(stringToBytes(ilk)).then(fromRay)
-        )
-      ]);
+      const live = await end.live();
       const emergencyShutdownActive = live.eq(0);
-      const emergencyShutdownTime = new Date(when.toNumber() * 1000);
-      const auctionCloseTime = new Date(
-        emergencyShutdownTime.getTime() + wait.toNumber() * 1000
-      );
+      if( emergencyShutdownActive ){
+        const claims = checks['global-settlement-collateral-claims'];
+        const validClaims = claims.filter(c => c.redeemable);
 
-      const diff = Math.floor((auctionCloseTime.getTime() - Date.now()) / 1000);
+        const vaultsData = await Promise.all([
+          ...validClaims.map(({ id }) =>
+            maker.service('mcd:cdpManager').getCdp(parseInt(id))
+          )
+        ]);
 
-      const secondsUntilAuctionClose = diff > 0 ? diff : 0;
-
-      const fixedPrices = [
-        { ilk: 'ETH-A', price: ethFixedPrice },
-        { ilk: 'BAT-A', price: batFixedPrice }
-      ];
-
-      const tagPrices = [
-        { ilk: 'ETH-A', price: ethTagPrice },
-        { ilk: 'BAT-A', price: batTagPrice }
-      ];
-
-      const parsedVaultsData = vaultsData.map(vault => {
-        const claim = validClaims.find(c => c.id.toNumber() === vault.id);
-        const currency = vault.type.ilk.split('-')[0];
-        const vaultValue = vault.collateralAmount
-          .toBigNumber()
-          .minus(vault.debtValue.toBigNumber().times(claim.tag));
-        return {
-          id: vault.id,
-          type: currency,
-          collateral: vault.collateralAmount.toString(),
-          daiDebt: `${prettifyNumber(vault.debtValue, false, 2, false)} DAI`,
-          vault,
-          exchangeRate: `1 DAI : ${prettifyNumber(
-            claim.tag,
-            false,
-            4
-          )} ${currency}`,
-          vaultValue: `${prettifyNumber(vaultValue)} ${currency}`
-        };
-      });
-
-      const _daiBalance = DAI(await maker.getToken('MDAI').balance());
-      const proxyAddress = await maker.service('proxy').currentProxy();
-      let _bagBalance = DAI(0);
-      if (proxyAddress)
-        _bagBalance = DAI(
-          await maker
-            .service('migration')
-            .getMigration('global-settlement-dai-redeemer')
-            .bagAmount(proxyAddress)
+        const [
+          wait,
+          when,
+          systemDebt,
+          ethFixedPrice,
+          batFixedPrice,
+          ethTagPrice,
+          batTagPrice
+        ] = await Promise.all([
+          end.wait(),
+          end.when(),
+          end.debt().then(fromRad),
+          ...['ETH-A', 'BAT-A'].map(ilk =>
+            end.fix(stringToBytes(ilk)).then(fromRay)
+          ),
+          ...['ETH-A', 'BAT-A'].map(ilk =>
+            end.tag(stringToBytes(ilk)).then(fromRay)
+          )
+        ]);
+        const emergencyShutdownActive = live.eq(0);
+        const emergencyShutdownTime = new Date(when.toNumber() * 1000);
+        const auctionCloseTime = new Date(
+          emergencyShutdownTime.getTime() + wait.toNumber() * 1000
         );
-      const _dsrBalance = await maker.service('mcd:savings').balance();
-      const _daiDsrBagBalance = _daiBalance.plus(_bagBalance).plus(_dsrBalance);
+
+        const diff = Math.floor((auctionCloseTime.getTime() - Date.now()) / 1000);
+
+        const secondsUntilAuctionClose = diff > 0 ? diff : 0;
+
+        const fixedPrices = [
+          { ilk: 'ETH-A', price: ethFixedPrice },
+          { ilk: 'BAT-A', price: batFixedPrice }
+        ];
+
+        const tagPrices = [
+          { ilk: 'ETH-A', price: ethTagPrice },
+          { ilk: 'BAT-A', price: batTagPrice }
+        ];
+
+        const parsedVaultsData = vaultsData.map(vault => {
+          const claim = validClaims.find(c => c.id.toNumber() === vault.id);
+          const currency = vault.type.ilk.split('-')[0];
+          const vaultValue = vault.collateralAmount
+            .toBigNumber()
+            .minus(vault.debtValue.toBigNumber().times(claim.tag));
+          return {
+            id: vault.id,
+            type: currency,
+            collateral: vault.collateralAmount.toString(),
+            daiDebt: `${prettifyNumber(vault.debtValue, false, 2, false)} DAI`,
+            vault,
+            exchangeRate: `1 DAI : ${prettifyNumber(
+              claim.tag,
+              false,
+              4
+            )} ${currency}`,
+            vaultValue: `${prettifyNumber(vaultValue)} ${currency}`
+          };
+        });
+
+        const _daiBalance = DAI(await maker.getToken('MDAI').balance());
+        const proxyAddress = await maker.service('proxy').currentProxy();
+        let _endBalance = DAI(0);
+        if (proxyAddress)
+          _endBalance = DAI(
+            await maker
+              .service('migration')
+              .getMigration('global-settlement-dai-redeemer')
+              .bagAmount(proxyAddress)
+          );
+        const _dsrBalance = await maker.service('mcd:savings').balance();
+        const _daiDsrEndBalance = _daiBalance.plus(_endBalance).plus(_dsrBalance);
+
+        dispatch({
+          type: 'assign',
+          payload: {
+            emergencyShutdownActive,
+            emergencyShutdownTime,
+            secondsUntilAuctionClose,
+            systemDebt,
+            fixedPrices,
+            tagPrices,
+            daiBalance: _daiBalance,
+            endBalance: _endBalance,
+            dsrBalance: _dsrBalance,
+            proxyAddress,
+            daiDsrEndBalance: _daiDsrEndBalance,
+            vaultsToRedeem: { claims: validClaims, parsedVaultsData },
+          }
+        });
+      }
 
       const scs = maker.service('smartContract');
       const tub = scs.getContract('SAI_TUB');
@@ -268,21 +289,10 @@ function OverviewDataFetch() {
         type: 'assign',
         payload: {
           emergencyShutdownActive,
-          emergencyShutdownTime,
-          secondsUntilAuctionClose,
-          systemDebt,
-          fixedPrices,
-          tagPrices,
           cdpMigrationCheck: checks['single-to-multi-cdp'],
           saiBalance: SAI(checks['sai-to-dai']),
-          daiBalance: _daiBalance,
-          bagBalance: _bagBalance,
-          dsrBalance: _dsrBalance,
-          proxyAddress,
-          daiDsrBagBalance: _daiDsrBagBalance,
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
-          vaultsToRedeem: { claims: validClaims, parsedVaultsData },
           tubState,
           pethInVaults,
           pethInAccount,
@@ -306,7 +316,7 @@ function Overview({ fetching }) {
       cdpMigrationCheck: cdps,
       saiBalance,
       daiBalance,
-      daiDsrBagBalance,
+      daiDsrEndBalance,
       saiAvailable,
       daiAvailable,
       oldMkrBalance,
@@ -325,8 +335,8 @@ function Overview({ fetching }) {
   const shouldShowChief =
     chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
   const shouldShowCollateral =
-    daiDsrBagBalance &&
-    daiDsrBagBalance.gt(0) &&
+    daiDsrEndBalance &&
+    daiDsrEndBalance.gt(0) &&
     emergencyShutdownActive &&
     secondsUntilAuctionClose !== undefined &&
     systemDebt !== undefined &&
@@ -466,7 +476,7 @@ function Overview({ fetching }) {
             <MigrationCard
               title="Redeem Dai for collateral"
               metadataTitle="Dai to redeem"
-              metadataValue={showAmount(daiDsrBagBalance)}
+              metadataValue={showAmount(daiDsrEndBalance)}
               onSelected={() => {
                 Router.push('/migration/redeemDai');
               }}
