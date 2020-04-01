@@ -95,52 +95,51 @@ const steps = [
   )
 ];
 
-async function getCdpData(cdp) {
-  const collateralValuePeth = await cdp.getCollateralValue(PETH);
-  const collateralValueEth = await cdp.getCollateralValue()
-  return {
-    collateralValuePeth,
-    collateralValueEth
-  };
-}
-
-async function getAllCdpData(allCdps, maker) {
-  const cdpIds = Object.values(allCdps).flat();
-  const allCdpData = await Promise.all(
-    cdpIds.map(async id => {
-      const cdp = await maker.getCdp(id);
-      const data = await getCdpData(cdp);
-      return { ...cdp, ...data, give: cdp.give };
-    })
-  );
-  return allCdpData.sort(
-    (a, b) => b.debtValueExact.toNumber() - a.debtValueExact.toNumber()
-  );
-}
+// async function getCdpData(cdp) {
+//   const collateralValuePeth = await cdp.getCollateralValue(PETH);
+//   const collateralValueEth = await cdp.getCollateralValue()
+//   return {
+//     collateralValuePeth,
+//     collateralValueEth
+//   };
+// }
+//
+// async function getAllCdpData(allCdps, maker) {
+//   const cdpIds = Object.values(allCdps).flat();
+//   const allCdpData = await Promise.all(
+//     cdpIds.map(async id => {
+//       const cdp = await maker.getCdp(id);
+//       const data = await getCdpData(cdp);
+//       return { ...cdp, ...data, give: cdp.give };
+//     })
+//   );
+//   return allCdpData.sort(
+//     (a, b) => b.debtValueExact.toNumber() - a.debtValueExact.toNumber()
+//   );
+// }
 
 export default function() {
-  const { maker, account } = useMaker();
+  const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
-  const [cdps, setCdps] = useState([]);
-  const [loadingCdps, setLoadingCdps] = useState(true);
-  const [selectedCDPs, setSelectedCDPs] = useState([]);
   const [txHash, setTxHash] = useState(null);
-  const [txObject, setTxObject] = useState({})
+  const [selectedCdps, setSelectedCdps] = useState([]);
+  const [{ pethInVaults }] = useStore()
+  // const [cdps, setCdps] = useState([]);
+  // const [loadingCdps, setLoadingCdps] = useState(true);
+  // const [txObject, setTxObject] = useState({})
 
   useEffect(() => {
     if (!account) Router.replace('/');
   }, []); // eslint-disable-line
 
-  const [{ cdpMigrationCheck }] = useStore()
-
-  useEffect(() => {
-    (async () => {
-      if (!maker || !account || !cdpMigrationCheck) return;
-      const data = await getAllCdpData(cdpMigrationCheck, maker);
-      setCdps(data);
-      setLoadingCdps(false);
-    })();
-  }, [maker, account, cdpMigrationCheck]);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (!maker || !account || !cdpMigrationCheck) return;
+  //     const data = await getAllCdpData(cdpMigrationCheck, maker);
+  //     setCdps(data);
+  //     setLoadingCdps(false);
+  //   })();
+  // }, [maker, account, cdpMigrationCheck]);
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
@@ -149,7 +148,7 @@ export default function() {
   const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
   const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
-  const [selectedCdps, setSelectedCdps] = useState([]);
+
 
   return (
     // TODO list total PETH in your CDPs, PETH:WETH ratio
@@ -180,15 +179,8 @@ export default function() {
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
                   onReset: reset,
-                  onSelect: setSelectedCDPs,
-                  cdps,
-                  setCdps,
-                  loadingCdps,
-                  selectedCDPs,
                   setTxHash,
                   txHash,
-                  txObject,
-                  setTxObject,
                   showErrorMessageAndAllowExiting,
                   pethInVaults,
                   selectedCdps,
