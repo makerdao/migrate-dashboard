@@ -1,26 +1,40 @@
 import React, { useState } from 'react';
-import { Text, Button, Grid, Card, Box } from '@makerdao/ui-components-core';
+import {
+  Text,
+  Button,
+  Grid,
+  Card,
+  Box,
+  Checkbox
+} from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
 import { TextBlock } from '../Typography';
-import { prettifyNumber } from '../../utils/ui';
-import { SAI, DAI } from '../../maker';
-import AmountInputCard from '../AmountInputCard';
+import { SAI, DAI, ETH } from '../../maker';
 
-export default ({ onNext, onPrev }) => {
-  let [{ saiBalance = SAI(0)}, dispatch] = useStore();
-  const [saiAmountToRedeem, setSaiAmountToRedeem] = useState();
-  const [valid, setValid] = useState(true);
-  const shutdownPethEthRatio = 0
-  const currentPethEthRatio = 0
-  const estimatedPethEthRatio = 0
-  const pethInVaults = 0
-  const pethInAccount = 0
-  const totalPeth = pethInVaults * pethInAccount
-  const redeemedCollateral = totalPeth * currentPethEthRatio
+const CHECKBOX_WIDTH = '5rem';
+
+export default ({
+  onNext,
+  onPrev,
+  pethInVaults,
+  selectedCdps,
+  setSelectedCdps
+}) => {
+  // TODO
+  const shutdownRatio = 0.957;
+  const currentRatio = 0.98;
+  const estimatedRatio = 0.989;
+
+  const toggleSelection = id => {
+    if (selectedCdps.includes(id)) {
+      return setSelectedCdps(selectedCdps.filter(x => x !== id));
+    }
+    setSelectedCdps(selectedCdps.concat(id));
+  };
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
-      <Text.h2 textAlign="center">Withdraw collateral from Sai Vault</Text.h2>
+      <Text.h2 textAlign="center">Redeem Sai CDPs</Text.h2>
       <Text.p
         textAlign="center"
         t="body"
@@ -28,105 +42,97 @@ export default ({ onNext, onPrev }) => {
         m="0 auto"
         display={{ s: 'none', m: 'block' }}
       >
-        The cooldown period has now ended and it is possible to withdraw collateral from your Sai Vault.
+        Select one or more CDPs to redeem their collateral for ETH.
       </Text.p>
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
-        gridGap="m"
+        gridColumnGap="m"
+        gridRowGap="s"
         my={{ s: 's', l: 'l' }}
       >
-        <TextBlock t="h5" lineHeight="normal">
-          Please note the following:
-        </TextBlock>
-        <Grid gridRowGap="m">
-          <Grid gridRowGap="xs" gridTemplateColumns="1fr 1fr">
-            <TextBlock t="h5" lineHeight="normal">
-            The PETH:ETH ratio at the time of emergency shutdown was
-            </TextBlock>
-            <Box>
-              <TextBlock t="body">{shutdownPethEthRatio}</TextBlock>
-            </Box>
-          </Grid>
-          <Grid gridRowGap="xs" gridTemplateColumns="1fr 1fr">
-            <TextBlock t="h5" lineHeight="normal">
-            The current PETH:ETH ratio is
-            </TextBlock>
-            <Box>
-              <TextBlock t="body">{currentPethEthRatio}</TextBlock>
-            </Box>
-          </Grid>
-          <Grid gridRowGap="xs" gridTemplateColumns="1fr 1fr">
-            <TextBlock t="h5" lineHeight="normal">
-            The PETH:ETH ratio once the debt of all Vaults have been bitten is estimated at
-            </TextBlock>
-            <Box>
-              <TextBlock t="body">{estimatedPethEthRatio}</TextBlock>
-            </Box>
-          </Grid>
-        </Grid>
-        <TextBlock>
-          WARNING!
-        </TextBlock>
-        <TextBlock>
-          It is recommended that users wait to withdraw their collateral until the PETH:ETH ratio is
-          equal to or better than the ratio at the time of emergency shutdown in order to receive a favourable
-          exchange rate. This ratio is an indication that the debt in the system has been accounted for at which
-          point in time the user will be able to claim the most amount of ETH for every unit of PETH that they
-          hold.
-        </TextBlock>
-      </Grid>
-      <Box>
-        <Grid gridGap="m" gridTemplateColumns="1fr 1fr">
-          <TextBlock>
-            PETH in vaults
-          </TextBlock>
-          <TextBlock>
-            {`${pethInVaults} PETH`}
-          </TextBlock>
-          <TextBlock>
-            PETH in account
-          </TextBlock>
-          <TextBlock>
-            {`${pethInAccount} PETH`}
-          </TextBlock>
-          <TextBlock>
-            Total PETH balance
-          </TextBlock>
-          <TextBlock>
-            {`${totalPeth} PETH`}
-          </TextBlock>
-          <TextBlock>
-            Total Value in ETH
-          </TextBlock>
-          <TextBlock>
-            {`${redeemedCollateral} ETH`}
-          </TextBlock>
-        </Grid>
-      </Box>
-      <Box>
-        <TextBlock>
-          Redeem full amount of ETH
-        </TextBlock>
         <Grid
-          justifySelf="center"
-          justifyContent="center"
-          gridTemplateColumns="auto auto"
-          gridColumnGap="m"
+          px="l"
+          gridTemplateColumns={`${CHECKBOX_WIDTH} 1fr 1fr 1fr`}
+          alignItems="center"
         >
-          <Button variant="secondary-outline" onClick={onPrev}>
-            No
-          </Button>
-          <Button
-            // disabled={!collateralAmountToRedeem || !valid}
-            onClick={() => {
-              dispatch({ type: 'assign', payload: { redeemedCollateral, pethEthRatio: currentPethEthRatio, totalPeth } });
-              onNext();
-            }}
-          >
-            Yes
-          </Button>
+          <span />
+          <Text t="subheading">CDP ID</Text>
+          <Text t="subheading">PETH Value</Text>
+          <Text t="subheading">ETH Value</Text>
         </Grid>
-      </Box>
+        <span />
+        <Box>
+          <Grid gridRowGap="s">
+            {pethInVaults.map(([id, amount]) => (
+              <ListItem
+                key={id}
+                {...{ id, amount }}
+                onChange={() => toggleSelection(id)}
+                checked={!!selectedCdps.find(x => x === id)}
+              />
+            ))}
+          </Grid>
+        </Box>
+        <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
+          <Grid gridRowGap="m">
+            <Grid gridRowGap="xs">
+              <TextBlock t="h5" lineHeight="normal">
+                PETH:ETH at shutdown
+              </TextBlock>
+              <TextBlock t="body">1 PETH : {shutdownRatio} ETH</TextBlock>
+            </Grid>
+            <Grid gridRowGap="xs">
+              <TextBlock t="h5" lineHeight="normal">
+                PETH:ETH at current time
+              </TextBlock>
+              <TextBlock t="body">1 PETH : {currentRatio} ETH</TextBlock>
+            </Grid>
+            <Grid gridRowGap="xs">
+              <TextBlock t="h5" lineHeight="normal">
+                Estimate of final PETH:ETH once all debt is bitten
+              </TextBlock>
+              <TextBlock t="body">1 PETH : {estimatedRatio} ETH</TextBlock>
+            </Grid>
+          </Grid>
+        </Card>
+      </Grid>
+
+      <Grid
+        justifySelf="center"
+        justifyContent="center"
+        gridTemplateColumns="auto auto"
+        gridColumnGap="m"
+      >
+        <Button variant="secondary-outline" onClick={onPrev}>
+          Cancel
+        </Button>
+        <Button onClick={onNext} disabled={selectedCdps.length === 0}>
+          Continue
+        </Button>
+      </Grid>
     </Grid>
   );
 };
+
+function ListItem({ id, amount, onChange, checked, ...otherProps }) {
+  return (
+    <Card
+      borderColor={checked ? '#1AAB9B' : '#D4D9E1'}
+      border={checked ? '2px solid' : '1px solid'}
+      {...otherProps}
+    >
+      <Grid
+        px={['s', 'l']}
+        py={['s', 'm']}
+        gridTemplateColumns={`${CHECKBOX_WIDTH} 1fr 1fr 1fr`}
+        alignItems="center"
+        onClick={onChange}
+      >
+        <Checkbox checked={checked} onChange={onChange} />
+        <span>{id}</span>
+        <span>{amount.toString()}</span>
+        <span>TODO ETH</span>
+      </Grid>
+    </Card>
+  );
+}

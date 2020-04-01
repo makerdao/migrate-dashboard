@@ -2,7 +2,10 @@ import { Text, Grid, Table, Button } from '@makerdao/ui-components-core';
 import { prettifyNumber } from '../../utils/ui';
 import BigNumber from 'bignumber.js';
 
-function CollateralTable({ data, tagData, amount, redeemDai, buttonDisabled, buttonLoading, redeemComplete }) {
+function CollateralTable({ data, tagData, amount, redeemDai, daiBalance, bagBalance, outAmounts, buttonDisabled, buttonLoading, redeemComplete }) {
+  const maxRedeem = amount ? outAmounts.map(e => {
+    return {...e, max: BigNumber.min(amount.toBigNumber(), daiBalance.toBigNumber().plus(bagBalance.toBigNumber()).minus(e.out))};
+  }) : outAmounts;
   return (
     <Grid gridRowGap="s" p="m">
       <Table>
@@ -46,7 +49,7 @@ function CollateralTable({ data, tagData, amount, redeemDai, buttonDisabled, but
 
                 <Table.th>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
-                    {amount ? `${prettifyNumber(price.times(amount.toBigNumber()))} ${ilk.split('-')[0]}` : ''}
+                    {amount ? `${prettifyNumber(price.times(maxRedeem.find(x => x.ilk===ilk).max))} ${ilk.split('-')[0]}` : ''}
                   </Text.p>
                 </Table.th>
                 {redeemDai ?
@@ -57,8 +60,8 @@ function CollateralTable({ data, tagData, amount, redeemDai, buttonDisabled, but
                     justifySelf="center"
                     fontSize={'13px'}
                     loading={buttonLoading===ilk}
-                    disabled={buttonDisabled || redeemComplete.includes(ilk)}
-                    onClick={() => redeemDai(ilk)}
+                    disabled={buttonDisabled || redeemComplete.includes(ilk) || maxRedeem.find(x => x.ilk===ilk).max.eq(0)}
+                    onClick={() => redeemDai(maxRedeem.find(x => x.ilk===ilk).max, ilk)}
                   >
                     Redeem
                   </Button>

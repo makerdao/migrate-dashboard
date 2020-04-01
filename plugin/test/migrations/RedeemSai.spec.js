@@ -27,11 +27,6 @@ describe('Redeem Sai', () => {
     expect(rate).toBe(0.0025);
   });
 
-  test('should get the collateral pending liquidation', async () => {
-    const fog = await migration.fog();
-    expect(fog).toBe(0.075);
-  });
-
   test('should redeem sai', async () => {
     const sai = maker.getToken('DAI');
     const gem = maker.getToken('WETH');

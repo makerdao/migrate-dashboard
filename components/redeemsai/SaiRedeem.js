@@ -67,8 +67,13 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
     try {
       setRedemptionInitiated(true);
       const migration = await maker.service('migration').getMigration('redeem-sai');
+<<<<<<< HEAD
       // The following should be removed when approval ui is in place
       // await maker.getToken('DAI').approveUnlimited(migration._tap.address);
+=======
+      // TODO: The following should be removed when approval ui is in place
+      await maker.getToken('DAI').approveUnlimited(migration._tap.address);
+>>>>>>> 844717ddcdaf700f56eab9092d209451f4fdf981
       const redeemTxObject = migration.redeemSai(saiAmountToRedeem);
       maker.service('transactionManager').listen(redeemTxObject, {
         pending: tx => {

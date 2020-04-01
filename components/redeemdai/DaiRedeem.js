@@ -16,10 +16,9 @@ function DaiRedeem({
   onNext,
 }) {
   const { maker } = useMaker();
-  const [{ dsrBalance, daiBalance, endBalance, fixedPrices, tagPrices }, dispatch] = useStore();
+  const [{ dsrBalance, daiBalance, bagBalance, endBalance, fixedPrices, tagPrices, outAmounts }, dispatch] = useStore();
   const daiEndBalance = daiBalance.plus(endBalance);
   const [valid, setValid] = useState(true);
-  console.log('dsrBalance', dsrBalance.toString());
   const [dsrWithdrawn, setDsrWithdrawn] = useState(dsrBalance.eq(0));
   const [dsrWithdrawing, setDsrWithdrawing] = useState(false);
   const validate = value => {
@@ -64,7 +63,7 @@ function DaiRedeem({
         <div />
         <Grid width="567px" gridRowGap="l">
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
-            <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} />
+            <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} daiBalance={daiBalance} bagBalance={bagBalance} outAmounts={outAmounts} />
           </Card>
           {dsrBalance.gt(0) ?
           <Card>
@@ -95,7 +94,7 @@ function DaiRedeem({
                 color="darkLavender"
               >
                 {daiEndBalance && daiEndBalance.gt(0)
-                  ? `${prettifyNumber(dsrBalance.toBigNumber())} DAI`
+                  ? `${prettifyNumber(daiEndBalance.toBigNumber())} DAI`
                   : '--'}
               </Text>
             </Box>

@@ -23,7 +23,8 @@ function ConfirmRedeem({
   dispatch
 }) {
   const { maker, account } = useMaker();
-  const [{ fixedPrices, tagPrices, endBalance }] = useStore();
+  const [{ fixedPrices, tagPrices, endBalance, daiBalance, bagBalance, outAmounts }] = useStore();
+  console.log('endBalance', endBalance.toString());
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [redeemInitiated, setRedeemInitiated] = useState(false);
   const [redeemComplete, setRedeemComplete] = useState([]);
@@ -79,16 +80,16 @@ function ConfirmRedeem({
     setDepositLoading(false);
   };
 
-  const redeemDai = async (ilk) => {
+  const redeemDai = async (amount, ilk) => {
 
     try {
       setRedeemInitiated(ilk);
       const mig = maker
         .service('migration')
         .getMigration('global-settlement-dai-redeemer');
-      if(ilk==='ETH-A') await mig.cashEth(redeemAmount);
-      if(ilk==='BAT-A') await mig.cashBat(redeemAmount);
-      if(ilk==='USDC-A') await mig.cashUsdc(redeemAmount);
+      if(ilk==='ETH-A') await mig.cashEth(amount);
+      if(ilk==='BAT-A') await mig.cashBat(amount);
+      if(ilk==='USDC-A') await mig.cashUsdc(amount);
       setRedeemComplete([...redeemComplete, ilk]);
     } catch (err) {
       const message = err.message ? err.message : err;
@@ -125,6 +126,7 @@ function ConfirmRedeem({
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
             <Grid gridRowGap="s" width="567px">
               <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} redeemDai={redeemDai}
+              daiBalance={daiBalance} bagBalance={bagBalance} outAmounts={outAmounts}
               buttonDisabled={!hasAllowance || !hasReadTOS || !hasDeposit} redeemComplete={redeemComplete}
               buttonLoading={redeemInitiated}/>
               <Grid gridRowGap="s" px="s" width="300px">

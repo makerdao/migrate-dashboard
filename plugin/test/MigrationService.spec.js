@@ -7,6 +7,8 @@ import GlobalSettlementSavingsDai from '../src/migrations/GlobalSettlementSaving
 import GlobalSettlementCollateralClaims from '../src/migrations/GlobalSettlementCollateralClaims';
 import GlobalSettlementDaiRedeemer from '../src/migrations/GlobalSettlementDaiRedeemer';
 import MkrRedeemer from '../src/migrations/MkrRedeemer';
+import RedeemSai from '../src/migrations/RedeemSai';
+import RedeemCollateral from '../src/migrations/RedeemCollateral';
 
 let maker, service;
 
@@ -42,10 +44,11 @@ test('can fetch a list of all migrations', () => {
       Migrations.GLOBAL_SETTLEMENT_DAI_REDEEMER,
       Migrations.MKR_REDEEMER,
       Migrations.CHIEF_MIGRATE,
-      Migrations.REDEEM_SAI
+      Migrations.REDEEM_SAI,
+      Migrations.REDEEM_COLLATERAL
     ])
   );
-  expect(ids.length).toEqual(9);
+  expect(ids.length).toEqual(10);
 });
 
 test('getting each migration returns a valid migration', () => {
@@ -64,6 +67,12 @@ test('getting each migration returns a valid migration', () => {
   ).toBeInstanceOf(GlobalSettlementDaiRedeemer);
   expect(service.getMigration(Migrations.MKR_REDEEMER)).toBeInstanceOf(
     MkrRedeemer
+  );
+  expect(service.getMigration(Migrations.REDEEM_SAI)).toBeInstanceOf(
+    RedeemSai
+  );
+  expect(service.getMigration(Migrations.REDEEM_COLLATERAL)).toBeInstanceOf(
+    RedeemCollateral
   );
 });
 

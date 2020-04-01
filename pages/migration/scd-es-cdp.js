@@ -149,6 +149,7 @@ export default function() {
   const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
   const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
+  const [selectedCdps, setSelectedCdps] = useState([]);
 
   return (
     // TODO list total PETH in your CDPs, PETH:WETH ratio
@@ -188,7 +189,10 @@ export default function() {
                   txHash,
                   txObject,
                   setTxObject,
-                  showErrorMessageAndAllowExiting
+                  showErrorMessageAndAllowExiting,
+                  pethInVaults,
+                  selectedCdps,
+                  setSelectedCdps
                 })}
               </FadeInFromSide>
             );
