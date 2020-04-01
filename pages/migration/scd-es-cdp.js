@@ -17,7 +17,6 @@ import {
   Text
 } from '@makerdao/ui-components-core';
 import Router from 'next/router';
-// To add
 import CollateralRedeem from '../../components/redeemscdvaults/CollateralRedeem';
 import Confirmation from '../../components/redeemscdvaults/Confirmation';
 import InProgress from '../../components/InProgress';
@@ -99,16 +98,12 @@ export default function() {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [txHash, setTxHash] = useState(null);
+  const [selectedCdps, setSelectedCdps] = useState([]);
   const [{ pethInVaults }] = useStore();
-  const [cdps, setCdps] = useState([]);
 
   useEffect(() => {
     if (!account) Router.replace('/');
   }, []); // eslint-disable-line
-
-  useEffect(() => {
-
-  });
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
@@ -117,7 +112,6 @@ export default function() {
   const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
   const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
-  const [selectedCdps, setSelectedCdps] = useState([]);
 
   return (
     // TODO list total PETH in your CDPs, PETH:WETH ratio
@@ -125,7 +119,7 @@ export default function() {
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
         <FlowHeader account={account} showClose={currentStep <= 1} />
         <Stepper
-          steps={['Collateral Redemption', 'Confirmation']}
+          steps={['Select CDPs', 'Confirm']}
           selected={currentStep}
           m="0 auto"
           mt={'m'}

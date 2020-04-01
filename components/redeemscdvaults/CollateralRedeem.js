@@ -1,17 +1,95 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import {
   Text,
-  Button,
   Grid,
   Card,
+  Button,
+  Checkbox,
+  Overflow,
   Box,
-  Checkbox
+  Flex,
+  Link
 } from '@makerdao/ui-components-core';
-import useStore from '../../hooks/useStore';
 import { TextBlock } from '../Typography';
-import { SAI, DAI, ETH } from '../../maker';
+import { getColor } from '../../utils/theme';
+import round from 'lodash/round';
 
-const CHECKBOX_WIDTH = '5rem';
+const CHECKBOX_WIDTH = '2rem';
+const CHECKBOX_CONTAINER_WIDTH = '4rem';
+const TABLE_COLUMNS = `${CHECKBOX_CONTAINER_WIDTH} 1fr 2fr 2fr`;
+
+const Label = styled(Box)`
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 13px;
+  color: ${getColor('steel')};
+`;
+
+function ListItemRow({ label, value, dark }) {
+  return (
+    <Flex
+      alignItems="center"
+      justifyContent="space-between"
+      bg={dark ? getColor('lightGrey') : 'white'}
+      px="m"
+      py="s"
+    >
+      <Label>{label}</Label>
+      <div>{value}</div>
+    </Flex>
+  );
+}
+
+function ListItem({ id, amount, eth, onChange, checked, ...otherProps }) {
+  return (
+    <Card
+      px={['0', 'l']}
+      py={['0', 'm']}
+      borderColor={checked ? '#1AAB9B' : '#D4D9E1'}
+      border={checked ? '2px solid' : '1px solid'}
+      {...otherProps}
+    >
+      <Box display={['none', 'block']}>
+        <Grid
+          gridTemplateColumns={TABLE_COLUMNS}
+          gridColumnGap="l"
+          alignItems="center"
+          fontSize="m"
+          color="darkPurple"
+          css={`
+            white-space: nowrap;
+          `}
+          onClick={onChange}
+        >
+          <Checkbox
+            onChange={onChange}
+            fontSize={CHECKBOX_WIDTH}
+            checked={checked}
+            data-testid={'cdpCheckbox'}
+          />
+
+          <span>{`#${id}`}</span>
+          <span>{`${amount.toString()}`}</span>
+          <span>{`${eth} ETH`}</span>
+        </Grid>
+      </Box>
+      <Box display={['block', 'none']} onClick={onChange}>
+        <Flex py="s" pl="m" alignItems="center">
+          <Checkbox
+            onChange={onChange}
+            fontSize={CHECKBOX_WIDTH}
+            checked={checked}
+            mr="9px"
+          />
+          <Text fontSize="20px">{`CDP ${id}`}</Text>
+        </Flex>
+        <ListItemRow label="Peth Value" value={`${amount.toString()}`} dark />
+        <ListItemRow label="Eth Value" value={`${eth} ETH`} />
+      </Box>
+    </Card>
+  );
+}
 
 export default ({
   onNext,
@@ -20,7 +98,6 @@ export default ({
   selectedCdps,
   setSelectedCdps
 }) => {
-  // TODO
   const shutdownRatio = 0.957;
   const currentRatio = 0.98;
   const estimatedRatio = 0.989;
@@ -33,106 +110,121 @@ export default ({
   };
 
   return (
-    <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
-      <Text.h2 textAlign="center">Redeem Sai CDPs</Text.h2>
+    <Grid maxWidth="912px" px={['s', 0]}>
+      <Text.h2 textAlign="center">Redeem Sai CDPs for Collateral</Text.h2>
       <Text.p
         textAlign="center"
         t="body"
         fontSize="1.8rem"
         m="0 auto"
+        mt="s"
         display={{ s: 'none', m: 'block' }}
       >
-        Select one or more CDPs to redeem their collateral for ETH.
+        Select one or more CDPs to redeem ETH back to your wallet.
       </Text.p>
+      {pethInVaults.length > 0 && (
+        <Grid
+          gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
+          gridGap="m"
+          mt={{ s: 's', l: 'xl' }}
+        >
+          <Box display={['none', 'block']}>
+            <Grid
+              px="l"
+              // pt="m"
+              pb="0"
+              gridTemplateColumns={TABLE_COLUMNS}
+              gridColumnGap="l"
+              alignItems="center"
+              fontWeight="medium"
+              color="steelLight"
+              css={`
+                white-space: nowrap;
+              `}
+            >
+              <span />
+              <Text t="subheading">CDP ID</Text>
+              <Text t="subheading">PETH VALUE</Text>
+              <Text t="subheading">ETH VALUE</Text>
+            </Grid>
+          </Box>
+          <Box />
+        </Grid>
+      )}
+
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
-        gridColumnGap="m"
-        gridRowGap="s"
-        my={{ s: 's', l: 'l' }}
+        gridGap="m"
+        mt={{ s: 'xs', l: 'm' }}
       >
-        <Grid
-          px="l"
-          gridTemplateColumns={`${CHECKBOX_WIDTH} 1fr 1fr 1fr`}
-          alignItems="center"
-        >
-          <span />
-          <Text t="subheading">CDP ID</Text>
-          <Text t="subheading">PETH Value</Text>
-          <Text t="subheading">ETH Value</Text>
-        </Grid>
-        <span />
-        <Box>
-          <Grid gridRowGap="s">
+        <Overflow x="scroll" y="visible">
+          {pethInVaults.length === 0 && (
+            <Card>
+              <Flex justifyContent="center" py="l" px="m">
+                <Text.p textAlign="center" t="body">
+                  You&apos;re all set! There are no redemptions to make using
+                  this wallet.
+                  <br />
+                  <Text.span display={{ s: 'block', m: 'none' }} mt="m" />
+                  Please visit us at <Link>chat.makerdao.com</Link> if you have
+                  any questions.
+                </Text.p>
+              </Flex>
+            </Card>
+          )}
+          <Grid gridRowGap="s" pb="m">
             {pethInVaults.map(([id, amount]) => (
               <ListItem
                 key={id}
-                {...{ id, amount }}
+                {...{ id, amount,  }}
+                eth={round(amount.toNumber() * currentRatio, 3)}
                 onChange={() => toggleSelection(id)}
                 checked={!!selectedCdps.find(x => x === id)}
               />
             ))}
           </Grid>
-        </Box>
+        </Overflow>
         <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
           <Grid gridRowGap="m">
             <Grid gridRowGap="xs">
               <TextBlock t="h5" lineHeight="normal">
-                PETH:ETH at shutdown
+                PETH:ETH (At Shutdown)
               </TextBlock>
               <TextBlock t="body">1 PETH : {shutdownRatio} ETH</TextBlock>
             </Grid>
             <Grid gridRowGap="xs">
               <TextBlock t="h5" lineHeight="normal">
-                PETH:ETH at current time
+                PETH:ETH (Current)
               </TextBlock>
               <TextBlock t="body">1 PETH : {currentRatio} ETH</TextBlock>
             </Grid>
             <Grid gridRowGap="xs">
-              <TextBlock t="h5" lineHeight="normal">
-                Estimate of final PETH:ETH once all debt is bitten
-              </TextBlock>
-              <TextBlock t="body">1 PETH : {estimatedRatio} ETH</TextBlock>
+              <Grid>
+                <TextBlock t="h5" lineHeight="normal">
+                  Estimated PETH:ETH
+                </TextBlock>
+                <TextBlock t="h5" lineHeight="normal">
+                  once all debt is bitten
+                </TextBlock>
+              </Grid>
+              <TextBlock t="body">1 PETH : ${estimatedRatio} ETH</TextBlock>
             </Grid>
           </Grid>
         </Card>
       </Grid>
-
       <Grid
         justifySelf="center"
-        justifyContent="center"
         gridTemplateColumns="auto auto"
         gridColumnGap="m"
+        mt={{ s: 'm', l: 'xl' }}
       >
         <Button variant="secondary-outline" onClick={onPrev}>
           Cancel
         </Button>
-        <Button onClick={onNext} disabled={selectedCdps.length === 0}>
+        <Button disabled={selectedCdps.length === 0} onClick={onNext}>
           Continue
         </Button>
       </Grid>
     </Grid>
   );
 };
-
-function ListItem({ id, amount, onChange, checked, ...otherProps }) {
-  return (
-    <Card
-      borderColor={checked ? '#1AAB9B' : '#D4D9E1'}
-      border={checked ? '2px solid' : '1px solid'}
-      {...otherProps}
-    >
-      <Grid
-        px={['s', 'l']}
-        py={['s', 'm']}
-        gridTemplateColumns={`${CHECKBOX_WIDTH} 1fr 1fr 1fr`}
-        alignItems="center"
-        onClick={onChange}
-      >
-        <Checkbox checked={checked} onChange={onChange} />
-        <span>{id}</span>
-        <span>{amount.toString()}</span>
-        <span>TODO ETH</span>
-      </Grid>
-    </Card>
-  );
-}
