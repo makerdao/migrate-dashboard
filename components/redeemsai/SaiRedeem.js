@@ -19,22 +19,27 @@ import { prettifyNumber } from '../../utils/ui';
 import { SAI, DAI } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
 
-export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) => {
-  let [{saiBalance = SAI(0)}, dispatch] = useStore();
+export default ({
+  onNext,
+  onPrev,
+  showErrorMessageAndAllowExiting,
+  setTxHash
+}) => {
+  let [{ saiBalance = SAI(0) }, dispatch] = useStore();
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [tapApprovePending, setTapApprovePending] = useState(false);
-  const [exchangeRate, setExchangeRate] = useState(1)
+  const [exchangeRate, setExchangeRate] = useState(1);
   const [redemptionInitiated, setRedemptionInitiated] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
   const [saiAmountToRedeem, setSaiAmountToRedeem] = useState(SAI(0));
   const [valid, setValid] = useState(true);
+  if (!maker) return null;
+
   const saiTapContractAddress = maker
     .service('smartContract')
     .getContract('SAI_TAP').address;
-  const max = saiBalance
-
-  if (!maker) return null;
+  const max = saiBalance;
 
   const validate = value => {
     let msg;
@@ -47,9 +52,7 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
   const giveProxyTapAllowance = async () => {
     setTapApprovePending(true);
     try {
-      await maker
-        .getToken('DAI')
-        .approveUnlimited(saiTapContractAddress);
+      await maker.getToken('DAI').approveUnlimited(saiTapContractAddress);
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasTapAllowance: true
@@ -66,7 +69,9 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
   const redeemSai = async () => {
     try {
       setRedemptionInitiated(true);
-      const migration = await maker.service('migration').getMigration('redeem-sai');
+      const migration = await maker
+        .service('migration')
+        .getMigration('redeem-sai');
       // The following should be removed when approval ui is in place
       // await maker.getToken('DAI').approveUnlimited(migration._tap.address);
       const redeemTxObject = migration.redeemSai(saiAmountToRedeem);
@@ -77,7 +82,7 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
         },
         error: () => showErrorMessageAndAllowExiting()
       });
-      redeemTxObject.then(onNext)
+      redeemTxObject.then(onNext);
     } catch (err) {
       const message = err.message ? err.message : err;
       const errMsg = `migrate tx failed ${message}`;
@@ -89,10 +94,13 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
   useEffect(() => {
     (async () => {
       if (maker) {
-        const xRate = await maker.service('migration').getMigration('redeem-sai').getRate();
-        setExchangeRate(xRate)
+        const xRate = await maker
+          .service('migration')
+          .getMigration('redeem-sai')
+          .getRate();
+        setExchangeRate(xRate);
       }
-    })()
+    })();
   }, [maker]);
 
   useEffect(() => {
@@ -119,7 +127,8 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
         m="0 auto"
         display={{ s: 'none', m: 'block' }}
       >
-        Redeem your SAI for a proportional amount of ETH from the Single-Collateral Dai system.
+        Redeem your SAI for a proportional amount of ETH from the
+        Single-Collateral Dai system.
       </Text.p>
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
@@ -233,7 +242,7 @@ export default ({ onNext, onPrev, showErrorMessageAndAllowExiting, setTxHash }) 
           }
           onClick={() => {
             dispatch({ type: 'assign', payload: { saiAmountToRedeem } });
-            redeemSai()
+            redeemSai();
           }}
         >
           Continue
