@@ -9,18 +9,15 @@ import {
   Overflow,
   Box,
   Flex,
-  Loader,
   Link
 } from '@makerdao/ui-components-core';
-import useStore from '../../hooks/useStore';
 import { TextBlock } from '../Typography';
 import { getColor } from '../../utils/theme';
-import { prettifyNumber } from '../../utils/ui';
-import { SAI, DAI, PETH } from '../../maker';
+import round from 'lodash/round';
 
 const CHECKBOX_WIDTH = '2rem';
 const CHECKBOX_CONTAINER_WIDTH = '4rem';
-const AESTHETIC_ROW_PADDING = '4rem';
+const TABLE_COLUMNS = `${CHECKBOX_CONTAINER_WIDTH} 1fr 2fr 2fr`;
 
 const Label = styled(Box)`
   text-transform: uppercase;
@@ -55,7 +52,7 @@ function ListItem({ id, amount, eth, onChange, checked, ...otherProps }) {
     >
       <Box display={['none', 'block']}>
         <Grid
-          gridTemplateColumns={`${CHECKBOX_CONTAINER_WIDTH} 1fr 2fr 2fr ${AESTHETIC_ROW_PADDING}`}
+          gridTemplateColumns={TABLE_COLUMNS}
           gridColumnGap="l"
           alignItems="center"
           fontSize="m"
@@ -63,6 +60,7 @@ function ListItem({ id, amount, eth, onChange, checked, ...otherProps }) {
           css={`
             white-space: nowrap;
           `}
+          onClick={onChange}
         >
           <Checkbox
             onChange={onChange}
@@ -76,24 +74,17 @@ function ListItem({ id, amount, eth, onChange, checked, ...otherProps }) {
           <span>{`${eth} ETH`}</span>
         </Grid>
       </Box>
-      <Box
-        display={['block', 'none']}
-        onClick={() => onSelect(cdp)}
-      >
+      <Box display={['block', 'none']} onClick={onChange}>
         <Flex py="s" pl="m" alignItems="center">
           <Checkbox
-            onChange={() => onSelect(cdp)}
+            onChange={onChange}
             fontSize={CHECKBOX_WIDTH}
             checked={checked}
             mr="9px"
           />
           <Text fontSize="20px">{`CDP ${id}`}</Text>
         </Flex>
-        <ListItemRow
-          label="Peth Value"
-          value={`${amount.toString()}`}
-          dark
-        />
+        <ListItemRow label="Peth Value" value={`${amount.toString()}`} dark />
         <ListItemRow label="Eth Value" value={`${eth} ETH`} />
       </Box>
     </Card>
@@ -131,61 +122,66 @@ export default ({
       >
         Select one or more CDPs to redeem ETH back to your wallet.
       </Text.p>
-      { pethInVaults.length > 0 && <Grid
-        gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
-        gridGap="m"
-        mt={{ s: 's', l: 'xl' }}
-      >
-        <Box display={['none', 'block']}>
-          <Grid
-            px="l"
-            // pt="m"
-            pb="0"
-            gridTemplateColumns={`${CHECKBOX_CONTAINER_WIDTH} 0.5fr 1fr 1fr ${AESTHETIC_ROW_PADDING}`}
-            gridColumnGap="l"
-            alignItems="center"
-            fontWeight="medium"
-            color="steelLight"
-            css={`
-              white-space: nowrap;
-            `}
-          >
-            <span />
-            <Text t="subheading">CDP ID</Text>
-            <Text t="subheading">PETH VALUE</Text>
-            <Text t="subheading">ETH VALUE</Text>
-          </Grid>
-        </Box>
-        <Box />
-      </Grid> }
+      {pethInVaults.length > 0 && (
+        <Grid
+          gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
+          gridGap="m"
+          mt={{ s: 's', l: 'xl' }}
+        >
+          <Box display={['none', 'block']}>
+            <Grid
+              px="l"
+              // pt="m"
+              pb="0"
+              gridTemplateColumns={TABLE_COLUMNS}
+              gridColumnGap="l"
+              alignItems="center"
+              fontWeight="medium"
+              color="steelLight"
+              css={`
+                white-space: nowrap;
+              `}
+            >
+              <span />
+              <Text t="subheading">CDP ID</Text>
+              <Text t="subheading">PETH VALUE</Text>
+              <Text t="subheading">ETH VALUE</Text>
+            </Grid>
+          </Box>
+          <Box />
+        </Grid>
+      )}
 
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
         gridGap="m"
-        mt={{ s: 'xs', l: 'm'}}
+        mt={{ s: 'xs', l: 'm' }}
       >
         <Overflow x="scroll" y="visible">
-          {pethInVaults.length === 0 && <Card>
-            <Flex justifyContent="center" py="l" px="m">
-              <Text.p textAlign="center" t="body">
-                You&apos;re all set! There are no redemptions to
-                make using this wallet.
-                <br />
-                <Text.span display={{ s: 'block', m: 'none' }} mt="m" />
-                Please visit us at <Link>chat.makerdao.com</Link> if you have
-                any questions.
-              </Text.p>
-            </Flex>
-          </Card>}
+          {pethInVaults.length === 0 && (
+            <Card>
+              <Flex justifyContent="center" py="l" px="m">
+                <Text.p textAlign="center" t="body">
+                  You&apos;re all set! There are no redemptions to make using
+                  this wallet.
+                  <br />
+                  <Text.span display={{ s: 'block', m: 'none' }} mt="m" />
+                  Please visit us at <Link>chat.makerdao.com</Link> if you have
+                  any questions.
+                </Text.p>
+              </Flex>
+            </Card>
+          )}
           <Grid gridRowGap="s" pb="m">
             {pethInVaults.map(([id, amount]) => (
-               <ListItem
-                 key={id}
-                 {...{ id, amount, eth: amount.toNumber() * currentRatio }}
-                 onChange={() => toggleSelection(id)}
-                 checked={!!selectedCdps.find(x => x === id)}
-               />
-             ))}
+              <ListItem
+                key={id}
+                {...{ id, amount,  }}
+                eth={round(amount.toNumber() * currentRatio, 3)}
+                onChange={() => toggleSelection(id)}
+                checked={!!selectedCdps.find(x => x === id)}
+              />
+            ))}
           </Grid>
         </Overflow>
         <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
@@ -194,13 +190,13 @@ export default ({
               <TextBlock t="h5" lineHeight="normal">
                 PETH:ETH (At Shutdown)
               </TextBlock>
-              <TextBlock t="body">{`1 PETH : ${shutdownRatio} ETH`}</TextBlock>
+              <TextBlock t="body">1 PETH : {shutdownRatio} ETH</TextBlock>
             </Grid>
             <Grid gridRowGap="xs">
               <TextBlock t="h5" lineHeight="normal">
                 PETH:ETH (Current)
               </TextBlock>
-              <TextBlock t="body">{`1 PETH : ${currentRatio} ETH`}</TextBlock>
+              <TextBlock t="body">1 PETH : {currentRatio} ETH</TextBlock>
             </Grid>
             <Grid gridRowGap="xs">
               <Grid>
@@ -211,9 +207,7 @@ export default ({
                   once all debt is bitten
                 </TextBlock>
               </Grid>
-              <TextBlock t="body">
-                {`1 PETH : ${estimatedRatio} ETH`}
-              </TextBlock>
+              <TextBlock t="body">1 PETH : ${estimatedRatio} ETH</TextBlock>
             </Grid>
           </Grid>
         </Card>
@@ -222,15 +216,12 @@ export default ({
         justifySelf="center"
         gridTemplateColumns="auto auto"
         gridColumnGap="m"
-        mt={{ s: 'm', l: 'xl'}}
+        mt={{ s: 'm', l: 'xl' }}
       >
         <Button variant="secondary-outline" onClick={onPrev}>
           Cancel
         </Button>
-        <Button
-          disabled={Object.keys(selectedCdps).length === 0}
-          onClick={onNext}
-        >
+        <Button disabled={selectedCdps.length === 0} onClick={onNext}>
           Continue
         </Button>
       </Grid>

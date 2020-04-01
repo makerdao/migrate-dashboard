@@ -17,8 +17,7 @@ import {
   Text
 } from '@makerdao/ui-components-core';
 import Router from 'next/router';
-import { PETH } from '../../maker';
-import CollateralRedeem from '../../components/redeemscdvaults/CollateralRedeem'
+import CollateralRedeem from '../../components/redeemscdvaults/CollateralRedeem';
 import Confirmation from '../../components/redeemscdvaults/Confirmation';
 import InProgress from '../../components/InProgress';
 import Complete from '../../components/Complete';
@@ -100,7 +99,7 @@ export default function() {
   const [currentStep, setCurrentStep] = useState(0);
   const [txHash, setTxHash] = useState(null);
   const [selectedCdps, setSelectedCdps] = useState([]);
-  const [{ pethInVaults }] = useStore()
+  const [{ pethInVaults }] = useStore();
 
   useEffect(() => {
     if (!account) Router.replace('/');
@@ -114,14 +113,13 @@ export default function() {
   const reset = () => setCurrentStep(0);
   const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
 
-
   return (
     // TODO list total PETH in your CDPs, PETH:WETH ratio
     <FlowBackground>
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
         <FlowHeader account={account} showClose={currentStep <= 1} />
         <Stepper
-          steps={['Select Vaults', 'Confirm']}
+          steps={['Select CDPs', 'Confirm']}
           selected={currentStep}
           m="0 auto"
           mt={'m'}
