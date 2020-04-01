@@ -95,51 +95,16 @@ const steps = [
   )
 ];
 
-// async function getCdpData(cdp) {
-//   const collateralValuePeth = await cdp.getCollateralValue(PETH);
-//   const collateralValueEth = await cdp.getCollateralValue()
-//   return {
-//     collateralValuePeth,
-//     collateralValueEth
-//   };
-// }
-//
-// async function getAllCdpData(allCdps, maker) {
-//   const cdpIds = Object.values(allCdps).flat();
-//   const allCdpData = await Promise.all(
-//     cdpIds.map(async id => {
-//       const cdp = await maker.getCdp(id);
-//       const data = await getCdpData(cdp);
-//       return { ...cdp, ...data, give: cdp.give };
-//     })
-//   );
-//   return allCdpData.sort(
-//     (a, b) => b.debtValueExact.toNumber() - a.debtValueExact.toNumber()
-//   );
-// }
-
 export default function() {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [txHash, setTxHash] = useState(null);
   const [selectedCdps, setSelectedCdps] = useState([]);
   const [{ pethInVaults }] = useStore()
-  // const [cdps, setCdps] = useState([]);
-  // const [loadingCdps, setLoadingCdps] = useState(true);
-  // const [txObject, setTxObject] = useState({})
 
   useEffect(() => {
     if (!account) Router.replace('/');
   }, []); // eslint-disable-line
-
-  // useEffect(() => {
-  //   (async () => {
-  //     if (!maker || !account || !cdpMigrationCheck) return;
-  //     const data = await getAllCdpData(cdpMigrationCheck, maker);
-  //     setCdps(data);
-  //     setLoadingCdps(false);
-  //   })();
-  // }, [maker, account, cdpMigrationCheck]);
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
