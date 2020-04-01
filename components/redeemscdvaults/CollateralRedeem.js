@@ -16,7 +16,7 @@ const CHECKBOX_WIDTH = '5rem';
 export default ({
   onNext,
   onPrev,
-  pethInVaults,
+  pethInVaults = [],
   selectedCdps,
   setSelectedCdps
 }) => {
