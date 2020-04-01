@@ -117,13 +117,13 @@ export default ({
 function ListItem({ id, amount, onChange, checked, ...otherProps }) {
   return (
     <Card
-      px={['0', 'l']}
-      py={['0', 'm']}
       borderColor={checked ? '#1AAB9B' : '#D4D9E1'}
       border={checked ? '2px solid' : '1px solid'}
       {...otherProps}
     >
       <Grid
+        px={['s', 'l']}
+        py={['s', 'm']}
         gridTemplateColumns={`${CHECKBOX_WIDTH} 1fr 1fr 1fr`}
         alignItems="center"
         onClick={onChange}
