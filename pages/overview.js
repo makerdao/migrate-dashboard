@@ -485,7 +485,7 @@ function Overview({ fetching }) {
           {shouldShowMkr && (
             <MigrationCard
               recommended
-              title="Redeem New MKR"
+              title="Redeem Old MKR"
               onSelected={() => {
                 window.open('https://makerdao.com/redeem/', '_blank');
               }}
