@@ -9,7 +9,8 @@ import {
   Overflow,
   Box,
   Flex,
-  Loader
+  Loader,
+  Link
 } from '@makerdao/ui-components-core';
 import useStore from '../../hooks/useStore';
 import { TextBlock } from '../Typography';
@@ -130,7 +131,7 @@ export default ({
       >
         Select one or more CDPs to redeem ETH back to your wallet.
       </Text.p>
-      <Grid
+      { pethInVaults.length > 0 && <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
         gridGap="m"
         mt={{ s: 's', l: 'xl' }}
@@ -156,14 +157,26 @@ export default ({
           </Grid>
         </Box>
         <Box />
-      </Grid>
+      </Grid> }
 
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
         gridGap="m"
-        mt={{ s: 'xs', l: 's'}}
+        mt={{ s: 'xs', l: 'm'}}
       >
         <Overflow x="scroll" y="visible">
+          {pethInVaults.length === 0 && <Card>
+            <Flex justifyContent="center" py="l" px="m">
+              <Text.p textAlign="center" t="body">
+                You&apos;re all set! There are no redemptions to
+                make using this wallet.
+                <br />
+                <Text.span display={{ s: 'block', m: 'none' }} mt="m" />
+                Please visit us at <Link>chat.makerdao.com</Link> if you have
+                any questions.
+              </Text.p>
+            </Flex>
+          </Card>}
           <Grid gridRowGap="s" pb="m">
             {pethInVaults.map(([id, amount]) => (
                <ListItem
