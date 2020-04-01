@@ -110,8 +110,6 @@ export default ({
   const currentRatio = 0.98;
   const estimatedRatio = 0.989;
 
-  pethInVaults = [[1556, PETH(40.4485)]]
-
   const toggleSelection = id => {
     if (selectedCdps.includes(id)) {
       return setSelectedCdps(selectedCdps.filter(x => x !== id));
