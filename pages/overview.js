@@ -158,7 +158,7 @@ function OverviewDataFetch() {
       const end = maker.service('smartContract').getContract('MCD_END_1');
       const live = await end.live();
       const emergencyShutdownActive = live.eq(0);
-      if( emergencyShutdownActive ){
+      if (emergencyShutdownActive) {
         const claims = checks['global-settlement-collateral-claims'];
         const validClaims = claims.filter(c => c.redeemable);
 
@@ -192,7 +192,9 @@ function OverviewDataFetch() {
           emergencyShutdownTime.getTime() + wait.toNumber() * 1000
         );
 
-        const diff = Math.floor((auctionCloseTime.getTime() - Date.now()) / 1000);
+        const diff = Math.floor(
+          (auctionCloseTime.getTime() - Date.now()) / 1000
+        );
 
         const secondsUntilAuctionClose = diff > 0 ? diff : 0;
 
@@ -238,19 +240,19 @@ function OverviewDataFetch() {
               .bagAmount(proxyAddress)
           );
         const _dsrBalance = await maker.service('mcd:savings').balance();
-        const _daiDsrEndBalance = _daiBalance.plus(_endBalance).plus(_dsrBalance);
-        
+        const _daiDsrEndBalance = _daiBalance
+          .plus(_endBalance)
+          .plus(_dsrBalance);
+
         let ethOut = BigNumber(0);
         let batOut = BigNumber(0);
         let bagBalance = DAI(0);
-        if (proxyAddress){
-          [
-            ethOut,
-            batOut
-          ] = await Promise.all(
+        if (proxyAddress) {
+          [ethOut, batOut] = await Promise.all(
             ['ETH-A', 'BAT-A'].map(ilk =>
-            end.out(stringToBytes(ilk), proxyAddress).then(fromWei)
-          ));
+              end.out(stringToBytes(ilk), proxyAddress).then(fromWei)
+            )
+          );
           bagBalance = DAI(
             await maker
               .service('migration')
@@ -263,7 +265,7 @@ function OverviewDataFetch() {
           { ilk: 'ETH-A', out: ethOut },
           { ilk: 'BAT-A', out: batOut }
         ];
-        
+
         dispatch({
           type: 'assign',
           payload: {
@@ -280,7 +282,7 @@ function OverviewDataFetch() {
             bagBalance,
             proxyAddress,
             daiDsrEndBalance: _daiDsrEndBalance,
-            vaultsToRedeem: { claims: validClaims, parsedVaultsData },
+            vaultsToRedeem: { claims: validClaims, parsedVaultsData }
           }
         });
       }
@@ -296,20 +298,14 @@ function OverviewDataFetch() {
         cooldown: await top.cooldown()
       };
 
-      let pethInVaults = PETH(0);
-      let pethInAccount, totalPeth;
+      const pethInVaults = [];
       if (tubState.off && countCdps(checks['single-to-multi-cdp']) > 0) {
         const cdpService = maker.service('cdp');
         const ids = flatten(Object.values(checks['single-to-multi-cdp']));
         for (const id of ids) {
           const value = await cdpService.getCollateralValue(id);
-          pethInVaults = pethInVaults.plus(PETH(value));
+          pethInVaults.push([id, PETH(value)]);
         }
-        pethInAccount = await maker
-          .service('token')
-          .getToken('PETH')
-          .balance();
-        totalPeth = pethInVaults.plus(pethInAccount);
       }
 
       setFetching(false);
@@ -323,9 +319,7 @@ function OverviewDataFetch() {
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
           tubState,
-          pethInVaults,
-          pethInAccount,
-          totalPeth
+          pethInVaults
         }
       });
     })();
@@ -608,6 +602,7 @@ function SCDESCollateralCard({ tubState, pethInVaults }) {
   const { out, caged, cooldown } = tubState;
   const endTime = caged.toNumber() + cooldown.toNumber();
   const [seconds, setSeconds] = useState();
+  const total = pethInVaults.reduce((sum, v) => sum.plus(v[1]), PETH(0));
 
   useEffect(() => {
     const val = endTime - new Date().getTime() / 1000;
@@ -619,7 +614,7 @@ function SCDESCollateralCard({ tubState, pethInVaults }) {
     <MigrationCard
       title="Withdraw ETH from SAI CDP"
       metadataTitle="PETH in Vault(s)"
-      metadataValue={showAmount(pethInVaults)}
+      metadataValue={showAmount(total)}
       onSelected={() => Router.push('/migration/scd-es-cdp')}
       disabled={!out}
     >
@@ -639,7 +634,10 @@ function SCDESCollateralCard({ tubState, pethInVaults }) {
                 order to balance out the ETH:PETH ratio.
               </Timer>
             ) : (
-              <>Cooldown period has ended and access will be granted soon. Reload the page to see.</>
+              <>
+                Cooldown period has ended and access will be granted soon.
+                Reload the page to see.
+              </>
             )}
           </TextBlock>
         )}

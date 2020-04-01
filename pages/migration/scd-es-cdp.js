@@ -95,64 +95,20 @@ const steps = [
   )
 ];
 
-async function getCdpData(cdp) {
-  const debtValueExact = await cdp.getDebtValue();
-  const debtValue = prettifyNumber(debtValueExact.toString());
-  const collateralValueExact = await cdp.getCollateralValue(USD);
-  const govFeeMKRExact = await cdp.getGovernanceFee();
-  const govFeeMKR =
-    govFeeMKRExact.toNumber() > 0.01
-      ? prettifyNumber(govFeeMKRExact, false, 2, false)
-      : round(govFeeMKRExact.toNumber(), 6);
-
-  const govFeeDaiExact = await cdp.getGovernanceFee(USD);
-  const govFeeDai =
-    govFeeDaiExact.toNumber() > 0.01
-      ? prettifyNumber(govFeeDaiExact, false, 2, false)
-      : round(govFeeDaiExact.toNumber(), 4);
-
-  const collateralizationRatioExact =
-    (await cdp.getCollateralizationRatio()) * 100;
-
-  const collateralizationRatio =
-    collateralizationRatioExact === Infinity
-      ? '---'
-      : prettifyNumber(collateralizationRatioExact);
-
-  return {
-    collateralValueExact,
-    collateralizationRatio,
-    debtValueExact,
-    govFeeDaiExact,
-    debtValue,
-    govFeeDai,
-    govFeeMKR,
-    govFeeMKRExact
-  };
-}
-
-async function getAllCdpData(allCdps, maker) {
-  const cdpIds = Object.values(allCdps).flat();
-  const allCdpData = await Promise.all(
-    cdpIds.map(async id => {
-      const cdp = await maker.getCdp(id);
-      const data = await getCdpData(cdp);
-      return { ...cdp, ...data, give: cdp.give };
-    })
-  );
-  return allCdpData.sort(
-    (a, b) => b.debtValueExact.toNumber() - a.debtValueExact.toNumber()
-  );
-}
-
 export default function() {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [txHash, setTxHash] = useState(null);
+  const [{ pethInVaults }] = useStore();
+  const [cdps, setCdps] = useState([]);
 
   useEffect(() => {
     if (!account) Router.replace('/');
   }, []); // eslint-disable-line
+
+  useEffect(() => {
+
+  });
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
@@ -161,6 +117,7 @@ export default function() {
   const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
   const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
+  const [selectedCdps, setSelectedCdps] = useState([]);
 
   return (
     // TODO list total PETH in your CDPs, PETH:WETH ratio
@@ -193,7 +150,10 @@ export default function() {
                   onReset: reset,
                   setTxHash,
                   txHash,
-                  showErrorMessageAndAllowExiting
+                  showErrorMessageAndAllowExiting,
+                  pethInVaults,
+                  selectedCdps,
+                  setSelectedCdps
                 })}
               </FadeInFromSide>
             );
