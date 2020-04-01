@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Grid, Card, Button, Box } from '@makerdao/ui-components-core';
+import { Text, Grid, Card, Button, Box, Flex } from '@makerdao/ui-components-core';
 import { DAI } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
 import CollateralTable from './CollateralTable';
@@ -62,22 +62,40 @@ function DaiRedeem({
       <Grid gridTemplateColumns="1fr 1fr 1fr">
         <div />
         <Grid width="567px" gridRowGap="l">
+          {dsrBalance.gt(0) ?
+          <Card
+            bg="yellow.100"
+            color="#826318"
+            borderColor="yellow.400"
+            border="1px solid"
+            lineHeight="normal"
+            p="s"
+          >
+            <Flex>
+              <div>
+                {'You have '}<b>{`${prettifyNumber(dsrBalance.toBigNumber())} DAI`}</b>{' in the DSR. Would you like to withdraw this Dai to your wallet?'}
+              </div>
+            <Button
+              variant="secondary-outline"
+              style={{backgroundColor: 'white'}}
+              ml='l'
+              my='7px'
+              px="12px"
+              py="4px"
+              width="89px"
+              justifySelf="center"
+              fontSize={'13px'}
+              onClick={withdrawDsr}
+              disabled={dsrWithdrawn}
+              loading={dsrWithdrawing}
+            >
+              Withdraw
+            </Button>
+            </Flex>
+          </Card>: ''}
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
             <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} daiBalance={daiBalance} bagBalance={bagBalance} outAmounts={outAmounts} />
           </Card>
-          {dsrBalance.gt(0) ?
-          <Card>
-           <LoadingToggle
-                  defaultText={`Withdraw ${prettifyNumber(dsrBalance.toBigNumber())} Savings DAI`}
-                  loadingText={`Withdrawing ${prettifyNumber(dsrBalance.toBigNumber())} Savings DAI`}
-                  completeText={`${prettifyNumber(dsrBalance.toBigNumber())} Savings DAI Withdrawn`}
-                  isLoading={dsrWithdrawing}
-                  isComplete={dsrWithdrawn}
-                  onToggle={withdrawDsr}
-                  disabled={dsrWithdrawn}
-                  reverse={false}
-                />
-          </Card>: ''}
           <AmountInputCard
             max={daiEndBalance}
             unit={DAI}

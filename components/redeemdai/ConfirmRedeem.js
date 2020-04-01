@@ -19,7 +19,7 @@ import useStore from '../../hooks/useStore';
 function ConfirmRedeem({
   onPrev,
   redeemAmount,
-  onNext,
+  onClose,
   dispatch
 }) {
   const { maker, account } = useMaker();
@@ -208,8 +208,7 @@ function ConfirmRedeem({
         <Button variant="secondary-outline" onClick={onPrev}>
           Back
         </Button>
-        <Button
-          onClick={onNext}
+        <Button variant="secondary-outline" onClick={onClose}
         >
           Close
         </Button>
