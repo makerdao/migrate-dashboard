@@ -24,7 +24,6 @@ function ConfirmRedeem({
 }) {
   const { maker, account } = useMaker();
   const [{ fixedPrices, tagPrices, endBalance, daiBalance, bagBalance, outAmounts }] = useStore();
-  console.log('endBalance', endBalance.toString());
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [redeemInitiated, setRedeemInitiated] = useState(false);
   const [redeemComplete, setRedeemComplete] = useState([]);

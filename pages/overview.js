@@ -26,6 +26,7 @@ import TooltipContents from '../components/TooltipContents';
 import { shutDown } from '../plugin/test/helpers';
 import { stringToBytes, fromRay, fromRad, fromWei } from '../utils/ethereum';
 import BigNumber from 'bignumber.js';
+import ilkList from '../references/ilkList';
 
 function clock(delta) {
   // const days = Math.floor(delta / 86400);
@@ -168,24 +169,40 @@ function OverviewDataFetch() {
           )
         ]);
 
+        const fixElement = async ilk => {
+          const price = await end.tag(stringToBytes(ilk)).then(fromRay);
+          return {
+            ilk,
+            price
+          };
+        };
+
+        const tagElement = async ilk => {
+          const price = await end.tag(stringToBytes(ilk)).then(fromRay);
+          return {
+            ilk,
+            price
+          };
+        };
+
+        const ilkKeys = ilkList.map(i => i.key);
+
         const [
           wait,
           when,
           systemDebt,
-          ethFixedPrice,
-          batFixedPrice,
-          ethTagPrice,
-          batTagPrice
+          fixedPrices,
+          tagPrices
         ] = await Promise.all([
           end.wait(),
           end.when(),
           end.debt().then(fromRad),
-          ...['ETH-A', 'BAT-A'].map(ilk =>
-            end.fix(stringToBytes(ilk)).then(fromRay)
-          ),
-          ...['ETH-A', 'BAT-A'].map(ilk =>
-            end.tag(stringToBytes(ilk)).then(fromRay)
-          )
+          Promise.all(ilkKeys.map(ilk =>
+            fixElement(ilk)
+          )),
+          Promise.all(ilkKeys.map(ilk =>
+            tagElement(ilk)
+          ))
         ]);
         const emergencyShutdownTime = new Date(when.toNumber() * 1000);
         const auctionCloseTime = new Date(
@@ -197,16 +214,6 @@ function OverviewDataFetch() {
         );
 
         const secondsUntilAuctionClose = diff > 0 ? diff : 0;
-
-        const fixedPrices = [
-          { ilk: 'ETH-A', price: ethFixedPrice },
-          { ilk: 'BAT-A', price: batFixedPrice }
-        ];
-
-        const tagPrices = [
-          { ilk: 'ETH-A', price: ethTagPrice },
-          { ilk: 'BAT-A', price: batTagPrice }
-        ];
 
         const parsedVaultsData = vaultsData.map(vault => {
           const claim = validClaims.find(c => c.id.toNumber() === vault.id);
@@ -232,39 +239,33 @@ function OverviewDataFetch() {
         const _daiBalance = DAI(await maker.getToken('MDAI').balance());
         const proxyAddress = await maker.service('proxy').currentProxy();
         let _endBalance = DAI(0);
-        if (proxyAddress)
-          _endBalance = DAI(
-            await maker
-              .service('migration')
-              .getMigration('global-settlement-dai-redeemer')
-              .bagAmount(proxyAddress)
-          );
         const _dsrBalance = await maker.service('mcd:savings').balance();
-        const _daiDsrEndBalance = _daiBalance
-          .plus(_endBalance)
-          .plus(_dsrBalance);
-
-        let ethOut = BigNumber(0);
-        let batOut = BigNumber(0);
         let bagBalance = DAI(0);
+        let outAmounts = [];
         if (proxyAddress) {
-          [ethOut, batOut] = await Promise.all(
-            ['ETH-A', 'BAT-A'].map(ilk =>
-              end.out(stringToBytes(ilk), proxyAddress).then(fromWei)
-            )
-          );
+          const outElement = async ilk => {
+            const out = await end.out(stringToBytes(ilk), proxyAddress).then(fromWei);
+            return {
+              ilk,
+              out
+            };
+          };
+
+          outAmounts = await Promise.all(ilkKeys.map(ilk =>
+            outElement(ilk)
+          ));
+
           bagBalance = DAI(
             await maker
               .service('migration')
               .getMigration('global-settlement-dai-redeemer')
               .bagAmount(proxyAddress)
           );
-          _endBalance = bagBalance.minus(BigNumber.min(ethOut, batOut));
+          _endBalance = bagBalance.minus(BigNumber.min.apply(null, outAmounts.map(o => o.out)));
         }
-        const outAmounts = [
-          { ilk: 'ETH-A', out: ethOut },
-          { ilk: 'BAT-A', out: batOut }
-        ];
+        const _daiDsrEndBalance = _daiBalance
+          .plus(_endBalance)
+          .plus(_dsrBalance);
 
         dispatch({
           type: 'assign',
