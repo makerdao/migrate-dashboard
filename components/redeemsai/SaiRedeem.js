@@ -23,13 +23,14 @@ export default ({
   onNext,
   onPrev,
   showErrorMessageAndAllowExiting,
-  setTxHash
+  setTxHash,
+  exchangeRate
 }) => {
   let [{ saiBalance = SAI(0) }, dispatch] = useStore();
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [tapApprovePending, setTapApprovePending] = useState(false);
-  const [exchangeRate, setExchangeRate] = useState(1);
+
   const [redemptionInitiated, setRedemptionInitiated] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
   const [saiAmountToRedeem, setSaiAmountToRedeem] = useState(SAI(0));
@@ -90,18 +91,6 @@ export default ({
       addToastWithTimeout(errMsg, dispatch);
     }
   };
-
-  useEffect(() => {
-    (async () => {
-      if (maker) {
-        const xRate = await maker
-          .service('migration')
-          .getMigration('redeem-sai')
-          .getRate();
-        setExchangeRate(xRate);
-      }
-    })();
-  }, [maker]);
 
   useEffect(() => {
     (async () => {
@@ -167,7 +156,7 @@ export default ({
               <TextBlock t="h5" lineHeight="normal">
                 Exchange Rate
               </TextBlock>
-              <TextBlock t="body">{`1 SAI : ${exchangeRate} ETH`}</TextBlock>
+              <TextBlock t="body">{`1 SAI : ${exchangeRate ? round(exchangeRate, 4) : '...'} ETH`}</TextBlock>
             </Grid>
             <Grid gridRowGap="xs">
               <TextBlock t="h5" lineHeight="normal">

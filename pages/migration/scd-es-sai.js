@@ -94,13 +94,26 @@ const steps = [
 ];
 
 export default function() {
-  const { account } = useMaker();
+  const { account, maker } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [txHash, setTxHash] = useState(null);
+  const [exchangeRate, setExchangeRate] = useState(1);
 
   useEffect(() => {
     if (!account) Router.replace('/');
   }, []); // eslint-disable-line
+
+  useEffect(() => {
+    (async () => {
+      if (maker) {
+        const xRate = await maker
+          .service('migration')
+          .getMigration('redeem-sai')
+          .getRate();
+        setExchangeRate(xRate);
+      }
+    })();
+  }, [maker]);
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
@@ -130,7 +143,8 @@ export default function() {
                   onReset: reset,
                   setTxHash,
                   txHash,
-                  showErrorMessageAndAllowExiting
+                  showErrorMessageAndAllowExiting,
+                  exchangeRate
                 })}
               </FadeInFromSide>
             );
