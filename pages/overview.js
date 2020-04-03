@@ -255,12 +255,10 @@ function OverviewDataFetch() {
             outElement(ilk)
           ));
 
-          bagBalance = DAI(
-            await maker
-              .service('migration')
-              .getMigration('global-settlement-dai-redeemer')
-              .bagAmount(proxyAddress)
-          );
+          bagBalance = await maker
+            .service('migration')
+            .getMigration('global-settlement-dai-redeemer')
+            .bagAmount(proxyAddress);
           _endBalance = bagBalance.minus(BigNumber.min.apply(null, outAmounts.map(o => o.out)));
         }
         const _daiDsrEndBalance = _daiBalance

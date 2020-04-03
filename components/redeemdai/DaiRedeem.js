@@ -94,7 +94,7 @@ function DaiRedeem({
             </Flex>
           </Card>: ''}
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
-            <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} daiBalance={daiBalance} bagBalance={bagBalance} outAmounts={outAmounts} />
+            <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} bagBalance={bagBalance} outAmounts={outAmounts} />
           </Card>
           <AmountInputCard
             max={daiEndBalance}

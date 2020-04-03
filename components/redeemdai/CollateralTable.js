@@ -2,9 +2,9 @@ import { Text, Grid, Table, Button } from '@makerdao/ui-components-core';
 import { prettifyNumber } from '../../utils/ui';
 import BigNumber from 'bignumber.js';
 
-function CollateralTable({ data, tagData, amount, redeemDai, daiBalance, bagBalance, outAmounts, buttonDisabled, buttonLoading, redeemComplete }) {
+function CollateralTable({ data, tagData, amount, redeemDai, bagBalance, outAmounts, buttonDisabled, buttonLoading, redeemComplete }) {
   const maxRedeem = amount ? outAmounts.map(e => {
-    return {...e, max: BigNumber.min(amount.toBigNumber(), daiBalance.toBigNumber().plus(bagBalance.toBigNumber()).minus(e.out))};
+    return {...e, max: BigNumber.min(amount.toBigNumber(), bagBalance.toBigNumber().minus(e.out))};
   }) : outAmounts;
   return (
     <Grid gridRowGap="s" p="m">
