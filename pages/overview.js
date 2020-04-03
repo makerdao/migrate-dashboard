@@ -304,7 +304,7 @@ function OverviewDataFetch() {
         const cdpService = maker.service('cdp');
         const ids = flatten(Object.values(checks['single-to-multi-cdp']));
         for (const id of ids) {
-          const value = await cdpService.getCollateralValue(id);
+          const value = await cdpService.getCollateralValue(id, PETH);
           pethInVaults.push([id, PETH(value)]);
         }
       }
@@ -368,7 +368,7 @@ function Overview({ fetching }) {
   const shouldShowRedeemVaults =
     vaultsToRedeem && vaultsToRedeem.claims.length > 0;
 
-  const shouldShowSCDESCollateral = scd.off && countCdps(cdps) > 0;
+  const shouldShowSCDESCollateral = scd.off && pethInVaults.some(x => x[1].gt(0));
   const shouldShowSCDESSai = scd.off && shouldShowDai;
 
   const noMigrations =
@@ -613,7 +613,7 @@ function SCDESCollateralCard({ scd, pethInVaults }) {
   return (
     <MigrationCard
       title="Withdraw ETH from SAI CDP"
-      metadataTitle="PETH in Vault(s)"
+      metadataTitle="PETH in CDP(s)"
       metadataValue={showAmount(total)}
       onSelected={() => Router.push('/migration/scd-es-cdp')}
       disabled={!out}
