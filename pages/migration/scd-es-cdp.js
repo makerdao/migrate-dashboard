@@ -24,6 +24,7 @@ import Complete from '../../components/Complete';
 import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
 import InProgressImage from '../../assets/icons/daiRedeem.svg';
+import BigNumber from 'bignumber.js';
 
 const CompleteBody = () => {
   const [{ redeemedCollateral }] = useStore();
@@ -108,7 +109,8 @@ export default function() {
 
   useEffect(() => {
     (async () => {
-      setRatio(await maker.service('price').getWethToPethRatio());
+      const per = await maker.service('smartContract').getContract('SAI_TUB').per();
+      setRatio(BigNumber(per).div('1e27'));
     })();
   }, [maker]);
 
