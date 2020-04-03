@@ -138,7 +138,7 @@ export async function shutDown() {
   const normalCdp = await openLockAndDrawScdCdp(maker);
   const proxyCdp = await maker.service('cdp').openProxyCdpLockEthAndDrawDai(
     2,
-    100,
+    103,
     proxy
   );
   await top.cage();
@@ -151,6 +151,6 @@ export async function shutDown() {
 async function openLockAndDrawScdCdp(maker) {
   const cdp = await maker.openCdp();
   await cdp.lockEth(1);
-  await cdp.drawDai(100);
+  await cdp.drawDai(111);
   return cdp;
 }
