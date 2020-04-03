@@ -9,7 +9,8 @@ export default class GlobalSettlementCollateralClaims {
 
   async check() {
     const end = this._container.get('smartContract').getContract('MCD_END_1');
-    const isInGlobalSettlement = !(await end.live());
+    const live = await end.live();
+    const isInGlobalSettlement = live.eq(0);
     if (!isInGlobalSettlement) return [];
     const address =
       (await this._container.get('proxy').currentProxy()) ||

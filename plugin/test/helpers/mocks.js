@@ -19,17 +19,17 @@ export async function mockCdpIds(maker, { forAccount, forProxy } = {}) {
 
 export const globalSettlement = {
   beforeCage: () => ({
-    live: async () => true,
+    live: async () => new BigNumber(1),
     tag: async () => new BigNumber(0),
     fix: async () => new BigNumber(0)
   }),
   afterCage: () => ({
-    live: async () => false,
+    live: async () => new BigNumber(0),
     tag: async () => new BigNumber(0),
     fix: async () => new BigNumber(0)
   }),
   afterCageCollateral: tags => ({
-    live: async () => false,
+    live: async () => new BigNumber(0),
     tag: async ilk => {
       const ilkAsString = bytesToString(ilk);
       return tags[ilkAsString]
@@ -39,7 +39,7 @@ export const globalSettlement = {
     fix: async () => new BigNumber(0)
   }),
   afterFlow: fixes => ({
-    live: async () => false,
+    live: async () => new BigNumber(0),
     fix: async ilk => {
       const ilkAsString = bytesToString(ilk);
       return fixes[ilkAsString]

@@ -19,11 +19,10 @@ import useStore from '../../hooks/useStore';
 function ConfirmRedeem({
   onPrev,
   redeemAmount,
-  onClose,
-  dispatch
+  onClose
 }) {
   const { maker, account } = useMaker();
-  const [{ fixedPrices, tagPrices, endBalance, daiBalance, bagBalance, outAmounts }] = useStore();
+  const [{ fixedPrices, tagPrices, endBalance, bagBalance, outAmounts }, dispatch] = useStore();
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [redeemInitiated, setRedeemInitiated] = useState(false);
   const [redeemComplete, setRedeemComplete] = useState([]);
@@ -68,7 +67,19 @@ function ConfirmRedeem({
         .service('migration')
         .getMigration('global-settlement-dai-redeemer');
       const packAmount = redeemAmount.minus(endBalance);
-      if (packAmount.gt(0)) await mig.packDai(packAmount);
+      if (packAmount.gt(0)) {
+        await mig.packDai(packAmount);
+        const newBagBalance = await maker
+        .service('migration')
+        .getMigration('global-settlement-dai-redeemer')
+        .bagAmount(proxyAddress);
+        dispatch({
+          type: 'assign',
+          payload: {
+            daiBalance: newBagBalance
+          }
+        });
+      }
       setHasDeposit(true);
     } catch (err) {
       const message = err.message ? err.message : err;
@@ -125,7 +136,7 @@ function ConfirmRedeem({
           <Card p="m" borderColor="#D4D9E1" border="1px solid">
             <Grid gridRowGap="s" width="567px">
               <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} redeemDai={redeemDai}
-              daiBalance={daiBalance} bagBalance={bagBalance} outAmounts={outAmounts}
+              bagBalance={bagBalance} outAmounts={outAmounts}
               buttonDisabled={!hasAllowance || !hasReadTOS || !hasDeposit} redeemComplete={redeemComplete}
               buttonLoading={redeemInitiated}/>
               <Grid gridRowGap="s" px="s" width="300px">

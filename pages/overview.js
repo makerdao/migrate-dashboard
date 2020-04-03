@@ -251,12 +251,10 @@ function OverviewDataFetch() {
 
           outAmounts = await Promise.all(ilkKeys.map(ilk => outElement(ilk)));
 
-          bagBalance = DAI(
-            await maker
-              .service('migration')
-              .getMigration('global-settlement-dai-redeemer')
-              .bagAmount(proxyAddress)
-          );
+          bagBalance = DAI(await maker
+            .service('migration')
+            .getMigration('global-settlement-dai-redeemer')
+            .bagAmount(proxyAddress));
           _endBalance = bagBalance.minus(
             BigNumber.min.apply(
               null,
