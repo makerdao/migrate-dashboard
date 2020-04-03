@@ -24,12 +24,11 @@ import Complete from '../../components/Complete';
 import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
 import InProgressImage from '../../assets/icons/daiRedeem.svg';
+import round from 'lodash/round';
 
-const CompleteBody = () => {
+const CompleteBody = ({ exchangeRate }) => {
   const [{ saiAmountToRedeem }] = useStore();
   const amount = saiAmountToRedeem
-    ? prettifyNumber(saiAmountToRedeem.toNumber())
-    : 0;
   return (
     <Card>
       <Grid gridRowGap="s" color="darkPurple" px={{ s: 'm' }} py={{ s: 'xs' }}>
@@ -47,7 +46,7 @@ const CompleteBody = () => {
               <Table.td>
                 <Text display={'block'}>Exchange Rate</Text>
                 <Text t="heading" display={'block'} fontWeight="bold">
-                  // Pass in actual exchange rate 1:1
+                  {`1 SAI : ${exchangeRate ? round(exchangeRate, 4) : '...'} ETH`}
                 </Text>
               </Table.td>
             </Table.tr>
@@ -55,7 +54,7 @@ const CompleteBody = () => {
               <Table.td>
                 <Text display={'block'}>Received: ETH</Text>
                 <Text t="heading" display={'block'} fontWeight="bold">
-                  {`${amount} ETH`}
+                  {`${amount.toNumber() * exchangeRate} ETH`}
                 </Text>
               </Table.td>
             </Table.tr>
@@ -81,7 +80,7 @@ const steps = [
       title="Redemption Complete"
       description="You've successfully redeemed your Sai for ETH."
     >
-      <CompleteBody />
+      <CompleteBody {...props}/>
     </Complete>
   ),
   props => (

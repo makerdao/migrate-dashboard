@@ -18,6 +18,7 @@ import { addToastWithTimeout } from '../Toast';
 import { prettifyNumber } from '../../utils/ui';
 import { SAI, DAI } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
+import round from 'lodash/round';
 
 export default ({
   onNext,
@@ -177,9 +178,9 @@ export default ({
             defaultText={'Unlock SAI to continue'}
             tokenDisplayName={'SAI'}
             isLoading={tapApprovePending}
-            isComplete={proxyDetails.hasTapAllowance}
+            isComplete={!!proxyDetails.hasTapAllowance}
             onToggle={giveProxyTapAllowance}
-            disabled={proxyDetails.hasTapAllowance}
+            disabled={!!proxyDetails.hasTapAllowance}
             testId="allowance-toggle"
             mx={'xl'}
             px={'xl'}
