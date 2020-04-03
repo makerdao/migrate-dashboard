@@ -197,12 +197,8 @@ function OverviewDataFetch() {
           end.wait(),
           end.when(),
           end.debt().then(fromRad),
-          Promise.all(ilkKeys.map(ilk =>
-            fixElement(ilk)
-          )),
-          Promise.all(ilkKeys.map(ilk =>
-            tagElement(ilk)
-          ))
+          Promise.all(ilkKeys.map(ilk => fixElement(ilk))),
+          Promise.all(ilkKeys.map(ilk => tagElement(ilk)))
         ]);
         const emergencyShutdownTime = new Date(when.toNumber() * 1000);
         const auctionCloseTime = new Date(
@@ -244,22 +240,27 @@ function OverviewDataFetch() {
         let outAmounts = [];
         if (proxyAddress) {
           const outElement = async ilk => {
-            const out = await end.out(stringToBytes(ilk), proxyAddress).then(fromWei);
+            const out = await end
+              .out(stringToBytes(ilk), proxyAddress)
+              .then(fromWei);
             return {
               ilk,
               out
             };
           };
 
-          outAmounts = await Promise.all(ilkKeys.map(ilk =>
-            outElement(ilk)
-          ));
+          outAmounts = await Promise.all(ilkKeys.map(ilk => outElement(ilk)));
 
-          bagBalance = await maker
+          bagBalance = DAI(await maker
             .service('migration')
             .getMigration('global-settlement-dai-redeemer')
-            .bagAmount(proxyAddress);
-          _endBalance = bagBalance.minus(BigNumber.min.apply(null, outAmounts.map(o => o.out)));
+            .bagAmount(proxyAddress));
+          _endBalance = bagBalance.minus(
+            BigNumber.min.apply(
+              null,
+              outAmounts.map(o => o.out)
+            )
+          );
         }
         const _daiDsrEndBalance = _daiBalance
           .plus(_endBalance)
@@ -286,19 +287,20 @@ function OverviewDataFetch() {
         });
       }
 
+      const cdpMigrationCheck = checks['single-to-multi-cdp'];
+
+      const pethInVaults = [];
       const scs = maker.service('smartContract');
       const tub = scs.getContract('SAI_TUB');
       const top = scs.getContract('SAI_TOP');
-      const tubState = {
-        per: await tub.per(), // WETH/PETH ratio
-        off: await tub.off(), // SCD is shut down
-        out: await tub.out(), // cooldown ended
-        caged: await top.caged(),
-        cooldown: await top.cooldown()
-      };
+      const scd = { off: await tub.off() }; // SCD is shut down
 
-      const pethInVaults = [];
-      if (tubState.off && countCdps(checks['single-to-multi-cdp']) > 0) {
+      if (scd.off && countCdps(cdpMigrationCheck) > 0) {
+        Object.assign(scd, {
+          caged: await top.caged(), // time of shutdown
+          cooldown: await top.cooldown(), // cooldown time length
+          out: await tub.out() // cooldown is over
+        });
         const cdpService = maker.service('cdp');
         const ids = flatten(Object.values(checks['single-to-multi-cdp']));
         for (const id of ids) {
@@ -313,11 +315,11 @@ function OverviewDataFetch() {
         type: 'assign',
         payload: {
           emergencyShutdownActive,
-          cdpMigrationCheck: checks['single-to-multi-cdp'],
+          cdpMigrationCheck,
           saiBalance: SAI(checks['sai-to-dai']),
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
-          tubState,
+          scd,
           pethInVaults
         }
       });
@@ -344,7 +346,7 @@ function Overview({ fetching }) {
       oldMkrBalance,
       chiefMigrationCheck,
       vaultsToRedeem,
-      tubState = {},
+      scd = {},
       pethInVaults
     }
   ] = useStore();
@@ -366,9 +368,8 @@ function Overview({ fetching }) {
   const shouldShowRedeemVaults =
     vaultsToRedeem && vaultsToRedeem.claims.length > 0;
 
-  console.log('tub state:', tubState);
-  const shouldShowSCDESCollateral = tubState.off && countCdps(cdps) > 0;
-  const shouldShowSCDESSai = tubState.off && shouldShowDai;
+  const shouldShowSCDESCollateral = scd.off && countCdps(cdps) > 0;
+  const shouldShowSCDESSai = scd.off && shouldShowDai;
 
   const noMigrations =
     !shouldShowCdps &&
@@ -483,7 +484,7 @@ function Overview({ fetching }) {
           {shouldShowMkr && (
             <MigrationCard
               recommended
-              title="Redeem New MKR"
+              title="Redeem Old MKR"
               onSelected={() => {
                 window.open('https://makerdao.com/redeem/', '_blank');
               }}
@@ -550,7 +551,7 @@ function Overview({ fetching }) {
           )}
 
           {shouldShowSCDESCollateral && (
-            <SCDESCollateralCard {...{ tubState, pethInVaults }} />
+            <SCDESCollateralCard {...{ scd, pethInVaults }} />
           )}
           {shouldShowSCDESSai && (
             <MigrationCard
@@ -597,8 +598,8 @@ function Overview({ fetching }) {
   );
 }
 
-function SCDESCollateralCard({ tubState, pethInVaults }) {
-  const { out, caged, cooldown } = tubState;
+function SCDESCollateralCard({ scd, pethInVaults }) {
+  const { out, caged, cooldown } = scd;
   const endTime = caged.toNumber() + cooldown.toNumber();
   const [seconds, setSeconds] = useState();
   const total = pethInVaults.reduce((sum, v) => sum.plus(v[1]), PETH(0));
@@ -619,7 +620,7 @@ function SCDESCollateralCard({ tubState, pethInVaults }) {
     >
       <>
         <Text.p t="body">
-          Redeem your ETH from your Single-Collateral Dai Vault(s) for a
+          Redeem your PETH from your Single-Collateral Dai CDPs for a
           proportional amount of ETH from the system.
         </Text.p>
         {!out && (

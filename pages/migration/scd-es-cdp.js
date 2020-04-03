@@ -95,15 +95,22 @@ const steps = [
 ];
 
 export default function() {
-  const { account } = useMaker();
+  const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [txHash, setTxHash] = useState(null);
   const [selectedCdps, setSelectedCdps] = useState([]);
   const [{ pethInVaults }] = useStore();
+  const [ratio, setRatio] = useState();
 
   useEffect(() => {
     if (!account) Router.replace('/');
   }, []); // eslint-disable-line
+
+  useEffect(() => {
+    (async () => {
+      setRatio(await maker.service('price').getWethToPethRatio());
+    })();
+  }, [maker]);
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
@@ -114,7 +121,6 @@ export default function() {
   const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
 
   return (
-    // TODO list total PETH in your CDPs, PETH:WETH ratio
     <FlowBackground>
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
         <FlowHeader account={account} showClose={currentStep <= 1} />
@@ -147,7 +153,8 @@ export default function() {
                   showErrorMessageAndAllowExiting,
                   pethInVaults,
                   selectedCdps,
-                  setSelectedCdps
+                  setSelectedCdps,
+                  ratio
                 })}
               </FadeInFromSide>
             );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import {
   Text,
@@ -14,93 +14,21 @@ import {
 import { TextBlock } from '../Typography';
 import { getColor } from '../../utils/theme';
 import round from 'lodash/round';
+import { ETH } from '@makerdao/dai';
 
 const CHECKBOX_WIDTH = '2rem';
 const CHECKBOX_CONTAINER_WIDTH = '4rem';
 const TABLE_COLUMNS = `${CHECKBOX_CONTAINER_WIDTH} 1fr 2fr 2fr`;
-
-const Label = styled(Box)`
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 13px;
-  color: ${getColor('steel')};
-`;
-
-function ListItemRow({ label, value, dark }) {
-  return (
-    <Flex
-      alignItems="center"
-      justifyContent="space-between"
-      bg={dark ? getColor('lightGrey') : 'white'}
-      px="m"
-      py="s"
-    >
-      <Label>{label}</Label>
-      <div>{value}</div>
-    </Flex>
-  );
-}
-
-function ListItem({ id, amount, eth, onChange, checked, ...otherProps }) {
-  return (
-    <Card
-      px={['0', 'l']}
-      py={['0', 'm']}
-      borderColor={checked ? '#1AAB9B' : '#D4D9E1'}
-      border={checked ? '2px solid' : '1px solid'}
-      {...otherProps}
-    >
-      <Box display={['none', 'block']}>
-        <Grid
-          gridTemplateColumns={TABLE_COLUMNS}
-          gridColumnGap="l"
-          alignItems="center"
-          fontSize="m"
-          color="darkPurple"
-          css={`
-            white-space: nowrap;
-          `}
-          onClick={onChange}
-        >
-          <Checkbox
-            onChange={onChange}
-            fontSize={CHECKBOX_WIDTH}
-            checked={checked}
-            data-testid={'cdpCheckbox'}
-          />
-
-          <span>{`#${id}`}</span>
-          <span>{`${amount.toString()}`}</span>
-          <span>{`${eth} ETH`}</span>
-        </Grid>
-      </Box>
-      <Box display={['block', 'none']} onClick={onChange}>
-        <Flex py="s" pl="m" alignItems="center">
-          <Checkbox
-            onChange={onChange}
-            fontSize={CHECKBOX_WIDTH}
-            checked={checked}
-            mr="9px"
-          />
-          <Text fontSize="20px">{`CDP ${id}`}</Text>
-        </Flex>
-        <ListItemRow label="Peth Value" value={`${amount.toString()}`} dark />
-        <ListItemRow label="Eth Value" value={`${eth} ETH`} />
-      </Box>
-    </Card>
-  );
-}
 
 export default ({
   onNext,
   onPrev,
   pethInVaults = [],
   selectedCdps,
-  setSelectedCdps
+  setSelectedCdps,
+  ratio
 }) => {
-  const shutdownRatio = 0.957;
-  const currentRatio = 0.98;
-  const estimatedRatio = 0.989;
+  const ethValue = amount => ratio ? ETH(amount.times(ratio)).toString(3) : '...';
 
   const toggleSelection = id => {
     if (selectedCdps.includes(id)) {
@@ -138,9 +66,7 @@ export default ({
               alignItems="center"
               fontWeight="medium"
               color="steelLight"
-              css={`
-                white-space: nowrap;
-              `}
+              css="white-space: nowrap;"
             >
               <span />
               <Text t="subheading">CDP ID</Text>
@@ -176,8 +102,8 @@ export default ({
             {pethInVaults.map(([id, amount]) => (
               <ListItem
                 key={id}
-                {...{ id, amount,  }}
-                eth={round(amount.toNumber() * currentRatio, 3)}
+                {...{ id, amount }}
+                eth={ethValue(amount)}
                 onChange={() => toggleSelection(id)}
                 checked={!!selectedCdps.find(x => x === id)}
               />
@@ -185,30 +111,11 @@ export default ({
           </Grid>
         </Overflow>
         <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
-          <Grid gridRowGap="m">
-            <Grid gridRowGap="xs">
-              <TextBlock t="h5" lineHeight="normal">
-                PETH:ETH (At Shutdown)
-              </TextBlock>
-              <TextBlock t="body">1 PETH : {shutdownRatio} ETH</TextBlock>
-            </Grid>
-            <Grid gridRowGap="xs">
-              <TextBlock t="h5" lineHeight="normal">
-                PETH:ETH (Current)
-              </TextBlock>
-              <TextBlock t="body">1 PETH : {currentRatio} ETH</TextBlock>
-            </Grid>
-            <Grid gridRowGap="xs">
-              <Grid>
-                <TextBlock t="h5" lineHeight="normal">
-                  Estimated PETH:ETH
-                </TextBlock>
-                <TextBlock t="h5" lineHeight="normal">
-                  once all debt is bitten
-                </TextBlock>
-              </Grid>
-              <TextBlock t="body">1 PETH : ${estimatedRatio} ETH</TextBlock>
-            </Grid>
+          <Grid gridRowGap="xs">
+            <TextBlock t="h5" lineHeight="normal">
+              PETH:ETH Ratio (Current)
+            </TextBlock>
+            <TextBlock t="body">1 PETH : {ratio ? round(ratio, 4) : '...'} ETH</TextBlock>
           </Grid>
         </Card>
       </Grid>
@@ -228,3 +135,75 @@ export default ({
     </Grid>
   );
 };
+
+function ListItem({ id, amount, eth, onChange, checked, ...otherProps }) {
+  return (
+    <Card
+      px={['0', 'l']}
+      py={['0', 'm']}
+      borderColor={checked ? '#1AAB9B' : '#D4D9E1'}
+      border={checked ? '2px solid' : '1px solid'}
+      {...otherProps}
+    >
+      <Box display={['none', 'block']}>
+        <Grid
+          gridTemplateColumns={TABLE_COLUMNS}
+          gridColumnGap="l"
+          alignItems="center"
+          fontSize="m"
+          color="darkPurple"
+          css="white-space: nowrap;"
+          onClick={onChange}
+        >
+          <Checkbox
+            onChange={onChange}
+            fontSize={CHECKBOX_WIDTH}
+            checked={checked}
+            data-testid='cdpCheckbox'
+          />
+
+          <span>#{id}</span>
+          <span>{amount.toString(3)}</span>
+          <span>{eth}</span>
+        </Grid>
+      </Box>
+      <Box display={['block', 'none']} onClick={onChange}>
+        <Flex py="s" pl="m" alignItems="center">
+          <Checkbox
+            onChange={onChange}
+            fontSize={CHECKBOX_WIDTH}
+            checked={checked}
+            mr="9px"
+          />
+          <Text fontSize="20px">CDP {id}</Text>
+        </Flex>
+        <ListItemRow label="Peth Value" dark>
+          {amount.toString(3)}
+        </ListItemRow>
+        <ListItemRow label="Eth Value">{eth}</ListItemRow>
+      </Box>
+    </Card>
+  );
+}
+
+function ListItemRow({ label, children, dark }) {
+  return (
+    <Flex
+      alignItems="center"
+      justifyContent="space-between"
+      bg={dark ? getColor('lightGrey') : 'white'}
+      px="m"
+      py="s"
+    >
+      <Label>{label}</Label>
+      <div>{children}</div>
+    </Flex>
+  );
+}
+
+const Label = styled(Box)`
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 13px;
+  color: ${getColor('steel')};
+`;
