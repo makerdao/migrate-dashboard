@@ -34,7 +34,7 @@ export default ({
     if (selectedCdps.includes(id)) {
       return setSelectedCdps(selectedCdps.filter(x => x !== id));
     }
-    setSelectedCdps(selectedCdps.concat(id));
+    setSelectedCdps(selectedCdps.concat(id).sort());
   };
 
   return (
@@ -137,6 +137,7 @@ export default ({
 };
 
 function ListItem({ id, amount, eth, onChange, checked, ...otherProps }) {
+  const selectable = amount.gt(0);
   return (
     <Card
       px={['0', 'l']}
@@ -153,13 +154,14 @@ function ListItem({ id, amount, eth, onChange, checked, ...otherProps }) {
           fontSize="m"
           color="darkPurple"
           css="white-space: nowrap;"
-          onClick={onChange}
+          onClick={selectable ? onChange : () => {}}
         >
           <Checkbox
-            onChange={onChange}
+            onChange={selectable ? onChange : () => {}}
             fontSize={CHECKBOX_WIDTH}
             checked={checked}
             data-testid='cdpCheckbox'
+            disabled={!selectable}
           />
 
           <span>#{id}</span>
