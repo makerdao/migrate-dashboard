@@ -3,6 +3,7 @@ import { Text, Button, Grid, Card } from '@makerdao/ui-components-core';
 import { TOSCheck } from '../migratecdp/PayAndMigrate';
 import { ETH } from '@makerdao/dai';
 import useMaker from '../../hooks/useMaker';
+import sortBy from 'lodash/sortBy';
 
 export default ({ onPrev, onNext, selectedCdps, pethInVaults, ratio }) => {
   const [hasReadTOS, setHasReadTOS] = useState();
@@ -20,14 +21,49 @@ export default ({ onPrev, onNext, selectedCdps, pethInVaults, ratio }) => {
     })();
   }, [maker, selectedCdps]);
 
+  const needExitTx = nonProxyNum > 0;
   const needWithdrawTx = nonProxyNum === selectedCdps.length;
-  const txCount = selectedCdps.length + (needWithdrawTx > 0 ? 1 : 0);
+  const txCount = selectedCdps.length + (needWithdrawTx > 0 ? 2 : 0);
 
-  const redeemCdps = () => {
-    return alert('todo');
-    // call free on each cdp
-    // make sure a proxy cdp goes last
+  const redeemCdps = async () => {
+    // TODO update state for in-progress screen
     onNext();
+
+    for (const cdp of cdpInstances.filter(c => !c.dsProxyAddress)) {
+      const val = pethInVaults.find(x => x[0] === cdp.id)[1];
+      console.log(`freeing ${val.toString(4)} for cdp ${cdp.id}`);
+      await cdp.freeEth(val);
+    }
+
+    // PETH exit has to happen before proxy cdp freeing, because it withdraws all WETH
+    if (needExitTx) {
+      const peth = maker.service('token').getToken('PETH');
+      const balance = await peth.balance();
+      console.log(`exiting ${balance.toString(4)}`);
+      await peth.exit(balance);
+    }
+
+    // eslint-disable-next-line require-atomic-updates
+    for (const cdp of cdpInstances.filter(c => c.dsProxyAddress)) {
+      const pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
+      const ethVal = ETH(pethVal.times(ratio));
+      
+      console.log(
+        pethVal.toFixed('wei'),
+        ratio.toString(),
+        ethVal.toFixed('wei')
+      );
+
+      console.log(`freeing ${ethVal.toString(4)} for cdp ${cdp.id}`);
+      await cdp.freeEth(ethVal);
+    }
+
+    if (needWithdrawTx) {
+      const weth = maker.service('token').getToken('WETH');
+      const balance = await weth.balance();
+      console.log(`withdrawing ${balance.toString(4)}`);
+      await weth.withdraw(balance);
+    }
   };
 
   return (
@@ -54,7 +90,8 @@ export default ({ onPrev, onNext, selectedCdps, pethInVaults, ratio }) => {
         <Card bg="yellow.100" p="m" borderColor="yellow.400" border="1px solid">
           When you click Continue, you will be prompted to sign {txCount}{' '}
           transactions: one for each CDP
-          {needWithdrawTx ? ' and one to convert your WETH to ETH.' : '.'}
+          {needExitTx && ', and one to convert PETH to WETH'}
+          {needWithdrawTx && ', and one to convert WETH to ETH'}.
         </Card>
       )}
       <Grid
