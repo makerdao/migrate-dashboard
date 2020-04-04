@@ -10,6 +10,9 @@ export default ({ onPrev, onNext, selectedCdps, pethInVaults, ratio }) => {
   const [cdpInstances, setCdpInstances] = useState();
   const [nonProxyNum, setNonProxyNum] = useState();
   const { maker } = useMaker();
+  const saiTubContractAddress = maker
+    .service('smartContract')
+    .getContract('SAI_TUB').address;
 
   useEffect(() => {
     const cs = maker.service('cdp');
@@ -40,6 +43,7 @@ export default ({ onPrev, onNext, selectedCdps, pethInVaults, ratio }) => {
       const peth = maker.service('token').getToken('PETH');
       const balance = await peth.balance();
       console.log(`exiting ${balance.toString(4)}`);
+      await maker.getToken('PETH').approveUnlimited(saiTubContractAddress);
       await peth.exit(balance);
     }
 
