@@ -8,6 +8,7 @@ import walletConnectPlugin from '@makerdao/dai-plugin-walletconnect';
 import { checkEthereumProvider } from './utils/ethereum';
 import { createCurrency } from '@makerdao/currency';
 import assert from 'assert';
+import ilkList from './references/ilkList';
 
 export const SAI = createCurrency('SAI');
 export const PETH = Maker.PETH;
@@ -55,8 +56,12 @@ export async function instantiateMaker(network) {
   const mcdPluginConfig = {
     cdpTypes: [
       { currency: SAI, ilk: 'SAI' },
-      { currency: ETH, ilk: 'ETH-A' },
-      { currency: BAT, ilk: 'BAT-A' }
+      ...ilkList.map(i => {
+        return {
+          currency: i.currency,
+          ilk: i.key
+        };
+      })
     ]
   };
 
@@ -68,14 +73,24 @@ export async function instantiateMaker(network) {
     const addresses = require('./addresses-kovan.json');
     mcdPluginConfig.addressOverrides = addresses;
     migrationPluginConfig.addressOverrides = addresses;
-    daiAddressOverrides = addresses;
+    daiAddressOverrides = {...addresses,
+      CDP_MANAGER: addresses.CDP_MANAGER_1,
+      MCD_VAT: addresses.MCD_VAT_1,
+      MCD_END: addresses.MCD_END_1,
+      GET_CDPS_1: addresses.GET_CDPS_1
+    };
   }
 
   if (network === 'testnet') {
     const addresses = require('./addresses-testnet.json');
     mcdPluginConfig.addressOverrides = addresses;
     migrationPluginConfig.addressOverrides = addresses;
-    daiAddressOverrides = addresses;
+    daiAddressOverrides = {...addresses,
+      CDP_MANAGER: addresses.CDP_MANAGER_1,
+      MCD_VAT: addresses.MCD_VAT_1,
+      MCD_END: addresses.MCD_END_1,
+      GET_CDPS_1: addresses.GET_CDPS_1
+    };
   }
 
   const config = {
