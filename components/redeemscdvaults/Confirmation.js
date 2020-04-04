@@ -40,10 +40,10 @@ export default ({ onPrev, onNext, selectedCdps, pethInVaults, ratio }) => {
 
     // PETH exit has to happen before proxy cdp freeing, because it withdraws all WETH
     if (needExitTx) {
-      const peth = maker.service('token').getToken('PETH');
+      const peth = maker.getToken('PETH');
       const balance = await peth.balance();
       console.log(`exiting ${balance.toString(4)}`);
-      await maker.getToken('PETH').approveUnlimited(saiTubContractAddress);
+      await peth.approveUnlimited(saiTubContractAddress);
       await peth.exit(balance);
     }
 
@@ -63,7 +63,7 @@ export default ({ onPrev, onNext, selectedCdps, pethInVaults, ratio }) => {
     }
 
     if (needWithdrawTx) {
-      const weth = maker.service('token').getToken('WETH');
+      const weth = maker.getToken('WETH');
       const balance = await weth.balance();
       console.log(`withdrawing ${balance.toString(4)}`);
       await weth.withdraw(balance);

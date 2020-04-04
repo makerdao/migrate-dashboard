@@ -20,7 +20,7 @@ describe('Redeem Sai', () => {
   test('should be off after shutdown', async () => {
     const off = await migration.off();
     expect(off).toBe(true);
-  })
+  });
 
   test('should get the exchange rate', async () => {
     const rate = await migration.getRate();
@@ -38,9 +38,11 @@ describe('Redeem Sai', () => {
     const saiBalanceAfterRedemption = await sai.balanceOf(address);
     const wethBalanceAfterRedemption = await gem.balanceOf(address);
 
-    expect(saiBalanceBeforeRedemption.toNumber()).toBe(30);
-    expect(saiBalanceAfterRedemption.toNumber()).toBe(25);
-    expect(wethBalanceBeforeRedemption.toNumber()).toBe(0);
-    expect(wethBalanceAfterRedemption.toNumber()).toBe(0.0125);
+    expect(saiBalanceAfterRedemption).toEqual(
+      saiBalanceBeforeRedemption.minus(5)
+    );
+    expect(wethBalanceAfterRedemption).toEqual(
+      wethBalanceBeforeRedemption.plus(0.0125)
+    );
   });
 });

@@ -25,7 +25,7 @@ describe('Redeem collateral', () => {
   });
 
   test('should get the total peth in tap', async () => {
-    expect(await migration.pethInTap()).toBe(0.075);
+    expect(await migration.pethInTap()).toBe(0.535);
   });
   
   test('should redeem collateral', async () => {
