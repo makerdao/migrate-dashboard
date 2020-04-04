@@ -3,16 +3,13 @@ import { Text, Button, Grid, Card } from '@makerdao/ui-components-core';
 import { TOSCheck } from '../migratecdp/PayAndMigrate';
 import { ETH } from '@makerdao/dai';
 import useMaker from '../../hooks/useMaker';
-import sortBy from 'lodash/sortBy';
+import BigNumber from 'bignumber.js';
 
 export default ({ onPrev, onNext, selectedCdps, pethInVaults, ratio }) => {
   const [hasReadTOS, setHasReadTOS] = useState();
   const [cdpInstances, setCdpInstances] = useState();
   const [nonProxyNum, setNonProxyNum] = useState();
   const { maker } = useMaker();
-  const saiTubContractAddress = maker
-    .service('smartContract')
-    .getContract('SAI_TUB').address;
 
   useEffect(() => {
     const cs = maker.service('cdp');
@@ -26,7 +23,8 @@ export default ({ onPrev, onNext, selectedCdps, pethInVaults, ratio }) => {
 
   const needExitTx = nonProxyNum > 0;
   const needWithdrawTx = nonProxyNum === selectedCdps.length;
-  const txCount = selectedCdps.length + (needWithdrawTx > 0 ? 2 : 0);
+  const txCount =
+    selectedCdps.length + (needWithdrawTx ? 1 : 0) + (needExitTx ? 1 : 0);
 
   const redeemCdps = async () => {
     // TODO update state for in-progress screen
@@ -43,15 +41,31 @@ export default ({ onPrev, onNext, selectedCdps, pethInVaults, ratio }) => {
       const peth = maker.getToken('PETH');
       const balance = await peth.balance();
       console.log(`exiting ${balance.toString(4)}`);
-      await peth.approveUnlimited(saiTubContractAddress);
       await peth.exit(balance);
     }
 
     // eslint-disable-next-line require-atomic-updates
     for (const cdp of cdpInstances.filter(c => c.dsProxyAddress)) {
       const pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
-      const ethVal = ETH(pethVal.times(ratio));
-      
+
+      // re-fetch the ratio because it could have changed a tiny amount
+      const freshRatio = BigNumber(
+        await maker
+          .service('smartContract')
+          .getContract('SAI_TUB')
+          .per()
+      );
+
+      // add 1 wei to avoid a revert due to dust check in tub.free
+      const ethVal = ETH(
+        pethVal
+          .times('1e18')
+          .plus(1)
+          .div('1e18')
+          .times(freshRatio)
+          .div('1e27')
+      );
+
       console.log(
         pethVal.toFixed('wei'),
         ratio.toString(),

@@ -151,7 +151,7 @@ function OverviewDataFetch() {
         const off = await mig.getMigration('redeem-sai').off();
         if (!off) {
           console.log('shutting down');
-          await shutDown();
+          await shutDown(true);
         }
       }
       const checks = await mig.runAllChecks();

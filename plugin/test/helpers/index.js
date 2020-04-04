@@ -131,26 +131,29 @@ export async function migrateSaiToDai(amount, maker) {
   await daiMigration.execute(amount);
 }
 
-export async function shutDown() {
+export async function shutDown(randomize) {
   const maker = await migrationMaker();
   const top = maker.service('smartContract').getContract('SAI_TOP');
   const proxy = await maker.service('proxy').ensureProxy();
-  const normalCdp = await openLockAndDrawScdCdp(maker);
-  const proxyCdp = await maker.service('cdp').openProxyCdpLockEthAndDrawDai(
-    2,
-    103,
-    proxy
-  );
+  const normalCdp = await openLockAndDrawScdCdp(maker, randomize);
+  const proxyCdp = await maker
+    .service('cdp')
+    .openProxyCdpLockEthAndDrawDai(
+      2 + (randomize ? Math.random() : 0),
+      103 + (randomize ? Math.random() * 20 : 0),
+      proxy
+    );
   await top.cage();
   await normalCdp.bite();
   await proxyCdp.bite();
   await top.setCooldown(0);
+  await new Promise(r => setTimeout(r, 1000));
   await top.flow();
 }
 
-async function openLockAndDrawScdCdp(maker) {
+async function openLockAndDrawScdCdp(maker, randomize) {
   const cdp = await maker.openCdp();
-  await cdp.lockEth(1);
-  await cdp.drawDai(111);
+  await cdp.lockEth(1 + (randomize ? Math.random() : 0));
+  await cdp.drawDai(111 + (randomize ? Math.random() * 20 : 0));
   return cdp;
 }
