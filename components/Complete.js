@@ -1,16 +1,19 @@
 import React from 'react';
-import {
-  Grid,
-  Text,
-  Button,
-  Link
-} from '@makerdao/ui-components-core';
-import arrowTopRight from '../assets/icons/arrowTopRight.svg';
-import { etherscanLink } from '../utils/ui';
+import { Grid, Text, Button } from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
+import { TxLink } from './InProgress';
 
-function Complete({ onClose, txHash, title, description, children }) {
+function Complete({
+  onClose,
+  txHash,
+  txHashes = [],
+  txCount,
+  title,
+  description,
+  children
+}) {
   const { network } = useMaker();
+  if (txHashes.length === 0 && txHash) txHashes = [txHash];
 
   return (
     <Grid gridRowGap="m" mx={'s'}>
@@ -18,22 +21,9 @@ function Complete({ onClose, txHash, title, description, children }) {
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
         {description}
       </Text.p>
-      <Link
-        justifySelf="center"
-        target="_blank"
-        href={etherscanLink(txHash, network)}
-      >
-        <Button
-          my="xs"
-          justifySelf="center"
-          fontSize="s"
-          py="xs"
-          px="s"
-          variant="secondary"
-        >
-          View transaction details <img src={arrowTopRight} />
-        </Button>
-      </Link>
+      {txHashes.map((hash, index) => (
+        <TxLink key={hash} total={txCount} {...{ index, hash, network }} />
+      ))}
       {children}
       <Button
         mt="s"

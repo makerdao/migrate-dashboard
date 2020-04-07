@@ -5,7 +5,16 @@ import { ETH } from '@makerdao/dai';
 import useMaker from '../../hooks/useMaker';
 import BigNumber from 'bignumber.js';
 
-export default ({ onPrev, onNext, selectedCdps, pethInVaults, ratio }) => {
+export default ({
+  onPrev,
+  onNext,
+  selectedCdps,
+  pethInVaults,
+  ratio,
+  setTxCount,
+  setTxHashes,
+  showErrorMessageAndAllowExiting
+}) => {
   const [hasReadTOS, setHasReadTOS] = useState();
   const [cdpInstances, setCdpInstances] = useState();
   const [nonProxyNum, setNonProxyNum] = useState();
@@ -27,60 +36,75 @@ export default ({ onPrev, onNext, selectedCdps, pethInVaults, ratio }) => {
     selectedCdps.length + (needWithdrawTx ? 1 : 0) + (needExitTx ? 1 : 0);
 
   const redeemCdps = async () => {
-    // TODO update state for in-progress screen
+    setTxCount(txCount);
     onNext();
 
-    for (const cdp of cdpInstances.filter(c => !c.dsProxyAddress)) {
-      const val = pethInVaults.find(x => x[0] === cdp.id)[1];
-      console.log(`freeing ${val.toString(4)} for cdp ${cdp.id}`);
-      await cdp.freeEth(val);
-    }
+    const txMgr = maker.service('transactionManager');
+    const runAndTrack = async op => {
+      txMgr.listen(op, {
+        pending: tx => setTxHashes(hashes => (hashes || []).concat(tx.hash)),
+        error: showErrorMessageAndAllowExiting
+      });
+      await new Promise(r => setTimeout(r, 3000)); // stall for testing
+      return op;
+    };
 
-    // PETH exit has to happen before proxy cdp freeing, because it withdraws all WETH
-    if (needExitTx) {
-      const peth = maker.getToken('PETH');
-      const balance = await peth.balance();
-      console.log(`exiting ${balance.toString(4)}`);
-      await peth.exit(balance);
-    }
+    try {
+      for (const cdp of cdpInstances.filter(c => !c.dsProxyAddress)) {
+        const val = pethInVaults.find(x => x[0] === cdp.id)[1];
+        console.log(`freeing ${val.toString(4)} for cdp ${cdp.id}`);
+        await runAndTrack(cdp.freeEth(val));
+      }
 
-    // eslint-disable-next-line require-atomic-updates
-    for (const cdp of cdpInstances.filter(c => c.dsProxyAddress)) {
-      const pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
+      // PETH exit has to happen before proxy cdp freeing, because it withdraws all WETH
+      if (needExitTx) {
+        const peth = maker.getToken('PETH');
+        const balance = await peth.balance();
+        console.log(`exiting ${balance.toString(4)}`);
+        await runAndTrack(peth.exit(balance));
+      }
 
-      // re-fetch the ratio because it could have changed a tiny amount
-      const freshRatio = BigNumber(
-        await maker
-          .service('smartContract')
-          .getContract('SAI_TUB')
-          .per()
-      );
+      // eslint-disable-next-line require-atomic-updates
+      for (const cdp of cdpInstances.filter(c => c.dsProxyAddress)) {
+        const pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
 
-      // add 1 wei to avoid a revert due to dust check in tub.free
-      const ethVal = ETH(
-        pethVal
-          .times('1e18')
-          .plus(1)
-          .div('1e18')
-          .times(freshRatio)
-          .div('1e27')
-      );
+        // re-fetch the ratio because it could have changed a tiny amount
+        const freshRatio = BigNumber(
+          await maker
+            .service('smartContract')
+            .getContract('SAI_TUB')
+            .per()
+        );
 
-      console.log(
-        pethVal.toFixed('wei'),
-        ratio.toString(),
-        ethVal.toFixed('wei')
-      );
+        console.log(pethVal.toFixed('wei'), freshRatio.toFixed());
 
-      console.log(`freeing ${ethVal.toString(4)} for cdp ${cdp.id}`);
-      await cdp.freeEth(ethVal);
-    }
+        // avoid a revert due to dust check in tub.free by avoiding the
+        // default rounding behavior of the currency lib
+        let ethVal = ETH(
+          pethVal
+            .times(freshRatio)
+            .div('1e27')
+            .toBigNumber()
+            .times('1e18')
+            .integerValue(BigNumber.ROUND_HALF_UP)
+            .div('1e18')
+        );
 
-    if (needWithdrawTx) {
-      const weth = maker.getToken('WETH');
-      const balance = await weth.balance();
-      console.log(`withdrawing ${balance.toString(4)}`);
-      await weth.withdraw(balance);
+        console.log(`freeing ${ethVal.toString(4)} for cdp ${cdp.id}`);
+        await runAndTrack(cdp.freeEth(ethVal));
+      }
+
+      if (needWithdrawTx) {
+        const weth = maker.getToken('WETH');
+        const balance = await weth.balance();
+        console.log(`withdrawing ${balance.toString(4)}`);
+        await runAndTrack(weth.withdraw(balance));
+      }
+
+      onNext();
+    } catch (err) {
+      // the listener will handle the error, so we don't do anything here
+      console.error(err);
     }
   };
 

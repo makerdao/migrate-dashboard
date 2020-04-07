@@ -26,6 +26,7 @@ import FadeInFromSide from '../../components/FadeInFromSide';
 import InProgressImage from '../../assets/icons/daiRedeem.svg';
 import BigNumber from 'bignumber.js';
 
+// TODO
 const CompleteBody = () => {
   const [{ redeemedCollateral }] = useStore();
   const amount = redeemedCollateral
@@ -73,7 +74,7 @@ const steps = [
   props => (
     <InProgress
       {...props}
-      title="Your ETH is being redeemed"
+      title="Your collateral is being redeemed"
       image={InProgressImage}
     />
   ),
@@ -81,7 +82,9 @@ const steps = [
     <Complete
       {...props}
       title="Redemption Complete"
-      description="You've successfully redeemed the collateral from your SCD vault."
+      description={`You've successfully redeemed the collateral from your CDP${
+        props.selectedCdps.length > 1 ? 's' : ''
+      }.`}
     >
       <CompleteBody />
     </Complete>
@@ -90,7 +93,7 @@ const steps = [
     <Failed
       {...props}
       title="Redemption Failed"
-      subtitle="Your collateral in the Single Collateral Dai vault was not redeemed"
+      subtitle="Your collateral was not redeemed."
     />
   )
 ];
@@ -98,7 +101,8 @@ const steps = [
 export default function() {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
-  const [txHash, setTxHash] = useState(null);
+  const [txCount, setTxCount] = useState();
+  const [txHashes, setTxHashes] = useState();
   const [selectedCdps, setSelectedCdps] = useState([]);
   const [{ pethInVaults }] = useStore();
   const [ratio, setRatio] = useState();
@@ -109,7 +113,10 @@ export default function() {
 
   useEffect(() => {
     (async () => {
-      const per = await maker.service('smartContract').getContract('SAI_TUB').per();
+      const per = await maker
+        .service('smartContract')
+        .getContract('SAI_TUB')
+        .per();
       setRatio(BigNumber(per).div('1e27'));
     })();
   }, [maker]);
@@ -150,8 +157,10 @@ export default function() {
                   onPrev: toPrevStepOrClose,
                   onNext: toNextStep,
                   onReset: reset,
-                  setTxHash,
-                  txHash,
+                  setTxCount,
+                  txCount,
+                  setTxHashes,
+                  txHashes,
                   showErrorMessageAndAllowExiting,
                   pethInVaults,
                   selectedCdps,
