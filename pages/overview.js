@@ -170,7 +170,7 @@ function OverviewDataFetch() {
         ]);
 
         const fixElement = async ilk => {
-          const price = await end.tag(stringToBytes(ilk)).then(fromRay);
+          const price = await end.fix(stringToBytes(ilk)).then(fromRay);
           return {
             ilk,
             price
@@ -237,20 +237,18 @@ function OverviewDataFetch() {
         let _endBalance = DAI(0);
         const _dsrBalance = await maker.service('mcd:savings').balance();
         let bagBalance = DAI(0);
-        let outAmounts = [];
-        if (proxyAddress) {
-          const outElement = async ilk => {
-            const out = await end
-              .out(stringToBytes(ilk), proxyAddress)
-              .then(fromWei);
-            return {
-              ilk,
-              out
-            };
+        const outElement = async ilk => {
+          const out = proxyAddress ? await end
+            .out(stringToBytes(ilk), proxyAddress)
+            .then(fromWei) : BigNumber(0);
+          return {
+            ilk,
+            out
           };
-
-          outAmounts = await Promise.all(ilkKeys.map(ilk => outElement(ilk)));
-
+        };
+        const outAmounts = await Promise.all(ilkKeys.map(ilk => outElement(ilk)));
+        
+        if (proxyAddress) {
           bagBalance = DAI(await maker
             .service('migration')
             .getMigration('global-settlement-dai-redeemer')
