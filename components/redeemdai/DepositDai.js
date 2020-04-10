@@ -1,33 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import { Text, Grid, Card, Button, Box, Flex } from '@makerdao/ui-components-core';
+import React, { useState } from 'react';
+import { Text, Grid, Card, Button, Box, Flex, Checkbox, Link } from '@makerdao/ui-components-core';
 import { DAI } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
-import CollateralTable from './CollateralTable';
-import LoadingToggle from '../LoadingToggle';
 import useStore from '../../hooks/useStore';
 import { addToastWithTimeout } from '../Toast';
 import useMaker from '../../hooks/useMaker';
 import { prettifyNumber } from '../../utils/ui';
+import useProxy from '../../hooks/useProxy';
 
-function DaiRedeem({
+function DepositDai({
   onClose,
   setRedeemAmount,
   redeemAmount,
   onNext,
 }) {
   const { maker } = useMaker();
-  const [{ dsrBalance, daiBalance, bagBalance, endBalance, fixedPrices, tagPrices, outAmounts }, dispatch] = useStore();
+  const [{ dsrBalance, daiBalance, endBalance}, dispatch] = useStore();
   const daiEndBalance = daiBalance.plus(endBalance);
   const [valid, setValid] = useState(true);
   const [dsrWithdrawn, setDsrWithdrawn] = useState(dsrBalance.eq(0));
   const [dsrWithdrawing, setDsrWithdrawing] = useState(false);
-  const validate = value => {
-    let msg;
-    if (value.lte(0)) msg = 'Amount must be greater than 0';
-    else if (value.gt(daiEndBalance)) msg = 'Insufficient Dai balance';
+  const [hasReadTOS, setHasReadTOS] = useState(false);
+  const { proxyAddress } = useProxy();
+  const [hasDeposit, setHasDeposit] = useState(endBalance.gte(redeemAmount));
+  const [depositLoading, setDepositLoading] = useState(false);
 
-    setValid(!msg);
-    return msg;
+  const packDai = async () => {
+    try {
+      setDepositLoading();
+      const mig = maker
+        .service('migration')
+        .getMigration('global-settlement-dai-redeemer');
+      const packAmount = redeemAmount.minus(endBalance);
+      if (packAmount.gt(0)) {
+        await mig.packDai(packAmount);
+        const newBagBalance = await maker
+        .service('migration')
+        .getMigration('global-settlement-dai-redeemer')
+        .bagAmount(proxyAddress);
+        dispatch({
+          type: 'assign',
+          payload: {
+            daiBalance: newBagBalance
+          }
+        });
+      }
+      setHasDeposit(true);
+    } catch (err) {
+      const message = err.message ? err.message : err;
+      const errMsg = `pack dai tx failed ${message}`;
+      console.error(errMsg);
+      addToastWithTimeout(errMsg, dispatch);
+    }
+    setDepositLoading(false);
   };
 
   const withdrawDsr = async () => {
@@ -52,12 +77,20 @@ function DaiRedeem({
     setDsrWithdrawing(false);
   };
 
+  const validate = value => {
+    let msg;
+    if (value.lte(0)) msg = 'Amount must be greater than 0';
+    else if (value.gt(daiEndBalance)) msg = 'Insufficient Dai balance';
+
+    setValid(!msg);
+    return msg;
+  };
+
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
-      <Text.h2 textAlign="center">Redeem Dai for Collateral</Text.h2>
+      <Text.h2 textAlign="center">Deposit Dai to Redeem</Text.h2>
       <Text.p textAlign="center" t="body" fontSize="1.8rem" m="0 auto">
-        Redeem your Dai for a proportional amount of underlying collateral from
-        the Multi-Collateral Dai system.
+        Deposit your Dai to redeem it for collateral from the system.
       </Text.p>
       <Grid gridTemplateColumns="1fr 1fr 1fr">
         <div />
@@ -93,9 +126,6 @@ function DaiRedeem({
             </Button>
             </Flex>
           </Card>: ''}
-          <Card p="m" borderColor="#D4D9E1" border="1px solid">
-            <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} bagBalance={bagBalance} outAmounts={outAmounts} />
-          </Card>
           <AmountInputCard
             max={daiEndBalance}
             unit={DAI}
@@ -117,17 +147,39 @@ function DaiRedeem({
               </Text>
             </Box>
           </AmountInputCard>
-          <Grid
-            justifySelf="center"
-            justifyContent="center"
-            gridTemplateColumns="auto auto"
-            gridColumnGap="m"
-          >
+          <Card
+            px={'m'}
+            py={'m'}>
+                <Checkbox
+                  mr="s"
+                  fontSize="l"
+                  checked={hasReadTOS}
+                  onChange={() => setHasReadTOS(!hasReadTOS)}
+                />
+                <Text
+                  t="caption"
+                  color="steel"
+                  data-testid="terms"
+                  onClick={() => setHasReadTOS(!hasReadTOS)}
+                >
+                  I have read and accept the{' '}
+                  <Link target="_blank" href="/terms">
+                    Terms of Service
+                  </Link>
+                  .
+                </Text>
+            </Card>
+            <Grid
+                justifySelf="center"
+                justifyContent="center"
+                gridTemplateColumns="auto auto"
+                gridColumnGap="m"
+            >
             <Button variant="secondary-outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button disabled={!redeemAmount || !valid} onClick={onNext}>
-              Continue
+            <Button disabled={!redeemAmount || !valid || !hasReadTOS} onClick={onNext}>
+              Deposit
             </Button>
           </Grid>
         </Grid>
@@ -137,4 +189,4 @@ function DaiRedeem({
   );
 }
 
-export default DaiRedeem;
+export default DepositDai;
