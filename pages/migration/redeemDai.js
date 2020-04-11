@@ -6,17 +6,16 @@ import FlowHeader from '../../components/FlowHeader';
 import useMaker from '../../hooks/useMaker';
 import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
-import DaiRedeem from '../../components/redeemdai/DaiRedeem';
+import DepositDai from '../../components/redeemdai/DepositDai';
 import DeployProxy from '../../components/redeemdai/DeployProxy';
 import ConfirmRedeem from '../../components/redeemdai/ConfirmRedeem';
-import Complete from '../../components/redeemdai/Complete';
 import useStore from '../../hooks/useStore';
+import { DAI } from '../../maker';
 
 const steps = [
-  props => <DaiRedeem {...props} />,
   props => <DeployProxy {...props}/>,
+  props => <DepositDai {...props} />,
   props => <ConfirmRedeem {...props} />,
-  props => <Complete {...props} />,
   props => (
     <Failed
       {...props}
@@ -39,7 +38,7 @@ export default function() {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [redeemTxHash, setRedeemTxHash] = useState(null);
-  const [redeemAmount, setRedeemAmount] = useState();
+  const [redeemAmount, setRedeemAmount] = useState(DAI(0));
   const [collateralData, setCollateralData] = useState([]);
   const [{ proxyAddress }] = useStore();
 
@@ -51,7 +50,7 @@ export default function() {
     if (currentStep <= 0) Router.replace('/overview');
     setCurrentStep(s => s===2 && proxyAddress ? s - 2 : s - 1);
   };
-  const toNextStep = () => setCurrentStep(s => s===0 && proxyAddress ? s + 2 : s + 1);
+  const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
   const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
 
@@ -69,7 +68,7 @@ export default function() {
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
         <FlowHeader account={account} showClose={currentStep <= 1} />
         <Stepper
-          steps={['Redeem Dai', 'Set Up Proxy', 'Confirmation']}
+          steps={['Set Up Proxy', 'Deposit Dai', 'Redeem']}
           selected={currentStep}
           m="0 auto"
           mt={'m'}

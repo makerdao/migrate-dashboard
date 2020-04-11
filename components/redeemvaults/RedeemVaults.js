@@ -98,8 +98,12 @@ const RedeemVaults = ({
 
       if (type === 'BAT') {
         txObject = mig.freeBat(vaultId);
-      } else if (type === 'ETH') {
+      }
+      if (type === 'ETH') {
         txObject = mig.freeEth(vaultId);
+      }
+      if (type === 'USDC') {
+        txObject = mig.freeUsdc(vaultId);
       }
 
       maker.service('transactionManager').listen(txObject, {
