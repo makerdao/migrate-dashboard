@@ -31,14 +31,14 @@ import { ETH } from '@makerdao/dai/dist/src/eth/Currency';
 const CompleteBody = () => {
   const [{ redeemedCollateral, pethEthRatio }] = useStore();
   const amount = redeemedCollateral
-    ? prettifyNumber(redeemedCollateral.toNumber(), false, 3)
+    ? prettifyNumber(redeemedCollateral, false, 3)
     : 0;
   const ratio = pethEthRatio && redeemedCollateral
     ? prettifyNumber(pethEthRatio, false, 3)
     : 1;
   const ethVal = pethEthRatio && redeemedCollateral
     ? prettifyNumber(
-        ETH(redeemedCollateral.times(pethEthRatio)).toNumber(),
+        ETH(redeemedCollateral).times(pethEthRatio).toNumber(),
         false,
         3
       )

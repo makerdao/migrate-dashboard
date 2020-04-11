@@ -21,7 +21,8 @@ export default ({
   const [nonProxyNum, setNonProxyNum] = useState();
   const [, dispatch] = useStore();
   const { maker } = useMaker();
-  let pethVal, freshRatio;
+  let totalPethVal = 0,
+    freshRatio;
 
   useEffect(() => {
     const cs = maker.service('cdp');
@@ -54,7 +55,8 @@ export default ({
 
     try {
       for (const cdp of cdpInstances.filter(c => !c.dsProxyAddress)) {
-        pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
+        const pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
+        totalPethVal += pethVal.toNumber();
         console.log(`freeing ${pethVal.toString(4)} for cdp ${cdp.id}`);
         await runAndTrack(cdp.freeEth(pethVal));
       }
@@ -69,7 +71,8 @@ export default ({
 
       // eslint-disable-next-line require-atomic-updates
       for (const cdp of cdpInstances.filter(c => c.dsProxyAddress)) {
-        pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
+        const pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
+        totalPethVal += pethVal.toNumber();
 
         // re-fetch the ratio because it could have changed a tiny amount
         freshRatio = BigNumber(
@@ -104,7 +107,7 @@ export default ({
       dispatch({
         type: 'assign',
         payload: {
-          redeemedCollateral: pethVal,
+          redeemedCollateral: totalPethVal,
           pethEthRatio: freshRatio 
             ? freshRatio.div('1e27')
             : ratio
