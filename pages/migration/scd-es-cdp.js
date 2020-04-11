@@ -25,14 +25,25 @@ import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
 import InProgressImage from '../../assets/icons/daiRedeem.svg';
 import BigNumber from 'bignumber.js';
+import { ETH } from '@makerdao/dai/dist/src/eth/Currency';
 
 // TODO
 const CompleteBody = () => {
-  const [{ redeemedCollateral }] = useStore();
+  const [{ redeemedCollateral, pethEthRatio }] = useStore();
   const amount = redeemedCollateral
     ? prettifyNumber(redeemedCollateral.toNumber(), false, 3)
     : 0;
-  console.log('amount:', amount);
+  const ratio = pethEthRatio && redeemedCollateral
+    ? prettifyNumber(pethEthRatio, false, 3)
+    : 1;
+  const ethVal = pethEthRatio && redeemedCollateral
+    ? prettifyNumber(
+        ETH(redeemedCollateral.times(pethEthRatio)).toNumber(),
+        false,
+        3
+      )
+    : 0;
+
   return (
     <Card>
       <Grid gridRowGap="s" color="darkPurple" px={{ s: 'm' }} py={{ s: 'xs' }}>
@@ -40,9 +51,9 @@ const CompleteBody = () => {
           <Table.tbody>
             <Table.tr>
               <Table.td>
-                <Text display={'block'}>Total Collateral in CDP</Text>
+                <Text display={'block'}>Total Collateral in CDPs</Text>
                 <Text t="heading" display={'block'} fontWeight="bold">
-                  {`${amount} ETH`}
+                  {`${amount} PETH`}
                 </Text>
               </Table.td>
             </Table.tr>
@@ -50,7 +61,7 @@ const CompleteBody = () => {
               <Table.td>
                 <Text display={'block'}>Exchange Rate (PETH/WETH)</Text>
                 <Text t="heading" display={'block'} fontWeight="bold">
-                  // Pass in actual exchange rate 1:1
+                  {`1 PETH : ${ratio} ETH`} 
                 </Text>
               </Table.td>
             </Table.tr>
@@ -58,7 +69,7 @@ const CompleteBody = () => {
               <Table.td>
                 <Text display={'block'}>Received Collateral</Text>
                 <Text t="heading" display={'block'} fontWeight="bold">
-                  {`${amount} ETH`}
+                  {`${ethVal} ETH`}
                 </Text>
               </Table.td>
             </Table.tr>

@@ -21,6 +21,7 @@ export default ({
   const [nonProxyNum, setNonProxyNum] = useState();
   const [, dispatch] = useStore();
   const { maker } = useMaker();
+  let pethVal, freshRatio;
 
   useEffect(() => {
     const cs = maker.service('cdp');
@@ -53,13 +54,7 @@ export default ({
 
     try {
       for (const cdp of cdpInstances.filter(c => !c.dsProxyAddress)) {
-        const pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
-        console.log('dispatch:', dispatch);
-        dispatch({
-          type: 'assign',
-          payload: {
-            redeemedCollateral: pethVal
-          }});
+        pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
         console.log(`freeing ${pethVal.toString(4)} for cdp ${cdp.id}`);
         await runAndTrack(cdp.freeEth(pethVal));
       }
@@ -75,21 +70,17 @@ export default ({
       // eslint-disable-next-line require-atomic-updates
       for (const cdp of cdpInstances.filter(c => c.dsProxyAddress)) {
         pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
-        console.log('pethValue in proxy hook:', pethVal);
 
         // re-fetch the ratio because it could have changed a tiny amount
-        const freshRatio = BigNumber(
+        freshRatio = BigNumber(
           await maker
             .service('smartContract')
             .getContract('SAI_TUB')
             .per()
         );
-        console.log('just set a fresh ratio');
-        setRatio(freshRatio);
-
         // avoid a revert due to dust check in tub.free by avoiding the
         // default rounding behavior of the currency lib
-        let ethVal = ETH(
+        const ethVal = ETH(
           pethVal
             .times(freshRatio)
             .div('1e27')
@@ -109,6 +100,15 @@ export default ({
         console.log(`withdrawing ${balance.toString(4)}`);
         await runAndTrack(weth.withdraw(balance));
       }
+
+      dispatch({
+        type: 'assign',
+        payload: {
+          redeemedCollateral: pethVal,
+          pethEthRatio: freshRatio 
+            ? freshRatio.div('1e27')
+            : ratio
+        }});
 
       onNext();
     } catch (err) {
