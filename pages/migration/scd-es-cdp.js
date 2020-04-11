@@ -30,8 +30,9 @@ import BigNumber from 'bignumber.js';
 const CompleteBody = () => {
   const [{ redeemedCollateral }] = useStore();
   const amount = redeemedCollateral
-    ? prettifyNumber(redeemedCollateral.toNumber())
+    ? prettifyNumber(redeemedCollateral.toNumber(), false, 3)
     : 0;
+  console.log('amount:', amount);
   return (
     <Card>
       <Grid gridRowGap="s" color="darkPurple" px={{ s: 'm' }} py={{ s: 'xs' }}>
@@ -104,8 +105,8 @@ export default function() {
   const [txCount, setTxCount] = useState();
   const [txHashes, setTxHashes] = useState();
   const [selectedCdps, setSelectedCdps] = useState([]);
-  const [{ pethInVaults }] = useStore();
   const [ratio, setRatio] = useState();
+  const [{ pethInVaults }] = useStore();
 
   useEffect(() => {
     if (!account) Router.replace('/');
