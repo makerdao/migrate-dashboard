@@ -16,6 +16,9 @@ const ProxyComponent = ({
   proxyLoading,
   proxyDeployed,
   proxyErrors,
+  hasAllowance,
+  allowanceLoading,
+  giveAllowance,
   labels,
   showErrorMessageAndAllowExiting
 }) => {
@@ -59,6 +62,25 @@ const ProxyComponent = ({
             />
           )}
         </Text.p>
+      </Grid>
+      <Grid gridRowGap="xs" mt="l">
+        <Text.h4>Set Allowance</Text.h4>
+        <Text.p color="darkLavender" fontSize="l" lineHeight="normal">
+          This permission allows your proxy to interact with your DAI. This only has to be done once.
+        </Text.p>
+        {hasAllowance ? (
+          <SuccessButton />
+        ) : (
+          <Button
+            width="13.0rem"
+            mt="xs"
+            onClick={giveAllowance}
+            disabled={!proxyAddress || proxyLoading || allowanceLoading}
+            loading={allowanceLoading}
+          >
+            Set
+          </Button>
+        )}
       </Grid>
     </Card>
   );
