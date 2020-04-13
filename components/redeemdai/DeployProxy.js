@@ -87,9 +87,7 @@ function DeployProxy({ onPrev, onNext, showErrorMessageAndAllowExiting }) {
         proxyDeployed={proxyDeployed}
         proxyErrors={proxyErrors}
         hasAllowance={hasAllowance}
-        setHasAllowance={setHasAllowance}
         allowanceLoading={allowanceLoading}
-        setAllowanceLoading={setAllowanceLoading}
         giveAllowance={giveProxyDaiAllowance}
         showErrorMessageAndAllowExiting={showErrorMessageAndAllowExiting}
       />
