@@ -48,7 +48,7 @@ export default function() {
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
-    setCurrentStep(s => s===2 && proxyAddress ? s - 2 : s - 1);
+    setCurrentStep(s => s - 1);
   };
   const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);

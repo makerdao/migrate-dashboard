@@ -15,13 +15,16 @@ function CollateralTable({ data, tagData, amount, redeemDai, bagBalance, outAmou
               <Text t="subheading">Token</Text>
             </Table.th>
             <Table.th> 
-              <Text t="subheading">Shutdown Value</Text>
+              <Text t="subheading">Value</Text>
             </Table.th>
             <Table.th>
               <Text t="subheading">Exchange Rate</Text>
             </Table.th>
             <Table.th>
-              <Text t="subheading">Amount</Text>
+              <Text t="subheading">Redeeming</Text>
+            </Table.th>
+            <Table.th>
+              <Text t="subheading">Redeeming (Dai)</Text>
             </Table.th>
           </Table.tr>
         </Table.thead>
@@ -52,6 +55,13 @@ function CollateralTable({ data, tagData, amount, redeemDai, bagBalance, outAmou
                     {amount ? `${prettifyNumber(price.times(maxRedeem.find(x => x.ilk===ilk).max))} ${ilk.split('-')[0]}` : ''}
                   </Text.p>
                 </Table.th>
+
+                <Table.th>
+                  <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
+                    {amount ? `${prettifyNumber(maxRedeem.find(x => x.ilk===ilk).max)} DAI` : ''}
+                  </Text.p>
+                </Table.th>
+
                 {redeemDai ?
                 (<Table.th>
                   <Button

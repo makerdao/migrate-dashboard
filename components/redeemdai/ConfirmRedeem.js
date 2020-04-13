@@ -56,13 +56,6 @@ function ConfirmRedeem({
               buttonLoading={redeemInitiated}/>
             </Grid>
           </Card>
-
-          <Card py="m" px="l">
-            <Flex justifyContent="space-between">
-              <Text.p>Redeeming</Text.p>
-              <Text.p>{redeemAmount.toString(4).split(' ')[0]} DAI</Text.p>
-            </Flex>
-          </Card>
         </Grid>
       </Grid>
       <div />
@@ -72,12 +65,9 @@ function ConfirmRedeem({
         gridTemplateColumns="auto auto"
         gridColumnGap="m"
       >
-        <Button variant="secondary-outline" onClick={onPrev}>
-          Back
-        </Button>
         <Button variant="secondary-outline" onClick={onClose}
         >
-          Close
+          Exit
         </Button>
       </Grid>
     </Grid>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, Grid, Card, Button, Box, Flex, Checkbox, Link } from '@makerdao/ui-components-core';
 import { DAI } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
@@ -25,9 +25,13 @@ function DepositDai({
   const [hasDeposit, setHasDeposit] = useState(endBalance.gte(redeemAmount));
   const [depositLoading, setDepositLoading] = useState(false);
 
+  useEffect(() => {
+    setHasDeposit(endBalance.gte(redeemAmount));
+  }, [endBalance, redeemAmount]);
+
   const packDai = async () => {
     try {
-      setDepositLoading();
+      setDepositLoading(true);
       const mig = maker
         .service('migration')
         .getMigration('global-settlement-dai-redeemer');
@@ -45,6 +49,7 @@ function DepositDai({
           }
         });
       }
+      onNext();
       setHasDeposit(true);
     } catch (err) {
       const message = err.message ? err.message : err;
@@ -176,11 +181,16 @@ function DepositDai({
                 gridColumnGap="m"
             >
             <Button variant="secondary-outline" onClick={onClose}>
-              Cancel
+              Back
             </Button>
-            <Button disabled={!redeemAmount || !valid || !hasReadTOS} onClick={onNext}>
+            {hasDeposit ? (
+              <Button disabled={!redeemAmount || !valid || !hasReadTOS} onClick={onNext}>
+              Continue
+            </Button>
+            ) :
+            (<Button disabled={!redeemAmount || !valid || !hasReadTOS} onClick={packDai} loading={depositLoading}>
               Deposit
-            </Button>
+            </Button>)}
           </Grid>
         </Grid>
       </Grid>
