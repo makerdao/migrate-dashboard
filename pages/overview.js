@@ -228,7 +228,7 @@ function OverviewDataFetch() {
               false,
               4
             )} ${currency}`,
-            vaultValue: `${prettifyNumber(vaultValue)} ${currency}`
+            vaultValue: `${prettifyNumber(vaultValue, false, vaultValue.gt(0.01) ? 2 : 4)} ${currency}`
           };
         });
 

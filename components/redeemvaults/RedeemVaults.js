@@ -12,6 +12,7 @@ import {
 import useStore from '../../hooks/useStore';
 import useMaker from '../../hooks/useMaker';
 import { addToastWithTimeout } from '../Toast';
+import SuccessButton from '../SuccessButton';
 
 const TableRow = ({
   vaultId,
@@ -33,18 +34,25 @@ const TableRow = ({
       {/* <td>{exchangeRate}</td> */}
       <td>{vaultValue}</td>
       <td>
-        <Button
-          px="16px"
+        {redeemDone.includes(vaultId) ?
+        <SuccessButton
+          px="0px"
           py="4px"
+          width="90px"
           justifySelf="center"
-          // px="xl"
+        />
+        : <Button
+          px="0px"
+          py="4px"
+          width="90px"
+          justifySelf="center"
           fontSize={'13px'}
           loading={redeemInitiated.includes(vaultId) && !redeemDone.includes(vaultId)}
-          disabled={redeemDone.includes(vaultId) || !hasReadTOS}
+          disabled={!hasReadTOS}
           onClick={() => redeemVaults(vaultId, type)}
         >
           Withdraw
-      </Button>
+      </Button>}
       </td>
     </tr>
   );
@@ -75,11 +83,10 @@ const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
 };
 
 const RedeemVaults = ({
-  // onPrev,
-  // onNext,
   vaultsToRedeem,
   setRedeemTxHash,
-  showErrorMessageAndAllowExiting
+  showErrorMessageAndAllowExiting,
+  onClose
 }) => {
   const { maker } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
@@ -157,6 +164,12 @@ const RedeemVaults = ({
         </Grid>
       </Grid>
       <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
+        <Card
+          px={'m'}
+          py={'m'}
+        >
+          <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
+        </Card>
         <Card px="l" py="l">
           <Table
             width="100%"
@@ -199,9 +212,6 @@ const RedeemVaults = ({
               ))}
             </tbody>
           </Table>
-          <Flex mt="m">
-            <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
-          </Flex>
         </Card>
       </Grid>
       <Grid
@@ -212,7 +222,7 @@ const RedeemVaults = ({
         <Button
           justifySelf="center"
           variant="secondary-outline"
-        // onClick={onPrev}
+          onClick={onClose}
         >
           Back to Migrate
         </Button>

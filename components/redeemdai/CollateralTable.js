@@ -53,17 +53,17 @@ function CollateralTable({ data, tagData, amount, redeemDai, bagBalance, outAmou
 
                 <Table.td>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
-                    {amount ? `${prettifyNumber(price.times(maxRedeem.find(x => x.ilk===ilk).max))} ${ilk.split('-')[0]}` : ''}
+                    {amount ? `${prettifyNumber(price.times(maxRedeem.find(x => x.ilk===ilk).max), false, price.times(maxRedeem.find(x => x.ilk===ilk).max).gt(0.01) ? 2 : 4)} ${ilk.split('-')[0]}` : ''}
                   </Text.p>
                 </Table.td>
 
                 <Table.td>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
-                    {amount ? `${prettifyNumber(maxRedeem.find(x => x.ilk===ilk).max)} DAI` : ''}
+                    {amount ? `${prettifyNumber(maxRedeem.find(x => x.ilk===ilk).max, false, maxRedeem.find(x => x.ilk===ilk).max.gt(0.01) ? 2 : 4)} DAI` : ''}
                   </Text.p>
                 </Table.td>
                 <Table.td>
-                { redeemComplete.includes(ilk) ?
+                { redeemComplete.includes(ilk) || maxRedeem.find(x => x.ilk===ilk).max.eq(0) ?
                 (<SuccessButton
                   px="16px"
                   py="4px"

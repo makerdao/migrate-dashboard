@@ -146,8 +146,21 @@ function DepositDai({
                 ml="s"
                 color="darkLavender"
               >
-                {daiEndBalance && daiEndBalance.gt(0)
-                  ? `${prettifyNumber(daiEndBalance.toBigNumber())} DAI`
+                {daiBalance && daiBalance.gt(0)
+                  ? `${prettifyNumber(daiBalance.toBigNumber())} DAI`
+                  : '--'}
+              </Text>
+            </Box>
+            <Box>
+              <Text t="subheading">Dai Deposited</Text>
+              <Text
+                t="caption"
+                display="inline-block"
+                ml="s"
+                color="darkLavender"
+              >
+                {endBalance && endBalance.gt(0)
+                  ? `${prettifyNumber(endBalance.toBigNumber())} DAI`
                   : '--'}
               </Text>
             </Box>
@@ -184,11 +197,11 @@ function DepositDai({
               Back
             </Button>
             {hasDeposit ? (
-              <Button disabled={!redeemAmount || !valid || !hasReadTOS} onClick={onNext}>
+              <Button disabled={redeemAmount.eq(0) || !valid || !hasReadTOS} onClick={onNext} width="130px">
               Continue
             </Button>
             ) :
-            (<Button disabled={!redeemAmount || !valid || !hasReadTOS} onClick={packDai} loading={depositLoading}>
+            (<Button disabled={redeemAmount.eq(0) || !valid || !hasReadTOS} onClick={packDai} loading={depositLoading} width="130px">
               Deposit
             </Button>)}
           </Grid>
