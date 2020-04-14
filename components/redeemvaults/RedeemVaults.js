@@ -91,7 +91,7 @@ const RedeemVaults = ({
   const redeemVaults = async (vaultId, type) => {
     try {
       let txObject = null;
-      setRedeemInitiated([...redeemInitiated, vaultId]);
+      setRedeemInitiated(redeemInitiated => [...redeemInitiated, vaultId]);
       const mig = maker
         .service('migration')
         .getMigration('global-settlement-collateral-claims');
@@ -111,7 +111,7 @@ const RedeemVaults = ({
           setRedeemTxHash(tx.hash);
         },
         mined: () => {
-          setRedeemDone([...redeemDone, vaultId]);
+          setRedeemDone(redeemDone => [...redeemDone, vaultId]);
         },
         error: () => showErrorMessageAndAllowExiting()
       });

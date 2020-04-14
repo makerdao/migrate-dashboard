@@ -1,6 +1,7 @@
 import { Text, Grid, Table, Button } from '@makerdao/ui-components-core';
 import { prettifyNumber } from '../../utils/ui';
 import BigNumber from 'bignumber.js';
+import SuccessButton from '../SuccessButton';
 
 function CollateralTable({ data, tagData, amount, redeemDai, bagBalance, outAmounts, buttonDisabled, buttonLoading, redeemComplete }) {
   const maxRedeem = amount ? outAmounts.map(e => {
@@ -32,50 +33,56 @@ function CollateralTable({ data, tagData, amount, redeemDai, bagBalance, outAmou
           {data &&
             data.map(({ ilk, price }, idx) => (
               <Table.tr key={idx}>
-                <Table.th>
+                <Table.td>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
                   {ilk.split('-')[0]}
                   </Text.p>
-                </Table.th>
+                </Table.td>
 
-                <Table.th>
+                <Table.td>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
                     {`$${prettifyNumber(BigNumber(1).div(tagData.find(t => t.ilk===ilk).price))}`}
                   </Text.p>
-                </Table.th>
+                </Table.td>
 
-                <Table.th>
+                <Table.td>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
                     {`1 DAI : ${prettifyNumber(price, false, 4)} ${ilk.split('-')[0]}`}
                   </Text.p>
-                </Table.th>
+                </Table.td>
 
-                <Table.th>
+                <Table.td>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
                     {amount ? `${prettifyNumber(price.times(maxRedeem.find(x => x.ilk===ilk).max))} ${ilk.split('-')[0]}` : ''}
                   </Text.p>
-                </Table.th>
+                </Table.td>
 
-                <Table.th>
+                <Table.td>
                   <Text.p my="m" fontSize="1.5rem" t="body" fontWeight={400}>
                     {amount ? `${prettifyNumber(maxRedeem.find(x => x.ilk===ilk).max)} DAI` : ''}
                   </Text.p>
-                </Table.th>
-
-                {redeemDai ?
-                (<Table.th>
-                  <Button
+                </Table.td>
+                <Table.td>
+                { redeemComplete.includes(ilk) ?
+                (<SuccessButton
+                  px="16px"
+                  py="4px"
+                  width="90px"
+                  justifySelf="center"
+                  />) : 
+                (<Button
                     px="16px"
                     py="4px"
+                    width="90px"
                     justifySelf="center"
                     fontSize={'13px'}
-                    loading={buttonLoading===ilk}
-                    disabled={buttonDisabled || redeemComplete.includes(ilk) || maxRedeem.find(x => x.ilk===ilk).max.eq(0)}
+                    loading={buttonLoading.includes(ilk)}
+                    disabled={buttonDisabled || maxRedeem.find(x => x.ilk===ilk).max.eq(0)}
                     onClick={() => redeemDai(maxRedeem.find(x => x.ilk===ilk).max, ilk)}
                   >
                     Redeem
-                  </Button>
-                </Table.th>):(<Table.th/>)}
+                  </Button>)}
+                </Table.td>
               </Table.tr>
             ))}
         </Table.tbody>

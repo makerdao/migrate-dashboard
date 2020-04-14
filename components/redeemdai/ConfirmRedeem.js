@@ -12,49 +12,50 @@ import useMaker from '../../hooks/useMaker';
 import useStore from '../../hooks/useStore';
 
 function ConfirmRedeem({
-  onPrev,
   redeemAmount,
   onClose
 }) {
   const { maker } = useMaker();
   const [{ fixedPrices, tagPrices, bagBalance, outAmounts }, dispatch] = useStore();
-  const [redeemInitiated, setRedeemInitiated] = useState(false);
+  const [redeemInitiated, setRedeemInitiated] = useState([]);
   const [redeemComplete, setRedeemComplete] = useState([]);
 
 
   const redeemDai = async (amount, ilk) => {
 
     try {
-      setRedeemInitiated(ilk);
+      setRedeemInitiated(redeemInitiated => [...redeemInitiated, ilk]);
       const mig = maker
         .service('migration')
         .getMigration('global-settlement-dai-redeemer');
       if(ilk==='ETH-A') await mig.cashEth(amount);
       if(ilk==='BAT-A') await mig.cashBat(amount);
       if(ilk==='USDC-A') await mig.cashUsdc(amount);
-      setRedeemComplete([...redeemComplete, ilk]);
+      setRedeemComplete(redeemComplete => [...redeemComplete, ilk]);
     } catch (err) {
       const message = err.message ? err.message : err;
       const errMsg = `cash tx failed ${message}`;
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
     }
-    setRedeemInitiated(false);
   };
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
       <Text.h2 textAlign="center">Redeem Dai</Text.h2>
+      <Grid gridRowGap="xs">
+        <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
+        Redeem your Dai for a proportional amount of underlying collateral from the Multi-Collateral Dai system.
+        </Text.p>
+      </Grid>
       <Grid gridTemplateColumns="1fr 1fr 1fr">
         <div />
         <Grid gridRowGap="s">
-          <Card p="m" borderColor="#D4D9E1" border="1px solid">
-            <Grid gridRowGap="s" width="567px">
+          <Card p="m" borderColor="#D4D9E1" border="1px solid" width="760px">
               <CollateralTable data={fixedPrices} tagData={tagPrices} amount={redeemAmount} redeemDai={redeemDai}
               bagBalance={bagBalance} outAmounts={outAmounts}
               redeemComplete={redeemComplete}
               buttonLoading={redeemInitiated}/>
-            </Grid>
           </Card>
         </Grid>
       </Grid>
