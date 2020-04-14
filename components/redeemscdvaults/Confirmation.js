@@ -3,6 +3,7 @@ import { Text, Button, Grid, Card } from '@makerdao/ui-components-core';
 import { TOSCheck } from '../migratecdp/PayAndMigrate';
 import { ETH } from '@makerdao/dai';
 import useMaker from '../../hooks/useMaker';
+import useStore from '../../hooks/useStore';
 import BigNumber from 'bignumber.js';
 
 export default ({
@@ -18,7 +19,10 @@ export default ({
   const [hasReadTOS, setHasReadTOS] = useState();
   const [cdpInstances, setCdpInstances] = useState();
   const [nonProxyNum, setNonProxyNum] = useState();
+  const [, dispatch] = useStore();
   const { maker } = useMaker();
+  let totalPethVal = 0,
+    freshRatio;
 
   useEffect(() => {
     const cs = maker.service('cdp');
@@ -51,9 +55,10 @@ export default ({
 
     try {
       for (const cdp of cdpInstances.filter(c => !c.dsProxyAddress)) {
-        const val = pethInVaults.find(x => x[0] === cdp.id)[1];
-        console.log(`freeing ${val.toString(4)} for cdp ${cdp.id}`);
-        await runAndTrack(cdp.freeEth(val));
+        const pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
+        totalPethVal += pethVal.toNumber();
+        console.log(`freeing ${pethVal.toString(4)} for cdp ${cdp.id}`);
+        await runAndTrack(cdp.freeEth(pethVal));
       }
 
       // PETH exit has to happen before proxy cdp freeing, because it withdraws all WETH
@@ -67,20 +72,18 @@ export default ({
       // eslint-disable-next-line require-atomic-updates
       for (const cdp of cdpInstances.filter(c => c.dsProxyAddress)) {
         const pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
+        totalPethVal += pethVal.toNumber();
 
         // re-fetch the ratio because it could have changed a tiny amount
-        const freshRatio = BigNumber(
+        freshRatio = BigNumber(
           await maker
             .service('smartContract')
             .getContract('SAI_TUB')
             .per()
         );
-
-        console.log(pethVal.toFixed('wei'), freshRatio.toFixed());
-
         // avoid a revert due to dust check in tub.free by avoiding the
         // default rounding behavior of the currency lib
-        let ethVal = ETH(
+        const ethVal = ETH(
           pethVal
             .times(freshRatio)
             .div('1e27')
@@ -100,6 +103,15 @@ export default ({
         console.log(`withdrawing ${balance.toString(4)}`);
         await runAndTrack(weth.withdraw(balance));
       }
+
+      dispatch({
+        type: 'assign',
+        payload: {
+          redeemedCollateral: totalPethVal,
+          pethEthRatio: freshRatio 
+            ? freshRatio.div('1e27')
+            : ratio
+        }});
 
       onNext();
     } catch (err) {

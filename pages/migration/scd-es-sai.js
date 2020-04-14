@@ -5,7 +5,6 @@
 import React, { useState, useEffect } from 'react';
 import useMaker from '../../hooks/useMaker';
 import useStore from '../../hooks/useStore';
-import { prettifyNumber } from '../../utils/ui';
 import FlowBackground from '../../components/FlowBackground';
 import FlowHeader from '../../components/FlowHeader';
 import {
