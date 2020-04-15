@@ -15,7 +15,7 @@ function DepositDai({
   onNext,
 }) {
   const { maker } = useMaker();
-  const [{ dsrBalance, daiBalance, endBalance}, dispatch] = useStore();
+  const [{ dsrBalance, daiBalance, endBalance, bagBalance}, dispatch] = useStore();
   const daiEndBalance = daiBalance.plus(endBalance);
   const [valid, setValid] = useState(true);
   const [dsrWithdrawn, setDsrWithdrawn] = useState(dsrBalance.eq(0));
@@ -38,14 +38,11 @@ function DepositDai({
       const packAmount = redeemAmount.minus(endBalance);
       if (packAmount.gt(0)) {
         await mig.packDai(packAmount);
-        const newBagBalance = await maker
-        .service('migration')
-        .getMigration('global-settlement-dai-redeemer')
-        .bagAmount(proxyAddress);
         dispatch({
           type: 'assign',
           payload: {
-            daiBalance: newBagBalance
+            daiBalance: daiBalance.minus(packAmount),
+            bagBalance: bagBalance.plus(packAmount)
           }
         });
       }
@@ -151,7 +148,7 @@ function DepositDai({
                   : '--'}
               </Text>
             </Box>
-            <Box>
+            {endBalance.gt(0) ? <Box>
               <Text t="subheading">Dai Deposited</Text>
               <Text
                 t="caption"
@@ -163,7 +160,7 @@ function DepositDai({
                   ? `${prettifyNumber(endBalance.toBigNumber())} DAI`
                   : '--'}
               </Text>
-            </Box>
+            </Box> : ''}
           </AmountInputCard>
           <Card
             px={'m'}
