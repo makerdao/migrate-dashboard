@@ -100,7 +100,7 @@ function DeployProxy({ onPrev, onNext, showErrorMessageAndAllowExiting }) {
         <Button variant="secondary-outline" onClick={onPrev}>
           Back
         </Button>
-        <Button onClick={onNext} disabled={!hasProxy}>
+        <Button onClick={onNext} disabled={!hasProxy || !hasAllowance}>
           Continue
         </Button>
       </Grid>

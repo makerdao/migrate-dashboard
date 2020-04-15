@@ -1,4 +1,5 @@
-import { Text, Grid, Table, Button } from '@makerdao/ui-components-core';
+import { Text, Grid, Table, Button, Tooltip, Box } from '@makerdao/ui-components-core';
+import TooltipContents from '../TooltipContents';
 import { prettifyNumber } from '../../utils/ui';
 import BigNumber from 'bignumber.js';
 import SuccessButton from '../SuccessButton';
@@ -14,18 +15,62 @@ function CollateralTable({ data, tagData, amount, redeemDai, bagBalance, outAmou
           <Table.tr py="xl" border="0px">
             <Table.th>
               <Text t="subheading">Token</Text>
+              <Tooltip
+              style={{visibility: 'hidden'}}
+              fontSize="m"
+              />
             </Table.th>
             <Table.th> 
               <Text t="subheading">Value</Text>
+              <Tooltip
+              color = "steel"
+              fontSize="m"
+              ml="2xs"
+              content={
+                <TooltipContents>
+                  Token value at time of shutdown
+                </TooltipContents>
+                }
+              />
             </Table.th>
             <Table.th>
               <Text t="subheading">Exchange Rate</Text>
+              <Tooltip
+              color = "steel"
+              fontSize="m"
+              ml="2xs"
+              content={
+                <TooltipContents>
+                  Amount of token redeemable per 1 DAI, after accounting for the token's proportion of the collateral pool (and any system surplus or deficit if applicable)
+                </TooltipContents>
+                }
+              />
             </Table.th>
             <Table.th>
               <Text t="subheading">Redeeming</Text>
+              <Tooltip
+              color = "steel"
+              fontSize="m"
+              ml="2xs"
+              content={
+                <TooltipContents>
+                  Total amount of token to be received
+                </TooltipContents>
+                }
+              />
             </Table.th>
             <Table.th>
               <Text t="subheading">Redeeming (Dai)</Text>
+              <Tooltip
+              color = "steel"
+              fontSize="m"
+              ml="2xs"
+              content={
+                <TooltipContents>
+                  Dai amount being redeemed
+                </TooltipContents>
+                }
+              />
             </Table.th>
           </Table.tr>
         </Table.thead>

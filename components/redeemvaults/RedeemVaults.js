@@ -7,8 +7,10 @@ import {
   Button,
   Checkbox,
   Link,
-  Card
+  Card,
+  Tooltip
 } from '@makerdao/ui-components-core';
+import TooltipContents from '../TooltipContents';
 import useStore from '../../hooks/useStore';
 import useMaker from '../../hooks/useMaker';
 import { addToastWithTimeout } from '../Toast';
@@ -24,6 +26,7 @@ const TableRow = ({
   hasReadTOS,
   redeemVaults,
   exchangeRate,
+  shutdownValue,
   vaultValue
 }) => (
     <tr css="white-space: nowrap;">
@@ -31,7 +34,7 @@ const TableRow = ({
       <td>{type}</td>
       {/* <td>{collateral}</td> */}
       {/* <td>{daiDebt}</td> */}
-      {/* <td>{exchangeRate}</td> */}
+      <td>{shutdownValue}</td>
       <td>{vaultValue}</td>
       <td>
         {redeemDone.includes(vaultId) ?
@@ -140,7 +143,7 @@ const RedeemVaults = ({
     'Vault Type',
     'Collateral',
     'Dai Debt',
-    'Exchange Rate',
+    'Shutdown Value',
     'Available',
     'Action',
   ];
@@ -189,8 +192,19 @@ const RedeemVaults = ({
                 <th>{tableHeaders[1]}</th>
                 {/* <th>{tableHeaders[2]}</th> */}
                 {/* <th>{tableHeaders[3]}</th> */}
-                {/* <th>{tableHeaders[4]}</th> */}
-                <th>{tableHeaders[5]}</th>
+                <th>{tableHeaders[4]}</th>
+                <th>{tableHeaders[5]}
+                  <Tooltip
+                  color = "steel"
+                  fontSize="m"
+                  ml="2xs"
+                  content={
+                    <TooltipContents>
+                      Amount of collateral available after cancelling out your Dai debt with collateral priced at the shutdown value
+                    </TooltipContents>
+                    }
+                  />
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -201,7 +215,7 @@ const RedeemVaults = ({
                   collateral={vault.collateral}
                   type={vault.type}
                   daiDebt={vault.daiDebt}
-                  exchangeRate={vault.exchangeRate}
+                  shutdownValue={vault.shutdownValue}
                   vaultValue={vault.vaultValue}
                   redeemInitiated={redeemInitiated}
                   redeemDone={redeemDone}
