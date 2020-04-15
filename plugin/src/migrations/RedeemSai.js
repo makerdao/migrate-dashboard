@@ -17,8 +17,7 @@ export default class RedeemSai {
   }
 
   redeemSai(wad) {
-    // This will be replaced with the new contract method
-    // that atomically exits/unwraps
-    return this._tap.cash(DAI(wad).toFixed(18));
+    const cageFree = this._manager.get('smartContract').getContract('SAI_CAGEFREE');
+    return cageFree.freeCash(DAI(wad).toFixed(18));
   }
 }
