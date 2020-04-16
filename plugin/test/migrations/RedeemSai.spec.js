@@ -1,6 +1,7 @@
 import { migrationMaker, shutDown } from '../helpers';
 import { ServiceRoles, Migrations } from '../../src/constants';
 import { takeSnapshot, restoreSnapshot } from '@makerdao/test-helpers';
+import { ETH } from '../../../maker';
 
 let maker, migration, snapshotData;
 
@@ -29,20 +30,21 @@ describe('Redeem Sai', () => {
 
   test('should redeem sai', async () => {
     const sai = maker.getToken('DAI');
-    const gem = maker.getToken('WETH');
-    const address = maker.service('web3').currentAddress();
-    await sai.approveUnlimited(migration._tap.address);
+    const web3Service = maker.service('web3');
+    const address = web3Service.currentAddress();
+    const cageFree = maker.service('smartContract').getContract('SAI_CAGEFREE').address;
+    await sai.approveUnlimited(cageFree);
     const saiBalanceBeforeRedemption = await sai.balanceOf(address);
-    const wethBalanceBeforeRedemption = await gem.balanceOf(address);
+    const ethBalanceBeforeRedemption = ETH.wei(await web3Service.getBalance(address));
     await migration.redeemSai(5);
     const saiBalanceAfterRedemption = await sai.balanceOf(address);
-    const wethBalanceAfterRedemption = await gem.balanceOf(address);
+    const ethBalanceAfterRedemption = ETH.wei(await web3Service.getBalance(address));
 
     expect(saiBalanceAfterRedemption).toEqual(
       saiBalanceBeforeRedemption.minus(5)
     );
-    expect(wethBalanceAfterRedemption).toEqual(
-      wethBalanceBeforeRedemption.plus(0.0125)
+    expect(ethBalanceAfterRedemption.toNumber()).toBeCloseTo(
+      ethBalanceBeforeRedemption.plus(0.0125).toNumber()
     );
   });
 });
