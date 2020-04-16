@@ -265,6 +265,13 @@ function OverviewDataFetch() {
           .plus(_endBalance)
           .plus(_dsrBalance);
 
+        const endVatBalancesInDai = await Promise.all(ilkKeys.map(async ilk =>
+          { const gem = await maker.service('migration')
+            .getMigration('global-settlement-dai-redeemer')
+            .endGemBalable(ilk);
+            return gem.dividedBy(fixedPrices.find(p=>p.ilk===ilk).price);
+          }));
+        const minEndVatBalance = BigNumber.min.apply(null, endVatBalancesInDai);
         dispatch({
           type: 'assign',
           payload: {
@@ -281,7 +288,8 @@ function OverviewDataFetch() {
             bagBalance,
             proxyAddress,
             daiDsrEndBalance: _daiDsrEndBalance,
-            vaultsToRedeem: { claims: validClaims, parsedVaultsData }
+            vaultsToRedeem: { claims: validClaims, parsedVaultsData },
+            minEndVatBalance
           }
         });
       }

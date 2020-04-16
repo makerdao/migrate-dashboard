@@ -6,7 +6,6 @@ import useStore from '../../hooks/useStore';
 import { addToastWithTimeout } from '../Toast';
 import useMaker from '../../hooks/useMaker';
 import { prettifyNumber } from '../../utils/ui';
-import useProxy from '../../hooks/useProxy';
 
 function DepositDai({
   onClose,
@@ -15,13 +14,12 @@ function DepositDai({
   onNext,
 }) {
   const { maker } = useMaker();
-  const [{ dsrBalance, daiBalance, endBalance, bagBalance}, dispatch] = useStore();
+  const [{ dsrBalance, daiBalance, endBalance, bagBalance, minEndVatBalance}, dispatch] = useStore();
   const daiEndBalance = daiBalance.plus(endBalance);
   const [valid, setValid] = useState(true);
   const [dsrWithdrawn, setDsrWithdrawn] = useState(dsrBalance.eq(0));
   const [dsrWithdrawing, setDsrWithdrawing] = useState(false);
   const [hasReadTOS, setHasReadTOS] = useState(false);
-  const { proxyAddress } = useProxy();
   const [hasDeposit, setHasDeposit] = useState(endBalance.gte(redeemAmount));
   const [depositLoading, setDepositLoading] = useState(false);
 
@@ -184,6 +182,21 @@ function DepositDai({
                   .
                 </Text>
             </Card>
+            {redeemAmount.gt(minEndVatBalance) ?
+            <Card
+              bg="yellow.100"
+              color="#826318"
+              borderColor="yellow.400"
+              border="1px solid"
+              lineHeight="normal"
+              p="s"
+            >
+              <Flex fontSize="s">
+                <div>
+                  {'Users cannot redeem more than '}<b>{`${prettifyNumber(minEndVatBalance)} DAI`}</b>{' at this time. Please change the amount or return back later. For further information, visit chat.makerdao.com.'}
+                </div>
+              </Flex>
+            </Card>: ''}
             <Grid
                 justifySelf="center"
                 justifyContent="center"
@@ -194,11 +207,11 @@ function DepositDai({
               Back
             </Button>
             {hasDeposit ? (
-              <Button disabled={redeemAmount.eq(0) || !valid || !hasReadTOS} onClick={onNext} width="130px">
+              <Button disabled={redeemAmount.eq(0) || redeemAmount.gt(minEndVatBalance) || !valid || !hasReadTOS} onClick={onNext} width="130px">
               Continue
             </Button>
             ) :
-            (<Button disabled={redeemAmount.eq(0) || !valid || !hasReadTOS} onClick={packDai} loading={depositLoading} width="130px">
+            (<Button disabled={redeemAmount.eq(0) || redeemAmount.gt(minEndVatBalance) || !valid || !hasReadTOS} onClick={packDai} loading={depositLoading} width="130px">
               Deposit
             </Button>)}
           </Grid>

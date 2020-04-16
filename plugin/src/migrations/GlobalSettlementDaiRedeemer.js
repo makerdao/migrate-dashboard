@@ -1,5 +1,7 @@
 import { MDAI_1 } from '../index';
 import { stringToBytes } from '../utils';
+import BigNumber from 'bignumber.js';
+import { WAD } from '../constants';
 
 export default class GlobalSettlementDaiRedeemer {
   constructor(container) {
@@ -38,6 +40,13 @@ export default class GlobalSettlementDaiRedeemer {
     );
 
     return fixes.some(fix => fix.gt(0));
+  }
+
+  async endGemBalable(ilk){
+    const vat = this._container.get('smartContract').getContract('MCD_VAT_1');
+    const endAddress = this._container.get('smartContract').getContractAddress('MCD_END_1');
+    const gemBalance = await vat.gem(stringToBytes(ilk), endAddress);
+    return BigNumber(gemBalance).div(WAD);
   }
 
   async bagAmount(address){
