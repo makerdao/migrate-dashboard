@@ -238,6 +238,7 @@ function OverviewDataFetch() {
         let _endBalance = DAI(0);
         const _dsrBalance = await maker.service('mcd:savings').balance();
         let bagBalance = DAI(0);
+        let proxyDaiAllowance = DAI(0);
         const outElement = async ilk => {
           const out = proxyAddress ? await end
             .out(stringToBytes(ilk), proxyAddress)
@@ -260,6 +261,8 @@ function OverviewDataFetch() {
               outAmounts.map(o => o.out)
             )
           );
+          proxyDaiAllowance = await maker.getToken(DAI).allowance(account.address, proxyAddress);
+
         }
         const _daiDsrEndBalance = _daiBalance
           .plus(_endBalance)
@@ -289,7 +292,8 @@ function OverviewDataFetch() {
             proxyAddress,
             daiDsrEndBalance: _daiDsrEndBalance,
             vaultsToRedeem: { claims: validClaims, parsedVaultsData },
-            minEndVatBalance
+            minEndVatBalance,
+            proxyDaiAllowance
           }
         });
       }

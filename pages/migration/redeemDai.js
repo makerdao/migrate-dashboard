@@ -40,7 +40,6 @@ export default function() {
   const [redeemTxHash, setRedeemTxHash] = useState(null);
   const [redeemAmount, setRedeemAmount] = useState(DAI(0));
   const [collateralData, setCollateralData] = useState([]);
-  const [{ proxyAddress }] = useStore();
 
   useEffect(() => {
     if (!account) Router.replace('/');
@@ -66,14 +65,13 @@ export default function() {
   return (
     <FlowBackground>
       <Grid gridRowGap={{ s: 's', l: 'xl' }}>
-        <FlowHeader account={account} showClose={currentStep <= 1} />
+        <FlowHeader account={account} showClose={true} />
         <Stepper
           steps={['Set Up Proxy', 'Deposit Dai', 'Redeem']}
           selected={currentStep}
           m="0 auto"
           mt={'m'}
           p={['0 80px', '0']}
-          opacity={currentStep < 2 ? 1 : 0}
           transition="opacity 0.2s"
         />
 

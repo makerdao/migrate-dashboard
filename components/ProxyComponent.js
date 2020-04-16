@@ -39,7 +39,7 @@ const ProxyComponent = ({
             width={['26.0rem', '13.0rem']}
             mt="xs"
             onClick={deployProxy}
-            disabled={!proxyAddress || proxyLoading || !!proxyErrors}
+            disabled={proxyLoading || !!proxyErrors}
             loading={proxyLoading || !!proxyErrors}
           >
             Deploy

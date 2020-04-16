@@ -9,8 +9,10 @@ import { MDAI } from '@makerdao/dai-plugin-mcd';
 import { addToastWithTimeout } from '../Toast';
 
 function DeployProxy({ onPrev, onNext, showErrorMessageAndAllowExiting }) {
-  const [dispatch] = useStore();
-  const { maker, account } = useMaker();
+  const [{proxyDaiAllowance, daiBalance, endBalance, dsrBalance}, dispatch] = useStore();
+  const alreadyHasAllowance = proxyDaiAllowance.gt(daiBalance.plus(dsrBalance.plus(endBalance)));
+  if (alreadyHasAllowance) onNext();
+  const { maker } = useMaker();
   const {
     proxyAddress,
     setupProxy,
@@ -38,7 +40,7 @@ function DeployProxy({ onPrev, onNext, showErrorMessageAndAllowExiting }) {
     setAllowanceLoading(false);
   };
 
-  const [hasAllowance, setHasAllowance] = useState(false);
+  const [hasAllowance, setHasAllowance] = useState(alreadyHasAllowance);
   const [allowanceLoading, setAllowanceLoading] = useState(false);
 
   const blockHeight = useBlockHeight(0);
@@ -55,24 +57,6 @@ function DeployProxy({ onPrev, onNext, showErrorMessageAndAllowExiting }) {
           : blockHeight - startingBlockHeight
       } of 10`
   };
-
-  useEffect(() => {
-    (async () => {
-      if (!maker || !account) return;
-      maker
-        .service('proxy')
-        .currentProxy()
-        .then(async address => {
-          if (!address) return;
-          const connectedWalletAllowance = await maker
-            .getToken(MDAI)
-            .allowance(account.address, address);
-          //TODO: change this from 0
-          const hasDaiAllowance = connectedWalletAllowance.gt(0);
-          setHasAllowance(hasDaiAllowance);
-        });
-    })();
-  }, [account, maker, hasProxy]);
 
   return (
     <Box maxWidth="71.8rem" mx={['s', 0]}>

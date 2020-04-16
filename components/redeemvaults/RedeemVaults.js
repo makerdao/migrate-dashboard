@@ -208,7 +208,7 @@ const RedeemVaults = ({
               </tr>
             </thead>
             <tbody>
-              {vaultsToRedeem && vaultsToRedeem.parsedVaultsData.map(vault => console.log('vault', vault) || (
+              {vaultsToRedeem && vaultsToRedeem.parsedVaultsData.map(vault => (
                 <TableRow
                   key={vault.id}
                   vaultId={vault.id}
@@ -221,7 +221,6 @@ const RedeemVaults = ({
                   redeemDone={redeemDone}
                   hasReadTOS={hasReadTOS}
                   redeemVaults={redeemVaults}
-                // vaultGem={vault.gem}
                 />
               ))}
             </tbody>
