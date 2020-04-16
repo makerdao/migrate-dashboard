@@ -30,7 +30,7 @@ export default ({
   let [{ saiBalance = SAI(0) }, dispatch] = useStore();
   const { maker, account } = useMaker();
   const [hasReadTOS, setHasReadTOS] = useState(false);
-  const [tapApprovePending, setTapApprovePending] = useState(false);
+  const [cageFreeApprovePending, setCageFreeApprovePending] = useState(false);
 
   const [redemptionInitiated, setRedemptionInitiated] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
@@ -38,9 +38,9 @@ export default ({
   const [valid, setValid] = useState(true);
   if (!maker) return null;
 
-  const saiTapContractAddress = maker
+  const cageFreeAddress = maker
     .service('smartContract')
-    .getContract('SAI_TAP').address;
+    .getContract('SAI_CAGEFREE').address;
   const max = saiBalance;
 
   const validate = value => {
@@ -51,21 +51,21 @@ export default ({
     return msg;
   };
 
-  const giveProxyTapAllowance = async () => {
-    setTapApprovePending(true);
+  const giveProxyCageFreeAllowance = async () => {
+    setCageFreeApprovePending(true);
     try {
-      await maker.getToken('DAI').approveUnlimited(saiTapContractAddress);
+      await maker.getToken('DAI').approveUnlimited(cageFreeAddress);
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
-        hasTapAllowance: true
+        hasCageFreeAllowance: true
       }));
     } catch (err) {
       const message = err.message ? err.message : err;
-      const errMsg = `unlock tap tx failed ${message}`;
+      const errMsg = `unlock cagefree tx failed ${message}`;
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
     }
-    setTapApprovePending(false);
+    setCageFreeApprovePending(false);
   };
 
   const redeemSai = async () => {
@@ -74,8 +74,6 @@ export default ({
       const migration = await maker
         .service('migration')
         .getMigration('redeem-sai');
-      // The following should be removed when approval ui is in place
-      // await maker.getToken('DAI').approveUnlimited(migration._tap.address);
       const redeemTxObject = migration.redeemSai(saiAmountToRedeem);
       maker.service('transactionManager').listen(redeemTxObject, {
         pending: tx => {
@@ -98,11 +96,11 @@ export default ({
       if (maker && account) {
         const connectedWalletAllowance = await maker
           .getToken('DAI')
-          .allowance(account.address, saiTapContractAddress);
-        const hasTapAllowance = connectedWalletAllowance.gte(
+          .allowance(account.address, cageFreeAddress);
+        const hasCageFreeAllowance = connectedWalletAllowance.gte(
           saiAmountToRedeem.toBigNumber().times(1.05)
         );
-        setProxyDetails({ hasTapAllowance });
+        setProxyDetails({ hasCageFreeAllowance });
       }
     })();
   }, [account, maker, saiAmountToRedeem]);
@@ -177,10 +175,10 @@ export default ({
             loadingText={'Unlocking SAI'}
             defaultText={'Unlock SAI to continue'}
             tokenDisplayName={'SAI'}
-            isLoading={tapApprovePending}
-            isComplete={!!proxyDetails.hasTapAllowance}
-            onToggle={giveProxyTapAllowance}
-            disabled={!!proxyDetails.hasTapAllowance}
+            isLoading={cageFreeApprovePending}
+            isComplete={!!proxyDetails.hasCageFreeAllowance}
+            onToggle={giveProxyCageFreeAllowance}
+            disabled={!!proxyDetails.hasCageFreeAllowance}
             testId="allowance-toggle"
             mx={'xl'}
             px={'xl'}
@@ -225,7 +223,7 @@ export default ({
         <Button
           disabled={
             !hasReadTOS ||
-            !proxyDetails.hasTapAllowance ||
+            !proxyDetails.hasCageFreeAllowance ||
             redemptionInitiated ||
             !saiAmountToRedeem.toNumber() ||
             !valid
