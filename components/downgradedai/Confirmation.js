@@ -33,9 +33,7 @@ export default ({
   const giveProxyDaiAllowance = async () => {
     setDaiApprovePending(true);
     try {
-      await maker
-        .getToken('MDAI')
-        .approveUnlimited(migrationContractAddress);
+      await maker.getToken('MDAI').approveUnlimited(migrationContractAddress);
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasDaiAllowance: true
@@ -186,7 +184,9 @@ export default ({
           Back
         </Button>
         <Button
-          disabled={!hasReadTOS || !proxyDetails.hasDaiAllowance || downgradeInitiated}
+          disabled={
+            !hasReadTOS || !proxyDetails.hasDaiAllowance || downgradeInitiated
+          }
           onClick={convertDai}
         >
           Continue

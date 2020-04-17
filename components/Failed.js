@@ -13,23 +13,26 @@ function Failed(props) {
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
         {props.subtitle}
       </Text.p>
-      { props.migrationTxHash ? (<Link
-        justifySelf="center"
-        target="_blank"
-        href={etherscanLink(props.migrationTxHash, network)}
-      >
-        <Button
-          my="xs"
+      {props.migrationTxHash ? (
+        <Link
           justifySelf="center"
-          fontSize="s"
-          py="xs"
-          px="s"
-          variant="secondary"
+          target="_blank"
+          href={etherscanLink(props.migrationTxHash, network)}
         >
-          View transaction details <img src={arrowTopRight} />
-        </Button>
-      </Link>
-      ): ''}
+          <Button
+            my="xs"
+            justifySelf="center"
+            fontSize="s"
+            py="xs"
+            px="s"
+            variant="secondary"
+          >
+            View transaction details <img src={arrowTopRight} />
+          </Button>
+        </Link>
+      ) : (
+        ''
+      )}
       <Grid gridRowGap="s" justifySelf="center">
         <Button variant="secondary-outline" onClick={props.onClose}>
           Exit

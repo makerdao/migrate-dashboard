@@ -127,7 +127,8 @@ function Overview() {
   const shouldShowCdps = countCdps(cdps) > 0 && saiAvailable.gt(0);
   const shouldShowDai = saiBalance && saiBalance.gt(0) && daiAvailable.gt(0);
   const shouldShowMkr = oldMkrBalance && oldMkrBalance.gt(0);
-  const shouldShowReverse = daiBalance && daiBalance.gt(0) && saiAvailable.gt(0);
+  const shouldShowReverse =
+    daiBalance && daiBalance.gt(0) && saiAvailable.gt(0);
   const shouldShowChief =
     chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
   const noMigrations =

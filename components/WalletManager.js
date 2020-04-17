@@ -73,11 +73,16 @@ function WalletManager({ providerName }) {
         >
           {lang.providers.trezor}
         </IconButton>
-        {useMemo(() => <TrezorModal
-          show={showTrezor}
-          onClose={() => setShowTrezor(false)}
-          onAccountChosen={onAccountChosen}
-        />, [onAccountChosen, showTrezor])}
+        {useMemo(
+          () => (
+            <TrezorModal
+              show={showTrezor}
+              onClose={() => setShowTrezor(false)}
+              onAccountChosen={onAccountChosen}
+            />
+          ),
+          [onAccountChosen, showTrezor]
+        )}
       </BrowserView>
 
       <BrowserView>
@@ -93,11 +98,16 @@ function WalletManager({ providerName }) {
         >
           {lang.providers.ledger_nano}
         </IconButton>
-        {useMemo(() => <LedgerModal
-          show={showLedger}
-          onClose={() => setShowLedger(false)}
-          onAccountChosen={onAccountChosen}
-        />, [onAccountChosen, showLedger])}
+        {useMemo(
+          () => (
+            <LedgerModal
+              show={showLedger}
+              onClose={() => setShowLedger(false)}
+              onAccountChosen={onAccountChosen}
+            />
+          ),
+          [onAccountChosen, showLedger]
+        )}
       </BrowserView>
       <BrowserView>
         <IconButton
