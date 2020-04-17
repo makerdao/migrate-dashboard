@@ -98,6 +98,8 @@ const RedeemVaults = ({
 
   const [, dispatch] = useStore();
 
+  if (!maker) return null;
+
   const redeemVaults = async (vaultId, type) => {
     try {
       let txObject = null;
