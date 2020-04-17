@@ -5,25 +5,10 @@ import FlowBackground from '../../components/FlowBackground';
 import FlowHeader from '../../components/FlowHeader';
 import FadeInFromSide from '../../components/FadeInFromSide';
 import RedeemVaults from '../../components/redeemvaults/RedeemVaults';
-import InProgress from '../../components/InProgress';
-import Complete from '../../components/redeemvaults/Complete';
-import Failed from '../../components/Failed';
 import useMaker from '../../hooks/useMaker';
 import useStore from '../../hooks/useStore';
-import daiLogo from '../../assets/icons/dai-logo.svg';
 
-const steps = [
-  props => <RedeemVaults {...props} />
-  // props => <InProgress {...props} title="Your Dai Vaults are being redeemed" image={daiLogo} />,
-  // props => <Complete {...props} />,
-  // props => (
-  //     <Failed
-  //         {...props}
-  //         title="Redeem failed"
-  //         subtitle={'There was an error with redeeming your vaults.'}
-  //     />
-  // )
-];
+const steps = [props => <RedeemVaults {...props} />];
 
 export default function() {
   const { account } = useMaker();
@@ -36,18 +21,6 @@ export default function() {
   }, [account]);
 
   const [{ vaultsToRedeem }] = useStore();
-  // useEffect(() => {
-  //   (async () => {
-  //     //TODO when we get real vault data remove line below
-  //     if (!maker || !account) return;
-  //     // if (!maker || !account || !vaultsToRedeem) return;
-  //     //TODO change this when we learn the real parameter
-  //     // const data = await getVaultData(account.address);
-  //     // setVaultData(data);
-  //     setVaultData(vaultsToRedeem.ids);
-  //     setLoadingVaults(false);
-  //   })();
-  // }, [maker, account, vaultsToRedeem]);
 
   const onPrev = () => {
     if (currentStep <= 0) Router.replace('/overview');
