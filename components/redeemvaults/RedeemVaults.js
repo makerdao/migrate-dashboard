@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Text,
   Grid,
-  Flex,
   Table,
   Button,
   Checkbox,
@@ -18,47 +17,43 @@ import SuccessButton from '../SuccessButton';
 
 const TableRow = ({
   vaultId,
-  collateral,
-  daiDebt,
   type,
   redeemInitiated,
   redeemDone,
   hasReadTOS,
   redeemVaults,
-  exchangeRate,
   shutdownValue,
   vaultValue
 }) => (
-    <tr css="white-space: nowrap;">
-      <td>{vaultId}</td>
-      <td>{type}</td>
-      {/* <td>{collateral}</td> */}
-      {/* <td>{daiDebt}</td> */}
-      <td>{shutdownValue}</td>
-      <td>{vaultValue}</td>
-      <td>
-        {redeemDone.includes(vaultId) ?
-        <SuccessButton
-          px="0px"
-          py="4px"
-          width="90px"
-          justifySelf="center"
-        />
-        : <Button
+  <tr css="white-space: nowrap;">
+    <td>{vaultId}</td>
+    <td>{type}</td>
+    {/* <td>{collateral}</td> */}
+    {/* <td>{daiDebt}</td> */}
+    <td>{shutdownValue}</td>
+    <td>{vaultValue}</td>
+    <td>
+      {redeemDone.includes(vaultId) ? (
+        <SuccessButton px="0px" py="4px" width="90px" justifySelf="center" />
+      ) : (
+        <Button
           px="0px"
           py="4px"
           width="90px"
           justifySelf="center"
           fontSize={'13px'}
-          loading={redeemInitiated.includes(vaultId) && !redeemDone.includes(vaultId)}
+          loading={
+            redeemInitiated.includes(vaultId) && !redeemDone.includes(vaultId)
+          }
           disabled={!hasReadTOS}
           onClick={() => redeemVaults(vaultId, type)}
         >
           Withdraw
-      </Button>}
-      </td>
-    </tr>
-  );
+        </Button>
+      )}
+    </td>
+  </tr>
+);
 
 const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
   return (
@@ -147,7 +142,7 @@ const RedeemVaults = ({
     'Dai Debt',
     'Shutdown Value',
     'Available',
-    'Action',
+    'Action'
   ];
 
   return (
@@ -169,10 +164,7 @@ const RedeemVaults = ({
         </Grid>
       </Grid>
       <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
-        <Card
-          px={'m'}
-          py={'m'}
-        >
+        <Card px={'m'} py={'m'}>
           <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
         </Card>
         <Card px="l" py="l">
@@ -195,36 +187,39 @@ const RedeemVaults = ({
                 {/* <th>{tableHeaders[2]}</th> */}
                 {/* <th>{tableHeaders[3]}</th> */}
                 <th>{tableHeaders[4]}</th>
-                <th>{tableHeaders[5]}
+                <th>
+                  {tableHeaders[5]}
                   <Tooltip
-                  color = "steel"
-                  fontSize="m"
-                  ml="2xs"
-                  content={
-                    <TooltipContents>
-                      Amount of collateral available after cancelling out your Dai debt with collateral priced at the shutdown value
-                    </TooltipContents>
+                    color="steel"
+                    fontSize="m"
+                    ml="2xs"
+                    content={
+                      <TooltipContents>
+                        Amount of collateral available after cancelling out your
+                        Dai debt with collateral priced at the shutdown value
+                      </TooltipContents>
                     }
                   />
                 </th>
               </tr>
             </thead>
             <tbody>
-              {vaultsToRedeem && vaultsToRedeem.parsedVaultsData.map(vault => (
-                <TableRow
-                  key={vault.id}
-                  vaultId={vault.id}
-                  collateral={vault.collateral}
-                  type={vault.type}
-                  daiDebt={vault.daiDebt}
-                  shutdownValue={vault.shutdownValue}
-                  vaultValue={vault.vaultValue}
-                  redeemInitiated={redeemInitiated}
-                  redeemDone={redeemDone}
-                  hasReadTOS={hasReadTOS}
-                  redeemVaults={redeemVaults}
-                />
-              ))}
+              {vaultsToRedeem &&
+                vaultsToRedeem.parsedVaultsData.map(vault => (
+                  <TableRow
+                    key={vault.id}
+                    vaultId={vault.id}
+                    collateral={vault.collateral}
+                    type={vault.type}
+                    daiDebt={vault.daiDebt}
+                    shutdownValue={vault.shutdownValue}
+                    vaultValue={vault.vaultValue}
+                    redeemInitiated={redeemInitiated}
+                    redeemDone={redeemDone}
+                    hasReadTOS={hasReadTOS}
+                    redeemVaults={redeemVaults}
+                  />
+                ))}
             </tbody>
           </Table>
         </Card>

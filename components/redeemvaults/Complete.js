@@ -1,18 +1,10 @@
 import React from 'react';
-import {
-  Grid,
-  Text,
-  Button,
-  Link
-} from '@makerdao/ui-components-core';
+import { Grid, Text, Button, Link } from '@makerdao/ui-components-core';
 import arrowTopRight from '../../assets/icons/arrowTopRight.svg';
 import { etherscanLink } from '../../utils/ui';
 import useMaker from '../../hooks/useMaker';
 
-function Complete({
-  onClose,
-  redeemTxHash,
-}) {
+function Complete({ onClose, redeemTxHash }) {
   const { network } = useMaker();
 
   return (

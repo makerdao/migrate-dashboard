@@ -83,7 +83,7 @@ async function getAllCdpData(allCdps, maker) {
 
 const ownedByProxy = cdp => 'dsProxyAddress' in cdp;
 
-export default function() {
+export default function () {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [cdps, setCdps] = useState([]);

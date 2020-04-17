@@ -9,11 +9,10 @@ import FadeInFromSide from '../../components/FadeInFromSide';
 import DepositDai from '../../components/redeemdai/DepositDai';
 import DeployProxy from '../../components/redeemdai/DeployProxy';
 import ConfirmRedeem from '../../components/redeemdai/ConfirmRedeem';
-import useStore from '../../hooks/useStore';
 import { DAI } from '../../maker';
 
 const steps = [
-  props => <DeployProxy {...props}/>,
+  props => <DeployProxy {...props} />,
   props => <DepositDai {...props} />,
   props => <ConfirmRedeem {...props} />,
   props => (
@@ -34,7 +33,7 @@ async function getCollateralData() {
   return new Promise(resolve => setTimeout(resolve(dummyData), 3000));
 }
 
-export default function() {
+export default function () {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [redeemTxHash, setRedeemTxHash] = useState(null);

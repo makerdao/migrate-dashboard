@@ -1,6 +1,5 @@
-import React from 'react'
+import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Grid, Box } from '@makerdao/ui-components-core'
 
 const Keyframe = keyframes`
   {
@@ -14,7 +13,7 @@ const Keyframe = keyframes`
       left: 0;
     }
   }
-`
+`;
 const Path = styled.div`
   position: relative;
   overflow: hidden;
@@ -27,16 +26,18 @@ const Path = styled.div`
 const Element = styled.span`
   position: absolute;
   left: 0;
-  background-color: #E67002;
+  background-color: #e67002;
   width: 46px;
   height: 2px;
   display: block;
   top: 0;
-  animation: ${Keyframe} 3.0s ease 3.0s infinite;
+  animation: ${Keyframe} 3s ease 3s infinite;
 `;
 
 export default () => {
-  return <Path>
-    <Element />
-  </Path>
-}
+  return (
+    <Path>
+      <Element />
+    </Path>
+  );
+};

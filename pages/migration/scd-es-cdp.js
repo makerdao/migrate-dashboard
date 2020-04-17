@@ -33,16 +33,18 @@ const CompleteBody = () => {
   const amount = redeemedCollateral
     ? prettifyNumber(redeemedCollateral, false, 3)
     : 0;
-  const ratio = pethEthRatio && redeemedCollateral
-    ? prettifyNumber(pethEthRatio, false, 3)
-    : 1;
-  const ethVal = pethEthRatio && redeemedCollateral
-    ? prettifyNumber(
-        ETH(redeemedCollateral).times(pethEthRatio).toNumber(),
-        false,
-        3
-      )
-    : 0;
+  const ratio =
+    pethEthRatio && redeemedCollateral
+      ? prettifyNumber(pethEthRatio, false, 3)
+      : 1;
+  const ethVal =
+    pethEthRatio && redeemedCollateral
+      ? prettifyNumber(
+          ETH(redeemedCollateral).times(pethEthRatio).toNumber(),
+          false,
+          3
+        )
+      : 0;
 
   return (
     <Card>
@@ -61,7 +63,7 @@ const CompleteBody = () => {
               <Table.td>
                 <Text display={'block'}>Exchange Rate (PETH/WETH)</Text>
                 <Text t="heading" display={'block'} fontWeight="bold">
-                  {`1 PETH : ${ratio} ETH`} 
+                  {`1 PETH : ${ratio} ETH`}
                 </Text>
               </Table.td>
             </Table.tr>
@@ -110,7 +112,7 @@ const steps = [
   )
 ];
 
-export default function() {
+export default function () {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [txCount, setTxCount] = useState();

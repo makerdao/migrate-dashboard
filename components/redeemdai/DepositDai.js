@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Grid, Card, Button, Box, Flex, Checkbox, Link } from '@makerdao/ui-components-core';
+import {
+  Text,
+  Grid,
+  Card,
+  Button,
+  Box,
+  Flex,
+  Checkbox,
+  Link
+} from '@makerdao/ui-components-core';
 import { DAI } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
 import useStore from '../../hooks/useStore';
@@ -7,14 +16,12 @@ import { addToastWithTimeout } from '../Toast';
 import useMaker from '../../hooks/useMaker';
 import { prettifyNumber } from '../../utils/ui';
 
-function DepositDai({
-  onClose,
-  setRedeemAmount,
-  redeemAmount,
-  onNext,
-}) {
+function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
   const { maker } = useMaker();
-  const [{ dsrBalance, daiBalance, endBalance, bagBalance, minEndVatBalance}, dispatch] = useStore();
+  const [
+    { dsrBalance, daiBalance, endBalance, bagBalance, minEndVatBalance },
+    dispatch
+  ] = useStore();
   const daiEndBalance = daiBalance.plus(endBalance);
   const [valid, setValid] = useState(true);
   const [dsrWithdrawn, setDsrWithdrawn] = useState(dsrBalance.eq(0));
@@ -95,37 +102,44 @@ function DepositDai({
       <Grid gridTemplateColumns="1fr 1fr 1fr">
         <div />
         <Grid width="567px" gridRowGap="l">
-          {dsrBalance.gt(0) ?
-          <Card
-            bg="yellow.100"
-            color="#826318"
-            borderColor="yellow.400"
-            border="1px solid"
-            lineHeight="normal"
-            p="s"
-          >
-            <Flex>
-              <div>
-                {'You have '}<b>{`${prettifyNumber(dsrBalance.toBigNumber())} DAI`}</b>{' in the DSR. Would you like to withdraw this Dai to your wallet?'}
-              </div>
-            <Button
-              variant="secondary-outline"
-              style={{backgroundColor: 'white'}}
-              ml='l'
-              my='7px'
-              px="12px"
-              py="4px"
-              width="89px"
-              justifySelf="center"
-              fontSize={'13px'}
-              onClick={withdrawDsr}
-              disabled={dsrWithdrawn}
-              loading={dsrWithdrawing}
+          {dsrBalance.gt(0) ? (
+            <Card
+              bg="yellow.100"
+              color="#826318"
+              borderColor="yellow.400"
+              border="1px solid"
+              lineHeight="normal"
+              p="s"
             >
-              Withdraw
-            </Button>
-            </Flex>
-          </Card>: ''}
+              <Flex>
+                <div>
+                  {'You have '}
+                  <b>{`${prettifyNumber(dsrBalance.toBigNumber())} DAI`}</b>
+                  {
+                    ' in the DSR. Would you like to withdraw this Dai to your wallet?'
+                  }
+                </div>
+                <Button
+                  variant="secondary-outline"
+                  style={{ backgroundColor: 'white' }}
+                  ml="l"
+                  my="7px"
+                  px="12px"
+                  py="4px"
+                  width="89px"
+                  justifySelf="center"
+                  fontSize={'13px'}
+                  onClick={withdrawDsr}
+                  disabled={dsrWithdrawn}
+                  loading={dsrWithdrawing}
+                >
+                  Withdraw
+                </Button>
+              </Flex>
+            </Card>
+          ) : (
+            ''
+          )}
           <AmountInputCard
             max={daiEndBalance}
             unit={DAI}
@@ -146,43 +160,45 @@ function DepositDai({
                   : '--'}
               </Text>
             </Box>
-            {endBalance.gt(0) ? <Box>
-              <Text t="subheading">Dai Deposited</Text>
-              <Text
-                t="caption"
-                display="inline-block"
-                ml="s"
-                color="darkLavender"
-              >
-                {endBalance && endBalance.gt(0)
-                  ? `${prettifyNumber(endBalance.toBigNumber())} DAI`
-                  : '--'}
-              </Text>
-            </Box> : ''}
-          </AmountInputCard>
-          <Card
-            px={'m'}
-            py={'m'}>
-                <Checkbox
-                  mr="s"
-                  fontSize="l"
-                  checked={hasReadTOS}
-                  onChange={() => setHasReadTOS(!hasReadTOS)}
-                />
+            {endBalance.gt(0) ? (
+              <Box>
+                <Text t="subheading">Dai Deposited</Text>
                 <Text
                   t="caption"
-                  color="steel"
-                  data-testid="terms"
-                  onClick={() => setHasReadTOS(!hasReadTOS)}
+                  display="inline-block"
+                  ml="s"
+                  color="darkLavender"
                 >
-                  I have read and accept the{' '}
-                  <Link target="_blank" href="/terms">
-                    Terms of Service
-                  </Link>
-                  .
+                  {endBalance && endBalance.gt(0)
+                    ? `${prettifyNumber(endBalance.toBigNumber())} DAI`
+                    : '--'}
                 </Text>
-            </Card>
-            {redeemAmount.gt(minEndVatBalance) ?
+              </Box>
+            ) : (
+              ''
+            )}
+          </AmountInputCard>
+          <Card px={'m'} py={'m'}>
+            <Checkbox
+              mr="s"
+              fontSize="l"
+              checked={hasReadTOS}
+              onChange={() => setHasReadTOS(!hasReadTOS)}
+            />
+            <Text
+              t="caption"
+              color="steel"
+              data-testid="terms"
+              onClick={() => setHasReadTOS(!hasReadTOS)}
+            >
+              I have read and accept the{' '}
+              <Link target="_blank" href="/terms">
+                Terms of Service
+              </Link>
+              .
+            </Text>
+          </Card>
+          {redeemAmount.gt(minEndVatBalance) ? (
             <Card
               bg="yellow.100"
               color="#826318"
@@ -193,27 +209,54 @@ function DepositDai({
             >
               <Flex fontSize="s">
                 <div>
-                  {'Users cannot redeem more than '}<b>{`${prettifyNumber(minEndVatBalance)} DAI`}</b>{' at this time. Please change the amount or return back later. For further information, visit chat.makerdao.com.'}
+                  {'Users cannot redeem more than '}
+                  <b>{`${prettifyNumber(minEndVatBalance)} DAI`}</b>
+                  {
+                    ' at this time. Please change the amount or return back later. For further information, visit chat.makerdao.com.'
+                  }
                 </div>
               </Flex>
-            </Card>: ''}
-            <Grid
-                justifySelf="center"
-                justifyContent="center"
-                gridTemplateColumns="auto auto"
-                gridColumnGap="m"
-            >
+            </Card>
+          ) : (
+            ''
+          )}
+          <Grid
+            justifySelf="center"
+            justifyContent="center"
+            gridTemplateColumns="auto auto"
+            gridColumnGap="m"
+          >
             <Button variant="secondary-outline" onClick={onClose}>
               Back
             </Button>
             {hasDeposit ? (
-              <Button disabled={redeemAmount.eq(0) || redeemAmount.gt(minEndVatBalance) || !valid || !hasReadTOS} onClick={onNext} width="130px">
-              Continue
-            </Button>
-            ) :
-            (<Button disabled={redeemAmount.eq(0) || redeemAmount.gt(minEndVatBalance) || !valid || !hasReadTOS} onClick={packDai} loading={depositLoading} width="130px">
-              Deposit
-            </Button>)}
+              <Button
+                disabled={
+                  redeemAmount.eq(0) ||
+                  redeemAmount.gt(minEndVatBalance) ||
+                  !valid ||
+                  !hasReadTOS
+                }
+                onClick={onNext}
+                width="130px"
+              >
+                Continue
+              </Button>
+            ) : (
+              <Button
+                disabled={
+                  redeemAmount.eq(0) ||
+                  redeemAmount.gt(minEndVatBalance) ||
+                  !valid ||
+                  !hasReadTOS
+                }
+                onClick={packDai}
+                loading={depositLoading}
+                width="130px"
+              >
+                Deposit
+              </Button>
+            )}
           </Grid>
         </Grid>
       </Grid>

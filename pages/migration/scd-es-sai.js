@@ -7,14 +7,7 @@ import useMaker from '../../hooks/useMaker';
 import useStore from '../../hooks/useStore';
 import FlowBackground from '../../components/FlowBackground';
 import FlowHeader from '../../components/FlowHeader';
-import {
-  Stepper,
-  Grid,
-  Flex,
-  Card,
-  Table,
-  Text
-} from '@makerdao/ui-components-core';
+import { Grid, Flex, Card, Table, Text } from '@makerdao/ui-components-core';
 import Router from 'next/router';
 // To add
 import SaiRedeem from '../../components/redeemsai/SaiRedeem';
@@ -27,7 +20,7 @@ import round from 'lodash/round';
 
 const CompleteBody = ({ exchangeRate }) => {
   const [{ saiAmountToRedeem }] = useStore();
-  const amount = saiAmountToRedeem
+  const amount = saiAmountToRedeem;
   return (
     <Card>
       <Grid gridRowGap="s" color="darkPurple" px={{ s: 'm' }} py={{ s: 'xs' }}>
@@ -45,7 +38,9 @@ const CompleteBody = ({ exchangeRate }) => {
               <Table.td>
                 <Text display={'block'}>Exchange Rate</Text>
                 <Text t="heading" display={'block'} fontWeight="bold">
-                  {`1 SAI : ${exchangeRate ? round(exchangeRate, 4) : '...'} ETH`}
+                  {`1 SAI : ${
+                    exchangeRate ? round(exchangeRate, 4) : '...'
+                  } ETH`}
                 </Text>
               </Table.td>
             </Table.tr>
@@ -79,7 +74,7 @@ const steps = [
       title="Redemption Complete"
       description="You've successfully redeemed your Sai for ETH."
     >
-      <CompleteBody {...props}/>
+      <CompleteBody {...props} />
     </Complete>
   ),
   props => (
@@ -91,7 +86,7 @@ const steps = [
   )
 ];
 
-export default function() {
+export default function () {
   const { account, maker } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [txHash, setTxHash] = useState(null);

@@ -4,7 +4,6 @@ import {
   Text,
   Button,
   Grid,
-  Table,
   Link,
   Card,
   Checkbox,
@@ -16,7 +15,7 @@ import { TextBlock } from '../Typography';
 import LoadingToggle from '../LoadingToggle';
 import { addToastWithTimeout } from '../Toast';
 import { prettifyNumber } from '../../utils/ui';
-import { SAI, DAI } from '../../maker';
+import { SAI } from '../../maker';
 import AmountInputCard from '../AmountInputCard';
 import round from 'lodash/round';
 
@@ -103,7 +102,7 @@ export default ({
         setProxyDetails({ hasCageFreeAllowance });
       }
     })();
-  }, [account, maker, saiAmountToRedeem]);
+  }, [account, cageFreeAddress, maker, saiAmountToRedeem]);
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
@@ -155,7 +154,9 @@ export default ({
               <TextBlock t="h5" lineHeight="normal">
                 Exchange Rate
               </TextBlock>
-              <TextBlock t="body">{`1 SAI : ${exchangeRate ? round(exchangeRate, 4) : '...'} ETH`}</TextBlock>
+              <TextBlock t="body">{`1 SAI : ${
+                exchangeRate ? round(exchangeRate, 4) : '...'
+              } ETH`}</TextBlock>
             </Grid>
             <Grid gridRowGap="xs">
               <TextBlock t="h5" lineHeight="normal">

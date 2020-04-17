@@ -79,14 +79,7 @@ function Complete({ onClose, migrationTxHash }) {
                 <Table.td>
                   <Text display={'block'}>Current Dai Savings Rate</Text>
                   <Text t="heading" display={'block'} fontWeight="bold">
-                    {round(
-                      dsrAnnual
-                        .minus(1)
-                        .times(100)
-                        .toNumber(),
-                      2
-                    )}
-                    %
+                    {round(dsrAnnual.minus(1).times(100).toNumber(), 2)}%
                   </Text>
                 </Table.td>
               </Table.tr>

@@ -21,7 +21,7 @@ import { TextBlock, Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
-import { SAI, DAI, ETH, PETH } from '../maker';
+import { SAI, DAI, PETH } from '../maker';
 import TooltipContents from '../components/TooltipContents';
 import { shutDown } from '../plugin/test/helpers';
 import { stringToBytes, fromRay, fromRad, fromWei } from '../utils/ethereum';
@@ -229,7 +229,11 @@ function OverviewDataFetch() {
               false,
               4
             )} ${currency}`,
-            vaultValue: `${prettifyNumber(vaultValue, false, vaultValue.gt(0.01) ? 2 : 4)} ${currency}`
+            vaultValue: `${prettifyNumber(
+              vaultValue,
+              false,
+              vaultValue.gt(0.01) ? 2 : 4
+            )} ${currency}`
           };
         });
 
@@ -240,40 +244,48 @@ function OverviewDataFetch() {
         let bagBalance = DAI(0);
         let proxyDaiAllowance = DAI(0);
         const outElement = async ilk => {
-          const out = proxyAddress ? await end
-            .out(stringToBytes(ilk), proxyAddress)
-            .then(fromWei) : BigNumber(0);
+          const out = proxyAddress
+            ? await end.out(stringToBytes(ilk), proxyAddress).then(fromWei)
+            : BigNumber(0);
           return {
             ilk,
             out
           };
         };
-        const outAmounts = await Promise.all(ilkKeys.map(ilk => outElement(ilk)));
-        
+        const outAmounts = await Promise.all(
+          ilkKeys.map(ilk => outElement(ilk))
+        );
+
         if (proxyAddress) {
-          bagBalance = DAI(await maker
-            .service('migration')
-            .getMigration('global-settlement-dai-redeemer')
-            .bagAmount(proxyAddress));
+          bagBalance = DAI(
+            await maker
+              .service('migration')
+              .getMigration('global-settlement-dai-redeemer')
+              .bagAmount(proxyAddress)
+          );
           _endBalance = bagBalance.minus(
             BigNumber.min.apply(
               null,
               outAmounts.map(o => o.out)
             )
           );
-          proxyDaiAllowance = await maker.getToken(DAI).allowance(account.address, proxyAddress);
-
+          proxyDaiAllowance = await maker
+            .getToken(DAI)
+            .allowance(account.address, proxyAddress);
         }
         const _daiDsrEndBalance = _daiBalance
           .plus(_endBalance)
           .plus(_dsrBalance);
 
-        const endVatBalancesInDai = await Promise.all(ilkKeys.map(async ilk =>
-          { const gem = await maker.service('migration')
-            .getMigration('global-settlement-dai-redeemer')
-            .endGemBalable(ilk);
-            return gem.dividedBy(fixedPrices.find(p=>p.ilk===ilk).price);
-          }));
+        const endVatBalancesInDai = await Promise.all(
+          ilkKeys.map(async ilk => {
+            const gem = await maker
+              .service('migration')
+              .getMigration('global-settlement-dai-redeemer')
+              .endGemBalable(ilk);
+            return gem.dividedBy(fixedPrices.find(p => p.ilk === ilk).price);
+          })
+        );
         const minEndVatBalance = BigNumber.min.apply(null, endVatBalancesInDai);
         dispatch({
           type: 'assign',
@@ -366,7 +378,8 @@ function Overview({ fetching }) {
   const shouldShowCdps = countCdps(cdps) > 0 && saiAvailable.gt(0);
   const shouldShowDai = saiBalance && saiBalance.gt(0) && daiAvailable.gt(0);
   const shouldShowMkr = oldMkrBalance && oldMkrBalance.gt(0);
-  const shouldShowReverse = daiBalance && daiBalance.gt(0) && saiAvailable.gt(0);
+  const shouldShowReverse =
+    daiBalance && daiBalance.gt(0) && saiAvailable.gt(0);
   const shouldShowChief =
     chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
   const shouldShowCollateral =
@@ -379,7 +392,8 @@ function Overview({ fetching }) {
   const shouldShowRedeemVaults =
     vaultsToRedeem && vaultsToRedeem.claims.length > 0;
 
-  const shouldShowSCDESCollateral = scd.off && pethInVaults.some(x => x[1].gt(0));
+  const shouldShowSCDESCollateral =
+    scd.off && pethInVaults.some(x => x[1].gt(0));
   const shouldShowSCDESSai = scd.off && shouldShowDai;
 
   const noMigrations =
@@ -619,7 +633,7 @@ function SCDESCollateralCard({ scd, pethInVaults }) {
     const val = endTime - new Date().getTime() / 1000;
     setSeconds(val);
     setTimeout(() => setSeconds(0), val * 1000);
-  }, []);
+  }, [endTime]);
 
   return (
     <MigrationCard

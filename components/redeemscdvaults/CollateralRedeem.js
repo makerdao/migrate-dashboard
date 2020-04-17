@@ -28,7 +28,8 @@ export default ({
   setSelectedCdps,
   ratio
 }) => {
-  const ethValue = amount => ratio ? ETH(amount.times(ratio)).toString(3) : '...';
+  const ethValue = amount =>
+    ratio ? ETH(amount.times(ratio)).toString(3) : '...';
 
   const toggleSelection = id => {
     if (selectedCdps.includes(id)) {
@@ -115,7 +116,9 @@ export default ({
             <TextBlock t="h5" lineHeight="normal">
               PETH:ETH Ratio (Current)
             </TextBlock>
-            <TextBlock t="body">1 PETH : {ratio ? round(ratio, 4) : '...'} ETH</TextBlock>
+            <TextBlock t="body">
+              1 PETH : {ratio ? round(ratio, 4) : '...'} ETH
+            </TextBlock>
           </Grid>
         </Card>
       </Grid>
@@ -160,7 +163,7 @@ function ListItem({ id, amount, eth, onChange, checked, ...otherProps }) {
             onChange={selectable ? onChange : () => {}}
             fontSize={CHECKBOX_WIDTH}
             checked={checked}
-            data-testid='cdpCheckbox'
+            data-testid="cdpCheckbox"
             disabled={!selectable}
           />
 

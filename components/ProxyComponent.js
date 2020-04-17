@@ -54,9 +54,10 @@ const ProxyComponent = ({
               ml="2xs"
               content={
                 <TooltipContents>
-                  Waiting for confirmations reduces the risk of your proxy address changing. We require users to wait 10
-                  block confirmations to ensure it's been created successfully.
-                  This will often take around 2 minutes.
+                  Waiting for confirmations reduces the risk of your proxy
+                  address changing. We require users to wait 10 block
+                  confirmations to ensure it's been created successfully. This
+                  will often take around 2 minutes.
                 </TooltipContents>
               }
             />
@@ -66,7 +67,8 @@ const ProxyComponent = ({
       <Grid gridRowGap="xs" mt="l">
         <Text.h4>Set Allowance</Text.h4>
         <Text.p color="darkLavender" fontSize="l" lineHeight="normal">
-          This permission allows your proxy to interact with your DAI. This only has to be done once.
+          This permission allows your proxy to interact with your DAI. This only
+          has to be done once.
         </Text.p>
         {hasAllowance ? (
           <SuccessButton />

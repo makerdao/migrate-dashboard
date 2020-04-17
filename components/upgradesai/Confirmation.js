@@ -45,7 +45,7 @@ export default ({
       addToastWithTimeout(errMsg, dispatch);
     }
     setSaiApprovePending(false);
-  }, [dispatch, maker, proxyDetails.address, saiAmountToMigrate]);
+  }, [dispatch, maker, migrationContractAddress]);
 
   const upgradeSai = async () => {
     try {
@@ -80,7 +80,7 @@ export default ({
         setProxyDetails({ hasSaiAllowance });
       }
     })();
-  }, [account, maker, saiAmountToMigrate]);
+  }, [account, maker, migrationContractAddress, saiAmountToMigrate]);
 
   const amount = prettifyNumber(saiAmountToMigrate.toNumber());
 

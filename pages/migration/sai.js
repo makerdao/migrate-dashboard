@@ -29,7 +29,7 @@ const steps = [
   )
 ];
 
-export default function() {
+export default function () {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [migrationTxHash, setMigrationTxHash] = useState(null);

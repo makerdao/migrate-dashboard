@@ -10,7 +10,7 @@ import useStore from '../../hooks/useStore';
 
 const steps = [props => <RedeemVaults {...props} />];
 
-export default function() {
+export default function () {
   const { account } = useMaker();
   const [redeemTxHash, setRedeemTxHash] = useState(null);
   const [redeemTxObject, setRedeemTxObject] = useState({});

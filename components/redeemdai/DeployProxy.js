@@ -1,4 +1,4 @@
-import React, { useState, useEffect }from 'react';
+import React, { useState } from 'react';
 import { Box, Text, Button, Grid } from '@makerdao/ui-components-core';
 import useProxy from '../../hooks/useProxy';
 import useBlockHeight from '../../hooks/useBlockHeight';
@@ -9,8 +9,13 @@ import { MDAI } from '@makerdao/dai-plugin-mcd';
 import { addToastWithTimeout } from '../Toast';
 
 function DeployProxy({ onPrev, onNext, showErrorMessageAndAllowExiting }) {
-  const [{proxyDaiAllowance, daiBalance, endBalance, dsrBalance}, dispatch] = useStore();
-  const alreadyHasAllowance = proxyDaiAllowance.gt(daiBalance.plus(dsrBalance.plus(endBalance)));
+  const [
+    { proxyDaiAllowance, daiBalance, endBalance, dsrBalance },
+    dispatch
+  ] = useStore();
+  const alreadyHasAllowance = proxyDaiAllowance.gt(
+    daiBalance.plus(dsrBalance.plus(endBalance))
+  );
   if (alreadyHasAllowance) onNext();
   const { maker } = useMaker();
   const {

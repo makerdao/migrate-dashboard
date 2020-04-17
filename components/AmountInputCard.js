@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Grid, Card, Input, Link } from '@makerdao/ui-components-core';
 import { TextBlock } from './Typography';
 
-export default function({
+export default function ({
   title,
   children,
 

@@ -23,7 +23,9 @@ async function getStartingData(maker) {
   const saiIlk = maker.service('mcd:cdpType').getCdpType(null, 'SAI');
   const { debtCeiling, totalDebt } = saiIlk;
   const systemHeadroom = DAI(systemWideDebtCeiling).minus(daiSupply);
-  const saiHeadroom = debtCeiling.gt(totalDebt) ? DAI(debtCeiling.minus(totalDebt)) : DAI(0);
+  const saiHeadroom = debtCeiling.gt(totalDebt)
+    ? DAI(debtCeiling.minus(totalDebt))
+    : DAI(0);
   return {
     dsrAnnual,
     saiAvailable: SAI(await mig.migrationSaiAvailable()),

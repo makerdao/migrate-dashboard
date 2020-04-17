@@ -4,7 +4,12 @@ import useProxy from '../../hooks/useProxy';
 import useBlockHeight from '../../hooks/useBlockHeight';
 import ProxyAndTransfer from '../ProxyAndTransfer';
 
-function DeployProxy({ onPrev, onNext, selectedCDP, showErrorMessageAndAllowExiting }) {
+function DeployProxy({
+  onPrev,
+  onNext,
+  selectedCDP,
+  showErrorMessageAndAllowExiting
+}) {
   const {
     proxyAddress,
     setupProxy,

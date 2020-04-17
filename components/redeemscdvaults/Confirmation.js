@@ -76,10 +76,7 @@ export default ({
 
         // re-fetch the ratio because it could have changed a tiny amount
         freshRatio = BigNumber(
-          await maker
-            .service('smartContract')
-            .getContract('SAI_TUB')
-            .per()
+          await maker.service('smartContract').getContract('SAI_TUB').per()
         );
         // avoid a revert due to dust check in tub.free by avoiding the
         // default rounding behavior of the currency lib
@@ -108,10 +105,9 @@ export default ({
         type: 'assign',
         payload: {
           redeemedCollateral: totalPethVal,
-          pethEthRatio: freshRatio 
-            ? freshRatio.div('1e27')
-            : ratio
-        }});
+          pethEthRatio: freshRatio ? freshRatio.div('1e27') : ratio
+        }
+      });
 
       onNext();
     } catch (err) {

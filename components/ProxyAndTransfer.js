@@ -29,9 +29,9 @@ const ProxyAndTransfer = ({
   if (proxyErrors) showErrorMessageAndAllowExiting();
   const transferCDP = useCallback(async () => {
     try {
-      if (!proxyAddress)
-        proxyAddress = await maker.service('proxy').getProxyAddress();
-      const give = selectedCDP.give(proxyAddress);
+      const address =
+        proxyAddress || (await maker.service('proxy').getProxyAddress());
+      const give = selectedCDP.give(address);
       setIsTransferringCDP(true);
       await give;
       setCDPTransferred(true);
@@ -41,7 +41,13 @@ const ProxyAndTransfer = ({
       console.error('cdp transfer tx failed', err);
       showErrorMessageAndAllowExiting();
     }
-  }, [selectedCDP]);
+  }, [
+    maker,
+    proxyAddress,
+    selectedCDP,
+    setCDPTransferred,
+    showErrorMessageAndAllowExiting
+  ]);
   return (
     <Card px={{ s: 'l', m: '2xl' }} py="l" mb="xl">
       <Grid gridRowGap="xs">
