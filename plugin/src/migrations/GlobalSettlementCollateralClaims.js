@@ -10,12 +10,10 @@ export default class GlobalSettlementCollateralClaims {
   async check() {
     const end = this._container.get('smartContract').getContract('MCD_END_1');
     const live = await end.live();
-    const isInGlobalSettlement = live.eq(0);
-    if (!isInGlobalSettlement) return [];
-    const address =
-      (await this._container.get('proxy').currentProxy()) ||
-      this._container.get('accounts').currentAddress();
-
+    const emergencyShutdownActive = live.eq(0);
+    if (!emergencyShutdownActive) return false;
+    const address = await this._container.get('proxy').currentProxy();
+    if (!address) return false;
     const cdpManager = this._container
       .get('smartContract')
       .getContract('CDP_MANAGER_1');
@@ -44,7 +42,7 @@ export default class GlobalSettlementCollateralClaims {
         return { id, owed, redeemable, ilk, urn, tag: tagDivRay };
       })
     );
-
+    if (!freeCollateral.some(v => v.redeemable)) return false;
     return freeCollateral;
   }
 

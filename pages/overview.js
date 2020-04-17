@@ -156,19 +156,16 @@ function OverviewDataFetch() {
       }
       const checks = await mig.runAllChecks();
 
+      const daiBalance = DAI(await maker.getToken('MDAI').balance());
       const end = maker.service('smartContract').getContract('MCD_END_1');
       const live = await end.live();
       const emergencyShutdownActive = live.eq(0);
+      let endBalance = DAI(0), dsrBalance = DAI(0), daiDsrEndBalance = DAI(0),
+        bagBalance = DAI(0), proxyDaiAllowance = DAI(0), validClaims,
+        parsedVaultsData, wait, when, systemDebt, fixedPrices, tagPrices,
+        emergencyShutdownTime, minEndVatBalance, secondsUntilAuctionClose,
+        outAmounts, proxyAddress;
       if (emergencyShutdownActive) {
-        const claims = checks['global-settlement-collateral-claims'];
-        const validClaims = claims.filter(c => c.redeemable);
-
-        const vaultsData = await Promise.all([
-          ...validClaims.map(({ id }) =>
-            maker.service('mcd:cdpManager').getCdp(parseInt(id))
-          )
-        ]);
-
         const fixElement = async ilk => {
           const price = await end.fix(stringToBytes(ilk)).then(fromRay);
           return {
@@ -187,18 +184,34 @@ function OverviewDataFetch() {
 
         const ilkKeys = ilkList.map(i => i.key);
 
-        const [
+        const outElement = async ilk => {
+          const out = proxyAddress
+            ? await end.out(stringToBytes(ilk), proxyAddress).then(fromWei)
+            : BigNumber(0);
+          return {
+            ilk,
+            out
+          };
+        };
+
+        [
           wait,
           when,
           systemDebt,
           fixedPrices,
-          tagPrices
+          tagPrices,
+          proxyAddress,
+          dsrBalance,
+          outAmounts
         ] = await Promise.all([
           end.wait(),
           end.when(),
           end.debt().then(fromRad),
           Promise.all(ilkKeys.map(ilk => fixElement(ilk))),
-          Promise.all(ilkKeys.map(ilk => tagElement(ilk)))
+          Promise.all(ilkKeys.map(ilk => tagElement(ilk))),
+          maker.service('proxy').currentProxy(),
+          maker.service('mcd:savings').balance(),
+          Promise.all(ilkKeys.map(ilk => outElement(ilk)))
         ]);
         const emergencyShutdownTime = new Date(when.toNumber() * 1000);
         const auctionCloseTime = new Date(
@@ -209,52 +222,45 @@ function OverviewDataFetch() {
           (auctionCloseTime.getTime() - Date.now()) / 1000
         );
 
-        const secondsUntilAuctionClose = diff > 0 ? diff : 0;
+        secondsUntilAuctionClose = diff > 0 ? diff : 0;
 
-        const parsedVaultsData = vaultsData.map(vault => {
-          const claim = validClaims.find(c => c.id.toNumber() === vault.id);
-          const currency = vault.type.ilk.split('-')[0];
-          const vaultValue = vault.collateralAmount
-            .toBigNumber()
-            .minus(vault.debtValue.toBigNumber().times(claim.tag));
-          return {
-            id: vault.id,
-            type: currency,
-            collateral: vault.collateralAmount.toString(),
-            daiDebt: `${prettifyNumber(vault.debtValue, false, 2, false)} DAI`,
-            vault,
-            shutdownValue: `$${prettifyNumber(BigNumber(1).div(claim.tag))}`,
-            exchangeRate: `1 DAI : ${prettifyNumber(
-              claim.tag,
-              false,
-              4
-            )} ${currency}`,
-            vaultValue: `${prettifyNumber(
-              vaultValue,
-              false,
-              vaultValue.gt(0.01) ? 2 : 4
-            )} ${currency}`
-          };
-        });
+        const claims = checks['global-settlement-collateral-claims'];
 
-        const _daiBalance = DAI(await maker.getToken('MDAI').balance());
-        const proxyAddress = await maker.service('proxy').currentProxy();
-        let _endBalance = DAI(0);
-        const _dsrBalance = await maker.service('mcd:savings').balance();
-        let bagBalance = DAI(0);
-        let proxyDaiAllowance = DAI(0);
-        const outElement = async ilk => {
-          const out = proxyAddress
-            ? await end.out(stringToBytes(ilk), proxyAddress).then(fromWei)
-            : BigNumber(0);
-          return {
-            ilk,
-            out
-          };
-        };
-        const outAmounts = await Promise.all(
-          ilkKeys.map(ilk => outElement(ilk))
-        );
+        if (claims){
+          validClaims = claims.filter(c => c.redeemable);
+
+          const vaultsData = await Promise.all([
+            ...validClaims.map(({ id }) =>
+              maker.service('mcd:cdpManager').getCdp(parseInt(id))
+            )
+          ]);
+
+          parsedVaultsData = vaultsData.map(vault => {
+            const claim = validClaims.find(c => c.id.toNumber() === vault.id);
+            const currency = vault.type.ilk.split('-')[0];
+            const vaultValue = vault.collateralAmount
+              .toBigNumber()
+              .minus(vault.debtValue.toBigNumber().times(claim.tag));
+            return {
+              id: vault.id,
+              type: currency,
+              collateral: vault.collateralAmount.toString(),
+              daiDebt: `${prettifyNumber(vault.debtValue, false, 2, false)} DAI`,
+              vault,
+              shutdownValue: `$${prettifyNumber(BigNumber(1).div(claim.tag))}`,
+              exchangeRate: `1 DAI : ${prettifyNumber(
+                claim.tag,
+                false,
+                4
+              )} ${currency}`,
+              vaultValue: `${prettifyNumber(
+                vaultValue,
+                false,
+                vaultValue.gt(0.01) ? 2 : 4
+              )} ${currency}`
+            };
+          });
+        }
 
         if (proxyAddress) {
           bagBalance = DAI(
@@ -263,51 +269,35 @@ function OverviewDataFetch() {
               .getMigration('global-settlement-dai-redeemer')
               .bagAmount(proxyAddress)
           );
-          _endBalance = bagBalance.minus(
+          endBalance = bagBalance.minus(
             BigNumber.min.apply(
               null,
               outAmounts.map(o => o.out)
             )
           );
-          proxyDaiAllowance = await maker
-            .getToken(DAI)
-            .allowance(account.address, proxyAddress);
         }
-        const _daiDsrEndBalance = _daiBalance
-          .plus(_endBalance)
-          .plus(_dsrBalance);
+        daiDsrEndBalance = daiBalance
+        .plus(endBalance)
+        .plus(dsrBalance);
+        if (daiDsrEndBalance.gt(0)){
 
-        const endVatBalancesInDai = await Promise.all(
-          ilkKeys.map(async ilk => {
-            const gem = await maker
-              .service('migration')
-              .getMigration('global-settlement-dai-redeemer')
-              .endGemBalable(ilk);
-            return gem.dividedBy(fixedPrices.find(p => p.ilk === ilk).price);
-          })
-        );
-        const minEndVatBalance = BigNumber.min.apply(null, endVatBalancesInDai);
-        dispatch({
-          type: 'assign',
-          payload: {
-            emergencyShutdownActive,
-            emergencyShutdownTime,
-            secondsUntilAuctionClose,
-            systemDebt,
-            fixedPrices,
-            tagPrices,
-            outAmounts,
-            daiBalance: _daiBalance,
-            endBalance: _endBalance,
-            dsrBalance: _dsrBalance,
-            bagBalance,
-            proxyAddress,
-            daiDsrEndBalance: _daiDsrEndBalance,
-            vaultsToRedeem: { claims: validClaims, parsedVaultsData },
-            minEndVatBalance,
-            proxyDaiAllowance
+          if (proxyAddress) {
+            proxyDaiAllowance = await maker
+              .getToken(DAI)
+              .allowance(account.address, proxyAddress);
           }
-        });
+
+          const endVatBalancesInDai = await Promise.all(
+            ilkKeys.map(async ilk => {
+              const gem = await maker
+                .service('migration')
+                .getMigration('global-settlement-dai-redeemer')
+                .endGemBalable(ilk);
+              return gem.dividedBy(fixedPrices.find(p => p.ilk === ilk).price);
+            })
+          );
+          minEndVatBalance = BigNumber.min.apply(null, endVatBalancesInDai);
+        }
       }
 
       const cdpMigrationCheck = checks['single-to-multi-cdp'];
@@ -343,7 +333,22 @@ function OverviewDataFetch() {
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
           scd,
-          pethInVaults
+          pethInVaults,
+          emergencyShutdownTime,
+          secondsUntilAuctionClose,
+          systemDebt,
+          fixedPrices,
+          tagPrices,
+          outAmounts,
+          daiBalance,
+          endBalance,
+          dsrBalance,
+          bagBalance,
+          proxyAddress,
+          daiDsrEndBalance,
+          vaultsToRedeem: { claims: validClaims, parsedVaultsData },
+          minEndVatBalance,
+          proxyDaiAllowance
         }
       });
     })();
@@ -390,7 +395,7 @@ function Overview({ fetching }) {
     systemDebt !== undefined &&
     fixedPrices !== undefined;
   const shouldShowRedeemVaults =
-    vaultsToRedeem && vaultsToRedeem.claims.length > 0;
+    vaultsToRedeem && vaultsToRedeem.claims && vaultsToRedeem.claims.length > 0;
 
   const shouldShowSCDESCollateral =
     scd.off && pethInVaults.some(x => x[1].gt(0));
