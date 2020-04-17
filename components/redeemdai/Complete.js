@@ -20,7 +20,7 @@ function Complete({ redeemTxHash }) {
       <Text.h2 textAlign="center">Your Dai is being redeemed</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
         The estimated time is 8 minutes. Please wait until this transaction has
-        confirmed before leaving
+        confirmed before leaving.
       </Text.p>
       <Link
         justifySelf="center"

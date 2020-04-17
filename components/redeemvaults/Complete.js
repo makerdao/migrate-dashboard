@@ -19,7 +19,7 @@ function Complete({
     <Grid gridRowGap="m" mx={'s'}>
       <Text.h2 textAlign="center">Vault Redeem Complete</Text.h2>
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
-        Your Vault has been successfully redeemed, you may leave the page.{' '}
+        Your Vault has been successfully redeemed; you may leave the page.{' '}
       </Text.p>
       <Link
         justifySelf="center"
