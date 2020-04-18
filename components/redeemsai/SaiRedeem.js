@@ -96,13 +96,15 @@ export default ({
         const connectedWalletAllowance = await maker
           .getToken('DAI')
           .allowance(account.address, cageFreeAddress);
+        console.log('CONNECTED WALLET ALLOWANCE:', connectedWalletAllowance.toNumber());
         const hasCageFreeAllowance = connectedWalletAllowance.gte(
           saiAmountToRedeem.toBigNumber().times(1.05)
-        );
+        ) && saiAmountToRedeem > 0;
         setProxyDetails({ hasCageFreeAllowance });
       }
     })();
   }, [account, cageFreeAddress, maker, saiAmountToRedeem]);
+  console.log('has approval', proxyDetails.hasCageFreeAllowance);
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
@@ -177,9 +179,9 @@ export default ({
             defaultText={'Unlock Sai to continue'}
             tokenDisplayName={'SAI'}
             isLoading={cageFreeApprovePending}
-            isComplete={!!proxyDetails.hasCageFreeAllowance}
+            isComplete={proxyDetails.hasCageFreeAllowance}
             onToggle={giveProxyCageFreeAllowance}
-            disabled={!!proxyDetails.hasCageFreeAllowance}
+            disabled={proxyDetails.hasCageFreeAllowance}
             testId="allowance-toggle"
             mx={'xl'}
             px={'xl'}
