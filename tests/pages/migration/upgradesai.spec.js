@@ -90,7 +90,7 @@ describe('with live testchain', () => {
     expect(getByText('Continue').disabled).toBeTruthy();
 
     click(getByTestId('allowance-toggle'));
-    await findByText('SAI unlocked');
+    await findByText('Sai unlocked');
 
     click(getByRole('checkbox'));
     click(getByText('Continue'));
