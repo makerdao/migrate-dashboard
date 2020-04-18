@@ -585,14 +585,14 @@ function Overview({ fetching }) {
           )}
           {shouldShowSCDESSai && (
             <MigrationCard
-              title="Redeem SAI for collateral"
+              title="Redeem Sai for collateral"
               onSelected={() => Router.push('/migration/scd-es-sai')}
               metadataTitle="SAI to Redeem"
               metadataValue={showAmount(saiBalance)}
             >
               <Text.p t="body">
-                Redeem your Single-Collateral Dai (SAI) for a proportional
-                amount of ETH from the Single-Collateral Dai system.
+                Redeem your Single-Collateral Sai for a proportional
+                amount of ETH from the Single-Collateral Sai system.
               </Text.p>
             </MigrationCard>
           )}
@@ -642,7 +642,7 @@ function SCDESCollateralCard({ scd, pethInVaults }) {
 
   return (
     <MigrationCard
-      title="Withdraw ETH from SAI CDP"
+      title="Withdraw ETH from Sai CDPs"
       metadataTitle="PETH in CDP(s)"
       metadataValue={showAmount(total)}
       onSelected={() => Router.push('/migration/scd-es-cdp')}
@@ -650,7 +650,7 @@ function SCDESCollateralCard({ scd, pethInVaults }) {
     >
       <>
         <Text.p t="body">
-          Redeem your PETH from your Single-Collateral Dai CDPs for a
+          Redeem your PETH from your Single-Collateral Sai CDPs for a
           proportional amount of ETH from the system.
         </Text.p>
         {!out && (
