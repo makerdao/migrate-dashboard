@@ -140,7 +140,7 @@ export default ({
         <Card bg="yellow.100" p="m" borderColor="yellow.400" border="1px solid">
           When you click Continue, you will be prompted to sign {txCount}{' '}
           transactions: one for each CDP
-          {needExitTx && ', and one to convert PETH to WETH'}
+          {needExitTx && ', one to convert PETH to WETH'}
           {needWithdrawTx && ', and one to convert WETH to ETH'}.
         </Card>
       )}

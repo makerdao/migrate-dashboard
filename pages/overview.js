@@ -585,9 +585,9 @@ function Overview({ fetching }) {
           )}
           {shouldShowSCDESSai && (
             <MigrationCard
-              title="Redeem Sai for collateral"
+              title="Redeem Sai for Collateral"
               onSelected={() => Router.push('/migration/scd-es-sai')}
-              metadataTitle="SAI to Redeem"
+              metadataTitle="Sai to redeem"
               metadataValue={showAmount(saiBalance)}
             >
               <Text.p t="body">

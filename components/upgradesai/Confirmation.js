@@ -134,9 +134,9 @@ export default ({
         <Card>
           <Grid px={'m'} py={'m'}>
             <LoadingToggle
-              completeText={'SAI unlocked'}
-              loadingText={'Unlocking SAI'}
-              defaultText={'Unlock SAI to continue'}
+              completeText={'Sai unlocked'}
+              loadingText={'Unlocking Sai'}
+              defaultText={'Unlock Sai to continue'}
               tokenDisplayName={'SAI'}
               isLoading={saiApprovePending}
               isComplete={proxyDetails.hasSaiAllowance}

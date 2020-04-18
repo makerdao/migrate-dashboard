@@ -114,8 +114,8 @@ export default ({
         m="0 auto"
         display={{ s: 'none', m: 'block' }}
       >
-        Redeem your SAI for a proportional amount of ETH from the
-        Single-Collateral Dai system.
+        Redeem your Sai for a proportional amount of ETH from the
+        Single-Collateral Sai system.
       </Text.p>
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
@@ -146,7 +146,7 @@ export default ({
           <Grid gridRowGap="m">
             <Grid gridRowGap="xs">
               <TextBlock t="h5" lineHeight="normal">
-                SAI Balance
+                Sai Balance
               </TextBlock>
               <TextBlock t="body">{`${saiBalance}`}</TextBlock>
             </Grid>
@@ -160,7 +160,7 @@ export default ({
             </Grid>
             <Grid gridRowGap="xs">
               <TextBlock t="h5" lineHeight="normal">
-                SAI Balance in ETH
+                Sai Balance in ETH
               </TextBlock>
               <TextBlock t="body">
                 {saiBalance.toNumber() * exchangeRate}
@@ -172,9 +172,9 @@ export default ({
       <Card>
         <Grid mx={'xl'} px={'xl'} py={'m'}>
           <LoadingToggle
-            completeText={'SAI unlocked'}
-            loadingText={'Unlocking SAI'}
-            defaultText={'Unlock SAI to continue'}
+            completeText={'Sai unlocked'}
+            loadingText={'Unlocking Sai'}
+            defaultText={'Unlock Sai to continue'}
             tokenDisplayName={'SAI'}
             isLoading={cageFreeApprovePending}
             isComplete={!!proxyDetails.hasCageFreeAllowance}
