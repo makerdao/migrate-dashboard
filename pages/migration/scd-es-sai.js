@@ -30,7 +30,7 @@ const CompleteBody = ({ exchangeRate }) => {
               <Table.td>
                 <Text display={'block'}>Sent: Sai</Text>
                 <Text t="heading" display={'block'} fontWeight="bold">
-                  {`${amount} SAI`}
+                  {`${amount}`}
                 </Text>
               </Table.td>
             </Table.tr>
@@ -59,12 +59,12 @@ const CompleteBody = ({ exchangeRate }) => {
   );
 };
 
-const steps = [
+const steps =[
   props => <SaiRedeem {...props} />,
   props => (
     <InProgress
       {...props}
-      title="Your SAI is being redeemed"
+      title="Your Sai is being redeemed"
       image={InProgressImage}
     />
   ),
