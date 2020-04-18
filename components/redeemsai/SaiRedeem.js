@@ -165,7 +165,7 @@ export default ({
                 Sai Balance in ETH
               </TextBlock>
               <TextBlock t="body">
-                {saiBalance.toNumber() * exchangeRate}
+                {round(saiBalance.toNumber() * exchangeRate, 4)} ETH
               </TextBlock>
             </Grid>
           </Grid>
