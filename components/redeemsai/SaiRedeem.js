@@ -90,13 +90,14 @@ export default ({
     }
   };
 
+  // todo: this appears to get confused by unlimited allowance,
+  // also goes for the similar hook in upgradesai/Confirmation
   useEffect(() => {
     (async () => {
       if (maker && account) {
         const connectedWalletAllowance = await maker
-          .getToken('DAI')
+          .getToken('SAI')
           .allowance(account.address, cageFreeAddress);
-        console.log('CONNECTED WALLET ALLOWANCE:', connectedWalletAllowance.toNumber());
         const hasCageFreeAllowance = connectedWalletAllowance.gte(
           saiAmountToRedeem.toBigNumber().times(1.05)
         ) && saiAmountToRedeem > 0;
@@ -104,7 +105,6 @@ export default ({
       }
     })();
   }, [account, cageFreeAddress, maker, saiAmountToRedeem]);
-  console.log('has approval', proxyDetails.hasCageFreeAllowance);
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
