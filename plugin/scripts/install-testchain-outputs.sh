@@ -34,3 +34,5 @@ do
   jq ".$NAME$SUFFIX=$ADDRESS" $CONTRACTS/addresses/testnet.json > testnet.tmp && mv testnet.tmp $CONTRACTS/addresses/testnet.json
   cp $SOURCE/out/mcd/$ABI.abi $CONTRACTS/abis/$ABI.json
 done
+
+cp $CONTRACTS/addresses/testnet.json $CWD/../../addresses-testnet.json
