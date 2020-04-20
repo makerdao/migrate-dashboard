@@ -28,7 +28,8 @@ function MigrationCard({
   metadataTitle,
   metadataValue,
   onSelected,
-  buttonLabel = 'Continue'
+  buttonLabel = 'Continue',
+  disabled = false
 }) {
   return (
     <ButtonCard
@@ -43,6 +44,7 @@ function MigrationCard({
       button={
         <Button
           px="xl"
+          disabled={disabled}
           variant={recommended ? 'primary' : 'secondary-outline'}
           onClick={onSelected}
         >
@@ -125,7 +127,7 @@ function Overview() {
   const { mkrLockedDirectly, mkrLockedViaProxy } = chiefMigrationCheck || {};
 
   const shouldShowCdps = countCdps(cdps) > 0 && saiAvailable.gt(0);
-  const shouldShowDai = saiBalance && saiBalance.gt(0) && daiAvailable.gt(0);
+  const shouldShowDai = saiBalance && saiBalance.gt(0);
   const shouldShowMkr = oldMkrBalance && oldMkrBalance.gt(0);
   const shouldShowReverse =
     daiBalance && daiBalance.gt(0) && saiAvailable.gt(0);
@@ -180,12 +182,13 @@ function Overview() {
             <MigrationCard
               recommended
               title="Single-Collateral Sai Upgrade"
-              body={`Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai availability: ${prettifyNumber(
+              body={daiAvailable.gt(0) ? `Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai availability: ${prettifyNumber(
                 daiAvailable
-              )}`}
+              )}` : 'Swapping Sai for Dai is no longer possible through the Migration Portal. Please visit a decentralized exchange to swap your Sai tokens.'}
               metadataTitle="Sai to upgrade"
               metadataValue={showAmount(saiBalance)}
               onSelected={() => Router.push('/migration/dai')}
+              disabled={daiAvailable.eq(0)}
             />
           )}
           {shouldShowReverse && (
