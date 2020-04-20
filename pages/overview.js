@@ -381,7 +381,7 @@ function Overview({ fetching }) {
 
   const { mkrLockedDirectly, mkrLockedViaProxy } = chiefMigrationCheck || {};
   const shouldShowCdps = countCdps(cdps) > 0 && saiAvailable.gt(0);
-  const shouldShowDai = saiBalance && saiBalance.gt(0) && daiAvailable.gt(0);
+  const shouldShowDai = saiBalance && saiBalance.gt(0);
   const shouldShowMkr = oldMkrBalance && oldMkrBalance.gt(0);
   const shouldShowReverse =
     daiBalance && daiBalance.gt(0) && saiAvailable.gt(0);
@@ -457,10 +457,12 @@ function Overview({ fetching }) {
               metadataTitle="Sai to upgrade"
               metadataValue={showAmount(saiBalance)}
               onSelected={() => Router.push('/migration/dai')}
+              disabled={daiAvailable.eq(0)}
             >
               <Text.p t="body">
-                Upgrade your Single-Collateral Sai to Multi-Collateral Dai.
-                Current Dai availability: {prettifyNumber(daiAvailable)}
+              {daiAvailable.gt(0) ? `Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai availability: ${prettifyNumber(
+                daiAvailable
+              )}` : 'Swapping Sai for Dai is no longer possible through the Migration Portal. Please visit a decentralized exchange to swap your Sai tokens.'}
               </Text.p>
             </MigrationCard>
           )}
