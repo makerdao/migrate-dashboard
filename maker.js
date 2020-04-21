@@ -69,8 +69,8 @@ export async function instantiateMaker(network) {
   
   let daiAddressOverrides = {};
 
-  if (network === 'kovan') {
-    const addresses = require('./addresses-kovan.json');
+  if (network === 'kovan'  && global.mcdESTest) {
+    const addresses = require('./addresses-kovan-mcd-es.json');
     mcdPluginConfig.addressOverrides = addresses;
     migrationPluginConfig.addressOverrides = addresses;
     daiAddressOverrides = {...addresses,

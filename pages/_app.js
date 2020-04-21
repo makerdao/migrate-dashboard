@@ -24,6 +24,7 @@ export default class MyApp extends App {
   UNSAFE_componentWillMount() {
     if (typeof window !== 'undefined') {
       global.scdESTest = !!window.location.search.includes('scdes');
+      global.mcdESTest = !!window.location.search.includes('mcdes');
       global.testnet = !!window.location.search.includes('testnet');
     }
   }
