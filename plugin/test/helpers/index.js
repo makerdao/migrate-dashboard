@@ -136,16 +136,27 @@ export async function shutDown(randomize) {
   const top = maker.service('smartContract').getContract('SAI_TOP');
   const proxy = await maker.service('proxy').ensureProxy();
   const normalCdp = await openLockAndDrawScdCdp(maker, randomize);
-  const proxyCdp = await maker
-    .service('cdp')
-    .openProxyCdpLockEthAndDrawDai(
-      2 + (randomize ? Math.random() : 0),
-      103 + (randomize ? Math.random() * 20 : 0),
-      proxy
-    );
+
+  const bites = [];
+  for (let i = 0; i < (randomize ? 5 : 1); i++) {
+    console.log('creating', i);
+    const proxyCdp = await maker
+      .service('cdp')
+      .openProxyCdpLockEthAndDrawDai(
+        2 + (randomize ? Math.random() : 0),
+        103 + (randomize ? Math.random() * 20 : 0),
+        proxy
+      );
+
+    bites.push(() => proxyCdp.bite());
+  }
+
   await top.cage();
   await normalCdp.bite();
-  await proxyCdp.bite();
+  for (let i = 0; i < bites.length; i++) {
+    console.log('biting', i);
+    await bites[i]();
+  }
   await top.setCooldown(0);
   await new Promise(r => setTimeout(r, 1000));
   await top.flow();
