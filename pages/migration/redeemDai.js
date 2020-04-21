@@ -23,22 +23,12 @@ const steps = [
     />
   )
 ];
-async function getCollateralData() {
-  const dummyData = [
-    { token: 'ETH', value: 195.1432, rate: 0.0338, amount: 54.19 },
-    { token: 'OMG', value: 5.1432, rate: 4.2198, amount: 1532.41 },
-    { token: 'BAT', value: 15.1932, rate: 0.9438, amount: 21211.21 }
-  ];
-
-  return new Promise(resolve => setTimeout(resolve(dummyData), 3000));
-}
 
 export default function () {
   const { account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [redeemTxHash, setRedeemTxHash] = useState(null);
   const [redeemAmount, setRedeemAmount] = useState(DAI(0));
-  const [collateralData, setCollateralData] = useState([]);
 
   useEffect(() => {
     if (!account) Router.replace('/');
@@ -51,13 +41,6 @@ export default function () {
   const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
   const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
-
-  useEffect(() => {
-    (async () => {
-      const data = await getCollateralData();
-      setCollateralData(data);
-    })();
-  }, [account]);
 
   if (!account) return null;
 
@@ -92,8 +75,7 @@ export default function () {
                   redeemTxHash,
                   showErrorMessageAndAllowExiting,
                   setRedeemAmount,
-                  redeemAmount,
-                  collateralData
+                  redeemAmount
                 })}
               </FadeInFromSide>
             );
