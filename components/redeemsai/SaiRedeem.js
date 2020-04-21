@@ -53,7 +53,7 @@ export default ({
   const giveProxyCageFreeAllowance = async () => {
     setCageFreeApprovePending(true);
     try {
-      await maker.getToken('DAI').approveUnlimited(cageFreeAddress);
+      await maker.getToken('SAI').approveUnlimited(cageFreeAddress);
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasCageFreeAllowance: true
