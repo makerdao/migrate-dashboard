@@ -12,7 +12,7 @@ const { click } = fireEvent;
 let maker, snapshotData, cdp1, cdp2, initialBalance;
 
 beforeAll(async () => {
-  jest.setTimeout(20000);
+  jest.setTimeout(30000);
   maker = await instantiateMaker('test');
   snapshotData = await takeSnapshot(maker);
 
@@ -66,7 +66,7 @@ test('the whole flow', async () => {
   
   await findByText('Confirm Transaction');
   click(getByTestId('tosCheck'));
-  await findByText(/sign\s+4\s+transactions/m);
+  await findByText(/sign\s+3\s+transactions/m);
   click(getByText('Continue'));
 
   await findByText('Your collateral is being redeemed');
