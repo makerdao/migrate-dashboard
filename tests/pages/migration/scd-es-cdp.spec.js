@@ -1,11 +1,12 @@
 import RedeemCollateral from '../../../pages/migration/scd-es-cdp';
+import Overview from '../../../pages/overview';
 import render from '../../helpers/render';
 import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
 import {
   restoreSnapshot,
   takeSnapshot
 } from '@makerdao/test-helpers/dist/snapshot';
-import { instantiateMaker, PETH } from '../../../maker';
+import { instantiateMaker, PETH, SAI, DAI } from '../../../maker';
 
 const { click } = fireEvent;
 
@@ -42,6 +43,24 @@ afterAll(async () => {
   if (snapshotData) await restoreSnapshot(snapshotData, maker);
 });
 
+test('overview', async () => {
+  const { findByText } = await render(<Overview />, {
+    initialState: {
+      saiAvailable: SAI(100),
+      daiAvailable: DAI(100)
+    },
+    getMaker: maker => {
+      maker.service('cdp').getCdpIds = jest.fn(async owner => {
+        if (owner === maker.currentAddress()) return [cdp1.id];
+        if (owner === (await maker.currentProxy())) return [cdp2.id];
+        throw new Error(`unrecognized address: ${owner}`);
+      });
+    }
+  });
+
+  await findByText('Withdraw ETH from Sai CDPs');
+});
+
 test('the whole flow', async () => {
   const {
     debug, // eslint-disable-line no-unused-vars
@@ -62,7 +81,7 @@ test('the whole flow', async () => {
   await findByText('Redeem Sai CDPs for Collateral');
   // wait for WETH/PETH ratio to be fetched
   await waitForElementToBeRemoved(() => queryAllByText('...'));
-  getAllByRole('checkbox').forEach(i => click(i));
+  getAllByRole('checkbox').forEach(i => i.checked || click(i));
   click(getByText('Continue'));
   
   await findByText('Confirm Transaction');
@@ -72,7 +91,7 @@ test('the whole flow', async () => {
 
   await findByText('Your collateral is being redeemed');
 
-  await findByText('Redemption Complete', {}, {timeout: 15000});
+  await findByText('Redemption Complete', {}, { timeout: 15000 });
   const received = getByTestId('received-collateral');
   const amount = parseFloat(received.textContent);
   console.log((await maker.getToken('WETH').balance()).toString());
