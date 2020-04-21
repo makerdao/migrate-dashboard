@@ -39,7 +39,7 @@ function CollateralTable({
           <Table.tr py="xl" border="0px">
             <Table.th>
               <Text t="subheading">Token</Text>
-              <Tooltip style={{ visibility: 'hidden' }} fontSize="m" />
+              <Tooltip style={{ visibility: 'hidden' }} fontSize="m" content={<div/>} />
             </Table.th>
             <Table.th>
               <Text t="subheading">Value</Text>

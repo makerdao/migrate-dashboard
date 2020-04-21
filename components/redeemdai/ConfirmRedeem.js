@@ -29,6 +29,7 @@ function ConfirmRedeem({ redeemAmount, onClose }) {
       const errMsg = `cash tx failed ${message}`;
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
+      setRedeemInitiated(redeemInitiated => redeemInitiated.filter(i => i !== ilk));
     }
   };
 

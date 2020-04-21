@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Text, Button, Grid } from '@makerdao/ui-components-core';
 import useProxy from '../../hooks/useProxy';
 import useBlockHeight from '../../hooks/useBlockHeight';
@@ -16,7 +16,7 @@ function DeployProxy({ onPrev, onNext, showErrorMessageAndAllowExiting }) {
   const alreadyHasAllowance = proxyDaiAllowance.gt(
     daiBalance.plus(dsrBalance.plus(endBalance))
   );
-  if (alreadyHasAllowance) onNext();
+  
   const { maker } = useMaker();
   const {
     proxyAddress,
@@ -62,6 +62,10 @@ function DeployProxy({ onPrev, onNext, showErrorMessageAndAllowExiting }) {
           : blockHeight - startingBlockHeight
       } of 10`
   };
+
+  useEffect(() => {
+    if (alreadyHasAllowance) onNext();
+  }, [alreadyHasAllowance, onNext, proxyDaiAllowance]);
 
   return (
     <Box maxWidth="71.8rem" mx={['s', 0]}>

@@ -83,7 +83,6 @@ const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
 const RedeemVaults = ({
   vaultsToRedeem,
   setRedeemTxHash,
-  showErrorMessageAndAllowExiting,
   onClose
 }) => {
   const { maker } = useMaker();
@@ -113,25 +112,14 @@ const RedeemVaults = ({
         txObject = mig.freeUsdc(vaultId);
       }
 
-      maker.service('transactionManager').listen(txObject, {
-        pending: tx => {
-          setRedeemTxHash(tx.hash);
-        },
-        mined: () => {
-          setRedeemDone(redeemDone => [...redeemDone, vaultId]);
-        },
-        error: () => showErrorMessageAndAllowExiting()
-      });
-
-      const mockHash =
-        '0x5179b053b1f0f810ba7a14f82562b389f06db4be6114ac6c40b2744dcf272d95';
-      setRedeemTxHash(mockHash);
-      // onNext();
+      await txObject;
+      setRedeemDone(redeemDone => [...redeemDone, vaultId]);
     } catch (err) {
       const message = err.message ? err.message : err;
       const errMsg = `redeem vaults tx failed ${message}`;
       console.error(errMsg);
       addToastWithTimeout(errMsg, dispatch);
+      setRedeemInitiated(redeemInitiated => redeemInitiated.filter(v => v !== vaultId));
     }
   };
 
