@@ -244,7 +244,11 @@ function OverviewDataFetch() {
             return {
               id: vault.id,
               type: currency,
-              collateral: vault.collateralAmount.toString(),
+              collateral: `${prettifyNumber(
+                vault.collateralAmount,
+                false,
+                vault.collateralAmount.gt(0.01) ? 2 : 4
+              )}`,
               daiDebt: `${prettifyNumber(vault.debtValue, false, 2, false)} DAI`,
               vault,
               shutdownValue: `$${prettifyNumber(BigNumber(1).div(claim.tag))}`,

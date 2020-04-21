@@ -42,14 +42,14 @@ function CollateralTable({
               <Tooltip style={{ visibility: 'hidden' }} fontSize="m" content={<div/>} />
             </Table.th>
             <Table.th>
-              <Text t="subheading">Value</Text>
+              <Text t="subheading">Price</Text>
               <Tooltip
                 color="steel"
                 fontSize="m"
                 ml="2xs"
                 content={
                   <TooltipContents>
-                    Token value at time of shutdown
+                    Token price at time of shutdown
                   </TooltipContents>
                 }
               />

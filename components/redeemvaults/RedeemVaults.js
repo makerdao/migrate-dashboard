@@ -22,15 +22,17 @@ const TableRow = ({
   redeemDone,
   hasReadTOS,
   redeemVaults,
+  collateral,
+  daiDebt,
   shutdownValue,
   vaultValue
 }) => (
   <tr css="white-space: nowrap;">
     <td>{vaultId}</td>
     <td>{type}</td>
-    {/* <td>{collateral}</td> */}
-    {/* <td>{daiDebt}</td> */}
     <td>{shutdownValue}</td>
+    <td>{collateral}</td>
+    <td>{daiDebt}</td>
     <td>{vaultValue}</td>
     <td>
       {redeemDone.includes(vaultId) ? (
@@ -82,7 +84,6 @@ const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
 
 const RedeemVaults = ({
   vaultsToRedeem,
-  setRedeemTxHash,
   onClose
 }) => {
   const { maker } = useMaker();
@@ -126,9 +127,9 @@ const RedeemVaults = ({
   const tableHeaders = [
     'Vault ID',
     'Vault Type',
+    'Price',
     'Collateral',
     'Dai Debt',
-    'Shutdown Value',
     'Available',
     'Action'
   ];
@@ -170,11 +171,35 @@ const RedeemVaults = ({
           >
             <thead>
               <tr css="white-space: nowrap;">
-                <th>{tableHeaders[0]}</th>
-                <th>{tableHeaders[1]}</th>
-                {/* <th>{tableHeaders[2]}</th> */}
-                {/* <th>{tableHeaders[3]}</th> */}
-                <th>{tableHeaders[4]}</th>
+                <th>
+                  {tableHeaders[0]}
+                  <Tooltip style={{ visibility: 'hidden' }} fontSize="m" content={<div/>} />
+                </th>
+                <th>
+                  {tableHeaders[1]}
+                  <Tooltip style={{ visibility: 'hidden' }} fontSize="m" content={<div/>} />
+                </th>
+                <th>
+                  {tableHeaders[2]}
+                  <Tooltip
+                    color="steel"
+                    fontSize="m"
+                    ml="2xs"
+                    content={
+                      <TooltipContents>
+                        Collateral token price at time of shutdown
+                      </TooltipContents>
+                    }
+                  />
+                </th>
+                <th>
+                  {tableHeaders[3]}
+                  <Tooltip style={{ visibility: 'hidden' }} fontSize="m" content={<div/>} />
+                </th>
+                <th>
+                  {tableHeaders[4]}
+                  <Tooltip style={{ visibility: 'hidden' }} fontSize="m" content={<div/>} />
+                </th>
                 <th>
                   {tableHeaders[5]}
                   <Tooltip
@@ -183,7 +208,7 @@ const RedeemVaults = ({
                     ml="2xs"
                     content={
                       <TooltipContents>
-                        Amount of collateral available after cancelling out your
+                        Amount of collateral available after canceling out your
                         Dai debt with collateral priced at the shutdown value
                       </TooltipContents>
                     }
