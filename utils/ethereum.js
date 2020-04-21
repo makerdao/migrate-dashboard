@@ -1,6 +1,8 @@
 import Web3 from 'web3';
 import round from 'lodash/round';
 import { ETH } from '../maker';
+import assert from 'assert';
+import BigNumber from 'bignumber.js';
 
 export async function checkEthereumProvider() {
   let provider;
@@ -41,3 +43,27 @@ export const addEthBalance = async account => {
     )
   };
 };
+
+export function bytesToString(hex) {
+  return Buffer.from(hex.replace(/^0x/, ''), 'hex')
+    .toString()
+    .replace(/\x00/g, ''); // eslint-disable-line no-control-regex
+}
+
+export function stringToBytes(str) {
+  assert(!!str, 'argument is falsy');
+  assert(typeof str === 'string', 'argument is not a string');
+  return '0x' + Buffer.from(str).toString('hex');
+}
+
+export function fromWei(value) {
+  return BigNumber(value).shiftedBy(-18);
+}
+
+export function fromRay(value) {
+  return BigNumber(value).shiftedBy(-27);
+}
+
+export function fromRad(value) {
+  return BigNumber(value).shiftedBy(-45);
+}

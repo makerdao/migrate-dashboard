@@ -80,7 +80,7 @@ export default ({
         setProxyDetails({ hasDaiAllowance });
       }
     })();
-  }, [account, maker, daiAmountToMigrate]);
+  }, [account, maker, daiAmountToMigrate, migrationContractAddress]);
 
   const amount = prettifyNumber(daiAmountToMigrate.toNumber());
 

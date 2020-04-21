@@ -27,13 +27,13 @@ const TAB_PAY_WITH_MKR = 0;
 const TAB_PAY_WITH_DEBT = 1;
 const TAB_LABELS = ['Pay with MKR', 'Pay with CDP debt'];
 
-const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
+export const TOSCheck = ({ hasReadTOS, setHasReadTOS, ...otherProps }) => {
   return (
-    <Grid alignItems="center" gridTemplateColumns="auto 1fr">
+    <Grid alignItems="center" gridTemplateColumns="auto 1fr" {...otherProps}>
       <Checkbox
         mr="s"
         fontSize="l"
-        checked={hasReadTOS}
+        checked={!!hasReadTOS}
         onChange={() => setHasReadTOS(!hasReadTOS)}
         data-testid="tosCheck"
       />

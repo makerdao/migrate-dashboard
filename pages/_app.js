@@ -21,9 +21,26 @@ const GlobalStyle = createGlobalStyle`
 export default class MyApp extends App {
   state = {};
 
+  UNSAFE_componentWillMount() {
+    if (typeof window !== 'undefined') {
+      global.scdESTest = !!window.location.search.includes('scdes');
+      global.mcdESTest = !!window.location.search.includes('mcdes');
+      global.testnet = !!window.location.search.includes('testnet');
+    }
+  }
+
   componentDidMount() {
+    let network;
+    if (window.location.search.includes('kovan')) {
+      network = 'kovan';
+    } else if (window.location.search.includes('testnet')) {
+      network = 'testnet';
+    } else {
+      network = 'mainnet';
+    }
+
     this.setState({
-      network: window.location.search.includes('kovan') ? 'kovan' : 'mainnet'
+      network: network
     });
   }
 

@@ -1,7 +1,7 @@
 module.exports = {
   coverageReporters: ['json', 'lcov', 'text-summary'],
   collectCoverageFrom: [
-    '{components,hooks,layouts,pages,providers,utils}/**/*.js'
+    '{components,hooks,layouts,pages,plugin,providers,utils}/**/*.js'
   ],
   setupFilesAfterEnv: ['./tests/helpers/setup'],
   transform: {

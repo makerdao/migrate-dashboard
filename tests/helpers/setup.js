@@ -29,5 +29,5 @@ beforeAll(async () => {
 
 afterAll(async () => {
   console.error = originalError;
-  await restoreSnapshot(snapshotData);
+  if (snapshotData) await restoreSnapshot(snapshotData);
 });

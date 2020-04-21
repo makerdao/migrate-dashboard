@@ -1,6 +1,5 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Grid, Box } from '@makerdao/ui-components-core';
 
 const Keyframe = keyframes`
   {
