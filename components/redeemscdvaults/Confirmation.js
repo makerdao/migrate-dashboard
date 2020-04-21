@@ -35,7 +35,11 @@ export default ({
   }, [maker, selectedCdps]);
 
   const needExitTx = nonProxyNum > 0;
-  const needWithdrawTx = nonProxyNum === selectedCdps.length;
+
+  // this is necessary if the user has an old Sai proxy that does not
+  // withdraw all WETH when freeing
+  const needWithdrawTx = nonProxyNum > 0; // nonProxyNum === selectedCdps.length;
+
   const txCount =
     selectedCdps.length + (needWithdrawTx ? 1 : 0) + (needExitTx ? 1 : 0);
 
@@ -98,7 +102,7 @@ export default ({
         const weth = maker.getToken('WETH');
         const balance = await weth.balance();
         console.log(`withdrawing ${balance.toString(4)}`);
-        await runAndTrack(weth.withdraw(balance));
+        if (balance.gt(0)) await runAndTrack(weth.withdraw(balance));
       }
 
       dispatch({
