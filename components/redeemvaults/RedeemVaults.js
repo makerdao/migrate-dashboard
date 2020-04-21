@@ -14,6 +14,7 @@ import useStore from '../../hooks/useStore';
 import useMaker from '../../hooks/useMaker';
 import { addToastWithTimeout } from '../Toast';
 import SuccessButton from '../SuccessButton';
+import { TOSCheck } from '../migratecdp/PayAndMigrate';
 
 const TableRow = ({
   vaultId,
@@ -56,31 +57,6 @@ const TableRow = ({
     </td>
   </tr>
 );
-
-const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
-  return (
-    <Grid alignItems="center" gridTemplateColumns="auto 1fr">
-      <Checkbox
-        mr="s"
-        fontSize="l"
-        checked={hasReadTOS}
-        onChange={() => setHasReadTOS(!hasReadTOS)}
-        data-testid="tosCheck"
-      />
-      <Text
-        t="caption"
-        color="steel"
-        onClick={() => setHasReadTOS(!hasReadTOS)}
-      >
-        I have read and accept the{' '}
-        <Link target="_blank" href="/terms">
-          Terms of Service
-        </Link>
-        .
-      </Text>
-    </Grid>
-  );
-};
 
 const RedeemVaults = ({
   vaultsToRedeem,
