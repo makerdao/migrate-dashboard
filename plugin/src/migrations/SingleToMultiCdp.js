@@ -17,7 +17,7 @@ export default class SingleToMultiCdp {
         const proxyAddress = await this._manager.get('proxy').currentProxy();
         return {
           [address]: [1],
-          [proxyAddress]: [2]
+          [proxyAddress]: [2, 3, 4, 5, 6]
         }
       }
 

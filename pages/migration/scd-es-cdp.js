@@ -27,7 +27,6 @@ import InProgressImage from '../../assets/icons/daiRedeem.svg';
 import BigNumber from 'bignumber.js';
 import { ETH } from '@makerdao/dai/dist/src/eth/Currency';
 
-// TODO
 const CompleteBody = () => {
   const [{ redeemedCollateral, pethEthRatio }] = useStore();
   const amount = redeemedCollateral
@@ -70,8 +69,13 @@ const CompleteBody = () => {
             <Table.tr>
               <Table.td>
                 <Text display={'block'}>Received Collateral</Text>
-                <Text t="heading" display={'block'} fontWeight="bold">
-                  {`${ethVal} ETH`}
+                <Text
+                  t="heading"
+                  display="block"
+                  fontWeight="bold"
+                  data-testid="received-collateral"
+                >
+                  {ethVal} ETH
                 </Text>
               </Table.td>
             </Table.tr>
@@ -122,11 +126,9 @@ export default function () {
   const [{ pethInVaults }] = useStore();
 
   useEffect(() => {
-    if (!account) Router.replace('/');
-  }, []); // eslint-disable-line
-
-  useEffect(() => {
+    if (!maker) return;
     (async () => {
+      // can't use PriceService.getWethToPethRatio because it loses precision
       const per = await maker
         .service('smartContract')
         .getContract('SAI_TUB')
@@ -134,6 +136,8 @@ export default function () {
       setRatio(BigNumber(per).div('1e27'));
     })();
   }, [maker]);
+
+  if (!maker) return null;
 
   const toPrevStepOrClose = () => {
     if (currentStep <= 0) Router.replace('/overview');
