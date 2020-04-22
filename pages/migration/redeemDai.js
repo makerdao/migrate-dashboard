@@ -14,14 +14,7 @@ import { DAI } from '../../maker';
 const steps = [
   props => <DeployProxy {...props} />,
   props => <DepositDai {...props} />,
-  props => <ConfirmRedeem {...props} />,
-  props => (
-    <Failed
-      {...props}
-      title="Redeem failed"
-      subtitle={'There was an error with redeeming collateral.'}
-    />
-  )
+  props => <ConfirmRedeem {...props} />
 ];
 
 export default function () {
@@ -40,7 +33,6 @@ export default function () {
   };
   const toNextStep = () => setCurrentStep(s => s + 1);
   const reset = () => setCurrentStep(0);
-  const showErrorMessageAndAllowExiting = () => setCurrentStep(4);
 
   if (!account) return null;
 
@@ -73,7 +65,6 @@ export default function () {
                   onReset: reset,
                   setRedeemTxHash,
                   redeemTxHash,
-                  showErrorMessageAndAllowExiting,
                   setRedeemAmount,
                   redeemAmount
                 })}

@@ -29,8 +29,6 @@ import BigNumber from 'bignumber.js';
 import ilkList from '../references/ilkList';
 
 function clock(delta) {
-  // const days = Math.floor(delta / 86400);
-  // delta -= days * 86400;
 
   const hours = Math.floor(delta / 3600);
   delta -= hours * 3600;
@@ -296,7 +294,7 @@ function OverviewDataFetch() {
               const gem = await maker
                 .service('migration')
                 .getMigration('global-settlement-dai-redeemer')
-                .endGemBalable(ilk);
+                .endGemBalance(ilk);
               return gem.dividedBy(fixedPrices.find(p => p.ilk === ilk).price);
             })
           );

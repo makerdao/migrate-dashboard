@@ -126,7 +126,7 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
                   my="7px"
                   px="12px"
                   py="4px"
-                  width="89px"
+                  width="113px"
                   justifySelf="center"
                   fontSize={'13px'}
                   onClick={withdrawDsr}

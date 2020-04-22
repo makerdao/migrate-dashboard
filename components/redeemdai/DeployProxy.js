@@ -65,7 +65,7 @@ function DeployProxy({ onPrev, onNext, showErrorMessageAndAllowExiting }) {
 
   useEffect(() => {
     if (alreadyHasAllowance) onNext();
-  }, [alreadyHasAllowance, onNext, proxyDaiAllowance]);
+  }, [alreadyHasAllowance, onNext]);
 
   return (
     <Box maxWidth="71.8rem" mx={['s', 0]}>
@@ -82,7 +82,6 @@ function DeployProxy({ onPrev, onNext, showErrorMessageAndAllowExiting }) {
         hasAllowance={hasAllowance}
         allowanceLoading={allowanceLoading}
         giveAllowance={giveProxyDaiAllowance}
-        showErrorMessageAndAllowExiting={showErrorMessageAndAllowExiting}
       />
       <Grid
         justifySelf="center"

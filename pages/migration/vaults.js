@@ -29,7 +29,6 @@ export default function () {
 
   const onNext = () => setCurrentStep(step => step + 1);
   const onReset = () => setCurrentStep(0);
-  const showErrorMessageAndAllowExiting = () => setCurrentStep(5);
 
   return (
     <FlowBackground>
@@ -64,7 +63,6 @@ export default function () {
                   setRedeemTxHash,
                   redeemTxHash,
                   migrationTxHash: redeemTxHash,
-                  showErrorMessageAndAllowExiting
                 })}
               </FadeInFromSide>
             );

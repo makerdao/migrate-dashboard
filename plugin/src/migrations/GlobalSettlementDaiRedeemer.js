@@ -42,7 +42,7 @@ export default class GlobalSettlementDaiRedeemer {
     return fixes.some(fix => fix.gt(0));
   }
 
-  async endGemBalable(ilk){
+  async endGemBalance(ilk){
     const vat = this._container.get('smartContract').getContract('MCD_VAT_1');
     const endAddress = this._container.get('smartContract').getContractAddress('MCD_END_1');
     const gemBalance = await vat.gem(stringToBytes(ilk), endAddress);
