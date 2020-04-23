@@ -42,7 +42,7 @@ function ListItemRow({ label, value, dark }) {
   );
 }
 
-function ListItem({ cdp, onSelect, checked, selectable, ...otherProps }) {
+function ListItem({ cdp, onSelect, checked, selectable, mkrOracleActive, ...otherProps }) {
   return (
     <Card
       px={['0', 'l']}
@@ -79,9 +79,9 @@ function ListItem({ cdp, onSelect, checked, selectable, ...otherProps }) {
           {/* Debt Value */}
           <span>{cdp.debtValue} SAI</span>
           {/* Fee in DAI */}
-          <span>{cdp.govFeeDai} SAI</span>
+          <span>{mkrOracleActive ? cdp.govFeeDai : '0'} SAI</span>
           {/* Fee in MKR */}
-          <span>{cdp.govFeeMKR} MKR</span>
+          <span>{mkrOracleActive ? cdp.govFeeMKR : '0'} MKR</span>
         </Grid>
       </Box>
       <Box
@@ -105,8 +105,8 @@ function ListItem({ cdp, onSelect, checked, selectable, ...otherProps }) {
           dark
         />
         <ListItemRow label="Sai Debt" value={cdp.debtValue + ' SAI'} />
-        <ListItemRow label="Fee in SAI" value={cdp.govFeeDai + ' SAI'} dark />
-        <ListItemRow label="Fee in MKR" value={cdp.govFeeMKR + ' MKR'} />
+        <ListItemRow label="Fee in SAI" value={(mkrOracleActive ? cdp.govFeeDai : '0') + ' SAI'} dark />
+        <ListItemRow label="Fee in MKR" value={(mkrOracleActive ? cdp.govFeeMKR : '0') + ' MKR'} />
       </Box>
     </Card>
   );
@@ -118,7 +118,8 @@ export default ({
   onSelect,
   cdps,
   loadingCdps,
-  selectedCDP
+  selectedCDP,
+  mkrOracleActive
 }) => {
   const [{ saiAvailable }] = useStore();
 
@@ -184,6 +185,7 @@ export default ({
               key={cdp.id}
               onSelect={onSelect}
               data-testid="cdpListItem"
+              mkrOracleActive={mkrOracleActive}
             />
           ))}
         </Grid>

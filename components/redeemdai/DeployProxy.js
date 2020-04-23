@@ -8,7 +8,7 @@ import useStore from '../../hooks/useStore';
 import { MDAI } from '@makerdao/dai-plugin-mcd';
 import { addToastWithTimeout } from '../Toast';
 
-function DeployProxy({ onPrev, onNext, showErrorMessageAndAllowExiting }) {
+function DeployProxy({ onPrev, onNext }) {
   const [
     { proxyDaiAllowance, daiBalance, endBalance, dsrBalance },
     dispatch

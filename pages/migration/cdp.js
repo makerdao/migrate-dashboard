@@ -87,6 +87,7 @@ export default function () {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
   const [cdps, setCdps] = useState([]);
+  const [mkrOracleActive, setMkrOracleActive] = useState([]);
   const [loadingCdps, setLoadingCdps] = useState(true);
   const [selectedCDP, setSelectedCDP] = useState({});
   const [migrationTxHash, setMigrationTxHash] = useState(null);
@@ -103,6 +104,10 @@ export default function () {
     (async () => {
       if (!maker || !account || !cdpMigrationCheck) return;
       const data = await getAllCdpData(cdpMigrationCheck, maker);
+      const ok = (await maker.service('smartContract')
+      .getContract('SAI_PEP').peek())[1];
+      setMkrOracleActive(ok);
+      setMkrOracleActive(false);//todo: delete, only for testing
       setCdps(data);
       setLoadingCdps(false);
     })();
@@ -165,6 +170,7 @@ export default function () {
                   migrationTxHash,
                   setNewCdpId,
                   setCdps,
+                  mkrOracleActive,
                   showErrorMessageAndAllowExiting
                 })}
               </FadeInFromSide>
