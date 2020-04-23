@@ -107,7 +107,6 @@ export default function () {
       const ok = (await maker.service('smartContract')
       .getContract('SAI_PEP').peek())[1];
       setMkrOracleActive(ok);
-      setMkrOracleActive(false);//todo: delete, only for testing
       setCdps(data);
       setLoadingCdps(false);
     })();

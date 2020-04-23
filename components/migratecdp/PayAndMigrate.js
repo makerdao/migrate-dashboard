@@ -80,6 +80,7 @@ const PayAndMigrate = ({
   setMigrationTxHash,
   setCdps,
   setNewCdpId,
+  mkrOracleActive,
   showErrorMessageAndAllowExiting
 }) => {
   const [hasReadTOS, setHasReadTOS] = useState(false);
@@ -240,7 +241,7 @@ const PayAndMigrate = ({
       width={['100vw', 'auto']}
     >
       <Text.h2 textAlign="center">Confirm CDP Upgrade</Text.h2>
-      <CardTabs onChange={setSelectedTab} headers={TAB_LABELS}>
+      {mkrOracleActive ? (<CardTabs onChange={setSelectedTab} headers={TAB_LABELS}>
         <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
           <Table width="100%">
             <Table.tbody>
@@ -387,7 +388,34 @@ const PayAndMigrate = ({
             </ErrorBlock>
           )}
         </Grid>
-      </CardTabs>
+      </CardTabs>) :
+      (<Card>
+        <Grid gridRowGap="m" color="darkPurple" pt="2xs" pb="l" px="l">
+          <Table width="100%">
+            <Table.tbody>
+              <Table.tr>
+                <Table.td>
+                  <Text>CDP ID</Text>
+                </Table.td>
+                <Table.td textAlign="right">
+                  <Text fontWeight="medium">
+                    <Link>{selectedCDP.id}</Link>
+                  </Text>
+                </Table.td>
+              </Table.tr>
+              <Table.tr>
+                <Table.td>
+                  <Text>Stability Fee</Text>
+                </Table.td>
+                <Table.td textAlign="right">
+                  <Text fontWeight="medium">0 MKR</Text>
+                </Table.td>
+              </Table.tr>
+            </Table.tbody>
+          </Table>
+          <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
+        </Grid>
+      </Card>)}
       {selectedTab === 1 && govFeeMKRExact.gt(HIGH_FEE_LOWER_BOUND) && (
         <PurchaseWarning />
       )}
@@ -413,14 +441,14 @@ const PayAndMigrate = ({
             (selectedTab === TAB_PAY_WITH_DEBT && !aboveOneSeventy)
           }
           onClick={() => {
-            if (selectedTab === TAB_PAY_WITH_MKR) {
+            if (selectedTab === TAB_PAY_WITH_MKR || !mkrOracleActive) {
               migrateCdpPayWithMkr();
             } else if (selectedTab === TAB_PAY_WITH_DEBT) {
               migrateCdpPayWithDebt();
             }
           }}
         >
-          Pay and Migrate
+          {mkrOracleActive ? 'Pay and Migrate' : 'Migrate'}
         </Button>
       </Grid>
     </Grid>
