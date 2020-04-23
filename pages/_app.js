@@ -26,6 +26,7 @@ export default class MyApp extends App {
       global.scdESTest = !!window.location.search.includes('scdes');
       global.mcdESTest = !!window.location.search.includes('mcdes');
       global.testnet = !!window.location.search.includes('testnet');
+      global.oracleTest = !!window.location.search.includes('oracle');
     }
   }
 

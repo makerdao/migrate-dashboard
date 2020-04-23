@@ -68,6 +68,7 @@ describe('with live testchain', () => {
     proxyAddress,
     proxyCdp,
     nonProxyCdp,
+    nonProxyCdp2,
     lowCdp,
     cdpManager;
 
@@ -85,6 +86,7 @@ describe('with live testchain', () => {
 
     proxyCdp = await openLockAndDrawScdCdp(25, maker);
     nonProxyCdp = await openLockAndDrawScdCdp(25, maker, false);
+    nonProxyCdp2 = await openLockAndDrawScdCdp(25, maker, false);
     lowCdp = await openLockAndDrawScdCdp(CDP_MIGRATION_MINIMUM_DEBT - 1, maker);
   });
 
@@ -212,4 +214,61 @@ describe('with live testchain', () => {
       `CDP #${proxyCdp.id} has been successfully upgraded to a Multi-Collateral Dai Vault.`
     );
   });
+
+  test('the whole flow with mkr oracle deactivated', async () => {
+    const pep = maker.service('smartContract').getContract('SAI_PEP');
+    await pep.void();
+    const oracleActive = (await pep.peek())[1];
+    expect(oracleActive).toBe(false);
+
+    const {
+      findAllByRole,
+      findAllByTestId,
+      findByText,
+      getByTestId,
+      getByText
+    } = await render(<MigrateCdp />, {
+      initialState: {
+        saiAvailable: SAI(100),
+        cdpMigrationCheck: {
+          [address]: [nonProxyCdp2.id]
+        }
+      }
+    });
+    await wait(() => window.maker);
+    expect(address).toEqual(window.maker.currentAddress());
+
+    const initialData = await cdpManager.getCdpIds(proxyAddress);
+
+    await findAllByTestId('cdpListItem');
+    const cdpRadio = await findAllByRole('radio');
+    click(cdpRadio[0]);
+    click(getByText('Continue'));
+
+    getByText('Set up proxy contract');
+    const continueButton = getByText('Continue');
+    expect(continueButton.disabled).toBeTruthy();
+    const transferButton = getByText('Transfer CDP');
+    await waitForElement(() => !transferButton.disabled);
+    click(transferButton);
+    await waitForElement(() => !continueButton.disabled);
+    click(continueButton);
+
+    getByText('Confirm CDP Upgrade');
+    await findByText('0 MKR');
+    click(getByTestId('tosCheck'));
+    const pay = getByText('Migrate');
+    await waitForElement(() => !pay.disabled);
+    click(pay);
+
+    await findByText('Your CDP is being upgraded');
+    await findByText('Upgrade complete');
+    cdpManager.reset();
+    const finalData = await cdpManager.getCdpIds(proxyAddress);
+    expect(finalData.length).toEqual(initialData.length + 1);
+    getByText(
+      `CDP #${nonProxyCdp2.id} has been successfully upgraded to a Multi-Collateral Dai Vault.`
+    );
+  });
+
 });

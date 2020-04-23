@@ -198,9 +198,10 @@ const PayAndMigrate = ({
             const connectedWalletAllowance = await maker
               .getToken(MKR)
               .allowance(account.address, address);
-            const hasMkrAllowance = connectedWalletAllowance.gte(
-              govFeeMKRExact.times(APPROVAL_FUDGE)
-            );
+            const hasMkrAllowance = mkrOracleActive ?
+              connectedWalletAllowance.gte(
+                govFeeMKRExact.times(APPROVAL_FUDGE)
+              ) : true;
             setProxyDetails({ hasMkrAllowance, address });
           }),
 
@@ -231,7 +232,6 @@ const PayAndMigrate = ({
     maxCost.toBigNumber().gt(saiNeededInMarket.toBigNumber());
 
   const [selectedTab, setSelectedTab] = useState(TAB_PAY_WITH_MKR);
-
   return (
     <Grid
       maxWidth="912px"
