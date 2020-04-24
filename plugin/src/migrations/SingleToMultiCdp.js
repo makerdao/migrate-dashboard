@@ -77,6 +77,8 @@ export default class SingleToMultiCdp {
   }
 
   async _requireAllowance(cupId, payment) {
+    const mkrOracleActive = (await this._manager.get('smartContract').getContract('SAI_PEP').peek())[1];
+    if (!mkrOracleActive) return;
     const address = this._manager.get('web3').currentAddress();
     const proxyAddress = await this._manager.get('proxy').currentProxy();
     const cdp = await this._manager.get('cdp').getCdp(cupId);

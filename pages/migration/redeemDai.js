@@ -4,7 +4,6 @@ import Router from 'next/router';
 import FlowBackground from '../../components/FlowBackground';
 import FlowHeader from '../../components/FlowHeader';
 import useMaker from '../../hooks/useMaker';
-import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
 import DepositDai from '../../components/redeemdai/DepositDai';
 import DeployProxy from '../../components/redeemdai/DeployProxy';

@@ -19,11 +19,9 @@ const ProxyComponent = ({
   hasAllowance,
   allowanceLoading,
   giveAllowance,
-  labels,
-  showErrorMessageAndAllowExiting
+  labels
 }) => {
   const { setup_text, confirmations_text } = labels;
-  if (proxyErrors) showErrorMessageAndAllowExiting();
   return (
     <Card px={{ s: 'l', m: '2xl' }} py="l" mb="xl">
       <Grid gridRowGap="xs">
@@ -39,8 +37,8 @@ const ProxyComponent = ({
             width={['26.0rem', '13.0rem']}
             mt="xs"
             onClick={deployProxy}
-            disabled={proxyLoading || !!proxyErrors}
-            loading={proxyLoading || !!proxyErrors}
+            disabled={proxyLoading}
+            loading={proxyLoading && !proxyErrors}
           >
             Deploy
           </Button>
