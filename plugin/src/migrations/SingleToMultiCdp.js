@@ -1,6 +1,7 @@
 import { tracksTransactionsWithOptions } from '@makerdao/dai/dist/src/utils/tracksTransactions';
 import { getIdBytes, stringToBytes } from '../utils';
 import { SAI, MKR } from '..';
+import dsValue from '../../contracts/abis/DSValue.json';
 
 export default class SingleToMultiCdp {
   constructor(manager) {
@@ -70,9 +71,31 @@ export default class SingleToMultiCdp {
       minRatio
     );
 
+    if (payment !== 'DEBT') await this._requireAllowance(cupId, payment);
     return migrationProxy[method](...args, { dsProxy: true, promise }).then(
       txo => this._manager.get('mcd:cdpManager').getNewCdpId(txo)
     );
+  }
+
+  async _requireAllowance(cupId, payment) {
+    const pepAddress = await this._manager.get('smartContract').getContract('SAI_TUB').pep();
+    const mkrOracleActive = (await this._manager.get('smartContract').getContractByAddressAndAbi(pepAddress, dsValue).peek())[1];
+    if (payment === 'MKR' && !mkrOracleActive) return;
+    const address = this._manager.get('web3').currentAddress();
+    const proxyAddress = await this._manager.get('proxy').currentProxy();
+    const cdp = await this._manager.get('cdp').getCdp(cupId);
+    const token = payment === 'MKR' ? this._getToken(MKR) : this._getToken(SAI);
+
+    let fee = await cdp.getGovernanceFee();
+    if (payment === 'GEM') {
+      const mkrPrice = await this._manager.get('price').getMkrPrice();
+      fee = SAI(fee.toNumber() * mkrPrice.toNumber());
+    }
+    const allowance = await token.allowance(address, proxyAddress);
+
+    // add a buffer amount to allowance in case drip hasn't been called recently
+    if (allowance.lt(fee.toNumber()))
+      await token.approve(proxyAddress, fee.times(1.5));
   }
 
   _setMethodAndArgs(payment, defaultArgs, maxPayAmount, minRatio) {
