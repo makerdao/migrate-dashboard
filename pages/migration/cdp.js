@@ -15,6 +15,7 @@ import useMaker from '../../hooks/useMaker';
 import round from 'lodash/round';
 import useStore from '../../hooks/useStore';
 import { prettifyNumber } from '../../utils/ui';
+import dsValue from '../../references/DSValue.json';
 
 const steps = [
   props => <SelectCDP {...props} />,
@@ -104,8 +105,9 @@ export default function () {
     (async () => {
       if (!maker || !account || !cdpMigrationCheck) return;
       const data = await getAllCdpData(cdpMigrationCheck, maker);
+      const pepAddress = await maker.service('smartContract').getContract('SAI_TUB').pep();
       const ok = (await maker.service('smartContract')
-      .getContract('SAI_PEP').peek())[1];
+      .getContractByAddressAndAbi(pepAddress, dsValue).peek())[1];
       setMkrOracleActive(ok);
       // the following can be removed when we're done testing this
       if (global.oracleTest) {
