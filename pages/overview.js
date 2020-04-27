@@ -382,7 +382,6 @@ function Overview({ fetching }) {
   ] = useStore();
 
   const { mkrLockedDirectly, mkrLockedViaProxy } = chiefMigrationCheck || {};
-  const shouldShowCdps = countCdps(cdps) > 0 && saiAvailable.gt(0);
   const shouldShowDai = saiBalance && saiBalance.gt(0);
   const shouldShowMkr = oldMkrBalance && oldMkrBalance.gt(0);
   const shouldShowReverse =
@@ -402,6 +401,8 @@ function Overview({ fetching }) {
   const shouldShowSCDESCollateral =
     scd.off && pethInVaults.some(x => x[1].gt(0));
   const shouldShowSCDESSai = scd.off && shouldShowDai;
+
+  const shouldShowCdps = countCdps(cdps) > 0 && !shouldShowSCDESCollateral;
 
   const noMigrations =
     !shouldShowCdps &&
@@ -446,10 +447,15 @@ function Overview({ fetching }) {
               } to upgrade`}
               metadataValue={showCdpCount(cdps)}
               onSelected={() => Router.push('/migration/cdp')}
+              disabled={saiAvailable.eq(0)}
             >
               <Text.p t="body">
-                Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai
-                liquidity: {prettifyNumber(saiAvailable)}
+              {daiAvailable.gt(0) ? `Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai
+                liquidity: ${prettifyNumber(saiAvailable)}`
+                : `Swapping your CDP for an MCD vault is no longer possible because
+                all the Sai from the migration contract has been drained. If your
+                CDP is still open after May 12th, when SCD shutdown is
+                triggered, you can claim your collateral here.`}
               </Text.p>
             </MigrationCard>
           )}
