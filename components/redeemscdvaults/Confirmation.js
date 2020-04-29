@@ -118,7 +118,13 @@ export default ({
   };
 
   return (
-    <Grid maxWidth="600px" gridRowGap="m" px={['s', 0]} minWidth="38rem">
+    <Grid
+      maxWidth="912px"
+      gridRowGap="l"
+      px={['s', 0]}
+      mx={[0, 'auto']}
+      width={['100vw', 'auto']}
+    >
       <Text.h2 textAlign="center" m="s">
         Confirm Transaction
       </Text.h2>

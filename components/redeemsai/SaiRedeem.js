@@ -133,12 +133,16 @@ export default ({
           title="Enter the amount you would like to redeem."
         >
           <Box>
-            <Text t="subheading">Sai Balance</Text>
+            <Text
+              fontSize={['20px', '16px']}
+              t="subheading"
+            >Sai Balance</Text>
             <Text
               t="caption"
               display="inline-block"
               ml="s"
               color="darkLavender"
+              fontSize={['20px', '16px']}
             >
               {saiBalance ? prettifyNumber(saiBalance) : '...'}
             </Text>
@@ -147,24 +151,24 @@ export default ({
         <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
           <Grid gridRowGap="m">
             <Grid gridRowGap="xs">
-              <TextBlock t="h5" lineHeight="normal">
-                Sai Balance
+              <TextBlock t="h5" lineHeight="normal" fontSize={['24px', '16px']}>
+                Sai Balance:
               </TextBlock>
-              <TextBlock t="body">{`${saiBalance}`}</TextBlock>
+              <TextBlock t="body" fontSize={['24px', '16px']}>{`${saiBalance}`}</TextBlock>
             </Grid>
             <Grid gridRowGap="xs">
-              <TextBlock t="h5" lineHeight="normal">
+              <TextBlock t="h5" lineHeight="normal" fontSize={['24px', '16px']}>
                 Exchange Rate
               </TextBlock>
-              <TextBlock t="body">{`1 SAI : ${
+              <TextBlock t="body" fontSize={['24px', '16px']}>{`1 SAI : ${
                 exchangeRate ? round(exchangeRate, 4) : '...'
               } ETH`}</TextBlock>
             </Grid>
             <Grid gridRowGap="xs">
-              <TextBlock t="h5" lineHeight="normal">
+              <TextBlock t="h5" lineHeight="normal" fontSize={['24px', '16px']}>
                 Sai Balance in ETH
               </TextBlock>
-              <TextBlock t="body">
+              <TextBlock t="body" fontSize={['24px', '16px']}>
                 {round(saiBalance.toNumber() * exchangeRate, 4)} ETH
               </TextBlock>
             </Grid>
@@ -205,6 +209,7 @@ export default ({
           t="caption"
           color="steel"
           data-testid="terms"
+          fontSize={['26px', '16px']}
           onClick={() => setHasReadTOS(!hasReadTOS)}
         >
           I have read and accept the{' '}
@@ -219,8 +224,15 @@ export default ({
         justifyContent="center"
         gridTemplateColumns="auto auto"
         gridColumnGap="m"
+        width={['100vw', 'auto']}
+        height={{ s: '75px' }}
       >
-        <Button variant="secondary-outline" onClick={onPrev}>
+        <Button
+          variant="secondary-outline"
+          onClick={onPrev}
+          width={{ s: '200px' }}
+          fontSize={['26px', '16px']}
+        >
           Cancel
         </Button>
         <Button
@@ -235,6 +247,9 @@ export default ({
             dispatch({ type: 'assign', payload: { saiAmountToRedeem } });
             redeemSai();
           }}
+          width={{ s: '200px' }}
+          fontSize={['26px', '16px']}
+
         >
           Continue
         </Button>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Grid, Card, Input, Link } from '@makerdao/ui-components-core';
-import { TextBlock } from './Typography';
+import { Grid, Card, Input, Link, Text } from '@makerdao/ui-components-core';
+// import { TextBlock } from './Typography';
 
 export default function ({
   title,
@@ -50,15 +50,16 @@ export default function ({
   return (
     <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
       <Grid gridRowGap="m">
-        <TextBlock t="h5" lineHeight="normal">
+        <Text fontSize={['26px', '16px']} lineHeight="normal">
           {title}
-        </TextBlock>
+        </Text>
         <Input
           type="number"
           value={value}
           placeholder={unit(0).toString()}
           onChange={onChange}
           failureMessage={error}
+          fontSize={['26px', '16px']}
           after={
             <Link color="blue" fontWeight="medium" onClick={setMax}>
               Set max
