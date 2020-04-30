@@ -1,5 +1,6 @@
 import Maker from '@makerdao/dai';
 import mcdPlugin, { MDAI, BAT } from '@makerdao/dai-plugin-mcd';
+import scdPlugin from '@makerdao/dai-plugin-scd';
 // import migrationPlugin from '@makerdao/dai-plugin-migrations';
 import migrationPlugin from './plugin/src/index';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
@@ -66,6 +67,7 @@ export async function instantiateMaker(network) {
   };
 
   const migrationPluginConfig = {};
+  const scdPluginConfig = {};
   
   let daiAddressOverrides = {};
 
@@ -103,7 +105,8 @@ export async function instantiateMaker(network) {
       walletLinkPlugin,
       walletConnectPlugin,
       [mcdPlugin, mcdPluginConfig],
-      [migrationPlugin, migrationPluginConfig]
+      [migrationPlugin, migrationPluginConfig],
+      [scdPlugin, scdPluginConfig]
     ],
     smartContract: {
       addressOverrides: {

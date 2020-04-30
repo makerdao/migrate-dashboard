@@ -1,5 +1,6 @@
 import Maker from '@makerdao/dai';
 import MigrationPlugin from '../../src';
+import ScdPlugin from '@makerdao/dai-plugin-scd';
 import { Migrations } from '../../src/constants';
 import { createCurrencyRatio } from '@makerdao/currency';
 import McdPlugin, {
@@ -60,7 +61,8 @@ export async function migrationMaker({
   const maker = await Maker.create(preset, {
     plugins: [
       [McdPlugin, { network }],
-      [MigrationPlugin, { addressOverrides, network }]
+      [MigrationPlugin, { addressOverrides, network }],
+      [ScdPlugin, {addressOverrides, network}]
     ],
     log: false,
     web3: {
