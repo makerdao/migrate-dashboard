@@ -19,8 +19,8 @@ function LoadingToggle({
     ? completeText
     : defaultText;
   return (
-    <Grid alignItems="center" gridTemplateColumns="auto 1fr auto" {...props}>
-      <Text t="body">{text}</Text>
+    <Grid alignItems="center" gridTemplateColumns="auto 1fr auto" width={['100vw', 'auto']}{...props} >
+      <Text t="body" fontSize={['24px', '16px']}>{text}</Text>
       {isLoading && (
         <Loader
           display="inline-block"
