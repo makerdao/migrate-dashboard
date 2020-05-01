@@ -4,19 +4,15 @@ import { fireEvent, waitForElement } from '@testing-library/react';
 import { instantiateMaker } from '../../../maker';
 import { DAI } from '@makerdao/dai/dist/src/eth/Currency';
 import esmAbi from '../../references/Esm';
-import BigNumber from 'bignumber.js';
+import { esmAddress, WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
 import { ETH } from '@makerdao/dai-plugin-mcd';
 
 const { click } = fireEvent;
 
-const esmAddress = '0xb002A319887185e56d787A5c90900e13834a85E3';
-const WAD = new BigNumber('1e18');
-let maker;
-
 beforeAll(async () => {
     jest.setTimeout(20000);
-    maker = await instantiateMaker('test');
+    const maker = await instantiateMaker('test');
     await maker.service('proxy').ensureProxy();
     const vault = await maker.service('mcd:cdpManager').openLockAndDraw('ETH-A', ETH(0.1), 1);
     //trigger ES, and get to the point that Dai can be cashed for ETH-A
