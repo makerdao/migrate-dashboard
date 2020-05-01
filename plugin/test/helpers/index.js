@@ -62,7 +62,7 @@ export async function migrationMaker({
     plugins: [
       [McdPlugin, { network }],
       [MigrationPlugin, { addressOverrides, network }],
-      [ScdPlugin, {addressOverrides, network}]
+      [ScdPlugin, { network }]
     ],
     log: false,
     web3: {
