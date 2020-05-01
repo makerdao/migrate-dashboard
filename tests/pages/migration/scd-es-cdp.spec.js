@@ -19,10 +19,10 @@ beforeAll(async () => {
 
   cdp1 = await maker.openCdp();
   await cdp1.lockEth(1 + Math.random());
-  await cdp1.drawDai(20 + Math.random() * 5);
+  await cdp1.drawSai(20 + Math.random() * 5);
   cdp2 = await maker
     .service('cdp')
-    .openProxyCdpLockEthAndDrawDai(
+    .openProxyCdpLockEthAndDrawSai(
       1 + Math.random(),
       20 + Math.random(),
       await maker.service('proxy').ensureProxy()

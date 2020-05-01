@@ -51,7 +51,7 @@ describe('with live testchain', () => {
     //generate 50 DAI
     await maker.service('mcd:cdpManager').openLockAndDraw('ETH-A', ETH(1), 50);
     //put 1000 SAI in the migration contract
-    await maker.service('cdp').openProxyCdpLockEthAndDrawDai(10, 1000, proxy);
+    await maker.service('cdp').openProxyCdpLockEthAndDrawSai(10, 1000, proxy);
     const migrationContractAddress = maker
       .service('smartContract')
       .getContract('MIGRATION').address;

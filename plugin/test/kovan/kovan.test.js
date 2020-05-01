@@ -37,7 +37,7 @@ async function mcdMaker({
 async function openLockAndDrawScdCdp(drawAmount, maker) {
   const cdp = await maker.openCdp({ dsProxy: true });
   await cdp.lockEth('0.1', { dsProxy: true });
-  await cdp.drawDai(drawAmount, { dsProxy: true });
+  await cdp.drawSai(drawAmount, { dsProxy: true });
   return cdp;
 }
 
