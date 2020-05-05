@@ -95,7 +95,7 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
 
   return (
     <Grid maxWidth="912px" gridRowGap="m" px={['s', 0]}>
-      <Text.h2 textAlign="center">Deposit Dai to Redeem</Text.h2>
+      <Text.h2 textAlign="center" fontSize={{s: '32px', l: '32px'}}>Deposit Dai to Redeem</Text.h2>
       <Text.p textAlign="center" t="body" fontSize="1.8rem" m="0 auto">
         Deposit your Dai to redeem it for collateral from the system.
       </Text.p>
@@ -112,13 +112,13 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
               p="s"
             >
               <Flex>
-                <div>
+                <Text fontSize={['20px', '16px']}>
                   {'You have '}
                   <b>{`${prettifyNumber(dsrBalance.toBigNumber())} DAI`}</b>
                   {
                     ' in the DSR. Would you like to withdraw this Dai to your wallet?'
                   }
-                </div>
+                </Text>
                 <Button
                   variant="secondary-outline"
                   style={{ backgroundColor: 'white' }}
@@ -126,12 +126,13 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
                   my="7px"
                   px="12px"
                   py="4px"
-                  width="113px"
+                  // width="113px"
                   justifySelf="center"
-                  fontSize={'13px'}
+                  fontSize={['20px', '13px']}
                   onClick={withdrawDsr}
                   disabled={dsrWithdrawn}
                   loading={dsrWithdrawing}
+
                 >
                   Withdraw
                 </Button>
@@ -148,12 +149,13 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
             title="Enter the amount you would like to redeem."
           >
             <Box>
-              <Text t="subheading">Dai Balance</Text>
+              <Text t="subheading" fontSize={['18px', '16px']}>Dai Balance</Text>
               <Text
                 t="caption"
                 display="inline-block"
                 ml="s"
                 color="darkLavender"
+                fontSize={['22px', '16px']}
               >
                 {daiBalance && daiBalance.gt(0)
                   ? `${prettifyNumber(daiBalance.toBigNumber())} DAI`
@@ -162,12 +164,13 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
             </Box>
             {endBalance.gt(0) ? (
               <Box>
-                <Text t="subheading">Dai Deposited</Text>
+                <Text t="subheading" fontSize={['18px', '16px']}>Dai Deposited</Text>
                 <Text
                   t="caption"
                   display="inline-block"
                   ml="s"
                   color="darkLavender"
+                  fontSize={['22px', '16px']}
                 >
                   {endBalance && endBalance.gt(0)
                     ? `${prettifyNumber(endBalance.toBigNumber())} DAI`
@@ -178,7 +181,7 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
               ''
             )}
           </AmountInputCard>
-          <Card px={'m'} py={'m'}>
+          <Card px={'m'} py={'m'} justifyContent="center">
             <Checkbox
               mr="s"
               fontSize="l"
@@ -190,6 +193,8 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
               color="steel"
               data-testid="terms"
               onClick={() => setHasReadTOS(!hasReadTOS)}
+              fontSize={['22px', '16px']}
+              pl="m"
             >
               I have read and accept the{' '}
               <Link target="_blank" href="/terms">
@@ -226,7 +231,12 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
             gridTemplateColumns="auto auto"
             gridColumnGap="m"
           >
-            <Button variant="secondary-outline" onClick={onClose}>
+            <Button
+              variant="secondary-outline"
+              onClick={onClose}
+              width={{ s: '200px' }}
+              fontSize={['26px', '16px']}
+            >
               Back
             </Button>
             {hasDeposit ? (
@@ -238,7 +248,8 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
                   !hasReadTOS
                 }
                 onClick={onNext}
-                width="130px"
+                width={{ s: '200px' }}
+                fontSize={['26px', '16px']}
               >
                 Continue
               </Button>
@@ -252,7 +263,8 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
                 }
                 onClick={packDai}
                 loading={depositLoading}
-                width="130px"
+                width={{ s: '200px' }}
+                fontSize={['26px', '16px']}
               >
                 Deposit
               </Button>
