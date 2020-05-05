@@ -37,7 +37,8 @@ const TableRow = ({
     <td>{vaultValue}</td>
     <td>
       {redeemDone.includes(vaultId) ? (
-        <SuccessButton px="0px" py="4px" width="90px" justifySelf="center" />
+        <SuccessButton px="0px" py="4px" width="90px" justifySelf="center"
+          data-testid="successButton"/>
       ) : (
         <Button
           px="0px"

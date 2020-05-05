@@ -19,10 +19,10 @@ beforeAll(async () => {
 
   cdp1 = await maker.openCdp();
   await cdp1.lockEth(1 + Math.random());
-  await cdp1.drawDai(20 + Math.random() * 5);
+  await cdp1.drawSai(20 + Math.random() * 5);
   cdp2 = await maker
     .service('cdp')
-    .openProxyCdpLockEthAndDrawDai(
+    .openProxyCdpLockEthAndDrawSai(
       1 + Math.random(),
       20 + Math.random(),
       await maker.service('proxy').ensureProxy()
@@ -94,7 +94,9 @@ test('the whole flow', async () => {
   await findByText('Redemption Complete', {}, { timeout: 15000 });
   const received = getByTestId('received-collateral');
   const amount = parseFloat(received.textContent);
-  console.log((await maker.getToken('WETH').balance()).toString());
   const finalBalance = await maker.getToken('ETH').balance();
-  expect(finalBalance.minus(initialBalance).toNumber()).toBeCloseTo(amount);
+  const ethGain = finalBalance.minus(initialBalance).toNumber();
+  // account for some gas expenditure
+  expect(ethGain).toBeGreaterThan(amount - 0.01);
+  expect(ethGain).toBeLessThan(amount);
 });

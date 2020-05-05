@@ -1,5 +1,6 @@
 import Maker from '@makerdao/dai';
 import MigrationPlugin from '../../src';
+import ScdPlugin from '@makerdao/dai-plugin-scd';
 import { Migrations } from '../../src/constants';
 import { createCurrencyRatio } from '@makerdao/currency';
 import McdPlugin, {
@@ -60,7 +61,8 @@ export async function migrationMaker({
   const maker = await Maker.create(preset, {
     plugins: [
       [McdPlugin, { network }],
-      [MigrationPlugin, { addressOverrides, network }]
+      [MigrationPlugin, { addressOverrides, network }],
+      [ScdPlugin, { addressOverrides, network }]
     ],
     log: false,
     web3: {
@@ -120,7 +122,7 @@ async function offer(
 export async function drawSaiAndMigrateToDai(drawAmount, maker) {
   const cdp = await maker.openCdp();
   await cdp.lockEth('20');
-  await cdp.drawDai(drawAmount);
+  await cdp.drawSai(drawAmount);
   await migrateSaiToDai(10, maker);
 }
 
@@ -142,7 +144,7 @@ export async function shutDown(randomize) {
     console.log('creating', i);
     const proxyCdp = await maker
       .service('cdp')
-      .openProxyCdpLockEthAndDrawDai(
+      .openProxyCdpLockEthAndDrawSai(
         2 + (randomize ? Math.random() : 0),
         103 + (randomize ? Math.random() * 20 : 0),
         proxy
@@ -165,6 +167,6 @@ export async function shutDown(randomize) {
 async function openLockAndDrawScdCdp(maker, randomize) {
   const cdp = await maker.openCdp();
   await cdp.lockEth(1 + (randomize ? Math.random() : 0));
-  await cdp.drawDai(111 + (randomize ? Math.random() * 20 : 0));
+  await cdp.drawSai(111 + (randomize ? Math.random() * 20 : 0));
   return cdp;
 }

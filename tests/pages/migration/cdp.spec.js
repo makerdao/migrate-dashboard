@@ -20,7 +20,7 @@ async function openLockAndDrawScdCdp(drawAmount, maker, proxyTransfer = true) {
   // if they don't match the settings in MCD, then cdp migration may revert due
   // to attempting to create an unsafe cdp
   await cdp.lockEth((drawAmount * 1.6) / 150);
-  await cdp.drawDai(drawAmount);
+  await cdp.drawSai(drawAmount);
   if (proxyTransfer) {
     const proxy = await maker.service('proxy').currentProxy();
     await cdp.give(proxy);

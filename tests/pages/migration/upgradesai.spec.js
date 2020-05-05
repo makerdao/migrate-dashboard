@@ -55,7 +55,7 @@ describe('with live testchain', () => {
   beforeEach(async () => {
     maker = await instantiateMaker('test')
     const proxy = await maker.service('proxy').ensureProxy();
-    await maker.service('cdp').openProxyCdpLockEthAndDrawDai(1, 50, proxy);
+    await maker.service('cdp').openProxyCdpLockEthAndDrawSai(1, 50, proxy);
     startingBalance = await maker.getToken('MDAI').balance();
   });
 
