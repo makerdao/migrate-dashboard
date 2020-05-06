@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Grid, Text, Button } from '@makerdao/ui-components-core';
+import { Grid, Text, Button } from '@makerdao/ui-components-core';
 import CollateralTable from './CollateralTable';
 import { addToastWithTimeout } from '../Toast';
 import useMaker from '../../hooks/useMaker';
@@ -42,24 +42,16 @@ function ConfirmRedeem({ redeemAmount, onClose }) {
           from the Multi-Collateral Dai system.
         </Text.p>
       </Grid>
-      <Grid gridTemplateColumns="1fr 1fr 1fr">
-        <div />
-        <Grid gridRowGap="s">
-          <Card p="m" borderColor="#D4D9E1" border="1px solid" width="760px">
-            <CollateralTable
-              data={fixedPrices}
-              tagData={tagPrices}
-              amount={redeemAmount}
-              redeemDai={redeemDai}
-              bagBalance={bagBalance}
-              outAmounts={outAmounts}
-              redeemComplete={redeemComplete}
-              buttonLoading={redeemInitiated}
-            />
-          </Card>
-        </Grid>
-      </Grid>
-      <div />
+      <CollateralTable
+        data={fixedPrices}
+        tagData={tagPrices}
+        amount={redeemAmount}
+        redeemDai={redeemDai}
+        bagBalance={bagBalance}
+        outAmounts={outAmounts}
+        redeemComplete={redeemComplete}
+        buttonLoading={redeemInitiated}
+      />
       <Grid
         justifySelf="center"
         justifyContent="center"

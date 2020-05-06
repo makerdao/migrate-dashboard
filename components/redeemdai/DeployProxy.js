@@ -16,7 +16,7 @@ function DeployProxy({ onPrev, onNext }) {
   const alreadyHasAllowance = proxyDaiAllowance.gt(
     daiBalance.plus(dsrBalance.plus(endBalance))
   );
-  
+
   const { maker } = useMaker();
   const {
     proxyAddress,
@@ -69,7 +69,7 @@ function DeployProxy({ onPrev, onNext }) {
 
   return (
     <Box maxWidth="71.8rem" mx={['s', 0]}>
-      <Text.h2 textAlign="center" mb="xl">
+      <Text.h2 textAlign="center" mt="m" mb="xl" fontSize={['26px', '32px']}>
         Set up proxy contract
       </Text.h2>
       <ProxyComponent
@@ -89,10 +89,20 @@ function DeployProxy({ onPrev, onNext }) {
         gridTemplateColumns="auto auto"
         gridColumnGap="m"
       >
-        <Button variant="secondary-outline" onClick={onPrev}>
+        <Button
+          variant="secondary-outline"
+          onClick={onPrev}
+          width={{ s: '200px' }}
+          fontSize={['22px', '16px']}
+        >
           Back
         </Button>
-        <Button onClick={onNext} disabled={!hasProxy || !hasAllowance}>
+        <Button
+          onClick={onNext}
+          disabled={!hasProxy || !hasAllowance}
+          width={{ s: '200px' }}
+          fontSize={['22px', '16px']}
+        >
           Continue
         </Button>
       </Grid>
