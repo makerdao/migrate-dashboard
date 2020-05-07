@@ -90,8 +90,6 @@ export default ({
     }
   };
 
-  // todo: this appears to get confused by unlimited allowance,
-  // also goes for the similar hook in upgradesai/Confirmation
   useEffect(() => {
     (async () => {
       if (maker && account) {
@@ -100,7 +98,9 @@ export default ({
           .allowance(account.address, cageFreeAddress);
         const hasCageFreeAllowance = connectedWalletAllowance.gte(
           saiAmountToRedeem.toBigNumber().times(1.05)
-        ) && saiAmountToRedeem > 0;
+        )
+          || connectedWalletAllowance.toNumber() === 1.157920892373162e+59
+          && saiAmountToRedeem > 0;
         setProxyDetails({ hasCageFreeAllowance });
       }
     })();
