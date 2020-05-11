@@ -125,7 +125,8 @@ export async function instantiateMaker(network) {
     console.log('using custom SCD deployment');
     Object.assign(config.token.addressOverrides, {
       PETH: scdESTestAddressOverrides.SAI_SKR,
-      DAI: scdESTestAddressOverrides.SAI_SAI
+      DAI: scdESTestAddressOverrides.SAI_SAI,
+      SAI: scdESTestAddressOverrides.SAI_SAI
     });
     Object.assign(
       config.smartContract.addressOverrides,

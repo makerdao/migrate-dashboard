@@ -53,7 +53,9 @@ export default ({
   const giveProxyCageFreeAllowance = async () => {
     setCageFreeApprovePending(true);
     try {
-      await maker.getToken('SAI').approveUnlimited(cageFreeAddress);
+      await maker
+        .getToken('SAI')
+        .approveUnlimited(cageFreeAddress);
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasCageFreeAllowance: true
@@ -96,11 +98,10 @@ export default ({
         const connectedWalletAllowance = await maker
           .getToken('SAI')
           .allowance(account.address, cageFreeAddress);
-        const hasCageFreeAllowance = connectedWalletAllowance.gte(
-          saiAmountToRedeem.toBigNumber().times(1.05)
-        )
-          || connectedWalletAllowance.toNumber() === 1.157920892373162e+59
-          && saiAmountToRedeem > 0;
+        let hasCageFreeAllowance = SAI(connectedWalletAllowance).gte(
+            saiAmountToRedeem.toBigNumber().times(1.05)
+          ) || SAI(connectedWalletAllowance).toNumber() === 1.157920892373162e+59;
+        if (saiAmountToRedeem.toNumber() === 0) hasCageFreeAllowance = false;
         setProxyDetails({ hasCageFreeAllowance });
       }
     })();
