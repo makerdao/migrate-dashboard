@@ -1,23 +1,29 @@
 import RedeemVaults from '../../../pages/migration/vaults';
+import Overview from '../../../pages/overview';
 import render from '../../helpers/render';
 import { fireEvent } from '@testing-library/react';
-import { instantiateMaker } from '../../../maker';
+import { instantiateMaker, SAI, DAI } from '../../../maker';
 import esmAbi from '../../references/Esm';
 import { esmAddress, WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH, MDAI } from '@makerdao/dai-plugin-mcd';
-import { exportAllDeclaration } from '@babel/types';
+import { ETH, /*BAT, USDC*/ } from '@makerdao/dai-plugin-mcd';
 
 const { click } = fireEvent;
 
-let maker, id;
+let maker, id = [];
+
+const ilks = [['ETH-A', ETH]]; //add BAT-A and USDC-A, but need to get the collateral on the testchain
 
 beforeAll(async () => {
   maker = await instantiateMaker('test');
   await maker.service('proxy').ensureProxy();
-  const vault = await maker.service('mcd:cdpManager').openLockAndDraw('ETH-A', ETH(0.1), 1);
-  id = vault.id;
-  //trigger ES, and get to the point that Dai can be cashed for ETH-A
+  await Promise.all(ilks.map(async (ilkInfo, i) => {
+    const [ ilk , gem ] = ilkInfo;
+    const vault = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.1), 1);
+    id[i] = vault.id;
+  }));
+
+  //trigger ES, and get to the point that Dai can be cashed for each of the gems
   const token = maker.service('smartContract').getContract('MCD_GOV');
   await token['mint(uint256)'](WAD.times(50000).toFixed());
   const esm = maker.service('smartContract').getContractByAddressAndAbi(esmAddress, esmAbi);
@@ -25,7 +31,26 @@ beforeAll(async () => {
   await esm.join(WAD.times(50000).toFixed());
   await esm.fire();
   const end = maker.service('smartContract').getContract('MCD_END');
-  await end['cage(bytes32)'](stringToBytes('ETH-A'));
+  await Promise.all(ilks.map(async ([ilk,]) => {
+    await end['cage(bytes32)'](stringToBytes(ilk));
+  }));
+
+});
+
+test('overview', async () => {
+  const {
+    findByText,
+  } = await render(<Overview />, {
+    initialState: {
+      saiAvailable: SAI(0),
+      daiAvailable: DAI(0)
+    },
+    getMaker: maker => {
+      maker.service('cdp').getCdpIds = jest.fn(() => []);
+    }
+  });
+
+  await findByText('Withdraw Excess Collateral from Vaults');
 });
 
 test('the whole flow', async () => {
@@ -41,7 +66,7 @@ test('the whole flow', async () => {
             collateral: '0.1 ETH',
             daiDebt: '1.00 DAI',
             exchangeRate: '1 DAI : 0.0005 ETH',
-            id,
+            id: id[0],
             shutdownValue: '$2,000.00',
             type: 'ETH',
             vaultValue: '0.0100 ETH'}]
