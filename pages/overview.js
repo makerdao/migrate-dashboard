@@ -402,7 +402,7 @@ function Overview({ fetching }) {
     scd.off && pethInVaults.some(x => x[1].gt(0));
   const shouldShowSCDESSai = scd.off && saiBalance && saiBalance.gt(0);
 
-  const shouldShowCdps = countCdps(cdps) > 0 && !shouldShowSCDESCollateral;
+  const shouldShowCdps = countCdps(cdps) > 0 && !scd.off;
 
   const noMigrations =
     !shouldShowCdps &&
