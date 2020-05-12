@@ -67,10 +67,10 @@ test('the whole flow', async () => {
   await findByText('Set up proxy contract');
   const continueButton = getByText('Continue');
   expect(continueButton.disabled).toBeTruthy();
-  const allowanceButton = getByText('Set Allowance');
+  const allowanceButton = getByText('Set');
   await waitForElement(() => !allowanceButton.disabled);
   click(allowanceButton);
-  //await waitForElement(() => !continueButton.disabled);
-  //click(continueButton);
-  //await findByText('Redeem Dai');
+  await waitForElement(() => !continueButton.disabled);
+  click(continueButton);
+  await findByText('Redeem Dai');
 });
