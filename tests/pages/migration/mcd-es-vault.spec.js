@@ -23,7 +23,7 @@ beforeAll(async () => {
     id[i] = vault.id;
   }));
 
-  //trigger ES, and get to the point that Dai can be cashed for each of the gems
+  //trigger ES, and get to the point that Vaults can be redeemed
   const token = maker.service('smartContract').getContract('MCD_GOV');
   await token['mint(uint256)'](WAD.times(50000).toFixed());
   const esm = maker.service('smartContract').getContractByAddressAndAbi(esmAddress, esmAbi);

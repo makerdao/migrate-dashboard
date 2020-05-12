@@ -1,7 +1,8 @@
 import RedeemDai from '../../../pages/migration/redeemDai';
+import Overview from '../../../pages/overview';
 import render from '../../helpers/render';
 import { fireEvent, waitForElement } from '@testing-library/react';
-import { instantiateMaker } from '../../../maker';
+import { instantiateMaker, SAI } from '../../../maker';
 import { DAI } from '@makerdao/dai/dist/src/eth/Currency';
 import esmAbi from '../../references/Esm';
 import { esmAddress, WAD } from '../../references/constants';
@@ -10,9 +11,11 @@ import { ETH } from '@makerdao/dai-plugin-mcd';
 
 const { click } = fireEvent;
 
+let maker;
+
 beforeAll(async () => {
     jest.setTimeout(20000);
-    const maker = await instantiateMaker('test');
+    maker = await instantiateMaker('test');
     await maker.service('proxy').ensureProxy();
     const vault = await maker.service('mcd:cdpManager').openLockAndDraw('ETH-A', ETH(0.1), 1);
     //trigger ES, and get to the point that Dai can be cashed for ETH-A
@@ -29,6 +32,22 @@ beforeAll(async () => {
     await migVault.freeEth(vault.id);
     await end.thaw();
     await end.flow(stringToBytes('ETH-A'));
+});
+
+test('overview', async () => {
+  const {
+    findByText,
+  } = await render(<Overview />, {
+    initialState: {
+      saiAvailable: SAI(0),
+      daiAvailable: DAI(0)
+    },
+    getMaker: maker => {
+      maker.service('cdp').getCdpIds = jest.fn(() => []);
+    }
+  });
+
+  await findByText('Redeem Dai for collateral');
 });
 
 test('the whole flow', async () => {
