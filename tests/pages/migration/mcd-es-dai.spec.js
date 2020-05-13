@@ -8,6 +8,7 @@ import esmAbi from '../../references/Esm';
 import { esmAddress, WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
 import { ETH } from '@makerdao/dai-plugin-mcd';
+import { MDAI } from '@makerdao/dai-plugin-mcd';
 
 const { click } = fireEvent;
 
@@ -16,8 +17,11 @@ let maker;
 beforeAll(async () => {
     jest.setTimeout(20000);
     maker = await instantiateMaker('test');
-    await maker.service('proxy').ensureProxy();
+    const proxyAddress = await maker.service('proxy').ensureProxy();
     const vault = await maker.service('mcd:cdpManager').openLockAndDraw('ETH-A', ETH(0.1), 1);
+    await maker.getToken(MDAI).approveUnlimited(proxyAddress, 0.5);
+    await maker.service('mcd:savings').join(MDAI(.5));
+
     //trigger ES, and get to the point that Dai can be cashed for ETH-A
     const token = maker.service('smartContract').getContract('MCD_GOV');
     await token['mint(uint256)'](WAD.times(50000).toFixed());
@@ -40,7 +44,7 @@ test('overview', async () => {
   } = await render(<Overview />, {
     initialState: {
       saiAvailable: SAI(0),
-      daiAvailable: DAI(0)
+      daiAvailable: MDAI(0)
     },
     getMaker: maker => {
       maker.service('cdp').getCdpIds = jest.fn(() => []);
@@ -53,14 +57,14 @@ test('overview', async () => {
 test('the whole flow', async () => {
   const {
     findByText,
-    getByTestId,
     getByText
   } = await render(<RedeemDai />, {
     initialState: {
-        proxyDaiAllowance: DAI(0),
-        daiBalance: DAI(0),
-        endBalance: DAI(0),
-        dsrBalance: DAI(0)
+        proxyDaiAllowance: MDAI(0),
+        daiBalance: MDAI(0),
+        endBalance: MDAI(0),
+        dsrBalance: MDAI(0.5),
+        minEndVatBalance: MDAI(.1)
     }
   });
 
@@ -72,5 +76,7 @@ test('the whole flow', async () => {
   click(allowanceButton);
   await waitForElement(() => !continueButton.disabled);
   click(continueButton);
-  await findByText('Redeem Dai');
+  await findByText('Deposit Dai to Redeem');
+  click(getByText('Withdraw'));
+  await findByText('1.00 DAI');
 });
