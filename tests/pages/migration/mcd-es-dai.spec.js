@@ -3,14 +3,13 @@ import Overview from '../../../pages/overview';
 import render from '../../helpers/render';
 import { fireEvent, waitForElement } from '@testing-library/react';
 import { instantiateMaker, SAI } from '../../../maker';
-import { DAI } from '@makerdao/dai/dist/src/eth/Currency';
 import esmAbi from '../../references/Esm';
 import { esmAddress, WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
 import { ETH } from '@makerdao/dai-plugin-mcd';
 import { MDAI } from '@makerdao/dai-plugin-mcd';
-
-const { click } = fireEvent;
+const { change, click } = fireEvent;
+import BigNumber from 'bignumber.js';
 
 let maker;
 
@@ -57,14 +56,16 @@ test('overview', async () => {
 test('the whole flow', async () => {
   const {
     findByText,
-    getByText
+    getByText,
+    getByRole,
+    getByTestId
   } = await render(<RedeemDai />, {
     initialState: {
         proxyDaiAllowance: MDAI(0),
-        daiBalance: MDAI(0),
+        daiBalance: MDAI(0.5),
         endBalance: MDAI(0),
         dsrBalance: MDAI(0.5),
-        minEndVatBalance: MDAI(.1)
+        minEndVatBalance: BigNumber(.1)
     }
   });
 
@@ -79,4 +80,10 @@ test('the whole flow', async () => {
   await findByText('Deposit Dai to Redeem');
   click(getByText('Withdraw'));
   await findByText('1.00 DAI');
+  change(getByRole('textbox'), { target: { value: .9 } });
+  //todo: check for error message
+  change(getByRole('textbox'), { target: { value: .1 } });
+  click(getByTestId('tosCheck'));
+  const continueButton2 = getByText('Deposit');
+  click(continueButton2);
 });

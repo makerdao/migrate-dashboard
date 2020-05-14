@@ -187,6 +187,7 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
               fontSize="l"
               checked={hasReadTOS}
               onChange={() => setHasReadTOS(!hasReadTOS)}
+              data-testid="tosCheck"
             />
             <Text
               t="caption"
