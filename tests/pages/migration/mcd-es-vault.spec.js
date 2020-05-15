@@ -56,9 +56,9 @@ test('overview', async () => {
 test('the whole flow', async () => {
   const {
     findByText,
-    findByTestId,
+    findAllByTestId,
     getByTestId,
-    getByText
+    getAllByText
   } = await render(<RedeemVaults />, {
     initialState: {
         vaultsToRedeem: {
@@ -74,13 +74,14 @@ test('the whole flow', async () => {
     }
   });
   await findByText('Withdraw Excess Collateral from Vaults');
-  const withdrawButton = getByText('Withdraw');
+  //there's two withdraw buttons, one for desktop, one for mobile
+  const withdrawButton = getAllByText('Withdraw')[0];
   expect(withdrawButton.disabled).toBeTruthy();
   click(getByTestId('tosCheck'));
   expect(withdrawButton.disabled).toBeFalsy();
   const ethBefore = await maker.service('token').getToken(ETH).balance();
   click(withdrawButton);
-  await findByTestId('successButton');
+  await findAllByTestId('successButton');
   const ethAfter = await maker.service('token').getToken(ETH).balance();
   expect(ethAfter.gt(ethBefore));
 });

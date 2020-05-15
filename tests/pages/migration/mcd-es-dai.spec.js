@@ -58,17 +58,24 @@ test('the whole flow', async () => {
     findByText,
     getByText,
     getByRole,
-    getByTestId
+    getByTestId,
+    getAllByText,
+    findAllByTestId
   } = await render(<RedeemDai />, {
     initialState: {
         proxyDaiAllowance: MDAI(0),
         daiBalance: MDAI(0.5),
         endBalance: MDAI(0),
         dsrBalance: MDAI(0.5),
-        minEndVatBalance: BigNumber(.1)
+        minEndVatBalance: BigNumber(.1),
+        bagBalance: MDAI(0),
+        outAmounts: [{ilk: 'ETH-A', out: BigNumber(0)},{ilk: 'BAT-A', out: BigNumber(0)},{ilk: 'USDC-A', out: BigNumber(0)}],
+        fixedPrices: [{ilk: 'ETH-A', price: BigNumber(10)},{ilk: 'BAT-A', price: BigNumber(10)},{ilk: 'USDC-A', price: BigNumber(10)}],
+        tagPrices: [{ilk: 'ETH-A', price: BigNumber(10)},{ilk: 'BAT-A', price: BigNumber(10)},{ilk: 'USDC-A', price: BigNumber(10)}]
     }
   });
 
+  //proxy contract setup
   await findByText('Set up proxy contract');
   const continueButton = getByText('Continue');
   expect(continueButton.disabled).toBeTruthy();
@@ -77,13 +84,25 @@ test('the whole flow', async () => {
   click(allowanceButton);
   await waitForElement(() => !continueButton.disabled);
   click(continueButton);
+
+  //deposit dai
   await findByText('Deposit Dai to Redeem');
   click(getByText('Withdraw'));
   await findByText('1.00 DAI');
   change(getByRole('textbox'), { target: { value: .9 } });
-  //todo: check for error message
+  getByText(/Users cannot redeem more/);
   change(getByRole('textbox'), { target: { value: .1 } });
   click(getByTestId('tosCheck'));
-  const continueButton2 = getByText('Deposit');
-  click(continueButton2);
+  const depositButton = getByText('Deposit');
+  expect(depositButton.disabled).toBeFalsy();
+  click(depositButton);
+
+  //redeem dai
+  await findByText('Redeem Dai');
+  const buttons = getAllByText('Redeem');
+  // buttons.forEach(b => {
+  //   console.log('b', b);
+  //   click(b);
+  // });
+  // await findAllByTestId('successButton');
 });

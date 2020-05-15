@@ -274,7 +274,7 @@ const RedeemVaults = ({
           </Grid>
         </Box>
         <Grid gridRowGap="s" pb="m" mt="m">
-          {vaultsToRedeem && vaultsToRedeem.map(vault => (
+          {vaultsToRedeem && vaultsToRedeem.parsedVaultsData.map(vault => (
             <ListItem
               key={vault.id}
               vaultId={vault.id}
