@@ -13,13 +13,17 @@ import BigNumber from 'bignumber.js';
 
 let maker;
 
+const daiAmount = 1;
+const dsrAmount = 0.5;
+const minEndBalance = 0.1;
+
 beforeAll(async () => {
     jest.setTimeout(20000);
     maker = await instantiateMaker('test');
     const proxyAddress = await maker.service('proxy').ensureProxy();
-    const vault = await maker.service('mcd:cdpManager').openLockAndDraw('ETH-A', ETH(0.1), 1);
-    await maker.getToken(MDAI).approveUnlimited(proxyAddress, 0.5);
-    await maker.service('mcd:savings').join(MDAI(.5));
+    const vault = await maker.service('mcd:cdpManager').openLockAndDraw('ETH-A', ETH(0.1), daiAmount);
+    await maker.getToken(MDAI).approveUnlimited(proxyAddress);
+    await maker.service('mcd:savings').join(MDAI(dsrAmount));
 
     //trigger ES, and get to the point that Dai can be cashed for ETH-A
     const token = maker.service('smartContract').getContract('MCD_GOV');
@@ -64,10 +68,10 @@ test('the whole flow', async () => {
   } = await render(<RedeemDai />, {
     initialState: {
         proxyDaiAllowance: MDAI(0),
-        daiBalance: MDAI(0.5),
+        daiBalance: MDAI(daiAmount - dsrAmount),
         endBalance: MDAI(0),
-        dsrBalance: MDAI(0.5),
-        minEndVatBalance: BigNumber(.1),
+        dsrBalance: MDAI(dsrAmount),
+        minEndVatBalance: BigNumber(minEndBalance),
         bagBalance: MDAI(0),
         outAmounts: [{ilk: 'ETH-A', out: BigNumber(0)},{ilk: 'BAT-A', out: BigNumber(0)},{ilk: 'USDC-A', out: BigNumber(0)}],
         fixedPrices: [{ilk: 'ETH-A', price: BigNumber(10)},{ilk: 'BAT-A', price: BigNumber(10)},{ilk: 'USDC-A', price: BigNumber(10)}],
@@ -89,9 +93,9 @@ test('the whole flow', async () => {
   await findByText('Deposit Dai to Redeem');
   click(getByText('Withdraw'));
   await findByText('1.00 DAI');
-  change(getByRole('textbox'), { target: { value: .9 } });
+  change(getByRole('textbox'), { target: { value: minEndBalance + .1 } });
   getByText(/Users cannot redeem more/);
-  change(getByRole('textbox'), { target: { value: .1 } });
+  change(getByRole('textbox'), { target: { value: minEndBalance } });
   click(getByTestId('tosCheck'));
   const depositButton = getByText('Deposit');
   expect(depositButton.disabled).toBeFalsy();
@@ -99,10 +103,10 @@ test('the whole flow', async () => {
 
   //redeem dai
   await findByText('Redeem Dai');
-  const buttons = getAllByText('Redeem');
-  // buttons.forEach(b => {
-  //   console.log('b', b);
-  //   click(b);
-  // });
-  // await findAllByTestId('successButton');
+  //get the ETH redeem button, assumes first one is ETH
+  const button = getAllByText('Redeem')[1];
+  click(button);
+  console.log('after click');
+  //should be two, one for mobile one for desktop
+  await findAllByTestId('successButton');
 });
