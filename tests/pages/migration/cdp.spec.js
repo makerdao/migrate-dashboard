@@ -14,7 +14,7 @@ import { CDP_MIGRATION_MINIMUM_DEBT } from '../../../utils/constants';
 const { click } = fireEvent;
 
 async function openLockAndDrawScdCdp(drawAmount, maker, proxyTransfer = true) {
-  const cdp = await maker.openCdp();
+  const cdp = await maker.service('cdp').openCdp();
 
   // note that we're hardcoding collateralization ratio and eth price here --
   // if they don't match the settings in MCD, then cdp migration may revert due

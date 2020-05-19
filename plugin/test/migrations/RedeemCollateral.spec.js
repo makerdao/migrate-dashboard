@@ -29,7 +29,7 @@ describe('Redeem collateral', () => {
   });
   
   test('should redeem collateral', async () => {
-    const cdp = await maker.getCdp(1);
+    const cdp = await maker.service('cdp').getCdp(1);
     const peth = maker.getToken('PETH');
     const address = maker.service('web3').currentAddress();
     const collateral = await cdp.getCollateralValue();
