@@ -382,7 +382,7 @@ function Overview({ fetching }) {
   ] = useStore();
 
   const { mkrLockedDirectly, mkrLockedViaProxy } = chiefMigrationCheck || {};
-  const shouldShowDai = saiBalance && saiBalance.gt(0);
+  const shouldShowDai = saiBalance && saiBalance.gt(0) && !scd.off;
   const shouldShowMkr = oldMkrBalance && oldMkrBalance.gt(0);
   const shouldShowReverse =
     daiBalance && daiBalance.gt(0) && saiAvailable.gt(0);
@@ -400,9 +400,9 @@ function Overview({ fetching }) {
 
   const shouldShowSCDESCollateral =
     scd.off && pethInVaults.some(x => x[1].gt(0));
-  const shouldShowSCDESSai = scd.off && shouldShowDai;
+  const shouldShowSCDESSai = scd.off && saiBalance && saiBalance.gt(0);
 
-  const shouldShowCdps = countCdps(cdps) > 0 && !shouldShowSCDESCollateral;
+  const shouldShowCdps = countCdps(cdps) > 0 && !scd.off;
 
   const noMigrations =
     !shouldShowCdps &&
