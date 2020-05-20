@@ -75,7 +75,7 @@ export async function migrationMaker({
 }
 
 export async function placeLimitOrder(migrationService) {
-  const daiToken = migrationService.get('token').getToken('DAI');
+  const daiToken = migrationService.get('token').getToken('SAI');
   const daiAddress = daiToken.address();
   const oasisAddress = migrationService
     .get('smartContract')
@@ -120,7 +120,7 @@ async function offer(
 }
 
 export async function drawSaiAndMigrateToDai(drawAmount, maker) {
-  const cdp = await maker.openCdp();
+  const cdp = await maker.service('cdp').openCdp();
   await cdp.lockEth('20');
   await cdp.drawSai(drawAmount);
   await migrateSaiToDai(10, maker);
@@ -165,7 +165,7 @@ export async function shutDown(randomize) {
 }
 
 async function openLockAndDrawScdCdp(maker, randomize) {
-  const cdp = await maker.openCdp();
+  const cdp = await maker.service('cdp').openCdp();
   await cdp.lockEth(1 + (randomize ? Math.random() : 0));
   await cdp.drawSai(111 + (randomize ? Math.random() * 20 : 0));
   return cdp;

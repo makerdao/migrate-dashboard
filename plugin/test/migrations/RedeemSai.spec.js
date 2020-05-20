@@ -29,7 +29,7 @@ describe('Redeem Sai', () => {
   });
 
   test('should redeem sai', async () => {
-    const sai = maker.getToken('DAI');
+    const sai = maker.getToken('SAI');
     const web3Service = maker.service('web3');
     const address = web3Service.currentAddress();
     const cageFree = maker.service('smartContract').getContract('SAI_CAGEFREE').address;

@@ -19,7 +19,7 @@ describe('SAI to DAI Migration', () => {
   test('if the account has no SAI, return 0', async () => {
     const amount = await maker
       .service('token')
-      .getToken('DAI')
+      .getToken('SAI')
       .balance();
     expect(amount.toNumber()).toBe(0);
 
@@ -32,7 +32,7 @@ describe('SAI to DAI Migration', () => {
 
     const amount = await maker
       .service('token')
-      .getToken('DAI')
+      .getToken('SAI')
       .balance();
     expect(amount.toNumber()).toBe(1);
 

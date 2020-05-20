@@ -20,5 +20,6 @@
   "OLD_MKR": "DSToken",
   "MCD_JOIN_*": "GemJoin",
   "PROXY_ACTIONS_END": "DssProxyActionsEnd",
-  "SAI_CAGEFREE": "CageFree"
+  "SAI_CAGEFREE": "CageFree",
+  "MCD_ESM": "ESM"
 }

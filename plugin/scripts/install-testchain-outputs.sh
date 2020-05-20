@@ -17,7 +17,7 @@ do
 done
 
 # Relevant contracts from MCD:
-for CONTRACT in "MCD_JOIN_ETH_A","GemJoin" "MCD_JOIN_DAI","DaiJoin" "MCD_JOIN_BAT_A","GemJoin" "MIGRATION","ScdMcdMigration" "MIGRATION_PROXY_ACTIONS","MigrationProxyActions" "PROXY_ACTIONS_END","DssProxyActionsEnd" "MCD_JOIN_USDC_A","GemJoin"
+for CONTRACT in "MCD_JOIN_ETH_A","GemJoin" "MCD_JOIN_DAI","DaiJoin" "MCD_JOIN_BAT_A","GemJoin" "MIGRATION","ScdMcdMigration" "MIGRATION_PROXY_ACTIONS","MigrationProxyActions" "PROXY_ACTIONS_END","DssProxyActionsEnd" "MCD_JOIN_USDC_A","GemJoin" "MCD_ESM","ESM"
 do
   IFS=',' read NAME ABI <<< "${CONTRACT}"
   ADDRESS=`jq ".$NAME" "$SOURCE/out/addresses-mcd.json"`

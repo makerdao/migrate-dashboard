@@ -20,7 +20,7 @@ let maker, migration, snapshotData;
 
 async function openLockAndDrawScdCdp(drawAmount) {
   const proxy = await maker.service('proxy').currentProxy();
-  const cdp = await maker.openCdp();
+  const cdp = await maker.service('cdp').openCdp();
   await cdp.lockEth('20');
   await cdp.drawSai(drawAmount);
   await cdp.give(proxy);
@@ -166,7 +166,7 @@ describe('SCD to MCD CDP Migration', () => {
 
       let message;
       try {
-        await maker.getCdp(cdp.id);
+        await maker.service('cdp').getCdp(cdp.id);
       } catch (err) {
         message = err.message;
       }

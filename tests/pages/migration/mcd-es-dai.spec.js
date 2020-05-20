@@ -3,8 +3,7 @@ import Overview from '../../../pages/overview';
 import render from '../../helpers/render';
 import { fireEvent, waitForElement } from '@testing-library/react';
 import { instantiateMaker, SAI } from '../../../maker';
-import esmAbi from '../../references/Esm';
-import { esmAddress, WAD } from '../../references/constants';
+import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
 import { ETH, BAT, USDC } from '@makerdao/dai-plugin-mcd';
 import { MDAI } from '@makerdao/dai-plugin-mcd';
@@ -35,8 +34,8 @@ beforeAll(async () => {
     //trigger ES, and get to the point that Dai can be cashed for all ilks
     const token = maker.service('smartContract').getContract('MCD_GOV');
     await token['mint(uint256)'](WAD.times(50000).toFixed());
-    const esm = maker.service('smartContract').getContractByAddressAndAbi(esmAddress, esmAbi);
-    await token.approve(esmAddress, -1); //approve unlimited
+    const esm = maker.service('smartContract').getContract('MCD_ESM');
+    await token.approve(esm.address, -1); //approve unlimited
     await esm.join(WAD.times(50000).toFixed());
     await esm.fire();
     const end = maker.service('smartContract').getContract('MCD_END');

@@ -72,7 +72,7 @@ async function getAllCdpData(allCdps, maker) {
   const cdpIds = Object.values(allCdps).flat();
   const allCdpData = await Promise.all(
     cdpIds.map(async id => {
-      const cdp = await maker.getCdp(id);
+      const cdp = await maker.service('cdp').getCdp(id);
       const data = await getCdpData(cdp);
       return { ...cdp, ...data, give: cdp.give };
     })

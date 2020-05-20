@@ -17,7 +17,7 @@ beforeAll(async () => {
   maker = await instantiateMaker('test');
   snapshotData = await takeSnapshot(maker);
 
-  cdp1 = await maker.openCdp();
+  cdp1 = await maker.service('cdp').openCdp();
   await cdp1.lockEth(1 + Math.random());
   await cdp1.drawSai(20 + Math.random() * 5);
   cdp2 = await maker
