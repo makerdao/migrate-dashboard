@@ -81,7 +81,7 @@ function ListItem({
     <SuccessButton
       py="4px"
       justifySelf="center"
-      data-testid="successButton"
+      data-testid={`successButton-${ilk}`}
     />
   ) : (
     <Button
@@ -99,6 +99,7 @@ function ListItem({
       onClick={() =>
         redeemDai(maxRedeem.find(x => x.ilk === ilk).max, ilk)
       }
+      data-testid={`redeemButton-${ilk}`}
     >
       Redeem
     </Button>

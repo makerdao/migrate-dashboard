@@ -56,7 +56,7 @@ function ListItem({
   }) {
   const redeemButton = redeemDone.includes(vaultId) ? (
     <SuccessButton px="0px" py="4px" width="90px" justifySelf="center"
-      data-testid="successButton"/>
+      data-testid={`successButton-${type}`}/>
   ) : (
     <Button
       px="0px"
@@ -69,6 +69,7 @@ function ListItem({
       }
       disabled={!hasReadTOS}
       onClick={() => redeemVaults(vaultId, type)}
+      data-testid={`withdrawButton-${type}`}
     >
       Withdraw
     </Button>
