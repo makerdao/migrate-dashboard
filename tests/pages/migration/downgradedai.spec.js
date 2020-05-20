@@ -59,7 +59,7 @@ describe('with live testchain', () => {
     const mig = maker.service('migration').getMigration('sai-to-dai');
     await mig.execute(SAI(1000));
 
-    startingBalance = await maker.getToken('DAI').balance();
+    startingBalance = await maker.getToken('SAI').balance();
   });
 
   test('the whole flow', async () => {
@@ -101,7 +101,7 @@ describe('with live testchain', () => {
     await findByText('Exit');
     getByText(`${round(amount, 2)} SAI`);
 
-    expect(await maker.getToken('DAI').balance()).toEqual(
+    expect(await maker.getToken('SAI').balance()).toEqual(
       startingBalance.plus(amount)
     );
   }, 10000);

@@ -16,6 +16,7 @@
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.8.3",
     "@babel/runtime-corejs2": "^7.9.2",
+    "@makerdao/currency": "^0.9.8",
     "@makerdao/dai": "^0.31.2",
     "@makerdao/dai-plugin-ledger-web": "^0.9.7",
     "@makerdao/dai-plugin-mcd": "^1.4.1",

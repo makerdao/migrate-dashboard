@@ -8,5 +8,7 @@ module.exports = {
     '^.+\\.jsx?$': 'babel-jest',
     '^.+\\.(svg|png)$': './tests/helpers/transformImportToPath'
   },
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.yalc/']
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.yalc/'],
+  // roots: ['<rootDir>/components', '<rootDir>/hooks', '<rootDir>/languages', '<rootDir>/layouts', '<rootDir>/pages', '<rootDir>/plugin', '<rootDir>/providers', '<rootDir>/references', '<rootDir>/tests', '<rootDir>/utils'],
+  modulePathIgnorePatterns: ['<rootDir>/.yalc/@makerdao/dai-plugin-scd/test']
 };

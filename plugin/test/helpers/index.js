@@ -75,7 +75,7 @@ export async function migrationMaker({
 }
 
 export async function placeLimitOrder(migrationService) {
-  const daiToken = migrationService.get('token').getToken('DAI');
+  const daiToken = migrationService.get('token').getToken('SAI');
   const daiAddress = daiToken.address();
   const oasisAddress = migrationService
     .get('smartContract')
