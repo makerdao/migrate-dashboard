@@ -6,7 +6,7 @@ import { instantiateMaker, SAI } from '../../../maker';
 import esmAbi from '../../references/Esm';
 import { esmAddress, WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH } from '@makerdao/dai-plugin-mcd';
+import { ETH, BAT, USDC } from '@makerdao/dai-plugin-mcd';
 import { MDAI } from '@makerdao/dai-plugin-mcd';
 const { change, click } = fireEvent;
 import BigNumber from 'bignumber.js';
@@ -17,15 +17,22 @@ const daiAmount = 1;
 const dsrAmount = 0.5;
 const minEndBalance = 0.1;
 
+const ilks = [['ETH-A', ETH], ['BAT-A', BAT], ['USDC-A', USDC]];
+
 beforeAll(async () => {
-    jest.setTimeout(20000);
     maker = await instantiateMaker('test');
     const proxyAddress = await maker.service('proxy').ensureProxy();
-    const vault = await maker.service('mcd:cdpManager').openLockAndDraw('ETH-A', ETH(0.1), daiAmount);
+    const vaults = {};
+    await Promise.all(ilks.map(async (ilkInfo ) => {
+      const [ ilk , gem ] = ilkInfo;
+      await maker.getToken(gem).approveUnlimited(proxyAddress);
+      vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.1), daiAmount);
+    }));
+
     await maker.getToken(MDAI).approveUnlimited(proxyAddress);
     await maker.service('mcd:savings').join(MDAI(dsrAmount));
 
-    //trigger ES, and get to the point that Dai can be cashed for ETH-A
+    //trigger ES, and get to the point that Dai can be cashed for all ilks
     const token = maker.service('smartContract').getContract('MCD_GOV');
     await token['mint(uint256)'](WAD.times(50000).toFixed());
     const esm = maker.service('smartContract').getContractByAddressAndAbi(esmAddress, esmAbi);
@@ -33,12 +40,23 @@ beforeAll(async () => {
     await esm.join(WAD.times(50000).toFixed());
     await esm.fire();
     const end = maker.service('smartContract').getContract('MCD_END');
-    await end['cage(bytes32)'](stringToBytes('ETH-A'));
+    await Promise.all(ilks.map(async (ilkInfo ) => {
+      const [ ilk ,] = ilkInfo;
+      await end['cage(bytes32)'](stringToBytes(ilk));
+    }));
     const migVault = maker.service('migration')
       .getMigration('global-settlement-collateral-claims');
-    await migVault.freeEth(vault.id);
+
+    await migVault.freeEth(vaults['ETH-A'].id);
+    await migVault.freeBat(vaults['BAT-A'].id);
+    await migVault.freeUsdc(vaults['USDC-A'].id);
+    
     await end.thaw();
-    await end.flow(stringToBytes('ETH-A'));
+    await Promise.all(ilks.map(async (ilkInfo ) => {
+      const [ ilk ,] = ilkInfo;
+      await end.flow(stringToBytes(ilk));
+    }));
+
 });
 
 test('overview', async () => {
@@ -63,12 +81,12 @@ test('the whole flow', async () => {
     getByText,
     getByRole,
     getByTestId,
-    getAllByText,
-    findAllByTestId
+    findAllByTestId,
+    getAllByTestId
   } = await render(<RedeemDai />, {
     initialState: {
         proxyDaiAllowance: MDAI(0),
-        daiBalance: MDAI(daiAmount - dsrAmount),
+        daiBalance: MDAI(daiAmount*ilks.length - dsrAmount),
         endBalance: MDAI(0),
         dsrBalance: MDAI(dsrAmount),
         minEndVatBalance: BigNumber(minEndBalance),
@@ -92,7 +110,7 @@ test('the whole flow', async () => {
   //deposit dai
   await findByText('Deposit Dai to Redeem');
   click(getByText('Withdraw'));
-  await findByText('1.00 DAI');
+  await findByText('3.00 DAI');//daiAmount
   change(getByRole('textbox'), { target: { value: minEndBalance + .1 } });
   getByText(/Users cannot redeem more/);
   change(getByRole('textbox'), { target: { value: minEndBalance } });
@@ -103,10 +121,19 @@ test('the whole flow', async () => {
 
   //redeem dai
   await findByText('Redeem Dai');
-  //get the ETH redeem button, assumes first one is ETH
-  const button = getAllByText('Redeem')[1];
-  click(button);
-  console.log('after click');
-  //should be two, one for mobile one for desktop
-  await findAllByTestId('successButton');
+
+  async function redeem(ilkInfo) {
+    const [ ilk, gem ] = ilkInfo;
+    //should be two buttons, one for mobile one for desktop
+    const button = getAllByTestId(`redeemButton-${ilk}`)[0];
+    const before = await maker.service('token').getToken(gem).balance();
+    click(button);
+    const after = await maker.service('token').getToken(gem).balance();
+    await findAllByTestId(`successButton-${ilk}`);
+    expect(after.gt(before));
+  }
+
+  await redeem(ilks[0]);
+  await redeem(ilks[1]);
+  await redeem(ilks[2]);
 });

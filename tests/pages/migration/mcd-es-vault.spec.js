@@ -10,19 +10,17 @@ import { ETH, BAT, USDC } from '@makerdao/dai-plugin-mcd';
 
 const { click } = fireEvent;
 
-let maker, id = [];
+let maker;
 
 const ilks = [['ETH-A', ETH], ['BAT-A', BAT], ['USDC-A', USDC]];
 
 beforeAll(async () => {
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
-  await Promise.all(ilks.map(async (ilkInfo, i) => {
+  await Promise.all(ilks.map(async (ilkInfo ) => {
     const [ ilk , gem ] = ilkInfo;
     await maker.getToken(gem).approveUnlimited(proxyAddress);
-    //await new Promise(r => setTimeout(r, i*50)); //avoid nonce issues
-    const vault = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.1), 1);
-    id[i] = vault.id;
+    await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.1), 1);
   }));
 
   //trigger ES, and get to the point that Vaults can be redeemed
