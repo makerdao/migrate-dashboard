@@ -5,21 +5,21 @@ import { fireEvent } from '@testing-library/react';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH, /*BAT, USDC*/ } from '@makerdao/dai-plugin-mcd';
+import { ETH, BAT, USDC } from '@makerdao/dai-plugin-mcd';
 
 const { click } = fireEvent;
 
-let maker, id = [];
+let maker;
 
-const ilks = [['ETH-A', ETH]]; //add BAT-A and USDC-A, but need to get the collateral on the testchain
+const ilks = [['ETH-A', ETH], ['BAT-A', BAT], ['USDC-A', USDC]];
 
 beforeAll(async () => {
   maker = await instantiateMaker('test');
-  await maker.service('proxy').ensureProxy();
-  await Promise.all(ilks.map(async (ilkInfo, i) => {
+  const proxyAddress = await maker.service('proxy').ensureProxy();
+  await Promise.all(ilks.map(async (ilkInfo ) => {
     const [ ilk , gem ] = ilkInfo;
-    const vault = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.1), 1);
-    id[i] = vault.id;
+    await maker.getToken(gem).approveUnlimited(proxyAddress);
+    await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.1), 1);
   }));
 
   //trigger ES, and get to the point that Vaults can be redeemed
@@ -57,15 +57,30 @@ test('the whole flow', async () => {
     findByText,
     findAllByTestId,
     getByTestId,
-    getAllByText
+    getAllByTestId
   } = await render(<RedeemVaults />, {
     initialState: {
         vaultsToRedeem: {
-            parsedVaultsData: [{
+            parsedVaultsData: [
+            { id: 3,
+              type: 'USDC',
+              collateral: '100,000,000,000.00 USDC',
+              daiDebt: '1.00 DAI',
+              shutdownValue: '$1.00',
+              exchangeRate: '1 DAI : 1.0000 USDC',
+              vaultValue: '99,999,999,999.00 USDC' },
+            { id: 2,
+              type: 'BAT',
+              collateral: '0.10 BAT',
+              daiDebt: '1.00 DAI',
+              shutdownValue: '$40.00',
+              exchangeRate: '1 DAI : 0.0250 BAT',
+              vaultValue: '0.08 BAT' },
+            {
             collateral: '0.1 ETH',
             daiDebt: '1.00 DAI',
             exchangeRate: '1 DAI : 0.0005 ETH',
-            id: id[0],
+            id: 1,
             shutdownValue: '$2,000.00',
             type: 'ETH',
             vaultValue: '0.0100 ETH'}]
@@ -73,14 +88,15 @@ test('the whole flow', async () => {
     }
   });
   await findByText('Withdraw Excess Collateral from Vaults');
-  //there's two withdraw buttons, one for desktop, one for mobile
-  const withdrawButton = getAllByText('Withdraw')[0];
-  expect(withdrawButton.disabled).toBeTruthy();
   click(getByTestId('tosCheck'));
-  expect(withdrawButton.disabled).toBeFalsy();
-  const ethBefore = await maker.service('token').getToken(ETH).balance();
-  click(withdrawButton);
-  await findAllByTestId('successButton');
-  const ethAfter = await maker.service('token').getToken(ETH).balance();
-  expect(ethAfter.gt(ethBefore));
+  await Promise.all(ilks.map(async (ilkInfo) => {
+    const [, gem ] = ilkInfo;
+    //there's two withdraw buttons, one for desktop, one for mobile
+    const withdrawButton = getAllByTestId(`withdrawButton-${gem.symbol}`)[0];
+    const before = await maker.service('token').getToken(gem).balance();
+    click(withdrawButton);
+    await findAllByTestId(`withdrawButton-${gem.symbol}`);
+    const after = await maker.service('token').getToken(gem).balance();
+    expect(after.gt(before));
+  }));
 });
