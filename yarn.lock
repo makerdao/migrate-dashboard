@@ -2730,10 +2730,10 @@
     bignumber.js "^8.1.1"
     rxjs "^6.5.4"
 
-"@makerdao/dai-plugin-scd@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-scd/-/dai-plugin-scd-1.2.2.tgz#2bd2b82c591f7f01334c2488ee01ab15eae41852"
-  integrity sha512-2mQPGvoG9jF6HYilc41yQLmVJLLwxXvzclOPUbWwrMySluGaewFyoJiyqNCOwBia9Zbev7G1mGtCsDiKAPxD+A==
+"@makerdao/dai-plugin-scd@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-scd/-/dai-plugin-scd-1.2.3.tgz#5ca8bd3ac81c6a67c5fd0c2e6a81624c65be50b0"
+  integrity sha512-nmMPVRhhzHcEBKvO/TXyJitvXXNs8AloTBqoXnozaX/nsSlPlh28fLqUd0MrdEUKczf+CTcwVEbJBc4/gvM0lg==
   dependencies:
     "@babel/cli" "^7.2.3"
     "@babel/core" "^7.4.5"
