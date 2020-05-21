@@ -656,31 +656,12 @@ function SCDESCollateralCard({ scd, pethInVaults }) {
       metadataTitle="PETH in CDP(s)"
       metadataValue={showAmount(total)}
       onSelected={() => Router.push('/migration/scd-es-cdp')}
-      disabled={!out}
     >
       <>
         <Text.p t="body">
           Redeem your PETH from your Single-Collateral Sai CDPs for a
           proportional amount of ETH from the system.
         </Text.p>
-        {!out && (
-          <TextBlock t="body" mt={'m'} color="#708390" fontWeight="500">
-            {seconds > 0 ? (
-              <Timer
-                seconds={seconds}
-                prefix="Sai redemption in progress. Cooldown period ends in"
-              >
-                CDP holders must wait for all outstanding debt to be removed in
-                order to balance out the ETH:PETH ratio.
-              </Timer>
-            ) : (
-              <>
-                Cooldown period has ended and access will be granted soon.
-                Reload the page to see.
-              </>
-            )}
-          </TextBlock>
-        )}
       </>
     </MigrationCard>
   );
