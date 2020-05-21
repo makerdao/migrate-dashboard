@@ -2791,10 +2791,10 @@
     babel-runtime "^6.26.0"
     walletlink "^1.0.0"
 
-"@makerdao/dai@^0.31.3":
-  version "0.31.3"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.31.3.tgz#f0257200e4817aca9ad09cf13a952bcd2b7be0d6"
-  integrity sha512-c0iiSaH9WBxeDI/PCgpkI2M6HXydBog78XW70LVTHL2DJOwLfZ1PI/r+KQk/DiPSPmoqXsLUyWmd5w5YdWLTtA==
+"@makerdao/dai@^0.31.4":
+  version "0.31.4"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.31.4.tgz#8cca45fe35599b7e109b37b70719535285d1075e"
+  integrity sha512-jns4cU+b1Lz0QDrz5+TD9+kK2cc1841lRGY3DeBSVVUahtEBGXzVDgh7ThJgygd1cd0P2Tw94ycD8n3To94akg==
   dependencies:
     "@babel/cli" "^7.2.3"
     "@babel/core" "^7.4.5"
