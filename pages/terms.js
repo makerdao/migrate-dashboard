@@ -29,7 +29,7 @@ function Terms() {
           fontWeight={'500'}
           textAlign={{ s: 'center', l: 'left' }}
         >
-          Last updated: 02 October 2019
+          Last updated: 19 November 2019
         </Breakout>
         <LegalTextLayout>
           <p>
@@ -75,12 +75,11 @@ function Terms() {
           </p>
           <p>
             You affirm that you are aware and acknowledge that Company is a
-            non-profit entity and non-custodial provider of software services,
-            meaning that the Company does not custody, control or manage user
-            funds in any manner whatsoever. The Services are deployed in a
-            decentralized environment wherein the Services can be autonomously
-            and directly accessed by the Users without any involvement or
-            actions taken by Company or any third-party.
+            non-custodial provider of software services, meaning that the Company 
+            does not custody, control or manage user funds in any manner whatsoever. 
+            The Services are deployed in a decentralized environment wherein the
+            Services can be autonomously and directly accessed by the Users 
+            without any involvement or actions taken by Company or any third-party.
           </p>
           <h3>1.2. Your Use of Services</h3>
           <p>You represent and warrant to Company that:</p>
