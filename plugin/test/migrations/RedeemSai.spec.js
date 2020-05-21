@@ -43,8 +43,8 @@ describe('Redeem Sai', () => {
     expect(saiBalanceAfterRedemption).toEqual(
       saiBalanceBeforeRedemption.minus(5)
     );
-    expect(ethBalanceAfterRedemption.toNumber()).toBeCloseTo(
-      ethBalanceBeforeRedemption.plus(0.0125).toNumber()
+    expect(ethBalanceAfterRedemption.toNumber()).toBeGreaterThan(
+      ethBalanceBeforeRedemption.toNumber()
     );
   });
 });
