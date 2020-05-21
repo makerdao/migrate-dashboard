@@ -17,7 +17,7 @@ import { addToastWithTimeout } from '../Toast';
 import SuccessButton from '../SuccessButton';
 import { TOSCheck } from '../migratecdp/PayAndMigrate';
 
-const TABLE_COLUMNS = '1fr 1fr 2fr 2fr 2fr 2fr';
+const TABLE_COLUMNS = '1fr 2fr 2fr 2fr 2fr 2fr 2fr';
 
 const Label = styled(Box)`
   text-transform: uppercase;
