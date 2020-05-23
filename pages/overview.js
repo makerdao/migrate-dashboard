@@ -17,13 +17,12 @@ import flatten from 'lodash/flatten';
 import reduce from 'lodash/reduce';
 import { getColor } from '../utils/theme';
 import { prettifyNumber } from '../utils/ui';
-import { TextBlock, Breakout } from '../components/Typography';
+import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
 import { SAI, DAI, PETH } from '../maker';
 import TooltipContents from '../components/TooltipContents';
-import { shutDown } from '../plugin/test/helpers';
 import { stringToBytes, fromRay, fromRad, fromWei } from '../utils/ethereum';
 import BigNumber from 'bignumber.js';
 import ilkList from '../references/ilkList';
@@ -144,14 +143,6 @@ function OverviewDataFetch() {
     (async () => {
       if (!maker || !account) return;
       const mig = maker.service('migration');
-      // the following can be removed when we're done testing this
-      if (global.scdESTest && global.testnet) {
-        const off = await mig.getMigration('redeem-sai').off();
-        if (!off) {
-          console.log('shutting down');
-          await shutDown(true);
-        }
-      }
       const checks = await mig.runAllChecks();
 
       const daiBalance = DAI(await maker.getToken('MDAI').balance());

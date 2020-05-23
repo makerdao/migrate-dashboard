@@ -2730,6 +2730,15 @@
     bignumber.js "^8.1.1"
     rxjs "^6.5.4"
 
+"@makerdao/dai-plugin-migrations@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.2.0.tgz#d728f4f9e1509ff4cf114fb1fd9db4be2fa2825d"
+  integrity sha512-oCDqjLTi4mxwJwgrFJ333F807opBNDf9t0gcbujAZshrY6mDXTCCmH4EH0nnbckaXX9MZgC7sBt3ivtM4Ftm1w==
+  dependencies:
+    "@makerdao/currency" "^0.9.8"
+    "@makerdao/services-core" "^0.9.9"
+    bignumber.js "^8.1.1"
+
 "@makerdao/dai-plugin-scd@^1.2.3":
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-scd/-/dai-plugin-scd-1.2.3.tgz#5ca8bd3ac81c6a67c5fd0c2e6a81624c65be50b0"

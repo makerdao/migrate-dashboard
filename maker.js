@@ -1,8 +1,7 @@
 import Maker from '@makerdao/dai';
 import mcdPlugin, { MDAI, BAT } from '@makerdao/dai-plugin-mcd';
 import scdPlugin from '@makerdao/dai-plugin-scd';
-// import migrationPlugin from '@makerdao/dai-plugin-migrations';
-import migrationPlugin from './plugin/src/index';
+import migrationPlugin from '@makerdao/dai-plugin-migrations';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import walletLinkPlugin from '@makerdao/dai-plugin-walletlink';
 import walletConnectPlugin from '@makerdao/dai-plugin-walletconnect';
