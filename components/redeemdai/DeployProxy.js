@@ -5,7 +5,7 @@ import useBlockHeight from '../../hooks/useBlockHeight';
 import ProxyComponent from '../ProxyComponent';
 import useMaker from '../../hooks/useMaker';
 import useStore from '../../hooks/useStore';
-import { MDAI } from '@makerdao/dai-plugin-mcd';
+import { DAI } from '@makerdao/dai-plugin-mcd';
 import { addToastWithTimeout } from '../Toast';
 
 function DeployProxy({ onPrev, onNext }) {
@@ -34,7 +34,7 @@ function DeployProxy({ onPrev, onNext }) {
       if (!proxyAddress) {
         throw new Error('No Proxy');
       }
-      await maker.getToken(MDAI).approveUnlimited(proxyAddress);
+      await maker.getToken(DAI).approveUnlimited(proxyAddress);
       setHasAllowance(true);
     } catch (err) {
       const message = err.message ? err.message : err;

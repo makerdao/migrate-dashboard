@@ -6,7 +6,7 @@ import { instantiateMaker, SAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
 import { ETH, BAT, USDC } from '@makerdao/dai-plugin-mcd';
-import { MDAI } from '@makerdao/dai-plugin-mcd';
+import { DAI } from '@makerdao/dai-plugin-mcd';
 const { change, click } = fireEvent;
 import BigNumber from 'bignumber.js';
 
@@ -19,6 +19,7 @@ const minEndBalance = 0.1;
 const ilks = [['ETH-A', ETH], ['BAT-A', BAT], ['USDC-A', USDC]];
 
 beforeAll(async () => {
+    jest.setTimeout(30000);
     maker = await instantiateMaker('test');
     const proxyAddress = await maker.service('proxy').ensureProxy();
     const vaults = {};
@@ -28,8 +29,8 @@ beforeAll(async () => {
       vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.1), daiAmount);
     }));
 
-    await maker.getToken(MDAI).approveUnlimited(proxyAddress);
-    await maker.service('mcd:savings').join(MDAI(dsrAmount));
+    await maker.getToken(DAI).approveUnlimited(proxyAddress);
+    await maker.service('mcd:savings').join(DAI(dsrAmount));
 
     //trigger ES, and get to the point that Dai can be cashed for all ilks
     const token = maker.service('smartContract').getContract('MCD_GOV');
@@ -64,7 +65,7 @@ test('overview', async () => {
   } = await render(<Overview />, {
     initialState: {
       saiAvailable: SAI(0),
-      daiAvailable: MDAI(0)
+      daiAvailable: DAI(0)
     },
     getMaker: maker => {
       maker.service('cdp').getCdpIds = jest.fn(() => []);
@@ -84,12 +85,12 @@ test('the whole flow', async () => {
     getAllByTestId
   } = await render(<RedeemDai />, {
     initialState: {
-        proxyDaiAllowance: MDAI(0),
-        daiBalance: MDAI(daiAmount*ilks.length - dsrAmount),
-        endBalance: MDAI(0),
-        dsrBalance: MDAI(dsrAmount),
+        proxyDaiAllowance: DAI(0),
+        daiBalance: DAI(daiAmount*ilks.length - dsrAmount),
+        endBalance: DAI(0),
+        dsrBalance: DAI(dsrAmount),
         minEndVatBalance: BigNumber(minEndBalance),
-        bagBalance: MDAI(0),
+        bagBalance: DAI(0),
         outAmounts: [{ilk: 'ETH-A', out: BigNumber(0)},{ilk: 'BAT-A', out: BigNumber(0)},{ilk: 'USDC-A', out: BigNumber(0)}],
         fixedPrices: [{ilk: 'ETH-A', price: BigNumber(10)},{ilk: 'BAT-A', price: BigNumber(10)},{ilk: 'USDC-A', price: BigNumber(10)}],
         tagPrices: [{ilk: 'ETH-A', price: BigNumber(10)},{ilk: 'BAT-A', price: BigNumber(10)},{ilk: 'USDC-A', price: BigNumber(10)}]

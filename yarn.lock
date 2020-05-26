@@ -2720,20 +2720,20 @@
     hdkey "^1.0.0"
     web3-provider-engine "14.0.4"
 
-"@makerdao/dai-plugin-mcd@^1.4.3":
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-mcd/-/dai-plugin-mcd-1.4.3.tgz#4121fb913ac7d2f983b2a3b0d33cb705c7478396"
-  integrity sha512-Fr2PoCjK3S9qrKFBeOwPkrO5bwRY+mX7ivGyGCN/fXlhnJDF3yVUqKQuxgVyMVKbhLAbMZ5Tr8QDBPNlNH5NZw==
+"@makerdao/dai-plugin-mcd@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-mcd/-/dai-plugin-mcd-1.5.0.tgz#e999664a0331c6e7d2134facb6644c76773817d1"
+  integrity sha512-vYNyZzMFvXRIeXMlCxZ1VXRJQ2NbEtqio3i39LLvkCgaHyomiZj9vOEUKn/ZoQfy/3xWV7kkAqaOAO6RJihBJA==
   dependencies:
     "@makerdao/currency" "^0.9.8"
     "@makerdao/services-core" "^0.9.9"
     bignumber.js "^8.1.1"
     rxjs "^6.5.4"
 
-"@makerdao/dai-plugin-migrations@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.2.0.tgz#d728f4f9e1509ff4cf114fb1fd9db4be2fa2825d"
-  integrity sha512-oCDqjLTi4mxwJwgrFJ333F807opBNDf9t0gcbujAZshrY6mDXTCCmH4EH0nnbckaXX9MZgC7sBt3ivtM4Ftm1w==
+"@makerdao/dai-plugin-migrations@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.3.0.tgz#631c084dfa761d6ad44a66a54eb4194ba25c9c25"
+  integrity sha512-yIk4oM5hRT30zGXH8Ynvadyuj7CwpGYyMvNHywJCeKImT+WZ9yxzoUBg1UOesoHsYHrHvHxYnpfb/HH2VSS+Xg==
   dependencies:
     "@makerdao/currency" "^0.9.8"
     "@makerdao/services-core" "^0.9.9"

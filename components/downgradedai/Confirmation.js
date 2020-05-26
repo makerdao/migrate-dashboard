@@ -33,7 +33,7 @@ export default ({
   const giveProxyDaiAllowance = async () => {
     setDaiApprovePending(true);
     try {
-      await maker.getToken('MDAI').approveUnlimited(migrationContractAddress);
+      await maker.getToken('DAI').approveUnlimited(migrationContractAddress);
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasDaiAllowance: true
@@ -72,7 +72,7 @@ export default ({
     (async () => {
       if (maker && account) {
         const connectedWalletAllowance = await maker
-          .getToken('MDAI')
+          .getToken('DAI')
           .allowance(account.address, migrationContractAddress);
         const hasDaiAllowance = connectedWalletAllowance.gte(
           daiAmountToMigrate.toBigNumber().times(1.05)

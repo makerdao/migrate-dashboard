@@ -14,7 +14,7 @@ async function getStartingData(maker) {
   const mig = await maker
     .service('migration')
     .getMigration('single-to-multi-cdp');
-  const daiToken = maker.service('token').getToken('MDAI');
+  const daiToken = maker.service('token').getToken('DAI');
   const [systemWideDebtCeiling, daiSupply, dsrAnnual] = await Promise.all([
     maker.service('mcd:systemData').getSystemWideDebtCeiling(),
     daiToken.totalSupply().then(s => s.toNumber()),

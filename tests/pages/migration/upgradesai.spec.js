@@ -1,14 +1,7 @@
 import UpgradeSai from '../../../pages/migration/dai';
 import render from '../../helpers/render';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
-import {
-  cleanup,
-  fireEvent,
-  wait,
-  waitForElement
-} from '@testing-library/react';
-import Maker from '@makerdao/dai';
-import McdPlugin from '@makerdao/dai-plugin-mcd';
+import { cleanup, fireEvent, wait } from '@testing-library/react';
 import BigNumber from 'bignumber.js';
 import round from 'lodash/round';
 const { change, click } = fireEvent;
@@ -53,10 +46,10 @@ describe('with live testchain', () => {
   let maker, startingBalance;
 
   beforeEach(async () => {
-    maker = await instantiateMaker('test')
+    maker = await instantiateMaker('test');
     const proxy = await maker.service('proxy').ensureProxy();
     await maker.service('cdp').openProxyCdpLockEthAndDrawSai(1, 50, proxy);
-    startingBalance = await maker.getToken('MDAI').balance();
+    startingBalance = await maker.getToken('DAI').balance();
   });
 
   test('the whole flow', async () => {
@@ -99,7 +92,7 @@ describe('with live testchain', () => {
     await findByText('Earn savings on your Dai');
     getByText('5%');
 
-    expect(await maker.getToken('MDAI').balance()).toEqual(
+    expect(await maker.getToken('DAI').balance()).toEqual(
       startingBalance.plus(amount)
     );
   }, 10000);

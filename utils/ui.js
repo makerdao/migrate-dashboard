@@ -1,5 +1,3 @@
-import { MDAI } from '@makerdao/dai-plugin-mcd';
-import { DAI } from '../maker';
 import { isValidTxString, isValidAddressString } from './ethereum';
 
 export function cutMiddle(str = '', left = 4, right = 4) {
@@ -26,12 +24,6 @@ export function prettifyFloat(num, decimalPlaces = 2) {
     : num;
 }
 
-export function cleanSymbol(currency) {
-  if (MDAI.isInstance(currency) || DAI.isInstance(currency)) return 'DAI';
-  if (currency.symbol === 'DAI') return 'SAI';
-  return currency.symbol;
-}
-
 export function prettifyNumber(
   raw = null,
   truncate = false,
@@ -40,7 +32,7 @@ export function prettifyNumber(
 ) {
   if (raw === null) return null;
   let symbol = '';
-  if (raw.symbol !== undefined) symbol += ' ' + cleanSymbol(raw);
+  if (raw.symbol !== undefined) symbol += ' ' + raw.symbol;
   const num = parseFloat(raw.toString());
   if (num > Number.MAX_SAFE_INTEGER) return 'NUMBER TOO BIG';
   let formattedNumber;

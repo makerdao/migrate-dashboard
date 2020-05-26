@@ -145,7 +145,7 @@ function OverviewDataFetch() {
       const mig = maker.service('migration');
       const checks = await mig.runAllChecks();
 
-      const daiBalance = DAI(await maker.getToken('MDAI').balance());
+      const daiBalance = DAI(await maker.getToken('DAI').balance());
       const end = maker.service('smartContract').getContract('MCD_END_1');
       const live = await end.live();
       const emergencyShutdownActive = live.eq(0);

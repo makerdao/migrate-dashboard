@@ -66,7 +66,7 @@ function DepositDai({ onClose, setRedeemAmount, redeemAmount, onNext }) {
     setDsrWithdrawing(true);
     try {
       await maker.service('mcd:savings').exitAll();
-      const newDaiBalance = DAI(await maker.getToken('MDAI').balance());
+      const newDaiBalance = DAI(await maker.getToken('DAI').balance());
       dispatch({
         type: 'assign',
         payload: {
