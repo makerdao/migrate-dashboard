@@ -16,53 +16,63 @@ const daiAmount = 1;
 const dsrAmount = 0.5;
 const minEndBalance = 0.1;
 
-const ilks = [['ETH-A', ETH], ['BAT-A', BAT], ['USDC-A', USDC]];
+const ilks = [
+  ['ETH-A', ETH],
+  ['BAT-A', BAT],
+  ['USDC-A', USDC]
+];
 
 beforeAll(async () => {
-    jest.setTimeout(30000);
-    maker = await instantiateMaker('test');
-    const proxyAddress = await maker.service('proxy').ensureProxy();
-    const vaults = {};
-    await Promise.all(ilks.map(async (ilkInfo ) => {
-      const [ ilk , gem ] = ilkInfo;
+  jest.setTimeout(30000);
+  maker = await instantiateMaker('test');
+  const proxyAddress = await maker.service('proxy').ensureProxy();
+  const vaults = {};
+  await Promise.all(
+    ilks.map(async ilkInfo => {
+      const [ilk, gem] = ilkInfo;
       await maker.getToken(gem).approveUnlimited(proxyAddress);
-      vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.1), daiAmount);
-    }));
+      vaults[ilk] = await maker
+        .service('mcd:cdpManager')
+        .openLockAndDraw(ilk, gem(0.1), daiAmount);
+    })
+  );
 
-    await maker.getToken(DAI).approveUnlimited(proxyAddress);
-    await maker.service('mcd:savings').join(DAI(dsrAmount));
+  await maker.getToken(DAI).approveUnlimited(proxyAddress);
+  await maker.service('mcd:savings').join(DAI(dsrAmount));
 
-    //trigger ES, and get to the point that Dai can be cashed for all ilks
-    const token = maker.service('smartContract').getContract('MCD_GOV');
-    await token['mint(uint256)'](WAD.times(50000).toFixed());
-    const esm = maker.service('smartContract').getContract('MCD_ESM');
-    await token.approve(esm.address, -1); //approve unlimited
-    await esm.join(WAD.times(50000).toFixed());
-    await esm.fire();
-    const end = maker.service('smartContract').getContract('MCD_END');
-    await Promise.all(ilks.map(async (ilkInfo ) => {
-      const [ ilk ,] = ilkInfo;
+  //trigger ES, and get to the point that Dai can be cashed for all ilks
+  const token = maker.service('smartContract').getContract('MCD_GOV');
+  await token['mint(uint256)'](WAD.times(50000).toFixed());
+  const esm = maker.service('smartContract').getContract('MCD_ESM');
+  await token.approve(esm.address, -1); //approve unlimited
+  await esm.join(WAD.times(50000).toFixed());
+  await esm.fire();
+  const end = maker.service('smartContract').getContract('MCD_END');
+  await Promise.all(
+    ilks.map(async ilkInfo => {
+      const [ilk] = ilkInfo;
       await end['cage(bytes32)'](stringToBytes(ilk));
-    }));
-    const migVault = maker.service('migration')
-      .getMigration('global-settlement-collateral-claims');
+    })
+  );
+  const migVault = maker
+    .service('migration')
+    .getMigration('global-settlement-collateral-claims');
 
-    await migVault.freeEth(vaults['ETH-A'].id);
-    await migVault.freeBat(vaults['BAT-A'].id);
-    await migVault.freeUsdc(vaults['USDC-A'].id);
-    
-    await end.thaw();
-    await Promise.all(ilks.map(async (ilkInfo ) => {
-      const [ ilk ,] = ilkInfo;
+  await migVault.freeEth(vaults['ETH-A'].id);
+  await migVault.freeBat(vaults['BAT-A'].id);
+  await migVault.freeUsdc(vaults['USDC-A'].id);
+
+  await end.thaw();
+  await Promise.all(
+    ilks.map(async ilkInfo => {
+      const [ilk] = ilkInfo;
       await end.flow(stringToBytes(ilk));
-    }));
-
+    })
+  );
 });
 
 test('overview', async () => {
-  const {
-    findByText,
-  } = await render(<Overview />, {
+  const { findByText } = await render(<Overview />, {
     initialState: {
       saiAvailable: SAI(0),
       daiAvailable: DAI(0)
@@ -85,15 +95,27 @@ test('the whole flow', async () => {
     getAllByTestId
   } = await render(<RedeemDai />, {
     initialState: {
-        proxyDaiAllowance: DAI(0),
-        daiBalance: DAI(daiAmount*ilks.length - dsrAmount),
-        endBalance: DAI(0),
-        dsrBalance: DAI(dsrAmount),
-        minEndVatBalance: BigNumber(minEndBalance),
-        bagBalance: DAI(0),
-        outAmounts: [{ilk: 'ETH-A', out: BigNumber(0)},{ilk: 'BAT-A', out: BigNumber(0)},{ilk: 'USDC-A', out: BigNumber(0)}],
-        fixedPrices: [{ilk: 'ETH-A', price: BigNumber(10)},{ilk: 'BAT-A', price: BigNumber(10)},{ilk: 'USDC-A', price: BigNumber(10)}],
-        tagPrices: [{ilk: 'ETH-A', price: BigNumber(10)},{ilk: 'BAT-A', price: BigNumber(10)},{ilk: 'USDC-A', price: BigNumber(10)}]
+      proxyDaiAllowance: DAI(0),
+      daiBalance: DAI(daiAmount * ilks.length - dsrAmount),
+      endBalance: DAI(0),
+      dsrBalance: DAI(dsrAmount),
+      minEndVatBalance: BigNumber(minEndBalance),
+      bagBalance: DAI(0),
+      outAmounts: [
+        { ilk: 'ETH-A', out: BigNumber(0) },
+        { ilk: 'BAT-A', out: BigNumber(0) },
+        { ilk: 'USDC-A', out: BigNumber(0) }
+      ],
+      fixedPrices: [
+        { ilk: 'ETH-A', price: BigNumber(10) },
+        { ilk: 'BAT-A', price: BigNumber(10) },
+        { ilk: 'USDC-A', price: BigNumber(10) }
+      ],
+      tagPrices: [
+        { ilk: 'ETH-A', price: BigNumber(10) },
+        { ilk: 'BAT-A', price: BigNumber(10) },
+        { ilk: 'USDC-A', price: BigNumber(10) }
+      ]
     }
   });
 
@@ -110,8 +132,8 @@ test('the whole flow', async () => {
   //deposit dai
   await findByText('Deposit Dai to Redeem');
   click(getByText('Withdraw'));
-  await findByText('3.00 DAI');//daiAmount
-  change(getByRole('textbox'), { target: { value: minEndBalance + .1 } });
+  await findByText('3.00 DAI'); //daiAmount
+  change(getByRole('textbox'), { target: { value: minEndBalance + 0.1 } });
   getByText(/Users cannot redeem more/);
   change(getByRole('textbox'), { target: { value: minEndBalance } });
   click(getByTestId('tosCheck'));
@@ -123,7 +145,7 @@ test('the whole flow', async () => {
   await findByText('Redeem Dai');
 
   async function redeem(ilkInfo) {
-    const [ ilk, gem ] = ilkInfo;
+    const [ilk, gem] = ilkInfo;
     //should be two buttons, one for mobile one for desktop
     const button = getAllByTestId(`redeemButton-${ilk}`)[0];
     const before = await maker.service('token').getToken(gem).balance();
