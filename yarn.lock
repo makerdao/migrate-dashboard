@@ -2739,10 +2739,10 @@
     "@makerdao/services-core" "^0.9.9"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-scd@^1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-scd/-/dai-plugin-scd-1.2.3.tgz#5ca8bd3ac81c6a67c5fd0c2e6a81624c65be50b0"
-  integrity sha512-nmMPVRhhzHcEBKvO/TXyJitvXXNs8AloTBqoXnozaX/nsSlPlh28fLqUd0MrdEUKczf+CTcwVEbJBc4/gvM0lg==
+"@makerdao/dai-plugin-scd@^1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-scd/-/dai-plugin-scd-1.2.5.tgz#0cfcbe3b41ec7f5e7eb2ad538f706feef7a6e93c"
+  integrity sha512-yR8dYZ42aq6qo3/qf/xVusN3Q5kaSdMwvmagOcRJXQB4OKJ9okf6DGIBV+nc0ola9vyk4jLGaXZyE7LhPZfqNQ==
   dependencies:
     "@babel/cli" "^7.2.3"
     "@babel/core" "^7.4.5"
