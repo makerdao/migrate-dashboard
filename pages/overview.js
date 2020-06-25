@@ -15,9 +15,10 @@ import {
 import useMaker from '../hooks/useMaker';
 import flatten from 'lodash/flatten';
 import reduce from 'lodash/reduce';
+import uniq from 'lodash/uniq';
 import { getColor } from '../utils/theme';
 import { prettifyNumber } from '../utils/ui';
-import { TextBlock, Breakout } from '../components/Typography';
+import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
@@ -317,7 +318,7 @@ function OverviewDataFetch() {
           out: await tub.out() // cooldown is over
         });
         const cdpService = maker.service('cdp');
-        const ids = flatten(Object.values(checks['single-to-multi-cdp']));
+        const ids = uniq(flatten(Object.values(checks['single-to-multi-cdp'])));
         for (const id of ids) {
           const value = await cdpService.getCollateralValue(id, PETH);
           pethInVaults.push([id, PETH(value)]);
