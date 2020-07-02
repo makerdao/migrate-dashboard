@@ -149,8 +149,8 @@ export async function shutDown(randomize) {
         103 + (randomize ? Math.random() * 20 : 0),
         proxy
       );
-
-    bites.push(() => proxyCdp.bite());
+    
+    if (i < 2) bites.push(() => proxyCdp.bite());
   }
 
   await top.cage();

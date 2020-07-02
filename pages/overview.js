@@ -30,7 +30,6 @@ import BigNumber from 'bignumber.js';
 import ilkList from '../references/ilkList';
 
 function clock(delta) {
-
   const hours = Math.floor(delta / 3600);
   delta -= hours * 3600;
 
@@ -159,11 +158,23 @@ function OverviewDataFetch() {
       const end = maker.service('smartContract').getContract('MCD_END_1');
       const live = await end.live();
       const emergencyShutdownActive = live.eq(0);
-      let endBalance = DAI(0), dsrBalance = DAI(0), daiDsrEndBalance = DAI(0),
-        bagBalance = DAI(0), proxyDaiAllowance = DAI(0), validClaims,
-        parsedVaultsData, wait, when, systemDebt, fixedPrices, tagPrices,
-        emergencyShutdownTime, minEndVatBalance, secondsUntilAuctionClose,
-        outAmounts, proxyAddress;
+      let endBalance = DAI(0),
+        dsrBalance = DAI(0),
+        daiDsrEndBalance = DAI(0),
+        bagBalance = DAI(0),
+        proxyDaiAllowance = DAI(0),
+        validClaims,
+        parsedVaultsData,
+        wait,
+        when,
+        systemDebt,
+        fixedPrices,
+        tagPrices,
+        emergencyShutdownTime,
+        minEndVatBalance,
+        secondsUntilAuctionClose,
+        outAmounts,
+        proxyAddress;
       if (emergencyShutdownActive) {
         const fixElement = async ilk => {
           const price = await end.fix(stringToBytes(ilk)).then(fromRay);
@@ -225,7 +236,7 @@ function OverviewDataFetch() {
 
         const claims = checks['global-settlement-collateral-claims'];
 
-        if (claims){
+        if (claims) {
           validClaims = claims.filter(c => c.redeemable);
 
           const vaultsData = await Promise.all([
@@ -248,7 +259,12 @@ function OverviewDataFetch() {
                 false,
                 vault.collateralAmount.gt(0.01) ? 2 : 4
               )}`,
-              daiDebt: `${prettifyNumber(vault.debtValue, false, 2, false)} DAI`,
+              daiDebt: `${prettifyNumber(
+                vault.debtValue,
+                false,
+                2,
+                false
+              )} DAI`,
               vault,
               shutdownValue: `$${prettifyNumber(BigNumber(1).div(claim.tag))}`,
               exchangeRate: `1 DAI : ${prettifyNumber(
@@ -279,11 +295,8 @@ function OverviewDataFetch() {
             )
           );
         }
-        daiDsrEndBalance = daiBalance
-        .plus(endBalance)
-        .plus(dsrBalance);
-        if (daiDsrEndBalance.gt(0)){
-
+        daiDsrEndBalance = daiBalance.plus(endBalance).plus(dsrBalance);
+        if (daiDsrEndBalance.gt(0)) {
           if (proxyAddress) {
             proxyDaiAllowance = await maker
               .getToken(DAI)
@@ -305,7 +318,7 @@ function OverviewDataFetch() {
 
       const cdpMigrationCheck = checks['single-to-multi-cdp'];
 
-      const pethInVaults = [];
+      const redeemableCdps = [];
       const scs = maker.service('smartContract');
       const tub = scs.getContract('SAI_TUB');
       const top = scs.getContract('SAI_TOP');
@@ -321,7 +334,8 @@ function OverviewDataFetch() {
         const ids = uniq(flatten(Object.values(checks['single-to-multi-cdp'])));
         for (const id of ids) {
           const value = await cdpService.getCollateralValue(id, PETH);
-          pethInVaults.push([id, PETH(value)]);
+          const debt = await cdpService.getDebtValue(id);
+          redeemableCdps.push([id, PETH(value), debt]);
         }
       }
 
@@ -336,7 +350,7 @@ function OverviewDataFetch() {
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
           scd,
-          pethInVaults,
+          redeemableCdps,
           emergencyShutdownTime,
           secondsUntilAuctionClose,
           systemDebt,
@@ -378,7 +392,7 @@ function Overview({ fetching }) {
       chiefMigrationCheck,
       vaultsToRedeem,
       scd = {},
-      pethInVaults
+      redeemableCdps
     }
   ] = useStore();
 
@@ -400,7 +414,7 @@ function Overview({ fetching }) {
     vaultsToRedeem && vaultsToRedeem.claims && vaultsToRedeem.claims.length > 0;
 
   const shouldShowSCDESCollateral =
-    scd.off && pethInVaults.some(x => x[1].gt(0));
+    scd.off && redeemableCdps.some(x => x[1].gt(0));
   const shouldShowSCDESSai = scd.off && saiBalance && saiBalance.gt(0);
 
   const shouldShowCdps = countCdps(cdps) > 0 && !scd.off;
@@ -451,9 +465,10 @@ function Overview({ fetching }) {
               disabled={saiAvailable.eq(0)}
             >
               <Text.p t="body">
-              {daiAvailable.gt(0) ? `Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai
+                {daiAvailable.gt(0)
+                  ? `Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai
                 liquidity: ${prettifyNumber(saiAvailable)}`
-                : `Swapping your CDP for an MCD vault is no longer possible because
+                  : `Swapping your CDP for an MCD vault is no longer possible because
                 all the Sai from the migration contract has been drained. If your
                 CDP is still open after May 12th, when SCD shutdown is
                 triggered, you can claim your collateral here.`}
@@ -469,9 +484,11 @@ function Overview({ fetching }) {
               disabled={daiAvailable.eq(0)}
             >
               <Text.p t="body">
-              {daiAvailable.gt(0) ? `Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai availability: ${prettifyNumber(
-                daiAvailable
-              )}` : 'Swapping Sai for Dai is no longer possible through the Migration Portal. Please visit a decentralized exchange to swap your Sai tokens.'}
+                {daiAvailable.gt(0)
+                  ? `Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai availability: ${prettifyNumber(
+                      daiAvailable
+                    )}`
+                  : 'Swapping Sai for Dai is no longer possible through the Migration Portal. Please visit a decentralized exchange to swap your Sai tokens.'}
               </Text.p>
             </MigrationCard>
           )}
@@ -592,7 +609,7 @@ function Overview({ fetching }) {
           )}
 
           {shouldShowSCDESCollateral && (
-            <SCDESCollateralCard {...{ scd, pethInVaults }} />
+            <SCDESCollateralCard redeemableCdps={redeemableCdps} />
           )}
           {shouldShowSCDESSai && (
             <MigrationCard
@@ -602,8 +619,8 @@ function Overview({ fetching }) {
               metadataValue={showAmount(saiBalance)}
             >
               <Text.p t="body">
-                Redeem your Single-Collateral Sai for a proportional
-                amount of ETH from the Single-Collateral Sai system.
+                Redeem your Single-Collateral Sai for a proportional amount of
+                ETH from the Single-Collateral Sai system.
               </Text.p>
             </MigrationCard>
           )}
@@ -639,17 +656,8 @@ function Overview({ fetching }) {
   );
 }
 
-function SCDESCollateralCard({ scd, pethInVaults }) {
-  const { out, caged, cooldown } = scd;
-  const endTime = caged.toNumber() + cooldown.toNumber();
-  const [seconds, setSeconds] = useState();
-  const total = pethInVaults.reduce((sum, v) => sum.plus(v[1]), PETH(0));
-
-  useEffect(() => {
-    const val = endTime - new Date().getTime() / 1000;
-    setSeconds(val);
-    setTimeout(() => setSeconds(0), val * 1000);
-  }, [endTime]);
+function SCDESCollateralCard({ redeemableCdps }) {
+  const total = redeemableCdps.reduce((sum, v) => sum.plus(v[1]), PETH(0));
 
   return (
     <MigrationCard
