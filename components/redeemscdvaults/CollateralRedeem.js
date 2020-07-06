@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import {
   Text,
@@ -15,6 +15,8 @@ import { TextBlock } from '../Typography';
 import { getColor } from '../../utils/theme';
 import round from 'lodash/round';
 import { ETH } from '@makerdao/dai';
+import sortBy from 'lodash/sortBy';
+import useMaker from '../../hooks/useMaker';
 
 const CHECKBOX_WIDTH = '2rem';
 const CHECKBOX_CONTAINER_WIDTH = '4rem';
@@ -23,11 +25,15 @@ const TABLE_COLUMNS = `${CHECKBOX_CONTAINER_WIDTH} 1fr 2fr 2fr`;
 export default ({
   onNext,
   onPrev,
-  pethInVaults = [],
+  cdps = [],
+  updateCdps,
   selectedCdps,
   setSelectedCdps,
   ratio
 }) => {
+  const { maker } = useMaker();
+  const [biting, setBiting] = useState(-1);
+
   const ethValue = amount =>
     ratio ? ETH(amount.times(ratio)).toString(3) : '...';
 
@@ -36,6 +42,21 @@ export default ({
       return setSelectedCdps(selectedCdps.filter(x => x !== id));
     }
     setSelectedCdps(selectedCdps.concat(id).sort());
+  };
+
+  const unbitten = cdps.filter(c => c[2].gt(0)).length;
+
+  const bite = async cdpId => {
+    try {
+      const op = maker.service('cdp').bite(cdpId);
+      setBiting(cdpId);
+      await op;
+      setBiting(-1);
+      updateCdps({ type: 'bite', id: cdpId, maker, recur: updateCdps });
+    } catch (err) {
+      console.error(err);
+      alert('Biting failed; please try again.');
+    }
   };
 
   return (
@@ -51,7 +72,7 @@ export default ({
       >
         Select one or more CDPs to redeem ETH back to your wallet.
       </Text.p>
-      {pethInVaults.length > 0 && (
+      {cdps.length > 0 && (
         <Grid
           gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
           gridGap="m"
@@ -62,7 +83,7 @@ export default ({
               px="l"
               // pt="m"
               pb="0"
-              gridTemplateColumns={TABLE_COLUMNS}
+              gridTemplateColumns={TABLE_COLUMNS + (unbitten ? ' 1fr' : '')}
               gridColumnGap="l"
               alignItems="center"
               fontWeight="medium"
@@ -81,11 +102,11 @@ export default ({
 
       <Grid
         gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
-        gridGap="m"
+        gridGap="s"
         mt={{ s: 'xs', l: 'm' }}
       >
         <Overflow x="scroll" y="visible">
-          {pethInVaults.length === 0 && (
+          {cdps.length === 0 && (
             <Card>
               <Flex justifyContent="center" py="l" px="m">
                 <Text.p textAlign="center" t="body">
@@ -100,28 +121,42 @@ export default ({
             </Card>
           )}
           <Grid gridRowGap="s" pb="m">
-            {pethInVaults.map(([id, amount]) => (
+            {sortBy(cdps, x => x[0]).map(([id, peth, debt]) => (
               <ListItem
                 key={id}
-                {...{ id, amount }}
-                eth={ethValue(amount)}
+                {...{ id, peth, debt, unbitten, bite }}
+                eth={ethValue(peth)}
                 onChange={() => toggleSelection(id)}
                 checked={!!selectedCdps.find(x => x === id)}
+                biting={biting === id}
               />
             ))}
           </Grid>
         </Overflow>
-        <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
-          <Grid gridRowGap="xs">
-            <TextBlock t="h5" lineHeight="normal">
+        <Box>
+          <Card px={{ s: 'm', m: 'l' }} py={{ s: 'm', m: 'l' }}>
+            <TextBlock t="h5" lineHeight="normal" mb="s">
               PETH:ETH Ratio (Current)
             </TextBlock>
             <TextBlock t="body">
               1 PETH : {ratio ? round(ratio, 4) : '...'} ETH
             </TextBlock>
-          </Grid>
-        </Card>
+          </Card>
+        </Box>
       </Grid>
+      {unbitten > 0 && (
+        <Card
+          bg="yellow.100"
+          p="m"
+          borderColor="yellow.400"
+          border="1px solid"
+          mt="s"
+        >
+          {unbitten} CDP{unbitten > 1 ? 's are' : ' is'} not selectable because{' '}
+          {unbitten > 1 ? 'they have' : 'it has'} debt. Press the "Bite" button
+          to clear a CDP's debt and make it redeemable.
+        </Card>
+      )}
       <Grid
         justifySelf="center"
         gridTemplateColumns="auto auto"
@@ -139,8 +174,20 @@ export default ({
   );
 };
 
-function ListItem({ id, amount, eth, onChange, checked, ...otherProps }) {
-  const selectable = amount.gt(0);
+function ListItem({
+  id,
+  peth,
+  debt,
+  eth,
+  onChange,
+  checked,
+  unbitten,
+  bite,
+  biting,
+  ...otherProps
+}) {
+  const selectable = peth.gt(0) && debt.eq(0);
+  const select = selectable ? onChange : () => {};
   return (
     <Card
       px={['0', 'l']}
@@ -151,16 +198,16 @@ function ListItem({ id, amount, eth, onChange, checked, ...otherProps }) {
     >
       <Box display={['none', 'block']}>
         <Grid
-          gridTemplateColumns={TABLE_COLUMNS}
+          gridTemplateColumns={TABLE_COLUMNS + (unbitten ? ' 1fr' : '')}
           gridColumnGap="l"
           alignItems="center"
           fontSize="m"
           color="darkPurple"
           css="white-space: nowrap;"
-          onClick={selectable ? onChange : () => {}}
+          onClick={select}
         >
           <Checkbox
-            onChange={selectable ? onChange : () => {}}
+            onChange={select}
             fontSize={CHECKBOX_WIDTH}
             checked={checked}
             data-testid="cdpCheckbox"
@@ -168,22 +215,35 @@ function ListItem({ id, amount, eth, onChange, checked, ...otherProps }) {
           />
 
           <span>#{id}</span>
-          <span>{amount.toString(3)}</span>
+          <span>{peth.toString(3)}</span>
           <span>{eth}</span>
+          {debt.gt(0) && (
+            <Button py="xs" px="s" onClick={() => bite(id)} loading={biting}>
+              Bite
+            </Button>
+          )}
         </Grid>
       </Box>
-      <Box display={['block', 'none']} onClick={onChange}>
-        <Flex py="s" pl="m" alignItems="center">
+      <Box display={['block', 'none']} onClick={select}>
+        <Flex py="s" px="m" alignItems="center">
           <Checkbox
-            onChange={onChange}
+            onChange={select}
             fontSize={CHECKBOX_WIDTH}
             checked={checked}
+            disabled={!selectable}
             mr="9px"
           />
           <Text fontSize="20px">CDP {id}</Text>
+          {debt.gt(0) && (
+            <Box flexGrow="2" textAlign="right">
+              <Button py="xs" px="s" onClick={() => bite(id)} loading={biting}>
+                Bite
+              </Button>
+            </Box>
+          )}
         </Flex>
         <ListItemRow label="Peth Value" dark>
-          {amount.toString(3)}
+          {peth.toString(3)}
         </ListItemRow>
         <ListItemRow label="Eth Value">{eth}</ListItemRow>
       </Box>

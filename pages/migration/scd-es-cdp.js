@@ -2,7 +2,7 @@
 /// SCD Collateral Redemption ///
 /////////////////////////////////
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import useMaker from '../../hooks/useMaker';
 import useStore from '../../hooks/useStore';
 import FlowBackground from '../../components/FlowBackground';
@@ -26,6 +26,8 @@ import FadeInFromSide from '../../components/FadeInFromSide';
 import InProgressImage from '../../assets/icons/daiRedeem.svg';
 import BigNumber from 'bignumber.js';
 import { ETH } from '@makerdao/dai/dist/src/eth/Currency';
+import { PETH } from '../../maker';
+import assert from 'assert';
 
 const CompleteBody = () => {
   const [{ redeemedCollateral, pethEthRatio }] = useStore();
@@ -116,6 +118,31 @@ const steps = [
   )
 ];
 
+const reducer = (state, { type, id, payload, maker, recur }) => {
+  if (type === 'replace') {
+    return state.filter(([ id ]) => id !== payload[0]).concat([payload]);
+  }
+
+  if (type === 'bite') {
+    assert(maker, 'missing maker prop in action');
+    assert(recur, 'missing recur prop in action');
+    (async () => {
+      const service = maker.service('cdp');
+      const payload = [
+        id,
+        PETH(await service.getCollateralValue(id, PETH)),
+        await service.getDebtValue(id)
+      ];
+
+      // this is a kinda-hacky way of handling async in a reducer,
+      // by calling itself again after awaiting
+      recur({ type: 'replace', payload });
+    })();
+  } 
+  
+  return state;
+}
+
 export default function () {
   const { maker, account } = useMaker();
   const [currentStep, setCurrentStep] = useState(0);
@@ -123,7 +150,8 @@ export default function () {
   const [txHashes, setTxHashes] = useState();
   const [selectedCdps, setSelectedCdps] = useState([]);
   const [ratio, setRatio] = useState();
-  const [{ pethInVaults }] = useStore();
+  const [{ redeemableCdps }] = useStore();
+  const [cdps, updateCdps] = useReducer(reducer, redeemableCdps);
 
   useEffect(() => {
     if (!maker) return;
@@ -180,7 +208,8 @@ export default function () {
                   setTxHashes,
                   txHashes,
                   showErrorMessageAndAllowExiting,
-                  pethInVaults,
+                  cdps,
+                  updateCdps,
                   selectedCdps,
                   setSelectedCdps,
                   ratio

@@ -10,7 +10,7 @@ export default ({
   onPrev,
   onNext,
   selectedCdps,
-  pethInVaults,
+  cdps,
   ratio,
   setTxCount,
   setTxHashes,
@@ -56,7 +56,7 @@ export default ({
 
     try {
       for (const cdp of cdpInstances.filter(c => !c.dsProxyAddress)) {
-        const pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
+        const pethVal = cdps.find(x => x[0] === cdp.id)[1];
         totalPethVal += pethVal.toNumber();
         console.log(`freeing ${pethVal.toString(4)} for cdp ${cdp.id}`);
         await runAndTrack(cdp.freeEth(pethVal));
@@ -72,7 +72,7 @@ export default ({
 
       // eslint-disable-next-line require-atomic-updates
       for (const cdp of cdpInstances.filter(c => c.dsProxyAddress)) {
-        const pethVal = pethInVaults.find(x => x[0] === cdp.id)[1];
+        const pethVal = cdps.find(x => x[0] === cdp.id)[1];
         totalPethVal += pethVal.toNumber();
 
         // re-fetch the ratio because it could have changed a tiny amount
@@ -137,7 +137,7 @@ export default ({
         {selectedCdps.map((id, index) => (
           <Row
             key={id}
-            amount={pethInVaults.find(x => x[0] === id)[1]}
+            amount={cdps.find(x => x[0] === id)[1]}
             {...{ id, index, ratio }}
           />
         ))}
