@@ -32,7 +32,6 @@ beforeAll(async () => {
   await top.cage();
   await top.setCooldown(0);
   await cdp1.bite();
-  await cdp2.bite();
   await new Promise(r => setTimeout(r, 1000));
   await top.flow();
 
@@ -66,14 +65,15 @@ test('the whole flow', async () => {
     debug, // eslint-disable-line no-unused-vars
     findByText,
     getAllByRole,
+    getAllByText,
     getByTestId,
     getByText,
     queryAllByText
   } = await render(<RedeemCollateral />, {
     initialState: {
-      pethInVaults: [
-        [cdp1.id, PETH(await cdp1.getCollateralValue())],
-        [cdp2.id, PETH(await cdp2.getCollateralValue())]
+      redeemableCdps: [
+        [cdp1.id, PETH(await cdp1.getCollateralValue()), await cdp1.getDebtValue()],
+        [cdp2.id, PETH(await cdp2.getCollateralValue()), await cdp2.getDebtValue()]
       ]
     }
   });
@@ -81,6 +81,10 @@ test('the whole flow', async () => {
   await findByText('Redeem Sai CDPs for Collateral');
   // wait for WETH/PETH ratio to be fetched
   await waitForElementToBeRemoved(() => queryAllByText('...'));
+  getByText(/Press the "Bite" button/);
+  click(getAllByText('Bite')[0]);
+  // await waitForElementToBeRemoved(() => queryAllByText('Bite'));
+
   getAllByRole('checkbox').forEach(i => i.checked || click(i));
   click(getByText('Continue'));
   
