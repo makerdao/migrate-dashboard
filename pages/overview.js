@@ -13,16 +13,14 @@ import {
   Tooltip
 } from '@makerdao/ui-components-core';
 import useMaker from '../hooks/useMaker';
-import flatten from 'lodash/flatten';
 import reduce from 'lodash/reduce';
-import uniq from 'lodash/uniq';
 import { getColor } from '../utils/theme';
 import { prettifyNumber } from '../utils/ui';
 import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
-import { SAI, DAI, PETH } from '../maker';
+import { DAI } from '../maker';
 import TooltipContents from '../components/TooltipContents';
 import { stringToBytes, fromRay, fromRad, fromWei } from '../utils/ethereum';
 import BigNumber from 'bignumber.js';
@@ -307,41 +305,14 @@ function OverviewDataFetch() {
         }
       }
 
-      const cdpMigrationCheck = checks['single-to-multi-cdp'];
-
-      const redeemableCdps = [];
-      const scs = maker.service('smartContract');
-      const tub = scs.getContract('SAI_TUB');
-      const top = scs.getContract('SAI_TOP');
-      const scd = { off: await tub.off() }; // SCD is shut down
-
-      if (scd.off && countCdps(cdpMigrationCheck) > 0) {
-        Object.assign(scd, {
-          caged: await top.caged(), // time of shutdown
-          cooldown: await top.cooldown(), // cooldown time length
-          out: await tub.out() // cooldown is over
-        });
-        const cdpService = maker.service('cdp');
-        const ids = uniq(flatten(Object.values(checks['single-to-multi-cdp'])));
-        for (const id of ids) {
-          const value = await cdpService.getCollateralValue(id, PETH);
-          const debt = await cdpService.getDebtValue(id);
-          redeemableCdps.push([id, PETH(value), debt]);
-        }
-      }
-
       setFetching(false);
 
       dispatch({
         type: 'assign',
         payload: {
           emergencyShutdownActive,
-          cdpMigrationCheck,
-          saiBalance: SAI(checks['sai-to-dai']),
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
-          scd,
-          redeemableCdps,
           emergencyShutdownTime,
           secondsUntilAuctionClose,
           systemDebt,
@@ -373,25 +344,15 @@ function Overview({ fetching }) {
       secondsUntilAuctionClose,
       systemDebt,
       fixedPrices,
-      cdpMigrationCheck: cdps,
-      saiBalance,
-      daiBalance,
       daiDsrEndBalance,
-      saiAvailable,
-      daiAvailable,
       oldMkrBalance,
       chiefMigrationCheck,
       vaultsToRedeem,
-      scd = {},
-      redeemableCdps
     }
   ] = useStore();
 
   const { mkrLockedDirectly, mkrLockedViaProxy } = chiefMigrationCheck || {};
-  const shouldShowDai = saiBalance && saiBalance.gt(0) && !scd.off;
   const shouldShowMkr = oldMkrBalance && oldMkrBalance.gt(0);
-  const shouldShowReverse =
-    daiBalance && daiBalance.gt(0) && saiAvailable.gt(0);
   const shouldShowChief =
     chiefMigrationCheck && (mkrLockedDirectly.gt(0) || mkrLockedViaProxy.gt(0));
   const shouldShowCollateral =
@@ -404,22 +365,11 @@ function Overview({ fetching }) {
   const shouldShowRedeemVaults =
     vaultsToRedeem && vaultsToRedeem.claims && vaultsToRedeem.claims.length > 0;
 
-  const shouldShowSCDESCollateral =
-    scd.off && redeemableCdps.some(x => x[1].gt(0));
-  const shouldShowSCDESSai = scd.off && saiBalance && saiBalance.gt(0);
-
-  const shouldShowCdps = countCdps(cdps) > 0 && !scd.off;
-
   const noMigrations =
-    !shouldShowCdps &&
-    !shouldShowDai &&
     !shouldShowMkr &&
-    !shouldShowReverse &&
     !shouldShowChief &&
     !shouldShowCollateral &&
-    !shouldShowRedeemVaults &&
-    !shouldShowSCDESCollateral &&
-    !shouldShowSCDESSai;
+    !shouldShowRedeemVaults;
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -445,59 +395,6 @@ function Overview({ fetching }) {
           gridTemplateColumns={{ s: '1fr', l: '1fr 1fr' }}
           gridGap="l"
         >
-          {shouldShowCdps && (
-            <MigrationCard
-              title="CDP Upgrade"
-              metadataTitle={`CDP${
-                countCdps(cdps) === 1 ? '' : 's'
-              } to upgrade`}
-              metadataValue={showCdpCount(cdps)}
-              onSelected={() => Router.push('/migration/cdp')}
-              disabled={saiAvailable.eq(0)}
-            >
-              <Text.p t="body">
-                {daiAvailable.gt(0)
-                  ? `Upgrade your CDPs to Multi-Collateral Dai and Oasis. Current Sai
-                liquidity: ${prettifyNumber(saiAvailable)}`
-                  : `Swapping your CDP for an MCD vault is no longer possible because
-                all the Sai from the migration contract has been drained. If your
-                CDP is still open after May 12th, when SCD shutdown is
-                triggered, you can claim your collateral here.`}
-              </Text.p>
-            </MigrationCard>
-          )}
-          {shouldShowDai && (
-            <MigrationCard
-              title="Single-Collateral Sai Upgrade"
-              metadataTitle="Sai to upgrade"
-              metadataValue={showAmount(saiBalance)}
-              onSelected={() => Router.push('/migration/dai')}
-              disabled={daiAvailable.eq(0)}
-            >
-              <Text.p t="body">
-                {daiAvailable.gt(0)
-                  ? `Upgrade your Single-Collateral Sai to Multi-Collateral Dai. Current Dai availability: ${prettifyNumber(
-                      daiAvailable
-                    )}`
-                  : 'Swapping Sai for Dai is no longer possible through the Migration Portal. Please visit a decentralized exchange to swap your Sai tokens.'}
-              </Text.p>
-            </MigrationCard>
-          )}
-          {shouldShowReverse && (
-            <MigrationCard
-              title="Swap Dai for Sai"
-              metadataTitle="Dai available to swap"
-              metadataValue={showAmount(daiBalance)}
-              onSelected={() => {
-                Router.push('/migration/sai');
-              }}
-            >
-              <Text.p t="body">
-                Swap your Multi-Collateral Dai back to Single-Collateral Sai.
-                Current Sai liquidity: {prettifyNumber(saiAvailable)}
-              </Text.p>
-            </MigrationCard>
-          )}
           {shouldShowChief && (
             <MigrationCard
               title="DSChief MKR Withdrawal"
@@ -598,23 +495,6 @@ function Overview({ fetching }) {
               </Grid>
             </MigrationCard>
           )}
-
-          {shouldShowSCDESCollateral && (
-            <SCDESCollateralCard redeemableCdps={redeemableCdps} />
-          )}
-          {shouldShowSCDESSai && (
-            <MigrationCard
-              title="Redeem Sai for Collateral"
-              onSelected={() => Router.push('/migration/scd-es-sai')}
-              metadataTitle="Sai to redeem"
-              metadataValue={showAmount(saiBalance)}
-            >
-              <Text.p t="body">
-                Redeem your Single-Collateral Sai for a proportional amount of
-                ETH from the Single-Collateral Sai system.
-              </Text.p>
-            </MigrationCard>
-          )}
         </Grid>
         {fetching ? (
           <Loader
@@ -644,26 +524,6 @@ function Overview({ fetching }) {
         )}
       </Box>
     </Flex>
-  );
-}
-
-function SCDESCollateralCard({ redeemableCdps }) {
-  const total = redeemableCdps.reduce((sum, v) => sum.plus(v[1]), PETH(0));
-
-  return (
-    <MigrationCard
-      title="Withdraw ETH from Sai CDPs"
-      metadataTitle="PETH in CDP(s)"
-      metadataValue={showAmount(total)}
-      onSelected={() => Router.push('/migration/scd-es-cdp')}
-    >
-      <>
-        <Text.p t="body">
-          Redeem your PETH from your Single-Collateral Sai CDPs for a
-          proportional amount of ETH from the system.
-        </Text.p>
-      </>
-    </MigrationCard>
   );
 }
 
