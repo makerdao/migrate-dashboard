@@ -4,11 +4,7 @@ import { wait } from '@testing-library/react';
 import assert from 'assert';
 
 test('render and run all checks', async () => {
-  const { findByText } = await render(<Overview />, {
-    getMaker: maker => {
-      maker.service('cdp').getCdpIds = jest.fn(() => []);
-    }
-  });
+  const { findByText } = await render(<Overview />);
   await findByText(/Migrate and Upgrade/);
   await wait(() => assert(window.maker.currentAddress()));
 
@@ -16,5 +12,4 @@ test('render and run all checks', async () => {
   // the default account with old MKR:
   // https://github.com/makerdao/testchain/blob/dai.js/scripts/deploy-scd#L154
   await findByText('Redeem Old MKR');
-  expect(window.maker.service('cdp').getCdpIds).toBeCalled();
 });
