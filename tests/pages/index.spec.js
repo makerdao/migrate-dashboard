@@ -49,15 +49,8 @@ const mockHardwareFactory = jest.fn(async settings => {
 });
 
 test('render and get starting data', async () => {
-  let state;
-  const { getByText } = await render(<Index />, {
-    onStateChange: s => {
-      state = s;
-    }
-  });
+  const { getByText } = await render(<Index />);
   getByText(/Migrate and Upgrade/);
-  await wait(() => assert(state.saiAvailable));
-  getByText(/Sai available for CDP migration/);
 });
 
 test('select trezor address', async () => {
