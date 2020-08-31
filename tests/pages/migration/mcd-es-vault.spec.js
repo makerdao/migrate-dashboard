@@ -89,14 +89,21 @@ test('the whole flow', async () => {
   });
   await findByText('Withdraw Excess Collateral from Vaults');
   click(getByTestId('tosCheck'));
-  await Promise.all(ilks.map(async (ilkInfo) => {
+
+  async function withdraw(ilkInfo) {
     const [, gem ] = ilkInfo;
     //there's two withdraw buttons, one for desktop, one for mobile
     const withdrawButton = getAllByTestId(`withdrawButton-${gem.symbol}`)[0];
     const before = await maker.service('token').getToken(gem).balance();
     click(withdrawButton);
-    await findAllByTestId(`withdrawButton-${gem.symbol}`);
+    await findAllByTestId(`successButton-${gem.symbol}`);
     const after = await maker.service('token').getToken(gem).balance();
-    expect(after.gt(before));
-  }));
+    expect(after.gt(before)).toBe(true);
+  }
+
+  //running consecutively seems to avoid nonce issues on testchain
+  await withdraw(ilks[0]);
+  await withdraw(ilks[1]);
+  await withdraw(ilks[2]);
+  expect.assertions(ilks.length);
 });
