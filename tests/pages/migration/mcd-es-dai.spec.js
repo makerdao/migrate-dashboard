@@ -58,9 +58,9 @@ beforeAll(async () => {
     .service('migration')
     .getMigration('global-settlement-collateral-claims');
 
-  await migVault.freeEth(vaults['ETH-A'].id);
-  await migVault.freeBat(vaults['BAT-A'].id);
-  await migVault.freeUsdc(vaults['USDC-A'].id);
+  await migVault.free(vaults['ETH-A'].id, 'ETH-A');
+  await migVault.free(vaults['BAT-A'].id, 'BAT-A');
+  await migVault.free(vaults['USDC-A'].id, 'USDC-A');
 
   await end.thaw();
   await Promise.all(
