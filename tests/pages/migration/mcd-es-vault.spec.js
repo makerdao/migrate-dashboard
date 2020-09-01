@@ -19,7 +19,7 @@ beforeAll(async () => {
   await Promise.all(ilks.map(async (ilkInfo ) => {
     const [ ilk , gem ] = ilkInfo;
     await maker.getToken(gem).approveUnlimited(proxyAddress);
-    await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.1), 1);
+    await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.2), 1);
   }));
 
   //trigger ES, and get to the point that Vaults can be redeemed
@@ -73,13 +73,13 @@ test('the whole flow', async () => {
             { id: 2,
               type: 'BAT',
               ilk: 'BAT-A',
-              collateral: '0.10 BAT',
+              collateral: '0.20 BAT',
               daiDebt: '1.00 DAI',
               shutdownValue: '$40.00',
               exchangeRate: '1 DAI : 0.0250 BAT',
               vaultValue: '0.08 BAT' },
             {
-            collateral: '0.1 ETH',
+            collateral: '0.2 ETH',
             daiDebt: '1.00 DAI',
             exchangeRate: '1 DAI : 0.0005 ETH',
             id: 1,
