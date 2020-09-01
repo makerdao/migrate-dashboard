@@ -101,6 +101,6 @@ test('the whole flow', async () => {
   const finalBalance = await maker.getToken('ETH').balance();
   const ethGain = finalBalance.minus(initialBalance).toNumber();
   // account for some gas expenditure
-  expect(ethGain).toBeGreaterThan(amount - 0.06);
+  expect(ethGain).toBeGreaterThan(amount - 0.065);
   expect(ethGain).toBeLessThan(amount);
 });
