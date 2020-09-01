@@ -64,6 +64,7 @@ test('the whole flow', async () => {
             parsedVaultsData: [
             { id: 3,
               type: 'USDC',
+              ilk: 'USDC-A',
               collateral: '100,000,000,000.00 USDC',
               daiDebt: '1.00 DAI',
               shutdownValue: '$1.00',
@@ -71,6 +72,7 @@ test('the whole flow', async () => {
               vaultValue: '99,999,999,999.00 USDC' },
             { id: 2,
               type: 'BAT',
+              ilk: 'BAT-A',
               collateral: '0.10 BAT',
               daiDebt: '1.00 DAI',
               shutdownValue: '$40.00',
@@ -83,6 +85,7 @@ test('the whole flow', async () => {
             id: 1,
             shutdownValue: '$2,000.00',
             type: 'ETH',
+            ilk: 'ETH-A',
             vaultValue: '0.0100 ETH'}]
         }
     }
@@ -91,17 +94,17 @@ test('the whole flow', async () => {
   click(getByTestId('tosCheck'));
 
   async function withdraw(ilkInfo) {
-    const [, gem ] = ilkInfo;
+    const [ilk, gem ] = ilkInfo;
     //there's two withdraw buttons, one for desktop, one for mobile
-    const withdrawButton = getAllByTestId(`withdrawButton-${gem.symbol}`)[0];
+    const withdrawButton = getAllByTestId(`withdrawButton-${ilk}`)[0];
     const before = await maker.service('token').getToken(gem).balance();
     click(withdrawButton);
-    await findAllByTestId(`successButton-${gem.symbol}`);
+    await findAllByTestId(`successButton-${ilk}`);
     const after = await maker.service('token').getToken(gem).balance();
     expect(after.gt(before)).toBe(true);
   }
 
-  //running consecutively seems to avoid nonce issues on testchain
+  //running consecutively seems to make nonce issues happen less on testchain
   await withdraw(ilks[0]);
   await withdraw(ilks[1]);
   await withdraw(ilks[2]);

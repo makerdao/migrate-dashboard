@@ -245,6 +245,7 @@ function OverviewDataFetch() {
             return {
               id: vault.id,
               type: currency,
+              ilk: vault.type.ilk,
               collateral: `${prettifyNumber(
                 vault.collateralAmount,
                 false,
