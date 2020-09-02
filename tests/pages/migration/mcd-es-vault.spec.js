@@ -5,22 +5,33 @@ import { fireEvent } from '@testing-library/react';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH, BAT, USDC } from '@makerdao/dai-plugin-mcd';
+import { ETH, BAT, USDC, WBTC, KNC } from '@makerdao/dai-plugin-mcd';
 
 const { click } = fireEvent;
 
 let maker;
 
-const ilks = [['ETH-A', ETH], ['BAT-A', BAT], ['USDC-A', USDC]];
+const ilks = [
+  ['ETH-A', ETH],
+  ['BAT-A', BAT],
+  ['USDC-A', USDC],
+  ['WBTC-A', WBTC],
+];
 
 beforeAll(async () => {
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
-  await Promise.all(ilks.map(async (ilkInfo ) => {
+
+  async function setupVault(ilkInfo) {
     const [ ilk , gem ] = ilkInfo;
     await maker.getToken(gem).approveUnlimited(proxyAddress);
     await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.2), 1);
-  }));
+  }
+
+  await setupVault(ilks[0]);
+  await setupVault(ilks[1]);
+  await setupVault(ilks[2]);
+  await setupVault(ilks[3]);
 
   //trigger ES, and get to the point that Vaults can be redeemed
   const token = maker.service('smartContract').getContract('MCD_GOV');
@@ -62,6 +73,14 @@ test('the whole flow', async () => {
     initialState: {
         vaultsToRedeem: {
             parsedVaultsData: [
+            { id: 4,
+              type: 'WBTC',
+              ilk: 'WBTC-A',
+              collateral: '0.20 WBTC',
+              daiDebt: '1.00 DAI',
+              shutdownValue: '$10,000.00',
+              exchangeRate: '1 DAI : 0.0001 WBTC',
+              vaultValue: '0.02 WBTC' },
             { id: 3,
               type: 'USDC',
               ilk: 'USDC-A',
@@ -108,5 +127,6 @@ test('the whole flow', async () => {
   await withdraw(ilks[0]);
   await withdraw(ilks[1]);
   await withdraw(ilks[2]);
+  await withdraw(ilks[3]);
   expect.assertions(ilks.length);
 });

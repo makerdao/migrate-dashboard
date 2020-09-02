@@ -5,7 +5,7 @@ import { fireEvent, waitForElement } from '@testing-library/react';
 import { instantiateMaker, SAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH, BAT, USDC } from '@makerdao/dai-plugin-mcd';
+import { ETH, BAT, USDC, WBTC } from '@makerdao/dai-plugin-mcd';
 import { DAI } from '@makerdao/dai-plugin-mcd';
 const { change, click } = fireEvent;
 import BigNumber from 'bignumber.js';
@@ -19,7 +19,8 @@ const minEndBalance = 0.1;
 const ilks = [
   ['ETH-A', ETH],
   ['BAT-A', BAT],
-  ['USDC-A', USDC]
+  ['USDC-A', USDC],
+  ['WBTC-A', WBTC]
 ];
 
 beforeAll(async () => {
@@ -61,6 +62,7 @@ beforeAll(async () => {
   await migVault.free(vaults['ETH-A'].id, 'ETH-A');
   await migVault.free(vaults['BAT-A'].id, 'BAT-A');
   await migVault.free(vaults['USDC-A'].id, 'USDC-A');
+  await migVault.free(vaults['WBTC-A'].id, 'WBTC-A');
 
   await end.thaw();
   await Promise.all(
@@ -104,17 +106,20 @@ test('the whole flow', async () => {
       outAmounts: [
         { ilk: 'ETH-A', out: BigNumber(0) },
         { ilk: 'BAT-A', out: BigNumber(0) },
-        { ilk: 'USDC-A', out: BigNumber(0) }
+        { ilk: 'USDC-A', out: BigNumber(0) },
+        { ilk: 'WBTC-A', out: BigNumber(0) }
       ],
       fixedPrices: [
         { ilk: 'ETH-A', price: BigNumber(10) },
         { ilk: 'BAT-A', price: BigNumber(10) },
-        { ilk: 'USDC-A', price: BigNumber(10) }
+        { ilk: 'USDC-A', price: BigNumber(10) },
+        { ilk: 'WBTC-A', price: BigNumber(10) }
       ],
       tagPrices: [
         { ilk: 'ETH-A', price: BigNumber(10) },
         { ilk: 'BAT-A', price: BigNumber(10) },
-        { ilk: 'USDC-A', price: BigNumber(10) }
+        { ilk: 'USDC-A', price: BigNumber(10) },
+        { ilk: 'WBTC-A', price: BigNumber(10) }
       ]
     }
   });
@@ -132,7 +137,7 @@ test('the whole flow', async () => {
   //deposit dai
   await findByText('Deposit Dai to Redeem');
   click(getByText('Withdraw'));
-  await findByText('3.00 DAI'); //daiAmount
+  await findByText((daiAmount * ilks.length).toString()+'.00 DAI');
   change(getByRole('textbox'), { target: { value: minEndBalance + 0.1 } });
   getByText(/Users cannot redeem more/);
   change(getByRole('textbox'), { target: { value: minEndBalance } });
@@ -158,4 +163,5 @@ test('the whole flow', async () => {
   await redeem(ilks[0]);
   await redeem(ilks[1]);
   await redeem(ilks[2]);
+  await redeem(ilks[3]);
 });
