@@ -5,7 +5,7 @@ import { fireEvent } from '@testing-library/react';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH, BAT, USDC, WBTC, KNC } from '@makerdao/dai-plugin-mcd';
+import { ETH, BAT, USDC, WBTC } from '@makerdao/dai-plugin-mcd';
 
 const { click } = fireEvent;
 
@@ -15,6 +15,7 @@ const ilks = [
   ['ETH-A', ETH],
   ['BAT-A', BAT],
   ['USDC-A', USDC],
+  ['USDC-B', USDC],
   ['WBTC-A', WBTC],
 ];
 
@@ -32,6 +33,7 @@ beforeAll(async () => {
   await setupVault(ilks[1]);
   await setupVault(ilks[2]);
   await setupVault(ilks[3]);
+  await setupVault(ilks[4]);
 
   //trigger ES, and get to the point that Vaults can be redeemed
   const token = maker.service('smartContract').getContract('MCD_GOV');
@@ -81,6 +83,14 @@ test('the whole flow', async () => {
               shutdownValue: '$10,000.00',
               exchangeRate: '1 DAI : 0.0001 WBTC',
               vaultValue: '0.02 WBTC' },
+            { id: 5,
+              type: 'USDC',
+              ilk: 'USDC-B',
+              collateral: '100,000,000,000.00 USDC',
+              daiDebt: '1.00 DAI',
+              shutdownValue: '$1.00',
+              exchangeRate: '1 DAI : 1.0000 USDC',
+              vaultValue: '99,999,999,999.00 USDC' },
             { id: 3,
               type: 'USDC',
               ilk: 'USDC-A',
@@ -128,5 +138,6 @@ test('the whole flow', async () => {
   await withdraw(ilks[1]);
   await withdraw(ilks[2]);
   await withdraw(ilks[3]);
+  await withdraw(ilks[4]);
   expect.assertions(ilks.length);
 });

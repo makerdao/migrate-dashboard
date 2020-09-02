@@ -1,4 +1,4 @@
-import { ETH, BAT, USDC, WBTC, KNC, ZRX, MANA } from '@makerdao/dai-plugin-mcd';
+import { ETH, BAT, USDC, WBTC } from '@makerdao/dai-plugin-mcd';
 
 export default [
   {
@@ -16,6 +16,12 @@ export default [
   {
     symbol: 'USDC-A',
     key: 'USDC-A',
+    gem: 'USDC',
+    currency: USDC,
+  },
+  {
+    symbol: 'USDC-B',
+    key: 'USDC-B',
     gem: 'USDC',
     currency: USDC,
   },
