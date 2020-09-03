@@ -5,7 +5,7 @@ import { fireEvent } from '@testing-library/react';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH, BAT, USDC, WBTC, ZRX } from '@makerdao/dai-plugin-mcd';
+import { ETH, BAT, USDC, WBTC, ZRX, KNC } from '@makerdao/dai-plugin-mcd';
 
 const { click } = fireEvent;
 
@@ -17,26 +17,18 @@ const ilks = [
   ['USDC-A', USDC],
   ['USDC-B', USDC],
   ['WBTC-A', WBTC],
-  ['ZRX-A', ZRX]
+  ['ZRX-A', ZRX],
+  ['KNC-A', KNC],
 ];
 
 beforeAll(async () => {
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
 
-  async function setupVault(ilkInfo) {
-    const [ ilk , gem ] = ilkInfo;
+  for (let [ ilk , gem ] of ilks) {
     await maker.getToken(gem).approveUnlimited(proxyAddress);
-    await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(1), 1);
+    await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(10), 1);
   }
-
-  //calling consecutively ensures 1st ilk gets id #1, etc. and seems to help with nonce issues
-  await setupVault(ilks[0]);
-  await setupVault(ilks[1]);
-  await setupVault(ilks[2]);
-  await setupVault(ilks[3]);
-  await setupVault(ilks[4]);
-  await setupVault(ilks[5]);
 
   //trigger ES, and get to the point that Vaults can be redeemed
   const token = maker.service('smartContract').getContract('MCD_GOV');
@@ -46,10 +38,10 @@ beforeAll(async () => {
   await esm.join(WAD.times(50000).toFixed());
   await esm.fire();
   const end = maker.service('smartContract').getContract('MCD_END');
-  await Promise.all(ilks.map(async ([ilk,]) => {
-    await end['cage(bytes32)'](stringToBytes(ilk));
-  }));
 
+  for (let [ilk,] of ilks) {
+    await end['cage(bytes32)'](stringToBytes(ilk));
+  }
 });
 
 test('overview', async () => {
@@ -152,12 +144,8 @@ test('the whole flow', async () => {
     expect(after.gt(before)).toBe(true);
   }
 
-  //running consecutively seems to make nonce issues happen less on testchain
-  await withdraw(ilks[0]);
-  await withdraw(ilks[1]);
-  await withdraw(ilks[2]);
-  await withdraw(ilks[3]);
-  await withdraw(ilks[4]);
-  await withdraw(ilks[5]);
+  for (let ilk of ilks) {
+    await withdraw(ilk);
+  }
   expect.assertions(ilks.length);
 });

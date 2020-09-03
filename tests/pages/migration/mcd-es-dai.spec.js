@@ -30,16 +30,14 @@ beforeAll(async () => {
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
   const vaults = {};
-  await Promise.all(
-    ilks.map(async ilkInfo => {
-      const [ilk, gem] = ilkInfo;
-      await maker.getToken(gem).approveUnlimited(proxyAddress);
-      vaults[ilk] = await maker
-        .service('mcd:cdpManager')
-        .openLockAndDraw(ilk, gem(0.1), daiAmount);
-    })
-  );
 
+  for (let ilkInfo of ilks) {
+    const [ilk, gem] = ilkInfo;
+    await maker.getToken(gem).approveUnlimited(proxyAddress);
+    vaults[ilk] = await maker
+      .service('mcd:cdpManager')
+      .openLockAndDraw(ilk, gem(10), daiAmount);
+  }
   await maker.getToken(DAI).approveUnlimited(proxyAddress);
   await maker.service('mcd:savings').join(DAI(dsrAmount));
 
@@ -51,30 +49,24 @@ beforeAll(async () => {
   await esm.join(WAD.times(50000).toFixed());
   await esm.fire();
   const end = maker.service('smartContract').getContract('MCD_END');
-  await Promise.all(
-    ilks.map(async ilkInfo => {
+  for (let ilkInfo of ilks) {
       const [ilk] = ilkInfo;
       await end['cage(bytes32)'](stringToBytes(ilk));
-    })
-  );
+  }
   const migVault = maker
     .service('migration')
     .getMigration('global-settlement-collateral-claims');
 
-  await migVault.free(vaults['ETH-A'].id, 'ETH-A');
-  await migVault.free(vaults['BAT-A'].id, 'BAT-A');
-  await migVault.free(vaults['USDC-A'].id, 'USDC-A');
-  await migVault.free(vaults['USDC-B'].id, 'USDC-B');
-  await migVault.free(vaults['WBTC-A'].id, 'WBTC-A');
-  await migVault.free(vaults['ZRX-A'].id, 'ZRX-A');
+  for (let vault of Object.keys(vaults)) {
+    await migVault.free(vaults[vault].id, vault);
+  }
 
   await end.thaw();
-  await Promise.all(
-    ilks.map(async ilkInfo => {
-      const [ilk] = ilkInfo;
-      await end.flow(stringToBytes(ilk));
-    })
-  );
+
+  for (let ilkInfo of ilks) {
+    const [ilk] = ilkInfo;
+    await end.flow(stringToBytes(ilk));
+  }
 });
 
 test('overview', async () => {
@@ -160,20 +152,24 @@ test('the whole flow', async () => {
   await findByText('Redeem Dai');
 
   async function redeem(ilkInfo) {
+    console.log('in redeem for ilk', ilkInfo);
     const [ilk, gem] = ilkInfo;
     //should be two buttons, one for mobile one for desktop
     const button = getAllByTestId(`redeemButton-${ilk}`)[0];
     const before = await maker.service('token').getToken(gem).balance();
     click(button);
-    const after = await maker.service('token').getToken(gem).balance();
     await findAllByTestId(`successButton-${ilk}`);
+    const after = await maker.service('token').getToken(gem).balance();
+    console.log('found it?', ilk);
+    console.log('after.toString()', after.toString());
+    console.log('before.toString()', before.toString());
     expect(after.gt(before));
+    console.log('post assertion', ilk);
   }
 
-  await redeem(ilks[0]);
-  await redeem(ilks[1]);
-  await redeem(ilks[2]);
-  await redeem(ilks[3]);
-  await redeem(ilks[4]);
-  await redeem(ilks[5]);
+  for (let ilk of ilks) {
+    await redeem(ilk);
+  }
+
+  expect.assertions(ilks.length+2);
 });
