@@ -5,7 +5,7 @@ import { fireEvent } from '@testing-library/react';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH, BAT, USDC, WBTC } from '@makerdao/dai-plugin-mcd';
+import { ETH, BAT, USDC, WBTC, ZRX } from '@makerdao/dai-plugin-mcd';
 
 const { click } = fireEvent;
 
@@ -17,6 +17,7 @@ const ilks = [
   ['USDC-A', USDC],
   ['USDC-B', USDC],
   ['WBTC-A', WBTC],
+  ['ZRX-A', ZRX]
 ];
 
 beforeAll(async () => {
@@ -26,14 +27,16 @@ beforeAll(async () => {
   async function setupVault(ilkInfo) {
     const [ ilk , gem ] = ilkInfo;
     await maker.getToken(gem).approveUnlimited(proxyAddress);
-    await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.2), 1);
+    await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(1), 1);
   }
 
+  //calling consecutively ensures 1st ilk gets id #1, etc. and seems to help with nonce issues
   await setupVault(ilks[0]);
   await setupVault(ilks[1]);
   await setupVault(ilks[2]);
   await setupVault(ilks[3]);
   await setupVault(ilks[4]);
+  await setupVault(ilks[5]);
 
   //trigger ES, and get to the point that Vaults can be redeemed
   const token = maker.service('smartContract').getContract('MCD_GOV');
@@ -75,15 +78,31 @@ test('the whole flow', async () => {
     initialState: {
         vaultsToRedeem: {
             parsedVaultsData: [
-            { id: 4,
+            { id: ilks.findIndex(i => i[0]==='ZRX-A')+1,
+            type: 'ZRX',
+            ilk: 'ZRX-A',
+            collateral: '1 ZRX',
+            daiDebt: '1.00 DAI',
+            shutdownValue: '$10,000.00',
+            exchangeRate: '1 DAI : 0.0001 ZRX',
+            vaultValue: '0.02 ZRX' },
+            { id: ilks.findIndex(i => i[0]==='KNC-A')+1,
+            type: 'KNC',
+            ilk: 'KNC-A',
+            collateral: '1 KNC',
+            daiDebt: '1.00 DAI',
+            shutdownValue: '$10,000.00',
+            exchangeRate: '1 DAI : 0.0001 KNC',
+            vaultValue: '0.02 KNC' },
+            { id: ilks.findIndex(i => i[0]==='WBTC-A')+1,
               type: 'WBTC',
               ilk: 'WBTC-A',
-              collateral: '0.20 WBTC',
+              collateral: '1 WBTC',
               daiDebt: '1.00 DAI',
               shutdownValue: '$10,000.00',
               exchangeRate: '1 DAI : 0.0001 WBTC',
               vaultValue: '0.02 WBTC' },
-            { id: 5,
+            { id: ilks.findIndex(i => i[0]==='USDC-B')+1,
               type: 'USDC',
               ilk: 'USDC-B',
               collateral: '100,000,000,000.00 USDC',
@@ -91,7 +110,7 @@ test('the whole flow', async () => {
               shutdownValue: '$1.00',
               exchangeRate: '1 DAI : 1.0000 USDC',
               vaultValue: '99,999,999,999.00 USDC' },
-            { id: 3,
+            { id: ilks.findIndex(i => i[0]==='USDC-A')+1,
               type: 'USDC',
               ilk: 'USDC-A',
               collateral: '100,000,000,000.00 USDC',
@@ -99,19 +118,19 @@ test('the whole flow', async () => {
               shutdownValue: '$1.00',
               exchangeRate: '1 DAI : 1.0000 USDC',
               vaultValue: '99,999,999,999.00 USDC' },
-            { id: 2,
+            { id: ilks.findIndex(i => i[0]==='BAT-A')+1,
               type: 'BAT',
               ilk: 'BAT-A',
-              collateral: '0.20 BAT',
+              collateral: '1 BAT',
               daiDebt: '1.00 DAI',
               shutdownValue: '$40.00',
               exchangeRate: '1 DAI : 0.0250 BAT',
               vaultValue: '0.08 BAT' },
             {
-            collateral: '0.2 ETH',
+            collateral: '1 ETH',
             daiDebt: '1.00 DAI',
             exchangeRate: '1 DAI : 0.0005 ETH',
-            id: 1,
+            id: ilks.findIndex(i => i[0]==='ETH-A')+1,
             shutdownValue: '$2,000.00',
             type: 'ETH',
             ilk: 'ETH-A',
@@ -139,5 +158,6 @@ test('the whole flow', async () => {
   await withdraw(ilks[2]);
   await withdraw(ilks[3]);
   await withdraw(ilks[4]);
+  await withdraw(ilks[5]);
   expect.assertions(ilks.length);
 });

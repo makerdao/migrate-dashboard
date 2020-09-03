@@ -5,7 +5,7 @@ import { fireEvent, waitForElement } from '@testing-library/react';
 import { instantiateMaker, SAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH, BAT, USDC, WBTC } from '@makerdao/dai-plugin-mcd';
+import { ETH, BAT, USDC, WBTC, ZRX } from '@makerdao/dai-plugin-mcd';
 import { DAI } from '@makerdao/dai-plugin-mcd';
 const { change, click } = fireEvent;
 import BigNumber from 'bignumber.js';
@@ -20,7 +20,9 @@ const ilks = [
   ['ETH-A', ETH],
   ['BAT-A', BAT],
   ['USDC-A', USDC],
-  ['WBTC-A', WBTC]
+  ['USDC-B', USDC],
+  ['WBTC-A', WBTC],
+  ['ZRX-A', ZRX]
 ];
 
 beforeAll(async () => {
@@ -62,7 +64,9 @@ beforeAll(async () => {
   await migVault.free(vaults['ETH-A'].id, 'ETH-A');
   await migVault.free(vaults['BAT-A'].id, 'BAT-A');
   await migVault.free(vaults['USDC-A'].id, 'USDC-A');
+  await migVault.free(vaults['USDC-B'].id, 'USDC-B');
   await migVault.free(vaults['WBTC-A'].id, 'WBTC-A');
+  await migVault.free(vaults['ZRX-A'].id, 'ZRX-A');
 
   await end.thaw();
   await Promise.all(
@@ -107,19 +111,25 @@ test('the whole flow', async () => {
         { ilk: 'ETH-A', out: BigNumber(0) },
         { ilk: 'BAT-A', out: BigNumber(0) },
         { ilk: 'USDC-A', out: BigNumber(0) },
-        { ilk: 'WBTC-A', out: BigNumber(0) }
+        { ilk: 'USDC-B', out: BigNumber(0) },
+        { ilk: 'WBTC-A', out: BigNumber(0) },
+        { ilk: 'ZRX-A', out: BigNumber(0) },
       ],
       fixedPrices: [
         { ilk: 'ETH-A', price: BigNumber(10) },
         { ilk: 'BAT-A', price: BigNumber(10) },
         { ilk: 'USDC-A', price: BigNumber(10) },
-        { ilk: 'WBTC-A', price: BigNumber(10) }
+        { ilk: 'USDC-B', price: BigNumber(10) },
+        { ilk: 'WBTC-A', price: BigNumber(10) },
+        { ilk: 'ZRX-A', price: BigNumber(10) },
       ],
       tagPrices: [
         { ilk: 'ETH-A', price: BigNumber(10) },
         { ilk: 'BAT-A', price: BigNumber(10) },
         { ilk: 'USDC-A', price: BigNumber(10) },
-        { ilk: 'WBTC-A', price: BigNumber(10) }
+        { ilk: 'USDC-B', price: BigNumber(10) },
+        { ilk: 'WBTC-A', price: BigNumber(10) },
+        { ilk: 'ZRX-A', price: BigNumber(10) },
       ]
     }
   });
@@ -164,4 +174,6 @@ test('the whole flow', async () => {
   await redeem(ilks[1]);
   await redeem(ilks[2]);
   await redeem(ilks[3]);
+  await redeem(ilks[4]);
+  await redeem(ilks[5]);
 });
