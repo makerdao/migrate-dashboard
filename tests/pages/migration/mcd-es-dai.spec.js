@@ -5,25 +5,18 @@ import { fireEvent, waitForElement } from '@testing-library/react';
 import { instantiateMaker, SAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH, BAT, USDC, WBTC, ZRX } from '@makerdao/dai-plugin-mcd';
 import { DAI } from '@makerdao/dai-plugin-mcd';
 const { change, click } = fireEvent;
 import BigNumber from 'bignumber.js';
+import ilkList from '../../../references/ilkList';
 
 let maker;
 
-const daiAmount = 1;
+const daiAmount = 5;
 const dsrAmount = 0.5;
-const minEndBalance = 0.1;
+const minEndBalance = ilkList.length * daiAmount - 1;
 
-const ilks = [
-  ['ETH-A', ETH],
-  ['BAT-A', BAT],
-  ['USDC-A', USDC],
-  ['USDC-B', USDC],
-  ['WBTC-A', WBTC],
-  ['ZRX-A', ZRX]
-];
+const ilks = ilkList.map(i => [i.symbol, i.currency]);
 
 beforeAll(async () => {
   jest.setTimeout(30000);
@@ -36,7 +29,8 @@ beforeAll(async () => {
     await maker.getToken(gem).approveUnlimited(proxyAddress);
     vaults[ilk] = await maker
       .service('mcd:cdpManager')
-      .openLockAndDraw(ilk, gem(10), daiAmount);
+      .openLockAndDraw(ilk, gem(30), daiAmount);
+    const collateral = 
   }
   await maker.getToken(DAI).approveUnlimited(proxyAddress);
   await maker.service('mcd:savings').join(DAI(dsrAmount));
@@ -99,30 +93,24 @@ test('the whole flow', async () => {
       dsrBalance: DAI(dsrAmount),
       minEndVatBalance: BigNumber(minEndBalance),
       bagBalance: DAI(0),
-      outAmounts: [
-        { ilk: 'ETH-A', out: BigNumber(0) },
-        { ilk: 'BAT-A', out: BigNumber(0) },
-        { ilk: 'USDC-A', out: BigNumber(0) },
-        { ilk: 'USDC-B', out: BigNumber(0) },
-        { ilk: 'WBTC-A', out: BigNumber(0) },
-        { ilk: 'ZRX-A', out: BigNumber(0) },
-      ],
-      fixedPrices: [
-        { ilk: 'ETH-A', price: BigNumber(10) },
-        { ilk: 'BAT-A', price: BigNumber(10) },
-        { ilk: 'USDC-A', price: BigNumber(10) },
-        { ilk: 'USDC-B', price: BigNumber(10) },
-        { ilk: 'WBTC-A', price: BigNumber(10) },
-        { ilk: 'ZRX-A', price: BigNumber(10) },
-      ],
-      tagPrices: [
-        { ilk: 'ETH-A', price: BigNumber(10) },
-        { ilk: 'BAT-A', price: BigNumber(10) },
-        { ilk: 'USDC-A', price: BigNumber(10) },
-        { ilk: 'USDC-B', price: BigNumber(10) },
-        { ilk: 'WBTC-A', price: BigNumber(10) },
-        { ilk: 'ZRX-A', price: BigNumber(10) },
-      ]
+      outAmounts: ilks.map(i => {
+        return {
+          ilk: i[0],
+          out: BigNumber(0)
+        };
+      }),
+      fixedPrices: ilks.map(i => {
+        return {
+          ilk: i[0],
+          price: BigNumber(10)
+        };
+      }),
+      tagPrices: ilks.map(i => {
+        return {
+          ilk: i[0],
+          price: BigNumber(10)
+        };
+      })
     }
   });
 
@@ -152,7 +140,6 @@ test('the whole flow', async () => {
   await findByText('Redeem Dai');
 
   async function redeem(ilkInfo) {
-    console.log('in redeem for ilk', ilkInfo);
     const [ilk, gem] = ilkInfo;
     //should be two buttons, one for mobile one for desktop
     const button = getAllByTestId(`redeemButton-${ilk}`)[0];
@@ -160,11 +147,9 @@ test('the whole flow', async () => {
     click(button);
     await findAllByTestId(`successButton-${ilk}`);
     const after = await maker.service('token').getToken(gem).balance();
-    console.log('found it?', ilk);
     console.log('after.toString()', after.toString());
     console.log('before.toString()', before.toString());
     expect(after.gt(before));
-    console.log('post assertion', ilk);
   }
 
   for (let ilk of ilks) {

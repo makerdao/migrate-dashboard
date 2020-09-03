@@ -5,21 +5,14 @@ import { fireEvent } from '@testing-library/react';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH, BAT, USDC, WBTC, ZRX, KNC } from '@makerdao/dai-plugin-mcd';
+import ilkList from '../../../references/ilkList';
 
 const { click } = fireEvent;
 
 let maker;
 
-const ilks = [
-  ['ETH-A', ETH],
-  ['BAT-A', BAT],
-  ['USDC-A', USDC],
-  ['USDC-B', USDC],
-  ['WBTC-A', WBTC],
-  ['ZRX-A', ZRX],
-  ['KNC-A', KNC],
-];
+const ilks = ilkList.map(i => [i.symbol, i.currency, i.gem]);
+const vaults = {};
 
 beforeAll(async () => {
   maker = await instantiateMaker('test');
@@ -27,7 +20,7 @@ beforeAll(async () => {
 
   for (let [ ilk , gem ] of ilks) {
     await maker.getToken(gem).approveUnlimited(proxyAddress);
-    await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(10), 1);
+    vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(10), 1);
   }
 
   //trigger ES, and get to the point that Vaults can be redeemed
@@ -69,64 +62,19 @@ test('the whole flow', async () => {
   } = await render(<RedeemVaults />, {
     initialState: {
         vaultsToRedeem: {
-            parsedVaultsData: [
-            { id: ilks.findIndex(i => i[0]==='ZRX-A')+1,
-            type: 'ZRX',
-            ilk: 'ZRX-A',
-            collateral: '1 ZRX',
-            daiDebt: '1.00 DAI',
-            shutdownValue: '$10,000.00',
-            exchangeRate: '1 DAI : 0.0001 ZRX',
-            vaultValue: '0.02 ZRX' },
-            { id: ilks.findIndex(i => i[0]==='KNC-A')+1,
-            type: 'KNC',
-            ilk: 'KNC-A',
-            collateral: '1 KNC',
-            daiDebt: '1.00 DAI',
-            shutdownValue: '$10,000.00',
-            exchangeRate: '1 DAI : 0.0001 KNC',
-            vaultValue: '0.02 KNC' },
-            { id: ilks.findIndex(i => i[0]==='WBTC-A')+1,
-              type: 'WBTC',
-              ilk: 'WBTC-A',
-              collateral: '1 WBTC',
+            parsedVaultsData: 
+            ilks.map(i => {
+              return {
+              id: vaults[i[0]].id,
+              type: i[2],
+              ilk: i[0],
+              collateral: '1 ' + i[2],
               daiDebt: '1.00 DAI',
-              shutdownValue: '$10,000.00',
-              exchangeRate: '1 DAI : 0.0001 WBTC',
-              vaultValue: '0.02 WBTC' },
-            { id: ilks.findIndex(i => i[0]==='USDC-B')+1,
-              type: 'USDC',
-              ilk: 'USDC-B',
-              collateral: '100,000,000,000.00 USDC',
-              daiDebt: '1.00 DAI',
-              shutdownValue: '$1.00',
-              exchangeRate: '1 DAI : 1.0000 USDC',
-              vaultValue: '99,999,999,999.00 USDC' },
-            { id: ilks.findIndex(i => i[0]==='USDC-A')+1,
-              type: 'USDC',
-              ilk: 'USDC-A',
-              collateral: '100,000,000,000.00 USDC',
-              daiDebt: '1.00 DAI',
-              shutdownValue: '$1.00',
-              exchangeRate: '1 DAI : 1.0000 USDC',
-              vaultValue: '99,999,999,999.00 USDC' },
-            { id: ilks.findIndex(i => i[0]==='BAT-A')+1,
-              type: 'BAT',
-              ilk: 'BAT-A',
-              collateral: '1 BAT',
-              daiDebt: '1.00 DAI',
-              shutdownValue: '$40.00',
-              exchangeRate: '1 DAI : 0.0250 BAT',
-              vaultValue: '0.08 BAT' },
-            {
-            collateral: '1 ETH',
-            daiDebt: '1.00 DAI',
-            exchangeRate: '1 DAI : 0.0005 ETH',
-            id: ilks.findIndex(i => i[0]==='ETH-A')+1,
-            shutdownValue: '$2,000.00',
-            type: 'ETH',
-            ilk: 'ETH-A',
-            vaultValue: '0.0100 ETH'}]
+              shutdownValue: '$---',
+              exchangeRate: '1 DAI : --- ' + i[2],
+              vaultValue: '1 ' + i[2]
+              };
+            })
         }
     }
   });
