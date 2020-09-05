@@ -11,7 +11,10 @@ const { click } = fireEvent;
 
 let maker;
 
-const ilks = ilkList.map(i => [i.symbol, i.currency, i.gem]);
+//don't test MANA for now, since its not possible to open a mana vault on the testchain with the default parameters
+const ilks = ilkList.map(i => [i.symbol, i.currency, i.gem])
+  .filter(i => i[0] !== 'MANA-A');
+
 const vaults = {};
 
 beforeAll(async () => {
