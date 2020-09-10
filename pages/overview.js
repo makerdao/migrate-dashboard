@@ -22,7 +22,7 @@ import { Breakout } from '../components/Typography';
 import ButtonCard from '../components/ButtonCard';
 import Subheading from '../components/Subheading';
 import useStore from '../hooks/useStore';
-import { DAI, PETH } from '../maker';
+import { SAI, DAI, PETH } from '../maker';
 import TooltipContents from '../components/TooltipContents';
 import { stringToBytes, fromRay, fromRad, fromWei } from '../utils/ethereum';
 import BigNumber from 'bignumber.js';
@@ -332,6 +332,7 @@ function OverviewDataFetch() {
         type: 'assign',
         payload: {
           emergencyShutdownActive,
+          saiBalance: SAI(await maker.getToken('SAI').balance()),
           oldMkrBalance: checks['mkr-redeemer'],
           chiefMigrationCheck: checks['chief-migrate'],
           scd,
