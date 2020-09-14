@@ -69,7 +69,7 @@ function ListItem({
         redeemInitiated.includes(vaultId) && !redeemDone.includes(vaultId)
       }
       disabled={!hasReadTOS}
-      onClick={() => redeemVaults(vaultId, type)}
+      onClick={() => redeemVaults(vaultId, ilk)}
       data-testid={`withdrawButton-${ilk}`}
     >
       Withdraw
@@ -143,25 +143,13 @@ const RedeemVaults = ({
 
   if (!maker) return null;
 
-  const redeemVaults = async (vaultId, type) => {
+  const redeemVaults = async (vaultId, ilk) => {
     try {
-      let txObject = null;
       setRedeemInitiated(redeemInitiated => [...redeemInitiated, vaultId]);
       const mig = maker
         .service('migration')
         .getMigration('global-settlement-collateral-claims');
-
-      if (type === 'BAT') {
-        txObject = mig.freeBat(vaultId);
-      }
-      if (type === 'ETH') {
-        txObject = mig.freeEth(vaultId);
-      }
-      if (type === 'USDC') {
-        txObject = mig.freeUsdc(vaultId);
-      }
-
-      await txObject;
+      await mig.free(vaultId, ilk);
       setRedeemDone(redeemDone => [...redeemDone, vaultId]);
     } catch (err) {
       const message = err.message ? err.message : err;

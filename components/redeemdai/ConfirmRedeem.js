@@ -20,9 +20,7 @@ function ConfirmRedeem({ redeemAmount, onClose }) {
       const mig = maker
         .service('migration')
         .getMigration('global-settlement-dai-redeemer');
-      if (ilk === 'ETH-A') await mig.cashEth(amount);
-      if (ilk === 'BAT-A') await mig.cashBat(amount);
-      if (ilk === 'USDC-A') await mig.cashUsdc(amount);
+      await mig.cash(amount,ilk);
       setRedeemComplete(redeemComplete => [...redeemComplete, ilk]);
     } catch (err) {
       const message = err.message ? err.message : err;

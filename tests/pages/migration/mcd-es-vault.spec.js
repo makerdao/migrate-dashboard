@@ -5,22 +5,26 @@ import { fireEvent } from '@testing-library/react';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH, BAT, USDC } from '@makerdao/dai-plugin-mcd';
+import ilkList from '../../../references/ilkList';
 
 const { click } = fireEvent;
 
 let maker;
 
-const ilks = [['ETH-A', ETH], ['BAT-A', BAT], ['USDC-A', USDC]];
+//don't test MANA for now, since its not possible to open a mana vault on the testchain with the default parameters
+const ilks = ilkList.map(i => [i.symbol, i.currency, i.gem])
+  .filter(i => i[0] !== 'MANA-A');
+
+const vaults = {};
 
 beforeAll(async () => {
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
-  await Promise.all(ilks.map(async (ilkInfo ) => {
-    const [ ilk , gem ] = ilkInfo;
+
+  for (let [ ilk , gem ] of ilks) {
     await maker.getToken(gem).approveUnlimited(proxyAddress);
-    await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.1), 1);
-  }));
+    vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(10), 1);
+  }
 
   //trigger ES, and get to the point that Vaults can be redeemed
   const token = maker.service('smartContract').getContract('MCD_GOV');
@@ -30,10 +34,10 @@ beforeAll(async () => {
   await esm.join(WAD.times(50000).toFixed());
   await esm.fire();
   const end = maker.service('smartContract').getContract('MCD_END');
-  await Promise.all(ilks.map(async ([ilk,]) => {
-    await end['cage(bytes32)'](stringToBytes(ilk));
-  }));
 
+  for (let [ilk,] of ilks) {
+    await end['cage(bytes32)'](stringToBytes(ilk));
+  }
 });
 
 test('overview', async () => {
@@ -61,32 +65,19 @@ test('the whole flow', async () => {
   } = await render(<RedeemVaults />, {
     initialState: {
         vaultsToRedeem: {
-            parsedVaultsData: [
-            { id: 3,
-              type: 'USDC',
-              ilk: 'USDC-A',
-              collateral: '100,000,000,000.00 USDC',
+            parsedVaultsData: 
+            ilks.map(i => {
+              return {
+              id: vaults[i[0]].id,
+              type: i[2],
+              ilk: i[0],
+              collateral: '1 ' + i[2],
               daiDebt: '1.00 DAI',
-              shutdownValue: '$1.00',
-              exchangeRate: '1 DAI : 1.0000 USDC',
-              vaultValue: '99,999,999,999.00 USDC' },
-            { id: 2,
-              type: 'BAT',
-              ilk: 'BAT-A',
-              collateral: '0.10 BAT',
-              daiDebt: '1.00 DAI',
-              shutdownValue: '$40.00',
-              exchangeRate: '1 DAI : 0.0250 BAT',
-              vaultValue: '0.08 BAT' },
-            {
-            collateral: '0.1 ETH',
-            daiDebt: '1.00 DAI',
-            exchangeRate: '1 DAI : 0.0005 ETH',
-            id: 1,
-            shutdownValue: '$2,000.00',
-            type: 'ETH',
-            ilk: 'ETH-A',
-            vaultValue: '0.0100 ETH'}]
+              shutdownValue: '$---',
+              exchangeRate: '1 DAI : --- ' + i[2],
+              vaultValue: '1 ' + i[2]
+              };
+            })
         }
     }
   });
@@ -104,9 +95,8 @@ test('the whole flow', async () => {
     expect(after.gt(before)).toBe(true);
   }
 
-  //running consecutively seems to make nonce issues happen less on testchain
-  await withdraw(ilks[0]);
-  await withdraw(ilks[1]);
-  await withdraw(ilks[2]);
+  for (let ilk of ilks) {
+    await withdraw(ilk);
+  }
   expect.assertions(ilks.length);
 });
