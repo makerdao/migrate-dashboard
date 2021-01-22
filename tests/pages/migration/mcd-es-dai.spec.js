@@ -9,19 +9,21 @@ import { DAI } from '@makerdao/dai-plugin-mcd';
 const { change, click } = fireEvent;
 import BigNumber from 'bignumber.js';
 import ilkList from '../../../references/ilkList';
+import { prettifyNumber } from '../../../utils/ui';
 
 let maker;
 
-//don't test MANA for now, since its not possible to open a mana vault on the testchain with the default parameters
+//TODO: figure out why creating a WBTC-A, RENBTC-A vault doesn't work
+//UNIV2DAIETH-A doesn't have parameters on the testchain
 const ilks = ilkList.map(i => [i.symbol, i.currency])
-  .filter(i => i[0] !== 'MANA-A');
+  .filter(i => i[0] !== 'WBTC-A' && i[0] !== 'RENBTC-A' && i[0] !== 'UNIV2DAIETH-A');
 
-const daiAmount = 5;
+const daiAmount = 100;
 const dsrAmount = 0.5;
 const minEndBalance = ilks.length * daiAmount - 1;
 
 beforeAll(async () => {
-  jest.setTimeout(30000);
+  jest.setTimeout(70000);
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
   const vaults = {};
@@ -31,7 +33,7 @@ beforeAll(async () => {
     await maker.getToken(gem).approveUnlimited(proxyAddress);
     vaults[ilk] = await maker
       .service('mcd:cdpManager')
-      .openLockAndDraw(ilk, gem(30), daiAmount);
+      .openLockAndDraw(ilk, ilk.substring(0,4) === 'ETH-' ? gem(10) : gem(5000), daiAmount);
   }
   await maker.getToken(DAI).approveUnlimited(proxyAddress);
   await maker.service('mcd:savings').join(DAI(dsrAmount));
@@ -128,7 +130,7 @@ test('the whole flow', async () => {
   //deposit dai
   await findByText('Deposit Dai to Redeem');
   click(getByText('Withdraw'));
-  await findByText((daiAmount * ilks.length).toString()+'.00 DAI');
+  await findByText(prettifyNumber(daiAmount * ilks.length)+' DAI');
   change(getByRole('textbox'), { target: { value: minEndBalance + 0.1 } });
   getByText(/Users cannot redeem more/);
   change(getByRole('textbox'), { target: { value: minEndBalance } });

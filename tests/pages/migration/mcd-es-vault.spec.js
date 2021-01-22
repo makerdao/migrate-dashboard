@@ -11,19 +11,21 @@ const { click } = fireEvent;
 
 let maker;
 
-//don't test MANA for now, since its not possible to open a mana vault on the testchain with the default parameters
+//TODO: figure out why creating a WBTC-A, RENBTC-A vault doesn't work
+//UNIV2DAIETH-A doesn't have parameters on the testchain
 const ilks = ilkList.map(i => [i.symbol, i.currency, i.gem])
-  .filter(i => i[0] !== 'MANA-A');
+  .filter(i => i[0] !== 'WBTC-A' && i[0] !== 'RENBTC-A' && i[0] !== 'UNIV2DAIETH-A');
 
 const vaults = {};
 
 beforeAll(async () => {
+  jest.setTimeout(30000);
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
 
   for (let [ ilk , gem ] of ilks) {
     await maker.getToken(gem).approveUnlimited(proxyAddress);
-    vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(10), 1);
+    vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, ilk.substring(0,4) === 'ETH-' ? gem(10) : gem(5000), 100);
   }
 
   //trigger ES, and get to the point that Vaults can be redeemed
