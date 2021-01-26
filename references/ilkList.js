@@ -172,7 +172,8 @@ export default [
     key: 'GUSD-A',
     gem: 'GUSD',
     currency: GUSD,
-    networks: ['mainnet', 'kovan']
+    networks: ['mainnet', 'kovan'],
+    decimals: 2
   },
   {
     slug: 'uni-a',
@@ -188,7 +189,8 @@ export default [
     key: 'RENBTC-A',
     gem: 'RENBTC',
     currency: RENBTC,
-    networks: ['mainnet', 'kovan']
+    networks: ['mainnet', 'kovan'],
+    decimals: 8
   },
   {
     slug: 'aave-a',

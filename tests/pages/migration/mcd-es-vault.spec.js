@@ -11,21 +11,24 @@ const { click } = fireEvent;
 
 let maker;
 
-//TODO: figure out why creating a WBTC-A, RENBTC-A vault doesn't work
-//UNIV2DAIETH-A doesn't have parameters on the testchain
+//UNIV2DAIETH-A isn't on the testchain yet
 const ilks = ilkList.map(i => [i.symbol, i.currency, i.gem])
-  .filter(i => i[0] !== 'WBTC-A' && i[0] !== 'RENBTC-A' && i[0] !== 'UNIV2DAIETH-A');
+  .filter(i => i[0] !== 'UNIV2DAIETH-A');
+
+//dust limit on the testchain. when updating the testchain this may need to be increased
+const vaultDaiAmount = 100;
 
 const vaults = {};
 
 beforeAll(async () => {
-  jest.setTimeout(30000);
+  jest.setTimeout(50000);
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
 
   for (let [ ilk , gem ] of ilks) {
     await maker.getToken(gem).approveUnlimited(proxyAddress);
-    vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, ilk.substring(0,4) === 'ETH-' ? gem(10) : gem(5000), 100);
+    let vaultCollateralAmount = ilk.substring(0,4) === 'ETH-' ? gem(10) : gem(4500);
+    vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, vaultCollateralAmount, vaultDaiAmount);
   }
 
   //trigger ES, and get to the point that Vaults can be redeemed

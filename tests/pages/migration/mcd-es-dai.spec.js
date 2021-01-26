@@ -13,12 +13,13 @@ import { prettifyNumber } from '../../../utils/ui';
 
 let maker;
 
-//TODO: figure out why creating a WBTC-A, RENBTC-A vault doesn't work
-//UNIV2DAIETH-A doesn't have parameters on the testchain
+//UNIV2DAIETH-A isn't on the testchain yet
 const ilks = ilkList.map(i => [i.symbol, i.currency])
-  .filter(i => i[0] !== 'WBTC-A' && i[0] !== 'RENBTC-A' && i[0] !== 'UNIV2DAIETH-A');
+  .filter(i => i[0] !== 'UNIV2DAIETH-A');
 
+//dust limit on the testchain. when updating the testchain this may need to be increased
 const daiAmount = 100;
+
 const dsrAmount = 0.5;
 const minEndBalance = ilks.length * daiAmount - 1;
 
