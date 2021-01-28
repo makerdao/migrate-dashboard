@@ -58,7 +58,7 @@ test('overview', async () => {
     }
   });
 
-  await findByText('Withdraw Excess Collateral from Vaults');
+  await findByText('Withdraw Excess Collateral from Vaults', {timeout: 5000});
 });
 
 test('the whole flow', async () => {
