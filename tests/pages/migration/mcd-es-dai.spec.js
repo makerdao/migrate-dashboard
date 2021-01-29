@@ -85,10 +85,10 @@ test('the whole flow', async () => {
   const {
     findByText,
     getByText,
-    getByRole,
     getByTestId,
     findAllByTestId,
-    getAllByTestId
+    getAllByTestId,
+    getAllByPlaceholderText
   } = await render(<RedeemDai />, {
     initialState: {
       proxyDaiAllowance: DAI(0),
@@ -132,9 +132,11 @@ test('the whole flow', async () => {
   await findByText('Deposit Dai to Redeem');
   click(getByText('Withdraw'));
   await findByText(prettifyNumber(daiAmount * ilks.length)+' DAI');
-  change(getByRole('textbox'), { target: { value: minEndBalance + 0.1 } });
+  const inputs = getAllByPlaceholderText('0.00 DAI');
+  const input = inputs[2]; //first two are divs, third is the input element we want
+  change(input, { target: { value: minEndBalance + 0.1 } });
   getByText(/Users cannot redeem more/);
-  change(getByRole('textbox'), { target: { value: minEndBalance } });
+  change(input, { target: { value: minEndBalance } });
   click(getByTestId('tosCheck'));
   const depositButton = getByText('Deposit');
   expect(depositButton.disabled).toBeFalsy();
