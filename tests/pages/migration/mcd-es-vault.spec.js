@@ -11,19 +11,24 @@ const { click } = fireEvent;
 
 let maker;
 
-//don't test MANA for now, since its not possible to open a mana vault on the testchain with the default parameters
+//UNIV2DAIETH-A isn't on the testchain yet
 const ilks = ilkList.map(i => [i.symbol, i.currency, i.gem])
-  .filter(i => i[0] !== 'MANA-A');
+  .filter(i => i[0] !== 'UNIV2DAIETH-A');
+
+//dust limit on the testchain. when updating the testchain this may need to be increased
+const vaultDaiAmount = 100;
 
 const vaults = {};
 
 beforeAll(async () => {
+  jest.setTimeout(50000);
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
 
   for (let [ ilk , gem ] of ilks) {
     await maker.getToken(gem).approveUnlimited(proxyAddress);
-    vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(10), 1);
+    let vaultCollateralAmount = ilk.substring(0,4) === 'ETH-' ? gem(10) : gem(4500);
+    vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, vaultCollateralAmount, vaultDaiAmount);
   }
 
   //trigger ES, and get to the point that Vaults can be redeemed
@@ -53,7 +58,7 @@ test('overview', async () => {
     }
   });
 
-  await findByText('Withdraw Excess Collateral from Vaults');
+  await findByText('Withdraw Excess Collateral from Vaults', {timeout: 5000});
 });
 
 test('the whole flow', async () => {
