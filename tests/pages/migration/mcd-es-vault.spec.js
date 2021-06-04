@@ -5,22 +5,31 @@ import { fireEvent } from '@testing-library/react';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
-import { ETH, BAT, USDC } from '@makerdao/dai-plugin-mcd';
+import ilkList from '../../../references/ilkList';
 
 const { click } = fireEvent;
 
 let maker;
 
-const ilks = [['ETH-A', ETH], ['BAT-A', BAT], ['USDC-A', USDC]];
+//UNIV2DAIETH-A isn't on the testchain yet
+const ilks = ilkList.map(i => [i.symbol, i.currency, i.gem])
+  .filter(i => i[0] !== 'UNIV2DAIETH-A');
+
+//dust limit on the testchain. when updating the testchain this may need to be increased
+const vaultDaiAmount = 100;
+
+const vaults = {};
 
 beforeAll(async () => {
+  jest.setTimeout(50000);
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
-  await Promise.all(ilks.map(async (ilkInfo ) => {
-    const [ ilk , gem ] = ilkInfo;
+
+  for (let [ ilk , gem ] of ilks) {
     await maker.getToken(gem).approveUnlimited(proxyAddress);
-    await maker.service('mcd:cdpManager').openLockAndDraw(ilk, gem(0.1), 1);
-  }));
+    let vaultCollateralAmount = ilk.substring(0,4) === 'ETH-' ? gem(10) : gem(4500);
+    vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, vaultCollateralAmount, vaultDaiAmount);
+  }
 
   //trigger ES, and get to the point that Vaults can be redeemed
   const token = maker.service('smartContract').getContract('MCD_GOV');
@@ -30,10 +39,10 @@ beforeAll(async () => {
   await esm.join(WAD.times(50000).toFixed());
   await esm.fire();
   const end = maker.service('smartContract').getContract('MCD_END');
-  await Promise.all(ilks.map(async ([ilk,]) => {
-    await end['cage(bytes32)'](stringToBytes(ilk));
-  }));
 
+  for (let [ilk,] of ilks) {
+    await end['cage(bytes32)'](stringToBytes(ilk));
+  }
 });
 
 test('overview', async () => {
@@ -49,7 +58,7 @@ test('overview', async () => {
     }
   });
 
-  await findByText('Withdraw Excess Collateral from Vaults');
+  await findByText('Withdraw Excess Collateral from Vaults', {timeout: 5000});
 });
 
 test('the whole flow', async () => {
@@ -61,42 +70,38 @@ test('the whole flow', async () => {
   } = await render(<RedeemVaults />, {
     initialState: {
         vaultsToRedeem: {
-            parsedVaultsData: [
-            { id: 3,
-              type: 'USDC',
-              collateral: '100,000,000,000.00 USDC',
+            parsedVaultsData: 
+            ilks.map(i => {
+              return {
+              id: vaults[i[0]].id,
+              type: i[2],
+              ilk: i[0],
+              collateral: '1 ' + i[2],
               daiDebt: '1.00 DAI',
-              shutdownValue: '$1.00',
-              exchangeRate: '1 DAI : 1.0000 USDC',
-              vaultValue: '99,999,999,999.00 USDC' },
-            { id: 2,
-              type: 'BAT',
-              collateral: '0.10 BAT',
-              daiDebt: '1.00 DAI',
-              shutdownValue: '$40.00',
-              exchangeRate: '1 DAI : 0.0250 BAT',
-              vaultValue: '0.08 BAT' },
-            {
-            collateral: '0.1 ETH',
-            daiDebt: '1.00 DAI',
-            exchangeRate: '1 DAI : 0.0005 ETH',
-            id: 1,
-            shutdownValue: '$2,000.00',
-            type: 'ETH',
-            vaultValue: '0.0100 ETH'}]
+              shutdownValue: '$---',
+              exchangeRate: '1 DAI : --- ' + i[2],
+              vaultValue: '1 ' + i[2]
+              };
+            })
         }
     }
   });
   await findByText('Withdraw Excess Collateral from Vaults');
   click(getByTestId('tosCheck'));
-  await Promise.all(ilks.map(async (ilkInfo) => {
-    const [, gem ] = ilkInfo;
+
+  async function withdraw(ilkInfo) {
+    const [ilk, gem ] = ilkInfo;
     //there's two withdraw buttons, one for desktop, one for mobile
-    const withdrawButton = getAllByTestId(`withdrawButton-${gem.symbol}`)[0];
+    const withdrawButton = getAllByTestId(`withdrawButton-${ilk}`)[0];
     const before = await maker.service('token').getToken(gem).balance();
     click(withdrawButton);
-    await findAllByTestId(`withdrawButton-${gem.symbol}`);
+    await findAllByTestId(`successButton-${ilk}`);
     const after = await maker.service('token').getToken(gem).balance();
-    expect(after.gt(before));
-  }));
+    expect(after.gt(before)).toBe(true);
+  }
+
+  for (let ilk of ilks) {
+    await withdraw(ilk);
+  }
+  expect.assertions(ilks.length);
 });

@@ -7,7 +7,7 @@ process.env.TEST_RPC_URL = 'http://localhost:2000';
 // this sets up the singleton so we can test components that use the router.
 // this will probably have to become a test helper for more sophisticated test
 // scenarios.
-const router = createRouter('/', {}, null, {});
+const router = createRouter('/', {}, '', {});
 
 router.replace = jest.fn();
 router.push = jest.fn();

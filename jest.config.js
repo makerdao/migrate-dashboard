@@ -9,5 +9,7 @@ module.exports = {
     '^.+\\.(svg|png)$': './tests/helpers/transformImportToPath'
   },
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.yalc/'],
-  modulePathIgnorePatterns: ['<rootDir>/.yalc/@makerdao/dai-plugin-scd/test']
+  modulePathIgnorePatterns: [
+    '<rootDir>/.yalc/@makerdao/dai-plugin-(mcd|migrations|scd)/test'
+  ]
 };

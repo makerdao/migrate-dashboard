@@ -44,6 +44,7 @@ function ListItemRow({ label, children, dark }) {
 function ListItem({
     vaultId,
     type,
+    ilk,
     redeemInitiated,
     redeemDone,
     hasReadTOS,
@@ -56,7 +57,7 @@ function ListItem({
   }) {
   const redeemButton = redeemDone.includes(vaultId) ? (
     <SuccessButton px="0px" py="4px" width="90px" justifySelf="center"
-      data-testid={`successButton-${type}`}/>
+      data-testid={`successButton-${ilk}`}/>
   ) : (
     <Button
       px="0px"
@@ -68,8 +69,8 @@ function ListItem({
         redeemInitiated.includes(vaultId) && !redeemDone.includes(vaultId)
       }
       disabled={!hasReadTOS}
-      onClick={() => redeemVaults(vaultId, type)}
-      data-testid={`withdrawButton-${type}`}
+      onClick={() => redeemVaults(vaultId, ilk)}
+      data-testid={`withdrawButton-${ilk}`}
     >
       Withdraw
     </Button>
@@ -142,25 +143,13 @@ const RedeemVaults = ({
 
   if (!maker) return null;
 
-  const redeemVaults = async (vaultId, type) => {
+  const redeemVaults = async (vaultId, ilk) => {
     try {
-      let txObject = null;
       setRedeemInitiated(redeemInitiated => [...redeemInitiated, vaultId]);
       const mig = maker
         .service('migration')
         .getMigration('global-settlement-collateral-claims');
-
-      if (type === 'BAT') {
-        txObject = mig.freeBat(vaultId);
-      }
-      if (type === 'ETH') {
-        txObject = mig.freeEth(vaultId);
-      }
-      if (type === 'USDC') {
-        txObject = mig.freeUsdc(vaultId);
-      }
-
-      await txObject;
+      await mig.free(vaultId, ilk);
       setRedeemDone(redeemDone => [...redeemDone, vaultId]);
     } catch (err) {
       const message = err.message ? err.message : err;
@@ -281,6 +270,7 @@ const RedeemVaults = ({
               vaultId={vault.id}
               collateral={vault.collateral}
               type={vault.type}
+              ilk={vault.ilk}
               daiDebt={vault.daiDebt}
               shutdownValue={vault.shutdownValue}
               vaultValue={vault.vaultValue}
