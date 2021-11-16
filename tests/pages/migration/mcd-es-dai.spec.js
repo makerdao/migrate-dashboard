@@ -159,4 +159,5 @@ test('the whole flow', async () => {
   for (let ilk of ilks) {
     await redeem(ilk);
   }
+  expect.assertions(ilks.length);
 });
