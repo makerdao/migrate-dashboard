@@ -35,7 +35,7 @@ beforeAll(async () => {
   const token = maker.service('smartContract').getContract('MCD_GOV');
   await token['mint(uint256)'](WAD.times(50000).toFixed());
   const esm = maker.service('smartContract').getContract('MCD_ESM');
-  await token.approve(esm.address, -1); //approve unlimited
+  await token.approve(esm.address, WAD.times(50000).toFixed());
   await esm.join(WAD.times(50000).toFixed());
   await esm.fire();
   const end = maker.service('smartContract').getContract('MCD_END');
