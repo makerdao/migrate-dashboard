@@ -2945,10 +2945,10 @@
     "@makerdao/services-core" "^0.11.4-alpha.0"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-scd@1.4.3-alpha.0":
-  version "1.4.3-alpha.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-scd/-/dai-plugin-scd-1.4.3-alpha.0.tgz#ac660026c858e5139a894d3deb7769e197127e14"
-  integrity sha512-N1EYwuebn8DslXxTpEqZPB4m7p/vW/DgAg4PhYx/Z98cBo55WKko2EyZnC+b4gDKH60gWblIi0zhSTuRvG2y6g==
+"@makerdao/dai-plugin-scd@1.4.3-alpha.1":
+  version "1.4.3-alpha.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-scd/-/dai-plugin-scd-1.4.3-alpha.1.tgz#262fda0b51d6dc60adce68d4f91bb20df2fbc8c1"
+  integrity sha512-zlyqg8dxuEORXDiGSKDvOkFC2lKki2qsmqFEQqacIb3O05UyyKYk3lGYARgf/QSJ+3YbvYeLFaiSaA79T6O6Yg==
   dependencies:
     "@makerdao/currency" "^0.9.9"
     "@makerdao/services-core" "^0.11.4-alpha.0"
