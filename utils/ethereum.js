@@ -58,13 +58,16 @@ export function stringToBytes(str) {
 }
 
 export function fromWei(value) {
+  if (value._isBigNumber && value._hex) value = value._hex;
   return BigNumber(value).shiftedBy(-18);
 }
 
 export function fromRay(value) {
+  if (value._isBigNumber && value._hex) value = value._hex;
   return BigNumber(value).shiftedBy(-27);
 }
 
 export function fromRad(value) {
+  if (value._isBigNumber && value._hex) value = value._hex;
   return BigNumber(value).shiftedBy(-45);
 }

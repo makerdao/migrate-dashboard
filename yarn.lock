@@ -2895,18 +2895,10 @@
     npmlog "^4.1.2"
     write-file-atomic "^2.3.0"
 
-"@makerdao/currency@0.9.10":
+"@makerdao/currency@0.9.10", "@makerdao/currency@^0.9.10":
   version "0.9.10"
   resolved "https://registry.yarnpkg.com/@makerdao/currency/-/currency-0.9.10.tgz#52ae59232d7ebe61d0ef49cf5eb81086a73d4f53"
   integrity sha512-zh2Lqw8/9HkVOoXX8KmfmLggai5Ok1JXfDiyIPXcImjc3Szy1sAXRPHmCSol9+1ExFgMQdxTNebA+xv5gW9bqw==
-  dependencies:
-    babel-runtime "^6.26.0"
-    bignumber.js "^8.1.1"
-
-"@makerdao/currency@0.9.9", "@makerdao/currency@^0.9.9":
-  version "0.9.9"
-  resolved "https://registry.yarnpkg.com/@makerdao/currency/-/currency-0.9.9.tgz#b5f847362cb4648c30548313f005c80c1c878c9e"
-  integrity sha512-fr6MaiWxQ1IxEaSO8znnhcZTPb8P5ZJU5PS76lx5zAX8CF/ZykfDCX7lb4AMaOVCWajQ8OPN8ekO5a0MOJb3wg==
   dependencies:
     babel-runtime "^6.26.0"
     bignumber.js "^8.1.1"
@@ -2924,33 +2916,33 @@
     hdkey "^1.0.0"
     web3-provider-engine "14.0.4"
 
-"@makerdao/dai-plugin-mcd@1.8.4-alpha.0":
-  version "1.8.4-alpha.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-mcd/-/dai-plugin-mcd-1.8.4-alpha.0.tgz#4dded7cf1163bcfe39ded259c5e563d9620ce35a"
-  integrity sha512-8yTBPljQ4UA8WSzC0hh22tyBQ+h8xlfVqJs18f/epTQfI3phamqN4bCfnfojvl8Khnn1Az9JCSynk2sVKMl41Q==
+"@makerdao/dai-plugin-mcd@1.8.4-alpha.1":
+  version "1.8.4-alpha.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-mcd/-/dai-plugin-mcd-1.8.4-alpha.1.tgz#58885f1f730e1b579ed32b2303a0ab66650dca60"
+  integrity sha512-Gvj2CELmDN5mmu8daXlk0JCm2qf/FdZXOnqs47Gpv6vhqPaYdnLw60PjA64PgMTckEE2VyTld9u1/YznK0o3kg==
   dependencies:
-    "@makerdao/currency" "0.9.9"
-    "@makerdao/dai" "^0.42.3-alpha.0"
+    "@makerdao/currency" "^0.9.10"
+    "@makerdao/dai" "^0.42.3-alpha.1"
     "@makerdao/services-core" "^0.11.4-alpha.0"
     bignumber.js "^8.1.1"
     rxjs "^6.5.4"
 
-"@makerdao/dai-plugin-migrations@1.5.3-alpha.0":
-  version "1.5.3-alpha.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.5.3-alpha.0.tgz#459665b998c21c2d3f09780697c4a203ac4140fc"
-  integrity sha512-HBkSK0VBJIrr1tnb9i+txVTotwVIfH39Ff1k06gSvFcDadChSatt6PKsb+wPHl0A5vdK47LQ7ICGRGWOiDgR/Q==
+"@makerdao/dai-plugin-migrations@1.5.3-alpha.1":
+  version "1.5.3-alpha.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.5.3-alpha.1.tgz#b6480635c80c87a0ab564893cd16eedfb652015d"
+  integrity sha512-Aa3cldFucTDNytCo2gIEQ3+fPH5jaL+GaSC4P2ZcrbD1j0X1Hldw6fv8m1VeA9bNHVshsUMbRfk/V+wWZEiW8w==
   dependencies:
-    "@makerdao/currency" "0.9.9"
-    "@makerdao/dai" "^0.42.3-alpha.0"
+    "@makerdao/currency" "^0.9.10"
+    "@makerdao/dai" "^0.42.3-alpha.1"
     "@makerdao/services-core" "^0.11.4-alpha.0"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-scd@1.4.3-alpha.1":
-  version "1.4.3-alpha.1"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-scd/-/dai-plugin-scd-1.4.3-alpha.1.tgz#262fda0b51d6dc60adce68d4f91bb20df2fbc8c1"
-  integrity sha512-zlyqg8dxuEORXDiGSKDvOkFC2lKki2qsmqFEQqacIb3O05UyyKYk3lGYARgf/QSJ+3YbvYeLFaiSaA79T6O6Yg==
+"@makerdao/dai-plugin-scd@1.4.3-alpha.2":
+  version "1.4.3-alpha.2"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-scd/-/dai-plugin-scd-1.4.3-alpha.2.tgz#e6f426be1fc662e1a05d6d68e0d2e1c1f9589fde"
+  integrity sha512-PjiE5jqeEoWSu9ES1nmJIHHbq2H0cwp6GT+rrp+7RMOBN0hZdpgtdVHClVE6jwTfHxqwCSNM45CIT/MV3bJUpQ==
   dependencies:
-    "@makerdao/currency" "^0.9.9"
+    "@makerdao/currency" "^0.9.10"
     "@makerdao/services-core" "^0.11.4-alpha.0"
     assert "^2.0.0"
     bignumber.js "^8.1.1"
@@ -2993,13 +2985,13 @@
     babel-runtime "^6.26.0"
     walletlink "^1.0.0"
 
-"@makerdao/dai@0.42.3-alpha.0", "@makerdao/dai@^0.42.3-alpha.0":
-  version "0.42.3-alpha.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.42.3-alpha.0.tgz#1983bdcc361420ad32b9bb98ae481af4fcb21e82"
-  integrity sha512-sPZnSyIqK7uPcCB3Dz1QCmT3y3LrG1TYIuNY2F+WA1sZqXA8Wl4/X9ZDs9P8KyPy1PRhrw62nkVn2e/Q6CcBKA==
+"@makerdao/dai@0.42.3-alpha.1", "@makerdao/dai@^0.42.3-alpha.1":
+  version "0.42.3-alpha.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.42.3-alpha.1.tgz#8bb89bd3909352c7f3d23645ec492af9ee6f3826"
+  integrity sha512-T8QotsVpU53Vvbx0x4t6LJ3VLdROqIarohYpYFYFZEFVHxIZ+Ic8VWS1U2RewY2gxP28JFxJKyzRb0cKw88qjQ==
   dependencies:
     "@babel/runtime" "^7.3.4"
-    "@makerdao/currency" "0.9.9"
+    "@makerdao/currency" "^0.9.10"
     "@makerdao/multicall" "^0.11.0"
     "@makerdao/services-core" "^0.11.4-alpha.0"
     "@makerdao/test-helpers" "^0.2.1"
@@ -15990,7 +15982,7 @@ web3-net@1.6.1:
     web3-core-method "1.6.1"
     web3-utils "1.6.1"
 
-web3-provider-engine@14.0.4, web3-provider-engine@makerdao/provider-engine#kovan-fix-dist:
+web3-provider-engine@14.0.4, "web3-provider-engine@github:makerdao/provider-engine#kovan-fix-dist":
   version "14.0.4"
   resolved "https://codeload.github.com/makerdao/provider-engine/tar.gz/7c4b187809f156409473246de15dc595e1fe3356"
   dependencies:

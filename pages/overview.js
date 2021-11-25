@@ -309,7 +309,10 @@ function OverviewDataFetch() {
       const scs = maker.service('smartContract');
       const tub = scs.getContract('SAI_TUB');
       const top = scs.getContract('SAI_TOP');
-      const scd = { off: await tub.off() }; // SCD is shut down
+      // console.log('tub', tub);
+      // console.log('tub.off()', tub.off());
+      //const scd = { off: await tub.off() }; // SCD is shut down
+      const scd = { off: true }; // SCD is shut down
 
       if (scd.off && countCdps(cdpMigrationCheck) > 0) {
         Object.assign(scd, {
@@ -403,7 +406,10 @@ function Overview({ fetching }) {
     !shouldShowRedeemVaults &&
     !shouldShowSCDESCollateral &&
     !shouldShowSCDESSai;
-
+  console.log('systemDebt', systemDebt);
+  console.log('systemDebt.toString()', systemDebt && systemDebt.toString());
+  console.log('fixedPrices', fixedPrices);
+  console.log('.map)', fixedPrices && fixedPrices.map(x => x.price.toString()));
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <Header />

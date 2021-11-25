@@ -200,12 +200,12 @@ export default [
     currency: AAVE,
     networks: ['mainnet', 'kovan']
   },
-  {
-    slug: 'univ2daieth-a',
-    symbol: 'UNIV2DAIETH-A',
-    key: 'UNIV2DAIETH-A',
-    gem: 'UNIV2DAIETH',
-    currency: UNIV2DAIETH,
-    networks: ['mainnet', 'kovan']
-  },
+  // {
+  //   slug: 'univ2daieth-a',
+  //   symbol: 'UNIV2DAIETH-A',
+  //   key: 'UNIV2DAIETH-A',
+  //   gem: 'UNIV2DAIETH',
+  //   currency: UNIV2DAIETH,
+  //   networks: ['mainnet', 'kovan']
+  // },
 ];
