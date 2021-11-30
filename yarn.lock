@@ -2927,10 +2927,10 @@
     bignumber.js "^8.1.1"
     rxjs "^6.5.4"
 
-"@makerdao/dai-plugin-migrations@1.5.3-alpha.1":
-  version "1.5.3-alpha.1"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.5.3-alpha.1.tgz#b6480635c80c87a0ab564893cd16eedfb652015d"
-  integrity sha512-Aa3cldFucTDNytCo2gIEQ3+fPH5jaL+GaSC4P2ZcrbD1j0X1Hldw6fv8m1VeA9bNHVshsUMbRfk/V+wWZEiW8w==
+"@makerdao/dai-plugin-migrations@1.5.3-alpha.2":
+  version "1.5.3-alpha.2"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.5.3-alpha.2.tgz#42236e20f6551ca2d598d2edd379dcb778c20b32"
+  integrity sha512-e4aRbAWLrFhwEYV3u5omCUs3t2muCxJDieBdx1Oj7hzfNj7ReslKGrogg/YZj6S9OMY6bBGO5wfQz3mU7Nh+kA==
   dependencies:
     "@makerdao/currency" "^0.9.10"
     "@makerdao/dai" "^0.42.3-alpha.1"
@@ -15982,7 +15982,7 @@ web3-net@1.6.1:
     web3-core-method "1.6.1"
     web3-utils "1.6.1"
 
-web3-provider-engine@14.0.4, "web3-provider-engine@github:makerdao/provider-engine#kovan-fix-dist":
+web3-provider-engine@14.0.4, web3-provider-engine@makerdao/provider-engine#kovan-fix-dist:
   version "14.0.4"
   resolved "https://codeload.github.com/makerdao/provider-engine/tar.gz/7c4b187809f156409473246de15dc595e1fe3356"
   dependencies:
