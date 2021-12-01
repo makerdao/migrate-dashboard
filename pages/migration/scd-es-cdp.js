@@ -160,7 +160,7 @@ export default function () {
         .service('smartContract')
         .getContract('SAI_TUB')
         .per();
-      setRatio(BigNumber(per).div('1e27'));
+      setRatio(BigNumber(per._hex).div('1e27'));
     })();
   }, [maker]);
 
