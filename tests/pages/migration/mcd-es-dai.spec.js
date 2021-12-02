@@ -23,10 +23,10 @@ const daiAmount = 100;
 const dsrAmount = 0.5;
 const minEndBalance = ilks.length * daiAmount - 1;
 
-jest.setTimeout(9000000);
+//jest.setTimeout(9000000);
 
 beforeAll(async () => {
-  jest.setTimeout(9000000);
+  jest.setTimeout(70000);
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
   const vaults = {};
@@ -53,6 +53,7 @@ beforeAll(async () => {
       const [ilk] = ilkInfo;
       await end['cage(bytes32)'](stringToBytes(ilk));
   }
+  //await new Promise(r => setTimeout(r, 9000000));
   const migVault = maker
     .service('migration')
     .getMigration('global-settlement-collateral-claims');
@@ -67,7 +68,7 @@ beforeAll(async () => {
     const [ilk] = ilkInfo;
     await end.flow(stringToBytes(ilk));
   }
-  await new Promise(r => setTimeout(r, 9000000));
+  //await new Promise(r => setTimeout(r, 9000000));
 });
 
 test('overview', async () => {
