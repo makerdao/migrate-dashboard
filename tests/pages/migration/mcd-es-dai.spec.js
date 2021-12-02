@@ -24,9 +24,9 @@ const dsrAmount = 0.5;
 const minEndBalance = ilks.length * daiAmount - 1;
 
 //jest.setTimeout(9000000);
+jest.setTimeout(70000);
 
 beforeAll(async () => {
-  jest.setTimeout(70000);
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
   const vaults = {};

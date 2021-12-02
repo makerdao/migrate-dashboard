@@ -20,8 +20,9 @@ const vaultDaiAmount = 100;
 
 const vaults = {};
 
+jest.setTimeout(50000);
+
 beforeAll(async () => {
-  jest.setTimeout(50000);
   maker = await instantiateMaker('test');
   const proxyAddress = await maker.service('proxy').ensureProxy();
 

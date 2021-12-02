@@ -13,9 +13,9 @@ const { click } = fireEvent;
 let maker, snapshotData, cdp1, cdp2, initialBalance;
 
 //jest.setTimeout(9000000);
+jest.setTimeout(30000);
 
 beforeAll(async () => {
-  jest.setTimeout(30000);
   maker = await instantiateMaker('test');
   snapshotData = await takeSnapshot(maker);
 
