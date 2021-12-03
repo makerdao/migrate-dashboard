@@ -441,8 +441,8 @@ function Overview({ fetching }) {
               }}
             >
               <Text.p t="body">
-                Due to the recent discovery of a potential exploit in the Maker
-                Governance Contract (DSChief), all users are requested to
+                Due to the discovery of a potential exploit in the Maker
+                Governance Contract (DSChief v1.0) in 2019, all users are requested to
                 withdraw any MKR deposited into one of the voting contracts back
                 to their wallet.
               </Text.p>

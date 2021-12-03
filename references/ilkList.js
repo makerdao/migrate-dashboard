@@ -160,18 +160,18 @@ export default [
     gem: 'AAVE',
     currency: AAVE,
   },
-  {
-    symbol: 'MATIC-A',
-    key: 'MATIC-A',
-    gem: 'MATIC',
-    currency: MATIC,
-  },
-  {
-    symbol: 'WSTETH-A',
-    key: 'WSTETH-A',
-    gem: 'WSTETH',
-    currency: WSTETH,
-  },
+  // {
+  //   symbol: 'MATIC-A',
+  //   key: 'MATIC-A',
+  //   gem: 'MATIC',
+  //   currency: MATIC,
+  // },
+  // {
+  //   symbol: 'WSTETH-A',
+  //   key: 'WSTETH-A',
+  //   gem: 'WSTETH',
+  //   currency: WSTETH,
+  // },
   // {
   //   slug: 'univ2daieth-a',
   //   symbol: 'UNIV2DAIETH-A',
