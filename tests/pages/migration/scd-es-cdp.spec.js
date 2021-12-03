@@ -34,7 +34,7 @@ beforeAll(async () => {
   await top.cage();
   await top.setCooldown(0);
   await cdp1.bite();
-  //await new Promise(r => setTimeout(r, 1000));
+  await new Promise(r => setTimeout(r, 1000));
   await top.flow();
 
   initialBalance = await maker.getToken('ETH').balance();
