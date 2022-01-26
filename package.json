@@ -13,7 +13,9 @@
     "test": "yarn testchain --ci jest --runInBand",
     "testchain": "./node_modules/@makerdao/testchain/scripts/launch -s default --fast",
     "hardhat": "npx hardhat node --network hardhat",
-    "fund": "npx hardhat run scripts/setup.js --network localhost"
+    "fund": "npx hardhat run scripts/setup.js --network localhost",
+    "cypress": "cypress open",
+    "cypress:headless": "cypress run"
   },
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.8.3",
@@ -30,7 +32,6 @@
     "@makerdao/ui-components-core": "^0.3.3",
     "@makerdao/ui-components-footer": "^0.1.16",
     "@makerdao/ui-components-header": "^0.2.2",
-    "@nomiclabs/hardhat-ethers": "^2.0.4",
     "@walletconnect/browser": "^1.0.0-beta.39",
     "@walletconnect/qrcode-modal": "^1.0.0-beta.39",
     "@zeit/next-css": "^1.0.1",
@@ -56,9 +57,11 @@
   "devDependencies": {
     "@makerdao/test-helpers": "^0.2.1",
     "@makerdao/testchain": "1.1.33-beta5",
+    "@nomiclabs/hardhat-ethers": "^2.0.4",
     "@testing-library/react": "^9.3.2",
     "babel-eslint": "^10.0.3",
     "babel-plugin-styled-components": "^1.10.6",
+    "cypress": "^9.3.1",
     "dev-proxy": "^2.1.2",
     "eslint": "^6.6.0",
     "eslint-plugin-react": "^7.16.0",

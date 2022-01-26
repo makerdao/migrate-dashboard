@@ -2,7 +2,7 @@ const hre = require('hardhat');
 const { ethers } = hre;
 
 // const keyPairs = require('../cypress/support/constants/keypairs.json');
-const ERC20_ABI = require('../tests/fixtures/erc20_abi.json');
+const ERC20_ABI = require('../cypress/fixtures/erc20_abi.json');
 
 async function main() {
   const testAccount = '0x8028Ef7ADA45AA7fa31EdaE7d6C30BfA5fb3cf0B';
