@@ -12,7 +12,8 @@
     "start": "next start",
     "test": "yarn testchain --ci jest --runInBand",
     "testchain": "./node_modules/@makerdao/testchain/scripts/launch -s default --fast",
-    "hardhat": "npx hardhat node --network hardhat"
+    "hardhat": "npx hardhat node --network hardhat",
+    "fund": "npx hardhat run scripts/setup.js --network localhost"
   },
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.8.3",
