@@ -57,7 +57,6 @@ export async function instantiateMaker(network) {
 
   const mcdPluginConfig = {
     cdpTypes: [
-      { currency: SAI, ilk: 'SAI' },
       //FIXME: the mcd plugin should be changed so that we're not required to add the default cdp types again here
       ...ilkList.map(i => {
         return {
@@ -69,22 +68,21 @@ export async function instantiateMaker(network) {
     ]
   };
 
-  const migrationPluginConfig = {};
-  const scdPluginConfig = {};
-  
+  let migrationPluginConfig = {};
+  let scdPluginConfig = {};
   let daiAddressOverrides = {};
 
-  if (network === 'kovan'  && global.mcdESTest) {
-    const addresses = require('./addresses-kovan-mcd-es.json');
-    mcdPluginConfig.addressOverrides = addresses;
-    migrationPluginConfig.addressOverrides = addresses;
-    daiAddressOverrides = {...addresses,
-      CDP_MANAGER: addresses.CDP_MANAGER_1,
-      MCD_VAT: addresses.MCD_VAT_1,
-      MCD_END: addresses.MCD_END_1,
-      GET_CDPS_1: addresses.GET_CDPS_1
-    };
-  }
+  // if (network === 'kovan'  && global.mcdESTest) {
+  //   const addresses = require('./addresses-kovan-mcd-es.json');
+  //   mcdPluginConfig.addressOverrides = addresses;
+  //   migrationPluginConfig.addressOverrides = addresses;
+  //   daiAddressOverrides = {...addresses,
+  //     CDP_MANAGER: addresses.CDP_MANAGER_1,
+  //     MCD_VAT: addresses.MCD_VAT_1,
+  //     MCD_END: addresses.MCD_END_1,
+  //     GET_CDPS_1: addresses.GET_CDPS_1
+  //   };
+  // }
 
   // if (network === 'testnet') {
   //   const addresses = require('./addresses-testnet.json');
@@ -97,6 +95,13 @@ export async function instantiateMaker(network) {
   //     GET_CDPS_1: addresses.GET_CDPS_1
   //   };
   // }
+
+  if (network === 'goerlifork') {
+    const addressesGoerli = require('./addresses-goerli.json');
+    mcdPluginConfig.addressOverrides = addressesGoerli;
+    migrationPluginConfig.addressOverrides = addressesGoerli;
+    daiAddressOverrides = addressesGoerli;
+  }
 
   const config = {
     url,
@@ -113,14 +118,9 @@ export async function instantiateMaker(network) {
     ],
     smartContract: {
       addressOverrides: {
-        ...daiAddressOverrides,
-        MAKER_OTC: {
-          mainnet: '0x794e6e91555438afc3ccf1c5076a74f42133d08d',
-          kovan: '0xe325acb9765b02b8b418199bf9650972299235f4'
-        }
+        ...daiAddressOverrides
       }
     },
-    token: { addressOverrides: {} }
   };
 
   if (global.scdESTest && !global.testnet) {
