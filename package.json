@@ -11,7 +11,7 @@
     "build": "next build && next export",
     "start": "next start",
     "test": "yarn testchain --ci jest --runInBand",
-    "jest:mcd-es-dai": "jest --runInBand mcd-es-dai",
+    "jest:hardhat": "jest --runInBand mcd-es-dai-hardhat",
     "testchain": "./node_modules/@makerdao/testchain/scripts/launch -s default --fast",
     "hardhat": "npx hardhat node --network hardhat",
     "fund": "npx hardhat run scripts/setup.js --network localhost",
@@ -19,7 +19,7 @@
     "cypress:headless": "cypress run",
     "e2e": "npm run fund && start-server-and-test dev http://localhost:3000 cypress",
     "e2e:headless": "npm run fund && start-server-and-test dev http://localhost:3000 cypress:headless",
-    "hardhat:jest": "start-server-and-test hardhat http://localhost:8545 jest:mcd-es-dai"
+    "hardhat:jest": "npm run fund && start-server-and-test hardhat http://localhost:8545 jest:hardhat"
   },
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.8.3",

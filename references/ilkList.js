@@ -160,6 +160,12 @@ export default [
     gem: 'AAVE',
     currency: AAVE,
   },
+  {
+    symbol: 'PSM-USDC-A',
+    key: 'PSM-USDC-A',
+    gem: 'USDC',
+    currency: USDC,
+  },
   // {
   //   symbol: 'MATIC-A',
   //   key: 'MATIC-A',

@@ -58,13 +58,13 @@ export async function instantiateMaker(network) {
   const mcdPluginConfig = {
     cdpTypes: [
       //FIXME: the mcd plugin should be changed so that we're not required to add the default cdp types again here
-      ...ilkList.map(i => {
+      ...ilkList.filter(i => i.symbol !== 'PSM-USDC-A').map(i => {
         return {
           currency: i.currency,
           ilk: i.key,
           decimals: i.decimals
         };
-      })
+      }),
     ]
   };
 
