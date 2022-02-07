@@ -48,7 +48,7 @@ export async function instantiateMaker(network) {
   const url =
     network === 'test' || network === 'testnet'
       ? 'http://localhost:2000'
-      : network === 'goerlifork' ? 'http://localhost:8545'
+      : network === 'goerlifork' || network === 'mainnetfork' ? 'http://localhost:8545'
       : `https://${network}.infura.io/v3/${INFURA_KEY}`;
 
   // this is required here instead of being imported normally because it runs
@@ -98,6 +98,13 @@ export async function instantiateMaker(network) {
 
   if (network === 'goerlifork') {
     const addressesGoerli = require('./addresses-goerli.json');
+    mcdPluginConfig.addressOverrides = addressesGoerli;
+    migrationPluginConfig.addressOverrides = addressesGoerli;
+    daiAddressOverrides = addressesGoerli;
+  }
+
+  if (network === 'mainnetfork') {
+    const addressesGoerli = require('./addresses-mainnet.json');
     mcdPluginConfig.addressOverrides = addressesGoerli;
     migrationPluginConfig.addressOverrides = addressesGoerli;
     daiAddressOverrides = addressesGoerli;

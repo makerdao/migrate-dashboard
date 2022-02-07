@@ -6,7 +6,7 @@ const ERC20_ABI = require('../cypress/fixtures/erc20_abi.json');
 
 async function main() {
   const testAccount = '0x8028Ef7ADA45AA7fa31EdaE7d6C30BfA5fb3cf0B';
-  const mkrAddress = '0xc5E4eaB513A7CD12b2335e8a0D57273e13D499f7';
+  const mkrAddress = '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2';
 
   // This is the test account used on the tests
   await hre.network.provider.request({
