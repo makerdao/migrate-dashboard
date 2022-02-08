@@ -5,7 +5,7 @@ const { ethers } = hre;
 const ERC20_ABI = require('../cypress/fixtures/erc20_abi.json');
 
 async function main() {
-  const testAccount = '0x8028Ef7ADA45AA7fa31EdaE7d6C30BfA5fb3cf0B';
+  const testAccount = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266';
   const mkrAddress = '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2';
 
   // This is the test account used on the tests
@@ -30,7 +30,8 @@ async function main() {
     await ethers.provider.send('evm_mine', []);
   };
 
-  const MKR_SLOT = 3;
+  //const MKR_SLOT = 3; //GOERLI
+  const MKR_SLOT = 1; //MAINNET
   const index = ethers.utils.solidityKeccak256(
     ['uint256', 'uint256'],
     [testAccount, MKR_SLOT]

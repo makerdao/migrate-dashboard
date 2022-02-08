@@ -14,8 +14,12 @@ import { prettifyNumber } from '../../../utils/ui';
 let maker;
 
 //for now, only use this test for PSMs (i.e. ilks that are not on the testchain)
-const ilks = ilkList.map(i => [i.symbol, i.currency])
-  .filter(i => i[0] !== 'PSM-USDC-A');
+// const ilks = [];
+
+const ilks = ilkList.map(i => [i.symbol, i.currency]);
+
+// const ilks = ilkList.map(i => [i.symbol, i.currency])
+//   .filter(i => i[0] !== 'PSM-USDC-A');
 
 //dust limit on the testchain. when updating the testchain this may need to be increased
 const daiAmount = 100;
@@ -28,39 +32,36 @@ jest.setTimeout(70000);
 
 beforeAll(async () => {
   console.log('0');
-  maker = await instantiateMaker('goerlifork');
+  maker = await instantiateMaker('mainnetfork');
   const proxyAddress = await maker.service('proxy').ensureProxy();
   console.log('1');
   const vaults = {};
-  for (let ilkInfo of ilks) {
-    const [ilk, gem] = ilkInfo;
-    await maker.getToken(gem).approveUnlimited(proxyAddress);
-    //TODO: lock USDC into the PSM 
-    //TODO: mint USDC in the setup script first
-  }
   console.log('2');
   await maker.getToken(DAI).approveUnlimited(proxyAddress);
-
+  console.log('3');
   //trigger ES, and get to the point that Dai can be cashed for all ilks
   const token = maker.service('smartContract').getContract('MCD_GOV');
-  await token['mint(uint256)'](WAD.times(50000).toFixed());
+  console.log('4');
   const esm = maker.service('smartContract').getContract('MCD_ESM');
-  await token.approve(esm.address, WAD.times(50000).toFixed());
-  await esm.join(WAD.times(50000).toFixed());
+  await token.approve(esm.address, WAD.times(100000).toFixed());
+  console.log('5');
+  console.log('maker.currentAccount: ', maker.currentAccount());
+  await esm.join(WAD.times(100000).toFixed());
+  console.log('6');
   await esm.fire();
+  console.log('7');
   const end = maker.service('smartContract').getContract('MCD_END');
+
+  //ohh, maybe I accidentally deleted this before, causing issues
   for (let ilkInfo of ilks) {
       const [ilk] = ilkInfo;
+      console.log('calling cage on ilk', ilk);
       await end['cage(bytes32)'](stringToBytes(ilk));
   }
-  //await new Promise(r => setTimeout(r, 9000000));
-  const migVault = maker
-    .service('migration')
-    .getMigration('global-settlement-collateral-claims');
 
-  for (let vault of Object.keys(vaults)) {
-    await migVault.free(vaults[vault].id, vault);
-  }
+//   for (let vault of Object.keys(vaults)) {
+//     await migVault.free(vaults[vault].id, vault);
+//   }
 
   await end.thaw();
 

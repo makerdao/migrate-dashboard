@@ -104,10 +104,10 @@ export async function instantiateMaker(network) {
   }
 
   if (network === 'mainnetfork') {
-    const addressesGoerli = require('./addresses-mainnet.json');
-    mcdPluginConfig.addressOverrides = addressesGoerli;
-    migrationPluginConfig.addressOverrides = addressesGoerli;
-    daiAddressOverrides = addressesGoerli;
+    const addressesMainnet = require('./addresses-mainnet.json');
+    mcdPluginConfig.addressOverrides = addressesMainnet;
+    migrationPluginConfig.addressOverrides = addressesMainnet;
+    daiAddressOverrides = addressesMainnet;
   }
 
   const config = {
