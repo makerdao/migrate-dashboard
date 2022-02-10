@@ -100,14 +100,24 @@ export async function instantiateMaker(network) {
     const addressesGoerli = require('./addresses-goerli.json');
     mcdPluginConfig.addressOverrides = addressesGoerli;
     migrationPluginConfig.addressOverrides = addressesGoerli;
-    daiAddressOverrides = addressesGoerli;
+    daiAddressOverrides = {...addressesGoerli,
+    CDP_MANAGER_1: addressesGoerli.CDP_MANAGER,
+    MCD_VAT_1: addressesGoerli.MCD_VAT,
+    MCD_END_1: addressesGoerli.MCD_END,
+    GET_CDPS_1: addressesGoerli.GET_CDPS
+    };
   }
 
   if (network === 'mainnetfork') {
     const addressesMainnet = require('./addresses-mainnet.json');
     mcdPluginConfig.addressOverrides = addressesMainnet;
     migrationPluginConfig.addressOverrides = addressesMainnet;
-    daiAddressOverrides = addressesMainnet;
+    daiAddressOverrides = {...addressesMainnet,
+      CDP_MANAGER_1: addressesMainnet.CDP_MANAGER,
+      MCD_VAT_1: addressesMainnet.MCD_VAT,
+      MCD_END_1: addressesMainnet.MCD_END,
+      GET_CDPS_1: addressesMainnet.GET_CDPS
+      };
   }
 
   const config = {

@@ -31,42 +31,39 @@ const minEndBalance = ilks.length * daiAmount - 1;
 jest.setTimeout(70000);
 
 beforeAll(async () => {
-  console.log('0');
   maker = await instantiateMaker('mainnetfork');
   const proxyAddress = await maker.service('proxy').ensureProxy();
-  console.log('1');
   const vaults = {};
-  console.log('2');
   await maker.getToken(DAI).approveUnlimited(proxyAddress);
-  console.log('3');
   //trigger ES, and get to the point that Dai can be cashed for all ilks
   const token = maker.service('smartContract').getContract('MCD_GOV');
-  console.log('4');
   const esm = maker.service('smartContract').getContract('MCD_ESM');
   await token.approve(esm.address, WAD.times(100000).toFixed());
-  console.log('5');
   console.log('maker.currentAccount: ', maker.currentAccount());
   await esm.join(WAD.times(100000).toFixed());
-  console.log('6');
   await esm.fire();
-  console.log('7');
   const end = maker.service('smartContract').getContract('MCD_END');
 
-  //ohh, maybe I accidentally deleted this before, causing issues
   for (let ilkInfo of ilks) {
       const [ilk] = ilkInfo;
-      console.log('calling cage on ilk', ilk);
       await end['cage(bytes32)'](stringToBytes(ilk));
   }
 
-//   for (let vault of Object.keys(vaults)) {
-//     await migVault.free(vaults[vault].id, vault);
-//   }
+const vat = maker.service('smartContract').getContract('MCD_VAT');
+const vow = maker.service('smartContract').getContract('MCD_VOW');
+const vowAddress = maker.service('smartContract').getContractAddress('MCD_VOW');
+const vowDai = await vat.dai(vowAddress);
+const vowSin = await vat.sin(vowAddress);
+
+await end.skim(stringToBytes('ETH-A'), '0xb09c349b0B60FeA600a55a7e2f9Be817D132a714');
+
+await vow.heal(vowDai.toString());
 
   await end.thaw();
 
   for (let ilkInfo of ilks) {
     const [ilk] = ilkInfo;
+    console.log('calling flow on ilk', ilk);
     await end.flow(stringToBytes(ilk));
   }
   //await new Promise(r => setTimeout(r, 9000000));
