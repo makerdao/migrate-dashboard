@@ -13,19 +13,7 @@ import { prettifyNumber } from '../../../utils/ui';
 
 let maker;
 
-//for now, only use this test for PSMs (i.e. ilks that are not on the testchain)
-// const ilks = [];
-
 const ilks = ilkList.map(i => [i.symbol, i.currency]);
-
-// const ilks = ilkList.map(i => [i.symbol, i.currency])
-//   .filter(i => i[0] !== 'PSM-USDC-A');
-
-//dust limit on the testchain. when updating the testchain this may need to be increased
-const daiAmount = 100;
-
-const dsrAmount = 0.5;
-const minEndBalance = ilks.length * daiAmount - 1;
 
 //jest.setTimeout(9000000);
 jest.setTimeout(70000);
@@ -33,7 +21,7 @@ jest.setTimeout(70000);
 beforeAll(async () => {
   maker = await instantiateMaker('mainnetfork');
   const proxyAddress = await maker.service('proxy').ensureProxy();
-  const vaults = {};
+
   await maker.getToken(DAI).approveUnlimited(proxyAddress);
   //trigger ES, and get to the point that Dai can be cashed for all ilks
   const token = maker.service('smartContract').getContract('MCD_GOV');
@@ -53,7 +41,6 @@ const vat = maker.service('smartContract').getContract('MCD_VAT');
 const vow = maker.service('smartContract').getContract('MCD_VOW');
 const vowAddress = maker.service('smartContract').getContractAddress('MCD_VOW');
 const vowDai = await vat.dai(vowAddress);
-const vowSin = await vat.sin(vowAddress);
 
 await end.skim(stringToBytes('ETH-A'), '0xb09c349b0B60FeA600a55a7e2f9Be817D132a714');
 
@@ -66,7 +53,6 @@ await vow.heal(vowDai.toString());
     console.log('calling flow on ilk', ilk);
     await end.flow(stringToBytes(ilk));
   }
-  //await new Promise(r => setTimeout(r, 9000000));
 });
 
 test('the whole flow', async () => {
@@ -80,9 +66,9 @@ test('the whole flow', async () => {
   } = await render(<RedeemDai />, {
     initialState: {
       proxyDaiAllowance: DAI(0),
-      daiBalance: DAI(daiAmount * ilks.length - dsrAmount),
+      daiBalance: DAI(daiAmount),
       endBalance: DAI(0),
-      dsrBalance: DAI(dsrAmount),
+      dsrBalance: DAI(0),
       minEndVatBalance: BigNumber(minEndBalance),
       bagBalance: DAI(0),
       outAmounts: ilks.map(i => {
