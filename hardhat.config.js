@@ -34,7 +34,7 @@ module.exports = {
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_MAINNET_API_KEY}`,
         blockNumber: 14168870,
-        chainId: 31337
+        chainId: 31338
       },
       timeout: 2000000
     }

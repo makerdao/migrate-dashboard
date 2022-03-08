@@ -1,5 +1,4 @@
 import RedeemDai from '../../../pages/migration/redeemDai';
-import Overview from '../../../pages/overview';
 import render from '../../helpers/render';
 import { fireEvent, waitForElement } from '@testing-library/react';
 import { instantiateMaker, SAI } from '../../../maker';
@@ -14,6 +13,9 @@ import { prettifyNumber } from '../../../utils/ui';
 let maker;
 
 const ilks = ilkList.map(i => [i.symbol, i.currency]);
+
+const daiAmount = 1000; //number of dai created in fund script
+const minEndBalance = daiAmount - 1;
 
 //jest.setTimeout(9000000);
 jest.setTimeout(70000);
@@ -89,9 +91,10 @@ test('the whole flow', async () => {
           price: BigNumber(10)
         };
       })
-    }
+    },
+    network: 'mainnetfork'
   });
-
+  console.log('beginning test');
   //proxy contract setup
   await findByText('Set up proxy contract');
   const continueButton = getByText('Continue');
@@ -101,11 +104,10 @@ test('the whole flow', async () => {
   click(allowanceButton);
   await waitForElement(() => !continueButton.disabled);
   click(continueButton);
-
+  console.log('banana');
   //deposit dai
   await findByText('Deposit Dai to Redeem');
-  click(getByText('Withdraw'));
-  await findByText(prettifyNumber(daiAmount * ilks.length)+' DAI');
+  await findByText(prettifyNumber(daiAmount)+' DAI');
   const inputs = getAllByPlaceholderText('0.00 DAI');
   const input = inputs[2]; //first two are divs, third is the input element we want
   change(input, { target: { value: minEndBalance + 0.1 } });
@@ -115,7 +117,6 @@ test('the whole flow', async () => {
   const depositButton = getByText('Deposit');
   expect(depositButton.disabled).toBeFalsy();
   click(depositButton);
-
   //redeem dai
   await findByText('Redeem Dai');
 
@@ -130,8 +131,13 @@ test('the whole flow', async () => {
     expect(after.gt(before));
   }
 
-  for (let ilk of ilks) {
-    await redeem(ilk);
-  }
+  const psmIlk = ilks.find(x => x[0] === 'PSM-USDC-A');
+  const addrs = maker.service('smartContract').getContractAddresses();
+  console.log('addrs', addrs);
+  await redeem(psmIlk);
+
+  // for (let ilk of ilks) {
+  //   await redeem(ilk);
+  // }
   //expect.assertions(ilks.length);
 });

@@ -23,8 +23,8 @@ const daiAmount = 100;
 const dsrAmount = 0.5;
 const minEndBalance = ilks.length * daiAmount - 1;
 
-//jest.setTimeout(9000000);
-jest.setTimeout(70000);
+jest.setTimeout(9000000);
+//jest.setTimeout(70000);
 
 beforeAll(async () => {
   maker = await instantiateMaker('test');
@@ -68,7 +68,7 @@ beforeAll(async () => {
     const [ilk] = ilkInfo;
     await end.flow(stringToBytes(ilk));
   }
-  //await new Promise(r => setTimeout(r, 9000000));
+  await new Promise(r => setTimeout(r, 9000000));
 });
 
 test('overview', async () => {

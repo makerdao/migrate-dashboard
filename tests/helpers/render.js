@@ -12,7 +12,7 @@ export default async function render(
   {
     initialState,
     getMaker,
-
+    network,
     // use this callback to get updates every time the store state changes
     onStateChange
   } = {}
@@ -27,7 +27,7 @@ export default async function render(
 
   const renderResults = renderBase(
     <ThemeProvider theme={theme}>
-      <MakerProvider network="test">
+      <MakerProvider network={network ? network : 'test'}>
         <MakerAccess callback={getMaker}>
           <StoreProvider initialState={initialState}>
             <StoreAccess callback={storeCallback}>{children}</StoreAccess>
