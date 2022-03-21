@@ -1,8 +1,7 @@
 import Maker from '@makerdao/dai';
-import mcdPlugin, { MDAI, BAT } from '@makerdao/dai-plugin-mcd';
+import mcdPlugin, { DAI as DAI_ } from '@makerdao/dai-plugin-mcd';
 import scdPlugin from '@makerdao/dai-plugin-scd';
-// import migrationPlugin from '@makerdao/dai-plugin-migrations';
-import migrationPlugin from './plugin/src/index';
+import migrationPlugin from '@makerdao/dai-plugin-migrations';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import walletLinkPlugin from '@makerdao/dai-plugin-walletlink';
 import walletConnectPlugin from '@makerdao/dai-plugin-walletconnect';
@@ -15,7 +14,7 @@ export const SAI = createCurrency('SAI');
 export const PETH = Maker.PETH;
 export const ETH = Maker.ETH;
 export const USD = Maker.USD;
-export const DAI = MDAI;
+export const DAI = DAI_;
 
 let maker;
 
@@ -24,7 +23,7 @@ export function getMaker() {
   return maker;
 }
 
-const INFURA_KEY = '6ba7a95268bf4ccda9bf1373fe582b43';
+const INFURA_KEY = 'e51bcaaddb6745a59330188039662b30';
 
 const scdESTestAddressOverrides = {
   SAI_GEM: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
@@ -58,10 +57,12 @@ export async function instantiateMaker(network) {
   const mcdPluginConfig = {
     cdpTypes: [
       { currency: SAI, ilk: 'SAI' },
+      //FIXME: the mcd plugin should be changed so that we're not required to add the default cdp types again here
       ...ilkList.map(i => {
         return {
           currency: i.currency,
-          ilk: i.key
+          ilk: i.key,
+          decimals: i.decimals
         };
       })
     ]
