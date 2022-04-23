@@ -23,7 +23,7 @@ export function getMaker() {
   return maker;
 }
 
-const INFURA_KEY = 'e51bcaaddb6745a59330188039662b30';
+const INFURA_KEY = '5a5a9f036c0c4db0ad00a6545a5f4fc0';
 
 const scdESTestAddressOverrides = {
   SAI_GEM: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
