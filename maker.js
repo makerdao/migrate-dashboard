@@ -136,6 +136,9 @@ export async function instantiateMaker(network) {
     smartContract: {
       addressOverrides: daiAddressOverrides
     },
+    gas: {
+      price: 73474656578
+    }
   };
 
   if (global.scdESTest && !global.testnet) {

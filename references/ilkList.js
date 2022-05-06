@@ -1,6 +1,7 @@
 /*
-This file is basically copied from https://github.com/makerdao/mcd-cdp-portal/blob/master/src/references/ilkList.js
-the slug and network properties are not used in this project
+can get the list of active ilks from the ilk registry: https://etherscan.io/address/0x5a464c28d19848f44199d003bef5ecc87d090f87#readContract
+use the list function to get an ilk's bytes32 representation, then pass it into the ilkData function to see what ilk it is
+problem is it includes ilks that have been offboarded, can check daistats to see if its been offboarded
 */
 import {
   ETH,
@@ -41,21 +42,14 @@ export default [
     currency: ETH,
   },
   {
-    symbol: 'BAT-A',
-    key: 'BAT-A',
-    gem: 'BAT',
-    currency: BAT,
+    symbol: 'ETH-C',
+    key: 'ETH-C',
+    gem: 'ETH',
+    currency: ETH,
   },
   {
     symbol: 'USDC-A',
     key: 'USDC-A',
-    gem: 'USDC',
-    currency: USDC,
-    decimals: 6
-  },
-  {
-    symbol: 'USDC-B',
-    key: 'USDC-B',
     gem: 'USDC',
     currency: USDC,
     decimals: 6
@@ -68,35 +62,10 @@ export default [
     decimals: 8
   },
   {
-    symbol: 'TUSD-A',
-    key: 'TUSD-A',
-    gem: 'TUSD',
-    currency: TUSD,
-  },
-  {
-    symbol: 'KNC-A',
-    key: 'KNC-A',
-    gem: 'KNC',
-    currency: KNC,
-  },
-  {
-    symbol: 'ZRX-A',
-    key: 'ZRX-A',
-    gem: 'ZRX',
-    currency: ZRX,
-  },
-  {
     symbol: 'MANA-A',
     key: 'MANA-A',
     gem: 'MANA',
     currency: MANA,
-  },
-  {
-    symbol: 'USDT-A',
-    key: 'USDT-A',
-    gem: 'USDT',
-    currency: USDT,
-    decimals: 6
   },
   {
     symbol: 'PAXUSD-A',
@@ -111,12 +80,6 @@ export default [
     currency: COMP,
   },
   {
-    symbol: 'LRC-A',
-    key: 'LRC-A',
-    gem: 'LRC',
-    currency: LRC,
-  },
-  {
     symbol: 'LINK-A',
     key: 'LINK-A',
     gem: 'LINK',
@@ -127,12 +90,6 @@ export default [
     key: 'YFI-A',
     gem: 'YFI',
     currency: YFI,
-  },
-  {
-    symbol: 'BAL-A',
-    key: 'BAL-A',
-    gem: 'BAL',
-    currency: BAL,
   },
   {
     symbol: 'GUSD-A',
@@ -155,10 +112,40 @@ export default [
     decimals: 8
   },
   {
-    symbol: 'AAVE-A',
-    key: 'AAVE-A',
-    gem: 'AAVE',
-    currency: AAVE,
+    symbol: 'UNIV2DAIETH-A',
+    key: 'UNIV2DAIETH-A',
+    gem: 'UNIV2DAIETH',
+    currency: UNIV2DAIETH,
+  },
+  {
+    symbol: 'UNIV2WBTCETH-A',
+    key: 'UNIV2WBTCETH-A',
+    gem: 'UNIV2WBTCETH',
+    currency: UNIV2WBTCETH
+  },
+  {
+    symbol: 'UNIV2USDCETH-A',
+    key: 'UNIV2USDCETH-A',
+    gem: 'UNIV2USDCETH',
+    currency: UNIV2USDCETH
+  },
+  {
+    symbol: 'UNIV2DAIUSDC-A',
+    key: 'UNIV2DAIUSDC-A',
+    gem: 'UNIV2DAIUSDC',
+    currency: UNIV2DAIUSDC
+  },
+  {
+    symbol: 'UNIV2UNIETH-A',
+    key: 'UNIV2UNIETH-A',
+    gem: 'UNIV2UNIETH',
+    currency: UNIV2UNIETH
+  },
+  {
+    symbol: 'UNIV2WBTCDAI-A',
+    key: 'UNIV2WBTCDAI-A',
+    gem: 'UNIV2WBTCDAI',
+    currency: UNIV2WBTCDAI
   },
   {
     symbol: 'PSM-USDC-A',
@@ -166,24 +153,94 @@ export default [
     gem: 'USDC',
     currency: USDC,
   },
-  // {
-  //   symbol: 'MATIC-A',
-  //   key: 'MATIC-A',
-  //   gem: 'MATIC',
-  //   currency: MATIC,
-  // },
-  // {
-  //   symbol: 'WSTETH-A',
-  //   key: 'WSTETH-A',
-  //   gem: 'WSTETH',
-  //   currency: WSTETH,
-  // },
-  // {
-  //   slug: 'univ2daieth-a',
-  //   symbol: 'UNIV2DAIETH-A',
-  //   key: 'UNIV2DAIETH-A',
-  //   gem: 'UNIV2DAIETH',
-  //   currency: UNIV2DAIETH,
-  //   networks: ['mainnet', 'kovan']
-  // },
+  {
+    symbol: 'RWA001-A',
+    key: 'RWA001-A',
+    gem: 'RWA001',
+    currency: RWA001,
+  },
+  {
+    symbol: 'RWA002-A',
+    key: 'RWA002-A',
+    gem: 'RWA002',
+    currency: RWA002,
+  },
+  {
+    symbol: 'RWA003-A',
+    key: 'RWA003-A',
+    gem: 'RWA003',
+    currency: RWA003,
+  },
+  {
+    symbol: 'RWA004-A',
+    key: 'RWA004-A',
+    gem: 'RWA004',
+    currency: RWA004,
+  },
+  {
+    symbol: 'RWA005-A',
+    key: 'RWA005-A',
+    gem: 'RWA005',
+    currency: RWA005,
+  },
+  {
+    symbol: 'PSM-PAX-A',
+    key: 'PSM-PAX-A',
+    gem: 'PAX',
+    currency: PAX,
+  },
+  {
+    symbol: 'MATIC-A',
+    key: 'MATIC-A',
+    gem: 'MATIC',
+    currency: MATIC,
+  },
+  {
+    symbol: 'GUNIV3DAIUSDC1-A',
+    key: 'GUNIV3DAIUSDC1-A',
+    gem: 'GUNIV3DAIUSDC1',
+    currency: GUNIV3DAIUSDC1,
+  },
+  {
+    symbol: 'WSTETH-A',
+    key: 'WSTETH-A',
+    gem: 'WSTETH',
+    currency: WSTETH,
+  },
+  {
+    symbol: 'DIRECT-AAVEV2-DAI',
+    key: 'DIRECT-AAVEV2-DAI',
+    gem: 'ADAI',
+    currency: ADAI,
+  },
+  {
+    symbol: 'WBTC-B',
+    key: 'WBTC-B',
+    gem: 'WBTC',
+    currency: WBTC,
+  },
+  {
+    symbol: 'WBTC-C',
+    key: 'WBTC-C',
+    gem: 'WBTC',
+    currency: WBTC,
+  },
+  {
+    symbol: 'PSM-GUSD-A',
+    key: 'PSM-GUSD-A',
+    gem: 'GUSD',
+    currency: GUSD,
+  },
+  {
+    symbol: 'GUNIV3DAIUSDC2-A',
+    key: 'GUNIV3DAIUSDC2-A',
+    gem: 'GUNIV3DAIUSDC2',
+    currency: GUNIV3DAIUSDC2,
+  },
+  {
+    symbol: 'CRVV1ETHSTETH-A',
+    key: 'CRVV1ETHSTETH-A',
+    gem: 'CRVV1ETHSTETH',
+    currency: CRVV1ETHSTETH,
+  }
 ];
