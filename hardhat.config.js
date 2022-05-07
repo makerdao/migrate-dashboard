@@ -17,7 +17,6 @@ module.exports = {
       url: 'http://127.0.0.1:8545',
       timeout: 2000000,
       chainId: 31337,
-      gasPrice: 50000000000
     },
 
     //goerli config
@@ -34,7 +33,7 @@ module.exports = {
     hardhat: {
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_MAINNET_API_KEY}`,
-        blockNumber: 14168870,
+        blockNumber: 14732359,
         chainId: 31338
       },
       timeout: 2000000

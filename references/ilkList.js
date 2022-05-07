@@ -5,28 +5,38 @@ problem is it includes ilks that have been offboarded, can check daistats to see
 */
 import {
   ETH,
-  BAT,
   USDC,
   WBTC,
-  TUSD,
-  ZRX,
-  KNC,
   MANA,
-  USDT,
   PAXUSD,
   COMP,
-  LRC,
   LINK,
   YFI,
-  BAL,
   GUSD,
   UNI,
   RENBTC,
-  AAVE,
   MATIC,
   WSTETH,
-  UNIV2DAIETH
+  UNIV2DAIETH,
+  UNIV2WBTCETH,
+  UNIV2USDCETH,
+  UNIV2DAIUSDC,
+  UNIV2UNIETH,
+  UNIV2WBTCDAI
 } from '@makerdao/dai-plugin-mcd';
+
+import { createCurrency } from '@makerdao/currency';
+
+const RWA001 = createCurrency('RWA001');
+const RWA002 = createCurrency('RWA002');
+const RWA003 = createCurrency('RWA003');
+const RWA004 = createCurrency('RWA004');
+const RWA005 = createCurrency('RWA005');
+const GUNIV3DAIUSDC1 = createCurrency('GUNIV3DAIUSDC1');
+const ADAI = createCurrency('ADAI');
+const GUNIV3DAIUSDC2 = createCurrency('GUNIV3DAIUSDC2');
+const CRVV1ETHSTETH = createCurrency('CRVV1ETHSTETH');
+
 
 export default [
   {
@@ -187,7 +197,7 @@ export default [
     symbol: 'PSM-PAX-A',
     key: 'PSM-PAX-A',
     gem: 'PAX',
-    currency: PAX,
+    currency: PAXUSD,
   },
   {
     symbol: 'MATIC-A',

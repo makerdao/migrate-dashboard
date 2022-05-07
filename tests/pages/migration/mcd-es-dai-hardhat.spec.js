@@ -23,7 +23,6 @@ jest.setTimeout(70000);
 beforeAll(async () => {
   maker = await instantiateMaker('mainnetfork');
   const proxyAddress = await maker.service('proxy').ensureProxy();
-
   await maker.getToken(DAI).approveUnlimited(proxyAddress);
   //trigger ES, and get to the point that Dai can be cashed for all ilks
   const token = maker.service('smartContract').getContract('MCD_GOV');
@@ -49,14 +48,18 @@ beforeAll(async () => {
   await end.skim(stringToBytes('ETH-A'), '0xb09c349b0B60FeA600a55a7e2f9Be817D132a714');
   await end.skim(stringToBytes('ETH-B'), '0x260E30F4CC513614253A4de9BFE754B0d958ef63');
   await end.skim(stringToBytes('PSM-USDC-A'), '0x89B78CfA322F6C5dE0aBcEecab66Aee45393cC5A');
+  await end.skim(stringToBytes('WBTC-A'), '0x83Ad5Ad1789C6b9D61C076b4490b6d8E918798dc');
+  await end.skim(stringToBytes('ETH-C'), '0xcB0C6C2A1D9AAf8670a12b72Fa92f860B2d04387');
+  await end.skim(stringToBytes('WSTETH-A'), '0x903E781dC578EEe94519447a77BFCF4cE1bD107D');
+  await end.skim(stringToBytes('WBTC-C'),'0xD3D94aB7DEE0E166c55b0f2bBa431EF9693156f5');
 
+  
   await vow.heal(vowDai.toString());
 
   await end.thaw();
 
   for (let ilkInfo of ilks) {
     const [ilk] = ilkInfo;
-    console.log('calling flow on ilk', ilk);
     await end.flow(stringToBytes(ilk));
   }
 });
