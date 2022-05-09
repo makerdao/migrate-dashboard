@@ -48,7 +48,7 @@ export async function instantiateMaker(network) {
   const url =
     network === 'test' || network === 'testnet'
       ? 'http://localhost:2000'
-      : network === 'goerlifork' || network === 'mainnetfork' ? 'http://localhost:8545'
+      : network === 'mainnetfork' ? 'http://localhost:8545'
       : `https://${network}.infura.io/v3/${INFURA_KEY}`;
   // this is required here instead of being imported normally because it runs
   // code that will break if run server-side
@@ -95,17 +95,6 @@ export async function instantiateMaker(network) {
   //   };
   // }
 
-  if (network === 'goerlifork') {
-    const addressesGoerli = require('./addresses-goerli.json');
-    mcdPluginConfig.addressOverrides = addressesGoerli;
-    migrationPluginConfig.addressOverrides = addressesGoerli;
-    daiAddressOverrides = {...addressesGoerli,
-    CDP_MANAGER_1: addressesGoerli.CDP_MANAGER,
-    MCD_VAT_1: addressesGoerli.MCD_VAT,
-    MCD_END_1: addressesGoerli.MCD_END,
-    GET_CDPS_1: addressesGoerli.GET_CDPS
-    };
-  }
   if (network === 'mainnetfork' || network === 'mainnet') {
     const addressesMainnet = require('./addresses-mainnet.json');
     mcdPluginConfig.addressOverrides = addressesMainnet;

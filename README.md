@@ -20,10 +20,16 @@ In addition to Emergency Shutdown, the migration portal checks for:
 ```
 yarn test
 ```
+or 
 
-There are tests for the mcd dai, mcd vault, and scd cdp flows.  Currently there is no test for the scd sai flow.  Note that currently the tests are not very consistent, and will sometimes fail. Running tests individually can sometimes help.
+```
+yarn test:mcd //run the mcd dai and mcd vault tests
+```
+
+The mcd dai and mcd vault tests were updated to test against a fork of mainnet using hardhat (instead of the old local ganache testchain). For now, the other tests do not work.
 
 The UI can also be used with the local testchain, with these steps:
+(note: this needs to be updated to work with the recent hardhat changes)
 
 - add the query string `testnet` to the url, e.g.`localhost:3000?testnet`
 - switch metamask to point to the testchain (should be localhost:2000)
