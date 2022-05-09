@@ -25,7 +25,8 @@ jobs:
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package.json" }}
-      - run: launch hardhat
+      - run:
+          name: Launch hardhat
           command: |
             yarn hardhat
       - run:
