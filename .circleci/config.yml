@@ -30,10 +30,10 @@ jobs:
           command: |
             yarn hardhat
       - run:
-          name: Run tests
+          name: Run mcd tests with hardhat
           command: |
             source /home/circleci/setup-env.sh
-            yarn dai-test --coverage
+            yarn test:mcd --coverage
             npm i --no-save codecov
             ./node_modules/.bin/codecov
   deploy_staging:

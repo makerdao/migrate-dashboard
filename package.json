@@ -11,8 +11,7 @@
     "build": "next build && next export",
     "start": "next start",
     "test": "npm run fund && jest --runInBand",
-    "dai-test": "npm run fund && jest --runInBand mcd-es-dai",
-    "vault-test": "npm run fund && jest --runInBand mcd-es-vault",
+    "test:mcd": "npm run fund && jest --runInBand mcd-es",
     "testchain": "./node_modules/@makerdao/testchain/scripts/launch -s default --fast",
     "hardhat": "npx hardhat node --network hardhat --verbose",
     "fund": "npx hardhat run scripts/setup.js --network localhost"
