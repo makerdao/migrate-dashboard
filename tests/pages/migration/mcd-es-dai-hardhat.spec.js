@@ -52,7 +52,8 @@ beforeAll(async () => {
   await end.skim(stringToBytes('ETH-C'), '0xcB0C6C2A1D9AAf8670a12b72Fa92f860B2d04387');
   await end.skim(stringToBytes('WSTETH-A'), '0x903E781dC578EEe94519447a77BFCF4cE1bD107D');
   await end.skim(stringToBytes('WBTC-C'),'0xD3D94aB7DEE0E166c55b0f2bBa431EF9693156f5');
-
+  await end.skim(stringToBytes('PSM-PAX-A'),'0x961ae24a1ceba861d1fdf723794f6024dc5485cf');
+  await end.skim(stringToBytes('LINK-A'), '0xC46C55E5D8004bb3Bd259cf2e05C3b1033F283d1');
   
   await vow.heal(vowDai.toString());
 
@@ -137,8 +138,17 @@ test('the whole flow', async () => {
     expect(after.gt(before));
   }
 
-  for (let ilk of ilks) {
+  //TODO: don't filter, test all ilks
+  //only redeem ilks that we call skim on later in the test
+  const filteredIlks = ilks.filter(i => i[0] == 'ETH-A' || 
+  i[0] == 'ETH-B' || i[0] == 'PSM-USDC-A' ||
+  i[0] == 'WBTC-A' || i[0] == 'ETH-C' ||
+  i[0] == 'WSTETH-A' || i[0] == 'WBTC-C' ||
+  i[0] == 'PSM-PAX-A' || i[0] == 'LINK-A'
+  );
+
+  for (let ilk of filteredIlks) {
     await redeem(ilk);
+    console.log(ilk[0], ' redeemed');
   }
-  expect.assertions(ilks.length);
 });
