@@ -9,7 +9,6 @@ const { change, click } = fireEvent;
 import BigNumber from 'bignumber.js';
 import ilkList from '../../../references/ilkList';
 import { prettifyNumber } from '../../../utils/ui';
-const hre = require('hardhat');
 
 let maker;
 
@@ -25,17 +24,21 @@ beforeAll(async () => {
   maker = await instantiateMaker('mainnetfork');
   const proxyAddress = await maker.service('proxy').ensureProxy();
   await maker.getToken(DAI).approveUnlimited(proxyAddress);
-  //trigger ES, and get to the point that Dai can be cashed for all ilks
-  const token = maker.service('smartContract').getContract('MCD_GOV');
-  const esm = maker.service('smartContract').getContract('MCD_ESM');
-  await token.approve(esm.address, WAD.times(100000).toFixed());
-  await esm.join(WAD.times(100000).toFixed());
-  await esm.fire();
-  const end = maker.service('smartContract').getContract('MCD_END');
 
-  for (let ilkInfo of ilks) {
-      const [ilk] = ilkInfo;
-      await end['cage(bytes32)'](stringToBytes(ilk));
+  //if ES hasn't been triggered, trigger ES and call cage on all ilks
+  const end = maker.service('smartContract').getContract('MCD_END');
+  const live = await end.live();
+  if (live.toNumber() === 1) {
+    const token = maker.service('smartContract').getContract('MCD_GOV');
+    const esm = maker.service('smartContract').getContract('MCD_ESM');
+    await token.approve(esm.address, WAD.times(100000).toFixed());
+    await esm.join(WAD.times(100000).toFixed());
+    await esm.fire();
+
+    for (let ilkInfo of ilks) {
+        const [ilk] = ilkInfo;
+        await end['cage(bytes32)'](stringToBytes(ilk));
+    }
   }
 
   const vat = maker.service('smartContract').getContract('MCD_VAT');
