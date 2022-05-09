@@ -12,5 +12,6 @@ module.exports = {
   modulePathIgnorePatterns: [
     '<rootDir>/.yalc/@makerdao/dai-plugin-(mcd|migrations|scd)/test'
   ],
-  testEnvironment: 'jsdom'
+  testEnvironment: 'jsdom',
+  testSequencer: './customSequencer.js'
 };
