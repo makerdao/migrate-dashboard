@@ -19,16 +19,6 @@ module.exports = {
       chainId: 31337,
     },
 
-    //goerli config
-    // hardhat: {
-    //   forking: {
-    //     url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_GOERLI_API_KEY}`,
-    //     blockNumber: 6182224,
-    //     chainId: 31337
-    //   },
-    //   timeout: 2000000
-    // },
-
     //mainnet config
     hardhat: {
       forking: {

@@ -1,66 +1,69 @@
 import RedeemVaults from '../../../pages/migration/vaults';
-import Overview from '../../../pages/overview';
+// import Overview from '../../../pages/overview';
 import render from '../../helpers/render';
 import { fireEvent } from '@testing-library/react';
 import { instantiateMaker, SAI, DAI } from '../../../maker';
 import { WAD } from '../../references/constants';
 import { stringToBytes } from '../../../utils/ethereum';
 import ilkList from '../../../references/ilkList';
+const hre = require('hardhat');
 
 const { click } = fireEvent;
 
 let maker;
 
-//UNIV2DAIETH-A isn't on the testchain yet
+//for now only test out ETH Vaults
+//TODO: add more collateral types to the hardhat testchain
 const ilks = ilkList.map(i => [i.symbol, i.currency, i.gem])
-  .filter(i => i[0] !== 'UNIV2DAIETH-A');
+  .filter(i => i[0] == 'ETH-A' || 
+  i[0] == 'ETH-B' || i[0] == 'ETH-C');
 
-//dust limit on the testchain. when updating the testchain this may need to be increased
-const vaultDaiAmount = 100;
+//dust limit of ETH-B on mainnet
+const vaultDaiAmount = 40000;
 
 const vaults = {};
 
 jest.setTimeout(50000);
 
 beforeAll(async () => {
-  maker = await instantiateMaker('test');
+  maker = await instantiateMaker('mainnetfork');
   const proxyAddress = await maker.service('proxy').ensureProxy();
 
   for (let [ ilk , gem ] of ilks) {
     await maker.getToken(gem).approveUnlimited(proxyAddress);
-    let vaultCollateralAmount = ilk.substring(0,4) === 'ETH-' ? gem(10) : gem(4500);
+    let vaultCollateralAmount = ilk.substring(0,4) === 'ETH-' ? gem(50) : gem(4500);
     vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, vaultCollateralAmount, vaultDaiAmount);
   }
 
-  //trigger ES, and get to the point that Vaults can be redeemed
+  //trigger ES, and get to the point that Dai can be cashed for all ilks
   const token = maker.service('smartContract').getContract('MCD_GOV');
-  await token['mint(uint256)'](WAD.times(50000).toFixed());
   const esm = maker.service('smartContract').getContract('MCD_ESM');
-  await token.approve(esm.address, WAD.times(50000).toFixed());
-  await esm.join(WAD.times(50000).toFixed());
+  await token.approve(esm.address, WAD.times(100000).toFixed());
+  await esm.join(WAD.times(100000).toFixed());
   await esm.fire();
   const end = maker.service('smartContract').getContract('MCD_END');
 
-  for (let [ilk,] of ilks) {
-    await end['cage(bytes32)'](stringToBytes(ilk));
+  for (let ilkInfo of ilks) {
+      const [ilk] = ilkInfo;
+      await end['cage(bytes32)'](stringToBytes(ilk));
   }
 });
 
-test('overview', async () => {
-  const {
-    findByText,
-  } = await render(<Overview />, {
-    initialState: {
-      saiAvailable: SAI(0),
-      daiAvailable: DAI(0)
-    },
-    getMaker: maker => {
-      maker.service('cdp').getCdpIds = jest.fn(() => []);
-    }
-  });
+// test('overview', async () => {
+//   const {
+//     findByText,
+//   } = await render(<Overview />, {
+//     initialState: {
+//       saiAvailable: SAI(0),
+//       daiAvailable: DAI(0)
+//     },
+//     getMaker: maker => {
+//       maker.service('cdp').getCdpIds = jest.fn(() => []);
+//     }
+//   });
 
-  await findByText('Withdraw Excess Collateral from Vaults', {timeout: 5000});
-});
+//   await findByText('Withdraw Excess Collateral from Vaults', {timeout: 5000});
+// });
 
 test('the whole flow', async () => {
   const {
@@ -103,6 +106,7 @@ test('the whole flow', async () => {
 
   for (let ilk of ilks) {
     await withdraw(ilk);
+    console.log('withdrew collateral from ', ilk[0], ' vault');
   }
   expect.assertions(ilks.length);
 });

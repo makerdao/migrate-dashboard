@@ -27,7 +27,7 @@ export default async function render(
 
   const renderResults = renderBase(
     <ThemeProvider theme={theme}>
-      <MakerProvider network={network ? network : 'test'}>
+      <MakerProvider network={network ? network : 'mainnetfork'}>
         <MakerAccess callback={getMaker}>
           <StoreProvider initialState={initialState}>
             <StoreAccess callback={storeCallback}>{children}</StoreAccess>

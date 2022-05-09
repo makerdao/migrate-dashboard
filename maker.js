@@ -50,7 +50,6 @@ export async function instantiateMaker(network) {
       ? 'http://localhost:2000'
       : network === 'goerlifork' || network === 'mainnetfork' ? 'http://localhost:8545'
       : `https://${network}.infura.io/v3/${INFURA_KEY}`;
-  console.log('url', url);
   // this is required here instead of being imported normally because it runs
   // code that will break if run server-side
   const trezorPlugin = require('@makerdao/dai-plugin-trezor-web').default;
@@ -107,7 +106,6 @@ export async function instantiateMaker(network) {
     GET_CDPS_1: addressesGoerli.GET_CDPS
     };
   }
-  console.log('network in maker.js', network);
   if (network === 'mainnetfork' || network === 'mainnet') {
     const addressesMainnet = require('./addresses-mainnet.json');
     mcdPluginConfig.addressOverrides = addressesMainnet;

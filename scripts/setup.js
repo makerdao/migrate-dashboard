@@ -1,9 +1,7 @@
 const hre = require('hardhat');
 const { ethers } = hre;
 
-// const keyPairs = require('../cypress/support/constants/keypairs.json');
-const ERC20_ABI = require('../cypress/fixtures/erc20_abi.json');
-const END_ABI = require('../cypress/fixtures/end_abi.json');
+const ERC20_ABI = require('./erc20_abi.json');
 
 async function main() {
   const testAccount = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266';
@@ -21,7 +19,6 @@ async function main() {
 
   const mkrToken = new ethers.Contract(mkrAddress, ERC20_ABI, signer);
   const daiToken = new ethers.Contract(daiAddress, ERC20_ABI, signer);
-  //const end = new ethers.Contract(endAddress, END_ABI, signer);
 
   //manipulate mkr contract, give test address 250K MKR
   //https://kndrck.co/posts/local_erc20_bal_mani_w_hh/
@@ -75,8 +72,6 @@ async function main() {
   console.log(`test account now has ${ethers.utils.formatUnits(mkrBalance)} MKR`);
   const daiBalance = await daiToken.balanceOf(testAccount);
   console.log(`test account now has ${ethers.utils.formatUnits(daiBalance)} DAI`);
-  //const wait = await end.wait();
-  //console.log(`end wait is: ${wait.toString()}`);
 }
 
 main().catch(error => {
