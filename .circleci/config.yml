@@ -25,11 +25,14 @@ jobs:
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package.json" }}
+      - run: launch hardhat
+          command: |
+            yarn hardhat
       - run:
           name: Run tests
           command: |
             source /home/circleci/setup-env.sh
-            yarn test --coverage
+            yarn dai-test --coverage
             npm i --no-save codecov
             ./node_modules/.bin/codecov
   deploy_staging:
