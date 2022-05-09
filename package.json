@@ -11,7 +11,7 @@
     "build": "next build && next export",
     "start": "next start",
     "test": "yarn hardhat & (sleep 6 && npm run fund && jest --runInBand)",
-    "test:mcd": "yarn hardhat & (sleep 6 && npm run fund && jest --runInBand mcd-es)",
+    "test:mcd": "yarn hardhat & (sleep 6 && npm run fund && jest --runInBand mcd-es --coverage)",
     "testchain": "./node_modules/@makerdao/testchain/scripts/launch -s default --fast",
     "hardhat": "npx hardhat node --network hardhat --verbose",
     "fund": "npx hardhat run scripts/setup.js --network localhost"
