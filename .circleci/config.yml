@@ -26,10 +26,6 @@ jobs:
           keys:
             - dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Launch hardhat
-          command: |
-            yarn hardhat
-      - run:
           name: Run mcd tests with hardhat
           command: |
             source /home/circleci/setup-env.sh
