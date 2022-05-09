@@ -27,16 +27,17 @@ jest.setTimeout(50000);
 beforeAll(async () => {
   maker = await instantiateMaker('mainnetfork');
   const proxyAddress = await maker.service('proxy').ensureProxy();
-  for (let [ ilk , gem ] of filteredIlks) {
-    await maker.getToken(gem).approveUnlimited(proxyAddress);
-    let vaultCollateralAmount = ilk.substring(0,4) === 'ETH-' ? gem(50) : gem(4500);
-    vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, vaultCollateralAmount, vaultDaiAmount);
-  }
 
   //if ES hasn't been triggered, trigger ES and call cage on all ilks
   const end = maker.service('smartContract').getContract('MCD_END');
   const live = await end.live();
   if (live.toNumber() === 1) {
+    for (let [ ilk , gem ] of filteredIlks) {
+      await maker.getToken(gem).approveUnlimited(proxyAddress);
+      let vaultCollateralAmount = ilk.substring(0,4) === 'ETH-' ? gem(50) : gem(4500);
+      vaults[ilk] = await maker.service('mcd:cdpManager').openLockAndDraw(ilk, vaultCollateralAmount, vaultDaiAmount);
+    }
+    
     const token = maker.service('smartContract').getContract('MCD_GOV');
     const esm = maker.service('smartContract').getContract('MCD_ESM');
     await token.approve(esm.address, WAD.times(100000).toFixed());

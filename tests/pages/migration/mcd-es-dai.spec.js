@@ -9,7 +9,6 @@ const { change, click } = fireEvent;
 import BigNumber from 'bignumber.js';
 import ilkList from '../../../references/ilkList';
 import { prettifyNumber } from '../../../utils/ui';
-const hre = require('hardhat');
 
 let maker;
 

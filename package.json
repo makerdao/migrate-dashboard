@@ -10,8 +10,8 @@
     "https": "yarn dev & dev-proxy -p 3000:3003",
     "build": "next build && next export",
     "start": "next start",
-    "test": "yarn hardhat & (sleep 20 && npm run fund && yarn testchain --ci jest --runInBand)",
-    "test:mcd": "yarn testchain & yarn hardhat & (sleep 20 && npm run fund && yarn testchain --ci jest --runInBand mcd-es --coverage)",
+    "test": "yarn hardhat & (sleep 5 && npm run fund && yarn testchain --ci jest --runInBand)",
+    "test:mcd": "yarn hardhat & (sleep 5 && npm run fund && yarn testchain --ci jest --runInBand mcd-es --coverage)",
     "testchain": "./node_modules/@makerdao/testchain/scripts/launch -s default --fast",
     "hardhat": "npx hardhat node --network hardhat",
     "fund": "npx hardhat run scripts/setup.js --network localhost"
