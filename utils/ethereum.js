@@ -3,6 +3,7 @@ import round from 'lodash/round';
 import { ETH } from '../maker';
 import assert from 'assert';
 import BigNumber from 'bignumber.js';
+import { utils as ethersUtils } from 'ethers';
 
 export async function checkEthereumProvider() {
   let provider;
@@ -53,17 +54,20 @@ export function bytesToString(hex) {
 export function stringToBytes(str) {
   assert(!!str, 'argument is falsy');
   assert(typeof str === 'string', 'argument is not a string');
-  return '0x' + Buffer.from(str).toString('hex');
+  return ethersUtils.formatBytes32String(str);
 }
 
 export function fromWei(value) {
+  if (value._isBigNumber && value._hex) value = value._hex;
   return BigNumber(value).shiftedBy(-18);
 }
 
 export function fromRay(value) {
+  if (value._isBigNumber && value._hex) value = value._hex;
   return BigNumber(value).shiftedBy(-27);
 }
 
 export function fromRad(value) {
+  if (value._isBigNumber && value._hex) value = value._hex;
   return BigNumber(value).shiftedBy(-45);
 }

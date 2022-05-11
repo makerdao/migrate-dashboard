@@ -25,8 +25,7 @@ import Failed from '../../components/Failed';
 import FadeInFromSide from '../../components/FadeInFromSide';
 import InProgressImage from '../../assets/icons/daiRedeem.svg';
 import BigNumber from 'bignumber.js';
-import { ETH } from '@makerdao/dai/dist/src/eth/Currency';
-import { PETH } from '../../maker';
+import { ETH, PETH } from '../../maker';
 import assert from 'assert';
 
 const CompleteBody = () => {
@@ -161,7 +160,7 @@ export default function () {
         .service('smartContract')
         .getContract('SAI_TUB')
         .per();
-      setRatio(BigNumber(per).div('1e27'));
+      setRatio(BigNumber(per._hex).div('1e27'));
     })();
   }, [maker]);
 

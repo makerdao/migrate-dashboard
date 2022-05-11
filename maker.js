@@ -48,53 +48,63 @@ export async function instantiateMaker(network) {
   const url =
     network === 'test' || network === 'testnet'
       ? 'http://localhost:2000'
+      : network === 'mainnetfork' ? 'http://localhost:8545'
       : `https://${network}.infura.io/v3/${INFURA_KEY}`;
-
   // this is required here instead of being imported normally because it runs
   // code that will break if run server-side
   const trezorPlugin = require('@makerdao/dai-plugin-trezor-web').default;
 
   const mcdPluginConfig = {
     cdpTypes: [
-      { currency: SAI, ilk: 'SAI' },
       //FIXME: the mcd plugin should be changed so that we're not required to add the default cdp types again here
-      ...ilkList.map(i => {
+      ...ilkList.filter(i => i.symbol !== 'PSM-USDC-A').map(i => {
         return {
           currency: i.currency,
           ilk: i.key,
           decimals: i.decimals
         };
-      })
+      }),
     ]
   };
 
-  const migrationPluginConfig = {};
-  const scdPluginConfig = {};
-  
+  let migrationPluginConfig = {};
+  let scdPluginConfig = {};
   let daiAddressOverrides = {};
 
-  if (network === 'kovan'  && global.mcdESTest) {
-    const addresses = require('./addresses-kovan-mcd-es.json');
-    mcdPluginConfig.addressOverrides = addresses;
-    migrationPluginConfig.addressOverrides = addresses;
-    daiAddressOverrides = {...addresses,
-      CDP_MANAGER: addresses.CDP_MANAGER_1,
-      MCD_VAT: addresses.MCD_VAT_1,
-      MCD_END: addresses.MCD_END_1,
-      GET_CDPS_1: addresses.GET_CDPS_1
-    };
-  }
+  // if (network === 'kovan'  && global.mcdESTest) {
+  //   const addresses = require('./addresses-kovan-mcd-es.json');
+  //   mcdPluginConfig.addressOverrides = addresses;
+  //   migrationPluginConfig.addressOverrides = addresses;
+  //   daiAddressOverrides = {...addresses,
+  //     CDP_MANAGER: addresses.CDP_MANAGER_1,
+  //     MCD_VAT: addresses.MCD_VAT_1,
+  //     MCD_END: addresses.MCD_END_1,
+  //     GET_CDPS_1: addresses.GET_CDPS_1
+  //   };
+  // }
 
-  if (network === 'testnet') {
-    const addresses = require('./addresses-testnet.json');
-    mcdPluginConfig.addressOverrides = addresses;
-    migrationPluginConfig.addressOverrides = addresses;
-    daiAddressOverrides = {...addresses,
-      CDP_MANAGER: addresses.CDP_MANAGER_1,
-      MCD_VAT: addresses.MCD_VAT_1,
-      MCD_END: addresses.MCD_END_1,
-      GET_CDPS_1: addresses.GET_CDPS_1
-    };
+  // if (network === 'testnet') {
+  //   const addresses = require('./addresses-testnet.json');
+  //   mcdPluginConfig.addressOverrides = addresses;
+  //   migrationPluginConfig.addressOverrides = addresses;
+  //   daiAddressOverrides = {...addresses,
+  //     CDP_MANAGER: addresses.CDP_MANAGER_1,
+  //     MCD_VAT: addresses.MCD_VAT_1,
+  //     MCD_END: addresses.MCD_END_1,
+  //     GET_CDPS_1: addresses.GET_CDPS_1
+  //   };
+  // }
+
+  if (network === 'mainnetfork' || network === 'mainnet') {
+    const addressesMainnet = require('./addresses-mainnet.json');
+    mcdPluginConfig.addressOverrides = addressesMainnet;
+    migrationPluginConfig.addressOverrides = addressesMainnet;
+    daiAddressOverrides = {...addressesMainnet,
+      CDP_MANAGER_1: addressesMainnet.CDP_MANAGER,
+      MCD_VAT_1: addressesMainnet.MCD_VAT,
+      MCD_END_1: addressesMainnet.MCD_END,
+      GET_CDPS_1: addressesMainnet.GET_CDPS
+      };
   }
 
   const config = {
@@ -111,15 +121,11 @@ export async function instantiateMaker(network) {
       [scdPlugin, scdPluginConfig]
     ],
     smartContract: {
-      addressOverrides: {
-        ...daiAddressOverrides,
-        MAKER_OTC: {
-          mainnet: '0x794e6e91555438afc3ccf1c5076a74f42133d08d',
-          kovan: '0xe325acb9765b02b8b418199bf9650972299235f4'
-        }
-      }
+      addressOverrides: daiAddressOverrides
     },
-    token: { addressOverrides: {} }
+    gas: {
+      price: 73474656578
+    }
   };
 
   if (global.scdESTest && !global.testnet) {

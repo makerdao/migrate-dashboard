@@ -1,211 +1,256 @@
 /*
-This file is basically copied from https://github.com/makerdao/mcd-cdp-portal/blob/master/src/references/ilkList.js
-the slug and network properties are not used in this project
+can get the list of active ilks from the ilk registry: https://etherscan.io/address/0x5a464c28d19848f44199d003bef5ecc87d090f87#readContract
+use the list function to get an ilk's bytes32 representation, then pass it into the ilkData function to see what ilk it is
+problem is it includes ilks that have been offboarded, can check daistats to see if its been offboarded
 */
 import {
   ETH,
-  BAT,
   USDC,
   WBTC,
-  TUSD,
-  ZRX,
-  KNC,
   MANA,
-  USDT,
   PAXUSD,
   COMP,
-  LRC,
   LINK,
   YFI,
-  BAL,
   GUSD,
   UNI,
   RENBTC,
-  AAVE,
-  UNIV2DAIETH
+  MATIC,
+  WSTETH,
+  UNIV2DAIETH,
+  UNIV2WBTCETH,
+  UNIV2USDCETH,
+  UNIV2DAIUSDC,
+  UNIV2UNIETH,
+  UNIV2WBTCDAI
 } from '@makerdao/dai-plugin-mcd';
+
+import { createCurrency } from '@makerdao/currency';
+
+const RWA001 = createCurrency('RWA001');
+const RWA002 = createCurrency('RWA002');
+const RWA003 = createCurrency('RWA003');
+const RWA004 = createCurrency('RWA004');
+const RWA005 = createCurrency('RWA005');
+const GUNIV3DAIUSDC1 = createCurrency('GUNIV3DAIUSDC1');
+const ADAI = createCurrency('ADAI');
+const GUNIV3DAIUSDC2 = createCurrency('GUNIV3DAIUSDC2');
+const CRVV1ETHSTETH = createCurrency('CRVV1ETHSTETH');
+
 
 export default [
   {
-    slug: 'eth-a', // URL param
     symbol: 'ETH-A', // how it's displayed in the UI
     key: 'ETH-A', // the actual ilk name used in the vat
     gem: 'ETH', // the actual asset that's being locked
     currency: ETH, // the associated dai.js currency type
-    networks: ['kovan', 'mainnet', 'testnet', 'rinkeby', 'ropsten', 'goerli']
   },
   {
-    slug: 'eth-b',
     symbol: 'ETH-B',
     key: 'ETH-B',
     gem: 'ETH',
     currency: ETH,
-    networks: ['kovan', 'mainnet']
   },
   {
-    slug: 'bat-a',
-    symbol: 'BAT-A',
-    key: 'BAT-A',
-    gem: 'BAT',
-    currency: BAT,
-    networks: ['kovan', 'mainnet', 'testnet', 'rinkeby', 'ropsten', 'goerli']
+    symbol: 'ETH-C',
+    key: 'ETH-C',
+    gem: 'ETH',
+    currency: ETH,
   },
   {
-    slug: 'usdc-a',
     symbol: 'USDC-A',
     key: 'USDC-A',
     gem: 'USDC',
     currency: USDC,
-    networks: ['kovan', 'mainnet', 'testnet', 'rinkeby', 'ropsten', 'goerli'],
     decimals: 6
   },
   {
-    slug: 'usdc-b',
-    symbol: 'USDC-B',
-    key: 'USDC-B',
-    gem: 'USDC',
-    currency: USDC,
-    networks: ['kovan', 'mainnet'],
-    decimals: 6
-  },
-  {
-    slug: 'wbtc-a',
     symbol: 'WBTC-A',
     key: 'WBTC-A',
     gem: 'WBTC',
     currency: WBTC,
-    networks: ['kovan', 'mainnet'],
     decimals: 8
   },
   {
-    slug: 'tusd-a',
-    symbol: 'TUSD-A',
-    key: 'TUSD-A',
-    gem: 'TUSD',
-    currency: TUSD,
-    networks: ['kovan', 'mainnet']
-  },
-  {
-    slug: 'knc-a',
-    symbol: 'KNC-A',
-    key: 'KNC-A',
-    gem: 'KNC',
-    currency: KNC,
-    networks: ['mainnet', 'kovan']
-  },
-  {
-    slug: 'zrx-a',
-    symbol: 'ZRX-A',
-    key: 'ZRX-A',
-    gem: 'ZRX',
-    currency: ZRX,
-    networks: ['mainnet', 'kovan']
-  },
-  {
-    slug: 'mana-a',
     symbol: 'MANA-A',
     key: 'MANA-A',
     gem: 'MANA',
     currency: MANA,
-    networks: ['mainnet', 'kovan']
   },
   {
-    slug: 'usdt-a',
-    symbol: 'USDT-A',
-    key: 'USDT-A',
-    gem: 'USDT',
-    currency: USDT,
-    networks: ['mainnet', 'kovan'],
-    decimals: 6
-  },
-  {
-    slug: 'paxusd-a',
     symbol: 'PAXUSD-A',
     key: 'PAXUSD-A',
     gem: 'PAXUSD',
     currency: PAXUSD,
-    networks: ['mainnet', 'kovan']
   },
   {
-    slug: 'comp-a',
     symbol: 'COMP-A',
     key: 'COMP-A',
     gem: 'COMP',
     currency: COMP,
-    networks: ['mainnet', 'kovan']
   },
   {
-    slug: 'lrc-a',
-    symbol: 'LRC-A',
-    key: 'LRC-A',
-    gem: 'LRC',
-    currency: LRC,
-    networks: ['mainnet', 'kovan']
-  },
-  {
-    slug: 'link-a',
     symbol: 'LINK-A',
     key: 'LINK-A',
     gem: 'LINK',
     currency: LINK,
-    networks: ['mainnet', 'kovan']
   },
   {
-    slug: 'yfi-a',
     symbol: 'YFI-A',
     key: 'YFI-A',
     gem: 'YFI',
     currency: YFI,
-    networks: ['mainnet', 'kovan']
   },
   {
-    slug: 'bal-a',
-    symbol: 'BAL-A',
-    key: 'BAL-A',
-    gem: 'BAL',
-    currency: BAL,
-    networks: ['mainnet', 'kovan']
-  },
-  {
-    slug: 'gusd-a',
     symbol: 'GUSD-A',
     key: 'GUSD-A',
     gem: 'GUSD',
     currency: GUSD,
-    networks: ['mainnet', 'kovan'],
     decimals: 2
   },
   {
-    slug: 'uni-a',
     symbol: 'UNI-A',
     key: 'UNI-A',
     gem: 'UNI',
     currency: UNI,
-    networks: ['mainnet', 'kovan']
   },
   {
-    slug: 'renbtc-a',
     symbol: 'RENBTC-A',
     key: 'RENBTC-A',
     gem: 'RENBTC',
     currency: RENBTC,
-    networks: ['mainnet', 'kovan'],
     decimals: 8
   },
   {
-    slug: 'aave-a',
-    symbol: 'AAVE-A',
-    key: 'AAVE-A',
-    gem: 'AAVE',
-    currency: AAVE,
-    networks: ['mainnet', 'kovan']
-  },
-  {
-    slug: 'univ2daieth-a',
     symbol: 'UNIV2DAIETH-A',
     key: 'UNIV2DAIETH-A',
     gem: 'UNIV2DAIETH',
     currency: UNIV2DAIETH,
-    networks: ['mainnet', 'kovan']
   },
+  {
+    symbol: 'UNIV2WBTCETH-A',
+    key: 'UNIV2WBTCETH-A',
+    gem: 'UNIV2WBTCETH',
+    currency: UNIV2WBTCETH
+  },
+  {
+    symbol: 'UNIV2USDCETH-A',
+    key: 'UNIV2USDCETH-A',
+    gem: 'UNIV2USDCETH',
+    currency: UNIV2USDCETH
+  },
+  {
+    symbol: 'UNIV2DAIUSDC-A',
+    key: 'UNIV2DAIUSDC-A',
+    gem: 'UNIV2DAIUSDC',
+    currency: UNIV2DAIUSDC
+  },
+  {
+    symbol: 'UNIV2UNIETH-A',
+    key: 'UNIV2UNIETH-A',
+    gem: 'UNIV2UNIETH',
+    currency: UNIV2UNIETH
+  },
+  {
+    symbol: 'UNIV2WBTCDAI-A',
+    key: 'UNIV2WBTCDAI-A',
+    gem: 'UNIV2WBTCDAI',
+    currency: UNIV2WBTCDAI
+  },
+  {
+    symbol: 'PSM-USDC-A',
+    key: 'PSM-USDC-A',
+    gem: 'USDC',
+    currency: USDC,
+  },
+  {
+    symbol: 'RWA001-A',
+    key: 'RWA001-A',
+    gem: 'RWA001',
+    currency: RWA001,
+  },
+  {
+    symbol: 'RWA002-A',
+    key: 'RWA002-A',
+    gem: 'RWA002',
+    currency: RWA002,
+  },
+  {
+    symbol: 'RWA003-A',
+    key: 'RWA003-A',
+    gem: 'RWA003',
+    currency: RWA003,
+  },
+  {
+    symbol: 'RWA004-A',
+    key: 'RWA004-A',
+    gem: 'RWA004',
+    currency: RWA004,
+  },
+  {
+    symbol: 'RWA005-A',
+    key: 'RWA005-A',
+    gem: 'RWA005',
+    currency: RWA005,
+  },
+  {
+    symbol: 'PSM-PAX-A',
+    key: 'PSM-PAX-A',
+    gem: 'PAX',
+    currency: PAXUSD,
+  },
+  {
+    symbol: 'MATIC-A',
+    key: 'MATIC-A',
+    gem: 'MATIC',
+    currency: MATIC,
+  },
+  {
+    symbol: 'GUNIV3DAIUSDC1-A',
+    key: 'GUNIV3DAIUSDC1-A',
+    gem: 'GUNIV3DAIUSDC1',
+    currency: GUNIV3DAIUSDC1,
+  },
+  {
+    symbol: 'WSTETH-A',
+    key: 'WSTETH-A',
+    gem: 'WSTETH',
+    currency: WSTETH,
+  },
+  {
+    symbol: 'DIRECT-AAVEV2-DAI',
+    key: 'DIRECT-AAVEV2-DAI',
+    gem: 'ADAI',
+    currency: ADAI,
+  },
+  {
+    symbol: 'WBTC-B',
+    key: 'WBTC-B',
+    gem: 'WBTC',
+    currency: WBTC,
+  },
+  {
+    symbol: 'WBTC-C',
+    key: 'WBTC-C',
+    gem: 'WBTC',
+    currency: WBTC,
+  },
+  {
+    symbol: 'PSM-GUSD-A',
+    key: 'PSM-GUSD-A',
+    gem: 'GUSD',
+    currency: GUSD,
+  },
+  {
+    symbol: 'GUNIV3DAIUSDC2-A',
+    key: 'GUNIV3DAIUSDC2-A',
+    gem: 'GUNIV3DAIUSDC2',
+    currency: GUNIV3DAIUSDC2,
+  },
+  {
+    symbol: 'CRVV1ETHSTETH-A',
+    key: 'CRVV1ETHSTETH-A',
+    gem: 'CRVV1ETHSTETH',
+    currency: CRVV1ETHSTETH,
+  }
 ];

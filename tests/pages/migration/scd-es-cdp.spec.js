@@ -12,9 +12,11 @@ const { click } = fireEvent;
 
 let maker, snapshotData, cdp1, cdp2, initialBalance;
 
+//jest.setTimeout(9000000);
+jest.setTimeout(30000);
+
 beforeAll(async () => {
-  jest.setTimeout(30000);
-  maker = await instantiateMaker('test');
+  maker = await instantiateMaker('mainnetfork');
   snapshotData = await takeSnapshot(maker);
 
   cdp1 = await maker.service('cdp').openCdp();
@@ -36,6 +38,15 @@ beforeAll(async () => {
   await top.flow();
 
   initialBalance = await maker.getToken('ETH').balance();
+
+  maker.service('cdp').getCdpIds = jest.fn(async owner => {
+    if (owner === maker.currentAddress()) return [cdp1.id];
+    if (owner === (await maker.currentProxy())) return [cdp2.id];
+    throw new Error(`unrecognized address: ${owner}`);
+  });
+
+  
+  //await new Promise(r => setTimeout(r, 9000000));
 });
 
 afterAll(async () => {
