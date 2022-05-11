@@ -309,7 +309,7 @@ function OverviewDataFetch() {
       const scs = maker.service('smartContract');
       const tub = scs.getContract('SAI_TUB');
       const top = scs.getContract('SAI_TOP');
-      const scd = { off: await tub.off() }; // SCD is shut down
+      const scd = { off: true }; // SCD is shut down - can hardcode this now
 
       if (scd.off && countCdps(cdpMigrationCheck) > 0) {
         Object.assign(scd, {
@@ -350,7 +350,8 @@ function OverviewDataFetch() {
           daiDsrEndBalance,
           vaultsToRedeem: { claims: validClaims, parsedVaultsData },
           minEndVatBalance,
-          proxyDaiAllowance
+          proxyDaiAllowance,
+          daiBalance
         }
       });
     })();
@@ -440,8 +441,8 @@ function Overview({ fetching }) {
               }}
             >
               <Text.p t="body">
-                Due to the recent discovery of a potential exploit in the Maker
-                Governance Contract (DSChief), all users are requested to
+                Due to the discovery of a potential exploit in the Maker
+                Governance Contract (DSChief v1.0) in 2019, all users are requested to
                 withdraw any MKR deposited into one of the voting contracts back
                 to their wallet.
               </Text.p>
