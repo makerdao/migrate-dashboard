@@ -3013,10 +3013,10 @@
     hdkey "^1.0.0"
     web3-provider-engine "14.0.4"
 
-"@makerdao/dai-plugin-mcd@1.8.6-alpha.2":
-  version "1.8.6-alpha.2"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-mcd/-/dai-plugin-mcd-1.8.6-alpha.2.tgz#463355c3b68fee77e88369d3bc4ac28a7273bf9e"
-  integrity sha512-aVc97WqSa+cZYxZE2D03NQRZ0NAFa9dHw0Ja2V51INCD0p5ukARlhUmQAC+z7qcWeJepEZoBkYXQMlCNPEv52w==
+"@makerdao/dai-plugin-mcd@1.8.6-alpha.3":
+  version "1.8.6-alpha.3"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-mcd/-/dai-plugin-mcd-1.8.6-alpha.3.tgz#2883b28d4f1723fef2cf2bec2c7630c7b1782d84"
+  integrity sha512-0vRXbyRW9qW3fqCFAlqKHqyCbaXiR5AWnElizlhM+51gXdlgg6ohW9tWCnOTh4txckWZrEruxq8iyPFSU8Lnyg==
   dependencies:
     "@makerdao/currency" "^0.9.10"
     "@makerdao/dai" "^0.42.5-alpha.0"
@@ -3024,10 +3024,10 @@
     bignumber.js "^8.1.1"
     rxjs "^6.5.4"
 
-"@makerdao/dai-plugin-migrations@1.5.5-alpha.1":
-  version "1.5.5-alpha.1"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.5.5-alpha.1.tgz#585db35fc62e0d6f01b92ae8c469143a684f251e"
-  integrity sha512-jMu01elKL9kg9XPeBOHGRRfSv5k6RfyYWYJSoPeHZg4Z3nHT6iZtXGWcH9aWb92O1vwIDtOgkVyrW98BuUZkwA==
+"@makerdao/dai-plugin-migrations@1.5.5-alpha.2":
+  version "1.5.5-alpha.2"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-migrations/-/dai-plugin-migrations-1.5.5-alpha.2.tgz#27bb9f2c271b82f9f9f9d28827d8c19c35239541"
+  integrity sha512-x5RCLEkuLfv61w1G+hwN2+4wrgmieO0+YSy+TBhlsKxZ64SmGxncVP1jpnoYo32rYxZNncoIB87PX0NqIwydpg==
   dependencies:
     "@makerdao/currency" "^0.9.10"
     "@makerdao/dai" "^0.42.5-alpha.0"
