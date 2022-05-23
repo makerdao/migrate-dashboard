@@ -11,9 +11,9 @@
     "build": "next build && next export",
     "start": "next start",
     "test": "yarn hardhat & (sleep 5 && npm run fund && yarn testchain --ci jest --runInBand) && kill -9 $(lsof -t -i :8545)",
-    "test:mcd": "yarn hardhat & (sleep 5 && npm run fund && yarn testchain --ci jest --runInBand mcd-es --coverage) && kill -9 $(lsof -t -i :8545)",
+    "test:mcd": "yarn hardhat & (sleep 5 && npm run fund && yarn testchain --ci jest --runInBand mcd-es --coverage) && kill -9 $TASKHARDHAT_PID",
     "testchain": "./node_modules/@makerdao/testchain/scripts/launch -s default --fast",
-    "hardhat": "npx hardhat node --network hardhat",
+    "hardhat": "npx hardhat node --network hardhat & TASKHARDHAT_PID=$!",
     "fund": "npx hardhat run scripts/setup.js --network localhost"
   },
   "dependencies": {
