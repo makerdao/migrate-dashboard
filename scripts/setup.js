@@ -60,11 +60,17 @@ async function main() {
     indexDai.toString(),
     toBytes32(ethers.utils.parseUnits('1000')).toString()
   );
+
+  // for (let i = 0; i < 15; i++) {
+  //   console.log(i);
+  //   const x = await ethers.provider.getStorageAt(endAddress, i);
+  //   console.log(x);
+  // }
   
   //set end.wait to 0
   await setStorageAt(
     endAddress,
-    '0x9',
+    '0xA',
     toBytes32(ethers.BigNumber.from('0')).toString()
   );
 
