@@ -7,7 +7,7 @@ async function main() {
   const testAccount = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266';
   const mkrAddress = '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2';
   const daiAddress = '0x6B175474E89094C44Da98b954EedeAC495271d0F';
-  const endAddress = '0xBB856d1742fD182a90239D7AE85706C2FE4e5922';
+  const endAddress = '0x0e2e8F1D1326A4B9633D96222Ce399c708B19c28';
 
   // This is the test account used on the tests
   await hre.network.provider.request({
