@@ -7,7 +7,7 @@ async function main() {
   const testAccount = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266';
   const mkrAddress = '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2';
   const daiAddress = '0x6B175474E89094C44Da98b954EedeAC495271d0F';
-  const endAddress = '0xBB856d1742fD182a90239D7AE85706C2FE4e5922';
+  const endAddress = '0x0e2e8F1D1326A4B9633D96222Ce399c708B19c28';
 
   // This is the test account used on the tests
   await hre.network.provider.request({
@@ -60,11 +60,17 @@ async function main() {
     indexDai.toString(),
     toBytes32(ethers.utils.parseUnits('1000')).toString()
   );
+
+  // for (let i = 0; i < 15; i++) {
+  //   console.log(i);
+  //   const x = await ethers.provider.getStorageAt(endAddress, i);
+  //   console.log(x);
+  // }
   
   //set end.wait to 0
   await setStorageAt(
     endAddress,
-    '0x9',
+    '0xA',
     toBytes32(ethers.BigNumber.from('0')).toString()
   );
 
