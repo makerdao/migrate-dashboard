@@ -36,3 +36,4 @@ The UI can also be used with the local testchain, with these steps:
 - import the default account for the testchain to your metamask. Private key can be found [here](https://github.com/makerdao/testchain/issues/31#issuecomment-616816206)
 - Get the testchain into the state you want it by running the relevant test until the point you want it to pause (see commented out setTimeouts in code).  This is a bit hacky, and can probably be improved with snapshots.
 - To test the scd cdp flow, you'll want to include `scdes` in the query string to tell dai.js to use mock data when getting the cdps. e.g. `localhost:3000?scdestestnet`
+test

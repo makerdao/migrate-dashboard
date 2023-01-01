@@ -67,3 +67,4 @@ yalc.lock
 
 # VSCode
 .vscodeplugin/dist
+.git/
